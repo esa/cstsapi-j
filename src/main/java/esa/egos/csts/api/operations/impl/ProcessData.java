@@ -9,13 +9,16 @@ import ccsds.csts.common.types.AbstractChoice;
 import ccsds.csts.common.types.DataUnitId;
 import ccsds.csts.common.types.Embedded;
 import ccsds.csts.common.types.Extended;
-import esa.egos.csts.api.exception.ApiException;
+import esa.egos.csts.api.enumerations.OperationType;
+import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.operations.AbstractOperation;
 import esa.egos.csts.api.operations.IProcessData;
-import esa.egos.csts.api.util.impl.ExtensionUtils;
+import esa.egos.csts.api.util.impl.CSTSUtils;
 
 public class ProcessData extends AbstractOperation implements IProcessData {
 
+	private final OperationType type = OperationType.PROCESS_DATA;
+	
 	private final static int versionNumber = 1;
 
 	private long dataUnitID;
@@ -23,6 +26,11 @@ public class ProcessData extends AbstractOperation implements IProcessData {
 
 	public ProcessData() {
 		super(versionNumber, false);
+	}
+	
+	@Override
+	public OperationType getType() {
+		return type;
 	}
 
 	@Override
@@ -62,12 +70,12 @@ public class ProcessData extends AbstractOperation implements IProcessData {
 
 	@Override
 	public ProcessDataInvocation encodeProcessDataInvocation() {
-		return encodeProcessDataInvocation(ExtensionUtils.nonUsedExtension());
+		return encodeProcessDataInvocation(CSTSUtils.nonUsedExtension());
 	}
 
 	@Override
 	public ProcessDataInvocation encodeProcessDataInvocation(Embedded extendedData) {
-		return encodeProcessDataInvocation(extendedData, ExtensionUtils.nonUsedExtension());
+		return encodeProcessDataInvocation(extendedData, CSTSUtils.nonUsedExtension());
 	}
 
 	@Override

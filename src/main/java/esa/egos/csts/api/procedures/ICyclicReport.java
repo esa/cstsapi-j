@@ -2,29 +2,29 @@ package esa.egos.csts.api.procedures;
 
 import java.util.List;
 
-import esa.egos.csts.api.enums.CyclicReportStartDiagnostic;
-import esa.egos.csts.api.parameters.IListOfParameters;
-import esa.egos.csts.api.parameters.IListOfParametersDiagnostics;
-import esa.egos.csts.api.parameters.IQualifiedParameter;
+import esa.egos.csts.api.diagnostics.CyclicReportStartDiagnostic;
+import esa.egos.csts.api.parameters.impl.ListOfParameters;
+import esa.egos.csts.api.parameters.impl.ListOfParametersDiagnostics;
+import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 
 public interface ICyclicReport extends IUnbufferedDataDelivery {
 
-	IListOfParameters getListOfParameters();
+	ListOfParameters getListOfParameters();
 	
-	void setListOfParameters(IListOfParameters listOfParameters);
-
-	void setDeliveryCycle(long deliveryCycle);
+	void setListOfParameters(ListOfParameters listOfParameters);
 
 	long getDeliveryCycle();
 
-	List<IQualifiedParameter> getQualifiedParameters();
+	void setDeliveryCycle(long deliveryCycle);
 
-	void setListOfParametersDiagnostics(IListOfParametersDiagnostics listOfParametersDiagnostics);
+	List<QualifiedParameter> getQualifiedParameters();
 
-	IListOfParametersDiagnostics getListOfParametersDiagnostics();
+	ListOfParametersDiagnostics getListOfParametersDiagnostics();
 
-	void setCyclicReportStartDiagnostic(CyclicReportStartDiagnostic cyclicReportStartDiagnostic);
+	void setListOfParametersDiagnostics(ListOfParametersDiagnostics listOfParametersDiagnostics);
 
-	CyclicReportStartDiagnostic getCyclicReportStartDiagnostic();
+	CyclicReportStartDiagnostic getStartDiagnostic();
+
+	void setStartDiagnostic(CyclicReportStartDiagnostic cyclicReportStartDiagnostic);
 
 }

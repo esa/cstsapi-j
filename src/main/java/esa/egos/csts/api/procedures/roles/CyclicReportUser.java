@@ -1,21 +1,20 @@
 package esa.egos.csts.api.procedures.roles;
 
-import esa.egos.csts.api.enums.Result;
-import esa.egos.csts.api.exception.ApiException;
-import esa.egos.csts.api.exception.NoServiceInstanceStateException;
-import esa.egos.csts.api.operations.IAcknowledgedOperation;
+import esa.egos.csts.api.enumerations.Result;
+import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.exceptions.NoServiceInstanceStateException;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IStart;
 import esa.egos.csts.api.operations.IStop;
 import esa.egos.csts.api.operations.ITransferData;
-import esa.egos.csts.api.parameters.IQualifiedParameter;
+import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 import esa.egos.csts.api.procedures.AbstractCyclicReport;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceInternal;
 import esa.egos.csts.api.serviceinstance.states.ActiveState;
 import esa.egos.csts.api.serviceinstance.states.InactiveState;
 import esa.egos.csts.api.serviceinstance.states.ServiceInstanceStateEnum;
-import esa.egos.csts.api.types.impl.Time;
+import esa.egos.csts.api.types.Time;
 
 public class CyclicReportUser extends AbstractCyclicReport {
 
@@ -30,21 +29,11 @@ public class CyclicReportUser extends AbstractCyclicReport {
 	}
 
 	@Override
-	protected Result doInitiateOperationReturn(IConfirmedOperation confOperation) {
-		return Result.SLE_E_ROLE;
-	}
-
-	@Override
-	protected Result doInitiateOperationAck(IAcknowledgedOperation ackOperation) {
-		return Result.SLE_E_ROLE;
-	}
-
-	@Override
 	protected Result doInformOperationInvoke(IOperation operation) {
 		ITransferData data = (ITransferData) operation;
-		System.out.println(Time.decodeCCSDSMillisToInstant(data.getGenerationTime().getMilliseconds()));
+		System.out.println(Time.decodeCCSDSMillisToInstant(data.getGenerationTime().getValue()));
 		System.out.println(data.getSequenceCounter());
-		for (IQualifiedParameter p : getQualifiedParameters()) {
+		for (QualifiedParameter p : getQualifiedParameters()) {
 			System.out.println(p);
 		}
 		return doStateProcessing(operation, true, false);
@@ -53,11 +42,6 @@ public class CyclicReportUser extends AbstractCyclicReport {
 	@Override
 	protected Result doInformOperationReturn(IConfirmedOperation confOperation) {
 		return doStateProcessing(confOperation, false, false);
-	}
-
-	@Override
-	protected Result doInformOperationAck(IAcknowledgedOperation ackOperation) {
-		return Result.SLE_E_ROLE;
 	}
 
 	@Override
@@ -78,7 +62,7 @@ public class CyclicReportUser extends AbstractCyclicReport {
 				if (IStart.class.isAssignableFrom(operation.getClass())) {
 					if (getState().getStateEnum() == ServiceInstanceStateEnum.inactive) {
 						setState(new ActiveState());
-						return serviceInstanceInternal.forwardInitiatePxyOpInv(operation, false);
+						return invokeOperation(operation);
 					} else {
 						return Result.SLE_E_PROTOCOL;
 					}
@@ -91,6 +75,7 @@ public class CyclicReportUser extends AbstractCyclicReport {
 					}
 				} else if (ITransferData.class.isAssignableFrom(operation.getClass())) {
 					if (getState().getStateEnum() == ServiceInstanceStateEnum.active) {
+						getQualifiedParameters().clear();
 						return serviceInstanceInternal.forwardInformAplOpInv(operation);
 					} else {
 						return Result.SLE_E_PROTOCOL;

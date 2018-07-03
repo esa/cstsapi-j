@@ -15,8 +15,6 @@ import ccsds.csts.common.types.Embedded;
 import ccsds.csts.common.types.IntPos;
 import ccsds.csts.common.types.IntUnsigned;
 import ccsds.csts.common.types.PublishedIdentifier;
-import ccsds.csts.common.types.TimeCCSDSMilli;
-import ccsds.csts.common.types.TimeCCSDSPico;
 import ccsds.csts.common.types.TypeAndValue;
 import ccsds.csts.common.types.TypeAndValue.CharacterString;
 import ccsds.csts.common.types.TypeAndValue.Enumerated;
@@ -24,11 +22,10 @@ import ccsds.csts.common.types.TypeAndValue.Float;
 import ccsds.csts.common.types.TypeAndValue.Integer;
 import ccsds.csts.common.types.TypeAndValue.IntegerPositive;
 import ccsds.csts.common.types.TypeAndValue.OctetString;
-import esa.egos.csts.api.enums.ParameterType;
-import esa.egos.csts.api.enums.TimeEnum;
-import esa.egos.csts.api.main.ObjectIdentifier;
-import esa.egos.csts.api.types.impl.Duration;
-import esa.egos.csts.api.types.impl.Time;
+import esa.egos.csts.api.enumerations.ParameterType;
+import esa.egos.csts.api.oids.ObjectIdentifier;
+import esa.egos.csts.api.types.Duration;
+import esa.egos.csts.api.types.Time;
 
 // TODO check extensibility
 public class ParameterValue {
@@ -137,7 +134,7 @@ public class ParameterValue {
 		case CHARACTER_STRING:
 			CharacterString characterString = new CharacterString();
 			for (String s : stringParameterValues) {
-				characterString.getBerVisibleString().add(new BerVisibleString(s.getBytes(StandardCharsets.UTF_16BE)));
+				characterString.getBerVisibleString().add(new BerVisibleString(s.getBytes(StandardCharsets.UTF_8)));
 			}
 			typeAndValue.setCharacterString(characterString);
 			break;
@@ -168,7 +165,7 @@ public class ParameterValue {
 		case OBJECT_IDENTIFIER:
 			ccsds.csts.common.types.TypeAndValue.ObjectIdentifier objectIdentifier = new ccsds.csts.common.types.TypeAndValue.ObjectIdentifier();
 			for (ObjectIdentifier OID : OIDparameterValues) {
-				objectIdentifier.getBerObjectIdentifier().add(new BerObjectIdentifier(OID.getOid()));
+				objectIdentifier.getBerObjectIdentifier().add(new BerObjectIdentifier(OID.toArray()));
 			}
 			typeAndValue.setObjectIdentifier(objectIdentifier);
 			break;
@@ -189,7 +186,7 @@ public class ParameterValue {
 		case PUBLISHED_IDENTIFIER:
 			ccsds.csts.common.types.TypeAndValue.PublishedIdentifier publishedIdentifier = new ccsds.csts.common.types.TypeAndValue.PublishedIdentifier();
 			for (ObjectIdentifier OID : OIDparameterValues) {
-				publishedIdentifier.getPublishedIdentifier().add(new PublishedIdentifier(OID.getOid()));
+				publishedIdentifier.getPublishedIdentifier().add(new PublishedIdentifier(OID.toArray()));
 			}
 			typeAndValue.setPublishedIdentifier(publishedIdentifier);
 			break;
@@ -203,16 +200,7 @@ public class ParameterValue {
 		case TIME:
 			ccsds.csts.common.types.TypeAndValue.Time time = new ccsds.csts.common.types.TypeAndValue.Time();
 			for (Time t : timeParameterValues) {
-				ccsds.csts.common.types.Time newTime = new ccsds.csts.common.types.Time();
-				switch (t.getEnumeration()) {
-				case MILLISECONDS:
-					newTime.setCcsdsFormatMilliseconds(new TimeCCSDSMilli(t.getMilliseconds()));
-					break;
-				case PICOSECONDS:
-					newTime.setCcsdsFormatPicoseconds(new TimeCCSDSPico(t.getPicoseconds()));
-					break;
-				}
-				time.getTime().add(newTime);
+				time.getTime().add(t.encode());
 			}
 			typeAndValue.setTime(time);
 			break;
@@ -246,7 +234,7 @@ public class ParameterValue {
 		} else if (typeAndValue.getCharacterString() != null) {
 			parameterValue = new ParameterValue(ParameterType.CHARACTER_STRING);
 			for (BerVisibleString string : typeAndValue.getCharacterString().getBerVisibleString()) {
-				parameterValue.getStringParameterValues().add(new String(string.value, StandardCharsets.UTF_16BE));
+				parameterValue.getStringParameterValues().add(new String(string.value, StandardCharsets.UTF_8));
 			}
 		} else if (typeAndValue.getDuration() != null) {
 			parameterValue = new ParameterValue(ParameterType.DURATION);
@@ -269,7 +257,7 @@ public class ParameterValue {
 		} else if (typeAndValue.getObjectIdentifier() != null) {
 			parameterValue = new ParameterValue(ParameterType.OBJECT_IDENTIFIER);
 			for (BerObjectIdentifier oid : typeAndValue.getObjectIdentifier().getBerObjectIdentifier()) {
-				parameterValue.getOIDparameterValues().add(new ObjectIdentifier(oid.value));
+				parameterValue.getOIDparameterValues().add(ObjectIdentifier.of(oid.value));
 			}
 		} else if (typeAndValue.getOctetString() != null) {
 			parameterValue = new ParameterValue(ParameterType.OCTET_STRING);
@@ -284,7 +272,7 @@ public class ParameterValue {
 		} else if (typeAndValue.getPublishedIdentifier() != null) {
 			parameterValue = new ParameterValue(ParameterType.PUBLISHED_IDENTIFIER);
 			for (PublishedIdentifier pid : typeAndValue.getPublishedIdentifier().getPublishedIdentifier()) {
-				parameterValue.getOIDparameterValues().add(new ObjectIdentifier(pid.value));
+				parameterValue.getOIDparameterValues().add(ObjectIdentifier.of(pid.value));
 			}
 		} else if (typeAndValue.getFloat() != null) {
 			parameterValue = new ParameterValue(ParameterType.REAL);
@@ -294,15 +282,7 @@ public class ParameterValue {
 		} else if (typeAndValue.getTime() != null) {
 			parameterValue = new ParameterValue(ParameterType.TIME);
 			for (ccsds.csts.common.types.Time t : typeAndValue.getTime().getTime()) {
-				Time time = null;
-				if (t.getCcsdsFormatMilliseconds() != null) {
-					time = new Time(TimeEnum.MILLISECONDS);
-					time.setMilliseconds(t.getCcsdsFormatMilliseconds().value);
-				} else if (t.getCcsdsFormatPicoseconds() != null) {
-					time = new Time(TimeEnum.PICOSECONDS);
-					time.setPicoseconds(t.getCcsdsFormatPicoseconds().value);
-				}
-				parameterValue.getTimeParameterValues().add(time);
+				parameterValue.getTimeParameterValues().add(Time.decode(t));
 			}
 		} else if (typeAndValue.getIntUnsigned() != null) {
 			parameterValue = new ParameterValue(ParameterType.UNSIGNED_INTEGER);

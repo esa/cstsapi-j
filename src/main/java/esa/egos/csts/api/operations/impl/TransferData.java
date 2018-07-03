@@ -9,14 +9,17 @@ import ccsds.csts.common.types.AbstractChoice;
 import ccsds.csts.common.types.Embedded;
 import ccsds.csts.common.types.Extended;
 import ccsds.csts.common.types.IntUnsigned;
-import esa.egos.csts.api.exception.ApiException;
+import esa.egos.csts.api.enumerations.OperationType;
+import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.operations.AbstractOperation;
 import esa.egos.csts.api.operations.ITransferData;
-import esa.egos.csts.api.types.impl.Time;
-import esa.egos.csts.api.util.impl.ExtensionUtils;
+import esa.egos.csts.api.types.Time;
+import esa.egos.csts.api.util.impl.CSTSUtils;
 
 public class TransferData extends AbstractOperation implements ITransferData {
 
+	private final OperationType type = OperationType.TRANSFER_DATA;
+	
 	private final static int versionNumber = 1;
 
 	private Time generationTime;
@@ -25,6 +28,11 @@ public class TransferData extends AbstractOperation implements ITransferData {
 
 	public TransferData() {
 		super(versionNumber, false);
+	}
+	
+	@Override
+	public OperationType getType() {
+		return type;
 	}
 
 	@Override
@@ -78,12 +86,12 @@ public class TransferData extends AbstractOperation implements ITransferData {
 
 	@Override
 	public TransferDataInvocation encodeTransferDataInvocation() {
-		return encodeTransferDataInvocation(ExtensionUtils.nonUsedExtension());
+		return encodeTransferDataInvocation(CSTSUtils.nonUsedExtension());
 	}
 
 	@Override
 	public TransferDataInvocation encodeTransferDataInvocation(Embedded extendedData) {
-		return encodeTransferDataInvocation(extendedData, ExtensionUtils.nonUsedExtension());
+		return encodeTransferDataInvocation(extendedData, CSTSUtils.nonUsedExtension());
 	}
 
 	@Override

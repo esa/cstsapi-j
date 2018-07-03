@@ -5,9 +5,9 @@ import org.openmuc.jasn1.ber.types.BerNull;
 import ccsds.csts.common.types.InvokeId;
 import ccsds.csts.common.types.StandardInvocationHeader;
 import ccsds.csts.service.instance.id.ServiceInstanceIdentifier;
-import esa.egos.csts.api.exception.ConfigException;
-import esa.egos.csts.api.main.ObjectIdentifier;
-import esa.egos.csts.api.procedures.IProcedureInstanceIdentifier;
+import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.exceptions.ConfigException;
+import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceIdentifier;
 import esa.egos.csts.api.util.ICredentials;
@@ -15,12 +15,6 @@ import esa.egos.csts.api.util.impl.Credentials;
 
 public abstract class AbstractOperation implements IOperation {
 
-	//  Uncomfirmed Operation - Operation Header Parameters
-	//	Parameter						Invocation
-	//	invoker-credentials				M
-	//	invoke-id						M
-	//	procedure-instance-identifier	M
-	
     /**
      * The credentials of the invoker of the operation. If null, credentials are
      * not used.
@@ -34,7 +28,29 @@ public abstract class AbstractOperation implements IOperation {
      */
     private int invokeId = 0;
 	
-    @Override
+    /**
+	 * Confirmed/unconfirmed operation. To be set via the constructor.
+	 */
+	private final boolean confirmed;
+
+	private ProcedureInstanceIdentifier procedureIdentifier;
+
+	/**
+	 * The operation version number
+	 */
+	private final int version;
+
+	protected AbstractOperation(int version, boolean confirmed) {
+		this.version = version;
+		this.confirmed = confirmed;
+	}
+
+	@Override
+	public boolean isConfirmed() {
+		return this.confirmed;
+	}
+
+	@Override
 	public int getInvokeId() {
 		return this.invokeId;
 	}
@@ -45,15 +61,6 @@ public abstract class AbstractOperation implements IOperation {
 	}
 	
 	@Override
-	public void setInvokeId(InvokeId invokeId) {
-		
-		int id;
-		id = invokeId.intValue();
-		
-		setInvokeId(id);
-	}
-    
-    @Override
 	public IServiceInstanceIdentifier getServiceInstanceIdentifier() {
 		return this.serviceInstanceIdentifier;
 	}
@@ -65,15 +72,15 @@ public abstract class AbstractOperation implements IOperation {
 		else 
 			throw new ConfigException("Service instance already set for operation " + toString());
 	}
-	
+
 	@Override
 	public void setServiceInstanceIdentifier(ServiceInstanceIdentifier serviceInstanceIdentifier) {
 		
 		IServiceInstanceIdentifier siid = null;
 		
-		ObjectIdentifier spacecraftIdentifier = new ObjectIdentifier(serviceInstanceIdentifier.getSpacecraftId().value);
-		ObjectIdentifier facilityIdentifier = new ObjectIdentifier(serviceInstanceIdentifier.getFacilityId().value);
-		ObjectIdentifier typeIdentifier = new ObjectIdentifier(serviceInstanceIdentifier.getServiceType().value);
+		ObjectIdentifier spacecraftIdentifier = ObjectIdentifier.of(serviceInstanceIdentifier.getSpacecraftId().value);
+		ObjectIdentifier facilityIdentifier = ObjectIdentifier.of(serviceInstanceIdentifier.getFacilityId().value);
+		ObjectIdentifier typeIdentifier = ObjectIdentifier.of(serviceInstanceIdentifier.getServiceType().value);
 		int serviceInstanceNumber = serviceInstanceIdentifier.getServiceInstanceNumber().intValue();
 		
 		siid = new esa.egos.csts.api.serviceinstance.impl.ServiceInstanceIdentifier(
@@ -87,35 +94,17 @@ public abstract class AbstractOperation implements IOperation {
 		}
 	}
 
-	/**
-     * Confirmed/unconfirmed operation. To be set via the constructor.
-     */
-    private final boolean confirmed;
-    
-    private IProcedureInstanceIdentifier procedureIdentifier;
-    
-    /**
-     * The operation version number
-     */
-    private final int version;
-
 	@Override
-	public void setProcedureInstanceIdentifier(
-			IProcedureInstanceIdentifier procedureInstanceIdentifier) {
-		this.procedureIdentifier = procedureInstanceIdentifier;
-	}
-
-	@Override
-	public IProcedureInstanceIdentifier getProcedureInstanceIdentifier() {
+	public ProcedureInstanceIdentifier getProcedureInstanceIdentifier() {
 		return this.procedureIdentifier;
 	}
 
-	protected AbstractOperation(int version, boolean confirmed) {
-		super();
-		this.version = version;
-		this.confirmed = confirmed;
+	@Override
+	public void setProcedureInstanceIdentifier(
+			ProcedureInstanceIdentifier procedureInstanceIdentifier) {
+		this.procedureIdentifier = procedureInstanceIdentifier;
 	}
-	
+
 	@Override
 	public int getOperationVersionNumber() {
 		return this.version;
@@ -132,17 +121,33 @@ public abstract class AbstractOperation implements IOperation {
 		this.invokerCredentials = credentials;
 	}
 
+	/**
+	 * @throws ApiException
+	 */
 	@Override
-	public boolean isConfirmed() {
-		return this.confirmed;
+	public synchronized void verifyInvocationArguments() throws ApiException {
+		// no specific verifications are performed
+		// no checks are defined for IOperation as well, basically Result = OK
 	}
 
-	public StandardInvocationHeader encodeStandardInvocationHeader() {
+	@Override
+	public void setInvokeId(InvokeId invokeId) {
+		int id = invokeId.intValue();
+		setInvokeId(id);
+	}
+    
+    protected ccsds.csts.common.types.Credentials getEmptyCredentials() {
+		ccsds.csts.common.types.Credentials cred = new ccsds.csts.common.types.Credentials();
+		cred.setUnused(new BerNull());
+		return cred;
+	}
+
+	protected final StandardInvocationHeader encodeStandardInvocationHeader() {
 		
 		StandardInvocationHeader header = new StandardInvocationHeader();
 		header.setInvokeId(new InvokeId(getInvokeId()));
 		if(getInvokerCredentials() != null)
-			header.setInvokerCredentials(getInvokerCredentials().asCredentials());
+			header.setInvokerCredentials(getInvokerCredentials().encode());
 		else
 			header.setInvokerCredentials(getEmptyCredentials());
 		header.setProcedureInstanceId(getProcedureInstanceIdentifier().encode());
@@ -151,15 +156,9 @@ public abstract class AbstractOperation implements IOperation {
 		
 	}
 	
-	protected ccsds.csts.common.types.Credentials getEmptyCredentials() {
-		ccsds.csts.common.types.Credentials cred = new ccsds.csts.common.types.Credentials();
-		cred.setUnused(new BerNull());
-		return cred;
-	}
-	
-	public void decodeStandardInvocationHeader(StandardInvocationHeader standardInvocationHeader) {
+	protected final void decodeStandardInvocationHeader(StandardInvocationHeader standardInvocationHeader) {
 		setInvokeId(standardInvocationHeader.getInvokeId());
-		setInvokerCredentials(Credentials.encodeCredentials(standardInvocationHeader.getInvokerCredentials()));
+		setInvokerCredentials(Credentials.decode(standardInvocationHeader.getInvokerCredentials()));
 		setProcedureInstanceIdentifier(ProcedureInstanceIdentifier.decode(standardInvocationHeader.getProcedureInstanceId()));
 	}
 	

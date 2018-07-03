@@ -6,26 +6,24 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import ccsds.csts.fw.procedure.parameters.events.directives.OidValues;
+import esa.egos.csts.api.diagnostics.CyclicReportStartDiagnostic;
 import esa.egos.csts.api.diagnostics.Diagnostic;
-import esa.egos.csts.api.enums.CyclicReportStartDiagnostic;
-import esa.egos.csts.api.enums.ListOfParametersDiagnosticsEnum;
-import esa.egos.csts.api.enums.ResourceIdentifier;
-import esa.egos.csts.api.enums.Result;
-import esa.egos.csts.api.enums.TimeEnum;
-import esa.egos.csts.api.enums.TypeIdentifier;
-import esa.egos.csts.api.exception.ApiException;
-import esa.egos.csts.api.exception.NoServiceInstanceStateException;
+import esa.egos.csts.api.diagnostics.ListOfParametersDiagnosticsEnum;
+import esa.egos.csts.api.enumerations.ResourceIdentifier;
+import esa.egos.csts.api.enumerations.Result;
+import esa.egos.csts.api.enumerations.TypeIdentifier;
+import esa.egos.csts.api.events.Event;
+import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.exceptions.NoServiceInstanceStateException;
 import esa.egos.csts.api.functionalresources.IFunctionalResource;
-import esa.egos.csts.api.main.ObjectIdentifier;
-import esa.egos.csts.api.operations.IAcknowledgedOperation;
+import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IStart;
 import esa.egos.csts.api.operations.IStop;
 import esa.egos.csts.api.operations.ITransferData;
-import esa.egos.csts.api.parameters.IConfigurationParameter;
-import esa.egos.csts.api.parameters.IFunctionalResourceParameter;
+import esa.egos.csts.api.parameters.AbstractConfigurationParameter;
+import esa.egos.csts.api.parameters.impl.FunctionalResourceParameter;
 import esa.egos.csts.api.parameters.impl.IntegerConfigurationParameter;
 import esa.egos.csts.api.parameters.impl.LabelLists;
 import esa.egos.csts.api.parameters.impl.ListOfParametersDiagnostics;
@@ -35,20 +33,27 @@ import esa.egos.csts.api.serviceinstance.IServiceInstanceInternal;
 import esa.egos.csts.api.serviceinstance.states.ActiveState;
 import esa.egos.csts.api.serviceinstance.states.InactiveState;
 import esa.egos.csts.api.serviceinstance.states.ServiceInstanceStateEnum;
-import esa.egos.csts.api.types.ILabel;
-import esa.egos.csts.api.types.IName;
-import esa.egos.csts.api.types.impl.LabelList;
-import esa.egos.csts.api.types.impl.Name;
-import esa.egos.csts.api.types.impl.Time;
+import esa.egos.csts.api.types.Label;
+import esa.egos.csts.api.types.LabelList;
+import esa.egos.csts.api.types.Name;
+import esa.egos.csts.api.types.Time;
 
 public class CyclicReportProvider extends AbstractCyclicReport {
 
-	public CyclicReportProvider() {
-		super();
-		getConfigurationParameters()
-				.add(new LabelLists(new ObjectIdentifier(OidValues.pCRnamedLabelLists.value), true, false, getType()));
-		getConfigurationParameters().add(new IntegerConfigurationParameter(
-				new ObjectIdentifier(OidValues.pCRminimumAllowedDeliveryCycle.value), true, false, getType(), 500));
+	@Override
+	public void configure() {
+		super.configure();
+
+		LabelLists labelLists = new LabelLists(OIDs.pCRnamedLabelLists, true, false, this);
+		addConfigurationParameter(labelLists);
+
+		IntegerConfigurationParameter minAllowedDeliveryCycle = new IntegerConfigurationParameter(
+				OIDs.pCRminimumAllowedDeliveryCycle, true, false, this, 500);
+		addConfigurationParameter(minAllowedDeliveryCycle);
+		
+		Event someEvent = new Event(OIDs.procThrowEvent, getProcedureInstanceIdentifier());
+		
+		getEvents().add(someEvent);
 	}
 
 	/**
@@ -58,16 +63,15 @@ public class CyclicReportProvider extends AbstractCyclicReport {
 	 */
 	protected boolean processListOfParameters() {
 
-		Map<IProcedure, List<IConfigurationParameter>> configurationParametersMap = getServiceInstance()
+		Map<IProcedure, List<AbstractConfigurationParameter>> configurationParametersMap = getServiceInstance()
 				.getConfigurationParametersMap();
 		Set<IProcedure> configuredProcedures = configurationParametersMap.keySet();
 
-		Map<IFunctionalResource, List<IConfigurationParameter>> functionalResourcesMap = getServiceInstance()
+		Map<IFunctionalResource, List<FunctionalResourceParameter>> functionalResourcesMap = getServiceInstance()
 				.getFunctionalResourceParametersMap();
 		Set<IFunctionalResource> functionalResources = functionalResourcesMap.keySet();
 
-		LabelLists labelLists = (LabelLists) getConfigurationParameter(
-				new ObjectIdentifier(OidValues.pCRnamedLabelLists.value));
+		LabelLists labelLists = (LabelLists) getConfigurationParameter(OIDs.pCRnamedLabelLists);
 
 		boolean found = false;
 		boolean negativeResult = false;
@@ -111,7 +115,7 @@ public class CyclicReportProvider extends AbstractCyclicReport {
 
 		case LABELS_SET:
 
-			for (ILabel label : getListOfParameters().getParameterLabels()) {
+			for (Label label : getListOfParameters().getParameterLabels()) {
 				found = false;
 				if (label.getTypeIdentifier() == TypeIdentifier.PROCEDURE_TYPE) {
 					for (IProcedure procedure : configuredProcedures) {
@@ -155,7 +159,7 @@ public class CyclicReportProvider extends AbstractCyclicReport {
 
 		case NAMES_SET:
 
-			for (IName name : getListOfParameters().getParameterNames()) {
+			for (Name name : getListOfParameters().getParameterNames()) {
 				found = false;
 				if (name.getResourceIdentifier() == ResourceIdentifier.PROCEDURE_INSTANCE_IDENTIFIER) {
 					for (IProcedure procedure : configuredProcedures) {
@@ -211,16 +215,15 @@ public class CyclicReportProvider extends AbstractCyclicReport {
 
 	protected synchronized void generateQualifiedParameters() {
 
-		Map<IProcedure, List<IConfigurationParameter>> configurationParametersMap = getServiceInstance()
+		Map<IProcedure, List<AbstractConfigurationParameter>> configurationParametersMap = getServiceInstance()
 				.getConfigurationParametersMap();
 		Set<IProcedure> configuredProcedures = configurationParametersMap.keySet();
 
-		Map<IFunctionalResource, List<IConfigurationParameter>> functionalResourcesMap = getServiceInstance()
+		Map<IFunctionalResource, List<FunctionalResourceParameter>> functionalResourcesMap = getServiceInstance()
 				.getFunctionalResourceParametersMap();
 		Set<IFunctionalResource> functionalResources = functionalResourcesMap.keySet();
 
-		LabelLists labelLists = (LabelLists) getConfigurationParameter(
-				new ObjectIdentifier(OidValues.pCRnamedLabelLists.value));
+		LabelLists labelLists = (LabelLists) getConfigurationParameter(OIDs.pCRnamedLabelLists);
 
 		// TODO implement in a way more elegant fashion
 		boolean found = false;
@@ -239,26 +242,20 @@ public class CyclicReportProvider extends AbstractCyclicReport {
 				return;
 			}
 
-			for (ILabel label : defaultList.getLabels()) {
+			for (Label label : defaultList.getLabels()) {
 				if (label.getTypeIdentifier() == TypeIdentifier.PROCEDURE_TYPE) {
 					for (IProcedure procedure : configuredProcedures) {
 						if (procedure.getType().equals(label.getProcedureType())) {
-							for (IConfigurationParameter param : procedure.getConfigurationParameters()) {
-								IName name = new Name(param.getIdentifier(),
-										ResourceIdentifier.PROCEDURE_INSTANCE_IDENTIFIER);
-								name.setProcedureInstanceIdentifier(procedure.getProcedureInstanceIdentifier());
-								getQualifiedParameters().add(param.toQualifiedParameter(name));
+							for (AbstractConfigurationParameter param : procedure.getConfigurationParameters()) {
+								getQualifiedParameters().add(param.toQualifiedParameter());
 							}
 						}
 					}
 				} else if (label.getTypeIdentifier() == TypeIdentifier.FUNCTIONAL_RESOURCE_TYPE) {
 					for (IFunctionalResource functionalResource : functionalResources) {
 						if (functionalResource.getType().equals(label.getFunctionalResourceType())) {
-							for (IFunctionalResourceParameter param : functionalResource.getParameters()) {
-								IName name = new Name(param.getIdentifier(),
-										ResourceIdentifier.FUNCTIONAL_RESOURCE_NAME);
-								name.setFunctionalResourceName(functionalResource.getName());
-								getQualifiedParameters().add(param.toQualifiedParameter(name));
+							for (FunctionalResourceParameter param : functionalResource.getParameters()) {
+								getQualifiedParameters().add(param.toQualifiedParameter());
 							}
 						}
 					}
@@ -270,10 +267,8 @@ public class CyclicReportProvider extends AbstractCyclicReport {
 			for (IFunctionalResource functionalResource : functionalResources) {
 				if (functionalResource.getName().equals(getListOfParameters().getFunctionalResourceName())) {
 					found = true;
-					for (IFunctionalResourceParameter param : functionalResource.getParameters()) {
-						IName name = new Name(param.getIdentifier(), ResourceIdentifier.FUNCTIONAL_RESOURCE_NAME);
-						name.setFunctionalResourceName(functionalResource.getName());
-						getQualifiedParameters().add(param.toQualifiedParameter(name));
+					for (FunctionalResourceParameter param : functionalResource.getParameters()) {
+						getQualifiedParameters().add(param.toQualifiedParameter());
 					}
 				}
 			}
@@ -289,10 +284,8 @@ public class CyclicReportProvider extends AbstractCyclicReport {
 			for (IFunctionalResource functionalResource : functionalResources) {
 				if (functionalResource.getType().equals(getListOfParameters().getFunctionalResourceType())) {
 					found = true;
-					for (IFunctionalResourceParameter param : functionalResource.getParameters()) {
-						IName name = new Name(param.getIdentifier(), ResourceIdentifier.FUNCTIONAL_RESOURCE_NAME);
-						name.setFunctionalResourceName(functionalResource.getName());
-						getQualifiedParameters().add(param.toQualifiedParameter(name));
+					for (FunctionalResourceParameter param : functionalResource.getParameters()) {
+						getQualifiedParameters().add(param.toQualifiedParameter());
 					}
 				}
 			}
@@ -306,17 +299,14 @@ public class CyclicReportProvider extends AbstractCyclicReport {
 
 		case LABELS_SET:
 
-			for (ILabel label : getListOfParameters().getParameterLabels()) {
+			for (Label label : getListOfParameters().getParameterLabels()) {
 				found = false;
 				if (label.getTypeIdentifier() == TypeIdentifier.PROCEDURE_TYPE) {
 					for (IProcedure procedure : configuredProcedures) {
 						if (procedure.getType().equals(label.getProcedureType())) {
 							found = true;
-							for (IConfigurationParameter param : procedure.getConfigurationParameters()) {
-								IName name = new Name(param.getIdentifier(),
-										ResourceIdentifier.PROCEDURE_INSTANCE_IDENTIFIER);
-								name.setProcedureInstanceIdentifier(procedure.getProcedureInstanceIdentifier());
-								getQualifiedParameters().add(param.toQualifiedParameter(name));
+							for (AbstractConfigurationParameter param : procedure.getConfigurationParameters()) {
+								getQualifiedParameters().add(param.toQualifiedParameter());
 							}
 						}
 					}
@@ -324,11 +314,8 @@ public class CyclicReportProvider extends AbstractCyclicReport {
 					for (IFunctionalResource functionalResource : functionalResources) {
 						if (functionalResource.getType().equals(label.getFunctionalResourceType())) {
 							found = true;
-							for (IFunctionalResourceParameter param : functionalResource.getParameters()) {
-								IName name = new Name(param.getIdentifier(),
-										ResourceIdentifier.FUNCTIONAL_RESOURCE_NAME);
-								name.setFunctionalResourceName(functionalResource.getName());
-								getQualifiedParameters().add(param.toQualifiedParameter(name));
+							for (FunctionalResourceParameter param : functionalResource.getParameters()) {
+								getQualifiedParameters().add(param.toQualifiedParameter());
 							}
 						}
 					}
@@ -355,26 +342,20 @@ public class CyclicReportProvider extends AbstractCyclicReport {
 				return;
 			}
 
-			for (ILabel label : namedList.getLabels()) {
+			for (Label label : namedList.getLabels()) {
 				if (label.getTypeIdentifier() == TypeIdentifier.PROCEDURE_TYPE) {
 					for (IProcedure procedure : configuredProcedures) {
 						if (procedure.getType().equals(label.getProcedureType())) {
-							for (IConfigurationParameter param : procedure.getConfigurationParameters()) {
-								IName name = new Name(param.getIdentifier(),
-										ResourceIdentifier.PROCEDURE_INSTANCE_IDENTIFIER);
-								name.setProcedureInstanceIdentifier(procedure.getProcedureInstanceIdentifier());
-								getQualifiedParameters().add(param.toQualifiedParameter(name));
+							for (AbstractConfigurationParameter param : procedure.getConfigurationParameters()) {
+								getQualifiedParameters().add(param.toQualifiedParameter());
 							}
 						}
 					}
 				} else if (label.getTypeIdentifier() == TypeIdentifier.FUNCTIONAL_RESOURCE_TYPE) {
 					for (IFunctionalResource functionalResource : functionalResources) {
 						if (functionalResource.getType().equals(label.getFunctionalResourceType())) {
-							for (IFunctionalResourceParameter param : functionalResource.getParameters()) {
-								IName name = new Name(param.getIdentifier(),
-										ResourceIdentifier.FUNCTIONAL_RESOURCE_NAME);
-								name.setFunctionalResourceName(functionalResource.getName());
-								getQualifiedParameters().add(param.toQualifiedParameter(name));
+							for (FunctionalResourceParameter param : functionalResource.getParameters()) {
+								getQualifiedParameters().add(param.toQualifiedParameter());
 							}
 						}
 					}
@@ -385,15 +366,15 @@ public class CyclicReportProvider extends AbstractCyclicReport {
 
 		case NAMES_SET:
 
-			for (IName name : getListOfParameters().getParameterNames()) {
+			for (Name name : getListOfParameters().getParameterNames()) {
 				found = false;
 				if (name.getResourceIdentifier() == ResourceIdentifier.PROCEDURE_INSTANCE_IDENTIFIER) {
 					for (IProcedure procedure : configuredProcedures) {
 						if (procedure.getProcedureInstanceIdentifier().equals(name.getProcedureInstanceIdentifier())) {
 							found = true;
-							for (IConfigurationParameter param : procedure.getConfigurationParameters()) {
-								if (param.getIdentifier().equals(name.getIdentifier())) {
-									getQualifiedParameters().add(param.toQualifiedParameter(name));
+							for (AbstractConfigurationParameter param : procedure.getConfigurationParameters()) {
+								if (param.getIdentifier().equals(name.getOid())) {
+									getQualifiedParameters().add(param.toQualifiedParameter());
 								}
 							}
 						}
@@ -402,9 +383,9 @@ public class CyclicReportProvider extends AbstractCyclicReport {
 					for (IFunctionalResource functionalResource : functionalResources) {
 						if (functionalResource.getName().equals(name.getFunctionalResourceName())) {
 							found = true;
-							for (IFunctionalResourceParameter param : functionalResource.getParameters()) {
-								if (param.getIdentifier().equals(name.getIdentifier())) {
-									getQualifiedParameters().add(param.toQualifiedParameter(name));
+							for (FunctionalResourceParameter param : functionalResource.getParameters()) {
+								if (param.getIdentifier().equals(name.getOid())) {
+									getQualifiedParameters().add(param.toQualifiedParameter());
 								}
 							}
 						}
@@ -424,10 +405,8 @@ public class CyclicReportProvider extends AbstractCyclicReport {
 				if (procedure.getProcedureInstanceIdentifier()
 						.equals(getListOfParameters().getProcedureInstanceIdentifier())) {
 					found = true;
-					for (IConfigurationParameter param : procedure.getConfigurationParameters()) {
-						IName name = new Name(param.getIdentifier(), ResourceIdentifier.PROCEDURE_INSTANCE_IDENTIFIER);
-						name.setProcedureInstanceIdentifier(procedure.getProcedureInstanceIdentifier());
-						getQualifiedParameters().add(param.toQualifiedParameter(name));
+					for (AbstractConfigurationParameter param : procedure.getConfigurationParameters()) {
+						getQualifiedParameters().add(param.toQualifiedParameter());
 					}
 				}
 			}
@@ -443,10 +422,8 @@ public class CyclicReportProvider extends AbstractCyclicReport {
 			for (IProcedure procedure : configuredProcedures) {
 				if (procedure.getType().equals(getListOfParameters().getProcedureType())) {
 					found = true;
-					for (IConfigurationParameter param : procedure.getConfigurationParameters()) {
-						IName name = new Name(param.getIdentifier(), ResourceIdentifier.PROCEDURE_INSTANCE_IDENTIFIER);
-						name.setProcedureInstanceIdentifier(procedure.getProcedureInstanceIdentifier());
-						getQualifiedParameters().add(param.toQualifiedParameter(name));
+					for (AbstractConfigurationParameter param : procedure.getConfigurationParameters()) {
+						getQualifiedParameters().add(param.toQualifiedParameter());
 					}
 				}
 			}
@@ -461,19 +438,17 @@ public class CyclicReportProvider extends AbstractCyclicReport {
 
 	}
 
-	protected void transferData() {
+	protected synchronized void createAndTransferData() {
 
-		IServiceInstanceInternal serviceInstanceInternal = getServiceInstance().getAssociationControlProcedure()
-				.getServiceInstanceInternal();
+		IServiceInstanceInternal serviceInstanceInternal = getServiceInstance().getInternal();
 
 		if (getState().getStateEnum() == ServiceInstanceStateEnum.active) {
 			generateQualifiedParameters();
 			ITransferData data = createTransferData();
-			Time generationTime = new Time(TimeEnum.MILLISECONDS);
-			generationTime.setMilliseconds(Time.encodeInstantToCCSDSMillis(Instant.now()));
-			data.setGenerationTime(generationTime);
-			data.setSequenceCounter(returnAndIncrementSequenceCounter());
+			data.setGenerationTime(new Time(Instant.now()));
+			data.setSequenceCounter(incrementSequenceCounter());
 			serviceInstanceInternal.forwardInitiatePxyOpInv(data, false);
+			getQualifiedParameters().clear();
 		}
 
 	}
@@ -499,23 +474,8 @@ public class CyclicReportProvider extends AbstractCyclicReport {
 	}
 
 	@Override
-	protected Result doInitiateOperationAck(IAcknowledgedOperation ackOperation) {
-		return Result.SLE_E_ROLE;
-	}
-
-	@Override
 	protected Result doInformOperationInvoke(IOperation operation) {
 		return doStateProcessing(operation, true, false);
-	}
-
-	@Override
-	protected Result doInformOperationReturn(IConfirmedOperation confOperation) {
-		return Result.SLE_E_ROLE;
-	}
-
-	@Override
-	protected Result doInformOperationAck(IAcknowledgedOperation ackOperation) {
-		return Result.SLE_E_ROLE;
 	}
 
 	@Override
@@ -529,8 +489,8 @@ public class CyclicReportProvider extends AbstractCyclicReport {
 			return Result.E_FAIL;
 		}
 
-		IServiceInstanceInternal serviceInstanceInternal = getServiceInstance().getAssociationControlProcedure()
-				.getServiceInstanceInternal();
+		IServiceInstanceInternal serviceInstanceInternal = getServiceInstance().getInternal();
+		
 		if (serviceInstanceState == ServiceInstanceStateEnum.bound) {
 			if (isInvoke) {
 
@@ -538,16 +498,16 @@ public class CyclicReportProvider extends AbstractCyclicReport {
 					IConfirmedOperation confirmedOperation = (IConfirmedOperation) operation;
 					if (getState().getStateEnum() == ServiceInstanceStateEnum.inactive) {
 						if (getDeliveryCycle() < ((IntegerConfigurationParameter) getConfigurationParameter(
-								new ObjectIdentifier(OidValues.pCRminimumAllowedDeliveryCycle.value))).getValue()) {
-							setCyclicReportStartDiagnostic(CyclicReportStartDiagnostic.OUT_OF_RANGE);
+								OIDs.pCRminimumAllowedDeliveryCycle)).getValue()) {
+							setStartDiagnostic(CyclicReportStartDiagnostic.OUT_OF_RANGE);
 							confirmedOperation.setDiagnostic(new Diagnostic(encodeNegativeResultDiagnosticExt()));
 						} else if (processListOfParameters()) {
 							setState(new ActiveState());
-							getExecutorService().scheduleAtFixedRate(this::transferData, 0, getDeliveryCycle(),
+							getExecutorService().scheduleAtFixedRate(this::createAndTransferData, 0, getDeliveryCycle(),
 									TimeUnit.MILLISECONDS);
 							confirmedOperation.setPositiveResult();
 						} else {
-							setCyclicReportStartDiagnostic(CyclicReportStartDiagnostic.COMMON);
+							setStartDiagnostic(CyclicReportStartDiagnostic.COMMON);
 							confirmedOperation.setDiagnostic(new Diagnostic(encodeNegativeResultDiagnosticExt()));
 						}
 						return serviceInstanceInternal.forwardInformAplOpInv(confirmedOperation);

@@ -3,21 +3,22 @@ package esa.egos.csts.api.parameters;
 import java.util.List;
 
 import ccsds.csts.common.types.ListOfParamEventsDiagnostics;
-import esa.egos.csts.api.enums.ListOfParametersDiagnosticsEnum;
-import esa.egos.csts.api.functionalresources.IFunctionalResourceName;
+import esa.egos.csts.api.diagnostics.ListOfParametersDiagnosticsEnum;
+import esa.egos.csts.api.functionalresources.impl.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.impl.FunctionalResourceType;
 import esa.egos.csts.api.procedures.IProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
-import esa.egos.csts.api.types.ILabel;
-import esa.egos.csts.api.types.IName;
+import esa.egos.csts.api.types.Label;
+import esa.egos.csts.api.types.Name;
 
+@Deprecated
 public interface IListOfParametersDiagnostics {
 
 	public ListOfParamEventsDiagnostics encode();
 
-	public List<IName> getUnknownParameterNames();
+	public List<Name> getUnknownParameterNames();
 
-	public List<ILabel> getUnknownParameterLabels();
+	public List<Label> getUnknownParameterLabels();
 
 	public ListOfParametersDiagnosticsEnum getEnumeration();
 
@@ -29,9 +30,9 @@ public interface IListOfParametersDiagnostics {
 
 	public ProcedureType getUnknownProcedureType();
 
-	public void setUnknownFunctionalResourceName(IFunctionalResourceName unknownFunctionalResourceName);
+	public void setUnknownFunctionalResourceName(FunctionalResourceName unknownFunctionalResourceName);
 
-	public IFunctionalResourceName getUnknownFunctionalResourceName();
+	public FunctionalResourceName getUnknownFunctionalResourceName();
 
 	public void setUnknownFunctionalResourceType(FunctionalResourceType unknownFunctionalResourceType);
 

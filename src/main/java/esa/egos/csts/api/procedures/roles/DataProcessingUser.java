@@ -1,6 +1,6 @@
 package esa.egos.csts.api.procedures.roles;
 
-import esa.egos.csts.api.enums.Result;
+import esa.egos.csts.api.enumerations.Result;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;

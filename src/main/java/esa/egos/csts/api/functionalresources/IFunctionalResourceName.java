@@ -2,6 +2,7 @@ package esa.egos.csts.api.functionalresources;
 
 import esa.egos.csts.api.functionalresources.impl.FunctionalResourceType;
 
+@Deprecated
 public interface IFunctionalResourceName {
 
 	public int getInstanceNumber();

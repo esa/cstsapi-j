@@ -1,10 +1,10 @@
 package esa.egos.csts.api.serviceinstance;
 
-import esa.egos.csts.api.enums.AppRole;
-import esa.egos.csts.api.exception.ApiException;
-import esa.egos.csts.api.exception.ConfigException;
-import esa.egos.csts.api.proxy.ServiceType;
-import esa.egos.csts.api.util.ITime;
+import esa.egos.csts.api.enumerations.AppRole;
+import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.exceptions.ConfigException;
+import esa.egos.csts.api.serviceinstance.impl.ServiceType;
+import esa.egos.proxy.util.ITime;
 
 public interface IServiceConfiguration {
 	

@@ -2,15 +2,19 @@ package esa.egos.csts.api.functionalresources;
 
 import java.util.List;
 
+import esa.egos.csts.api.events.Event;
+import esa.egos.csts.api.functionalresources.impl.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.impl.FunctionalResourceType;
-import esa.egos.csts.api.parameters.IFunctionalResourceParameter;
+import esa.egos.csts.api.parameters.impl.FunctionalResourceParameter;
 
 public interface IFunctionalResource {
 
-	IFunctionalResourceName getName();
+	FunctionalResourceName getName();
 	
 	FunctionalResourceType getType();
 
-	List<IFunctionalResourceParameter> getParameters();
+	List<FunctionalResourceParameter> getParameters();
+
+	List<Event> getEvents();
 
 }

@@ -1,6 +1,6 @@
 package esa.egos.csts.api.serviceinstance.states;
 
-import esa.egos.csts.api.exception.NoServiceInstanceStateException;
+import esa.egos.csts.api.exceptions.NoServiceInstanceStateException;
 
 public interface IProcedureState extends IState {
 

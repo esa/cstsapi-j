@@ -5,24 +5,21 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Observable;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ccsds.csts.association.control.types.PeerAbortDiagnostic;
 import esa.egos.csts.api.diagnostics.Diagnostic;
-import esa.egos.csts.api.enums.AbortOriginator;
-import esa.egos.csts.api.enums.AppRole;
-import esa.egos.csts.api.enums.BindDiagnostics;
-import esa.egos.csts.api.enums.DiagnosticEnum;
-import esa.egos.csts.api.enums.OperationResult;
-import esa.egos.csts.api.enums.PeerAbortDiagnostics;
-import esa.egos.csts.api.enums.ProcedureRole;
-import esa.egos.csts.api.enums.Result;
-import esa.egos.csts.api.exception.ApiException;
-import esa.egos.csts.api.exception.ConfigException;
-import esa.egos.csts.api.exception.NoServiceInstanceStateException;
+import esa.egos.csts.api.diagnostics.DiagnosticEnum;
+import esa.egos.csts.api.enumerations.AppRole;
+import esa.egos.csts.api.enumerations.OperationResult;
+import esa.egos.csts.api.enumerations.ProcedureRole;
+import esa.egos.csts.api.enumerations.Result;
+import esa.egos.csts.api.events.Event;
+import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.exceptions.ConfigException;
+import esa.egos.csts.api.exceptions.NoServiceInstanceStateException;
 import esa.egos.csts.api.functionalresources.IFunctionalResource;
 import esa.egos.csts.api.main.CstsApi;
 import esa.egos.csts.api.main.IApi;
@@ -33,24 +30,28 @@ import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IPeerAbort;
 import esa.egos.csts.api.operations.IUnbind;
 import esa.egos.csts.api.parameters.AbstractConfigurationParameter;
-import esa.egos.csts.api.parameters.IConfigurationParameter;
+import esa.egos.csts.api.parameters.impl.FunctionalResourceParameter;
+import esa.egos.csts.api.parameters.impl.ServiceParameter;
 import esa.egos.csts.api.procedures.IAssociationControl;
 import esa.egos.csts.api.procedures.IProcedure;
-import esa.egos.csts.api.procedures.IProcedureInstanceIdentifier;
-import esa.egos.csts.api.proxy.IProxyAdmin;
-import esa.egos.csts.api.proxy.ISrvProxyInitiate;
-import esa.egos.csts.api.proxy.ServiceType;
-import esa.egos.csts.api.proxy.del.ITranslator;
-import esa.egos.csts.api.proxy.del.PDUTranslator;
+import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
+import esa.egos.csts.api.serviceinstance.impl.ServiceType;
 import esa.egos.csts.api.serviceinstance.states.ActiveState;
 import esa.egos.csts.api.serviceinstance.states.IState;
 import esa.egos.csts.api.serviceinstance.states.ReadyState;
 import esa.egos.csts.api.serviceinstance.states.ServiceInstanceStateEnum;
 import esa.egos.csts.api.serviceinstance.states.UnboundState;
-import esa.egos.csts.api.time.CstsDuration;
-import esa.egos.csts.api.time.ElapsedTimer;
-import esa.egos.csts.api.util.ITime;
-import esa.egos.csts.api.util.impl.OperationSequencer;
+import esa.egos.proxy.IProxyAdmin;
+import esa.egos.proxy.ISrvProxyInitiate;
+import esa.egos.proxy.del.ITranslator;
+import esa.egos.proxy.del.PDUTranslator;
+import esa.egos.proxy.enums.AbortOriginator;
+import esa.egos.proxy.enums.BindDiagnostics;
+import esa.egos.proxy.enums.PeerAbortDiagnostics;
+import esa.egos.proxy.time.CstsDuration;
+import esa.egos.proxy.time.ElapsedTimer;
+import esa.egos.proxy.util.ITime;
+import esa.egos.proxy.util.impl.OperationSequencer;
 
 public abstract class AbstractServiceInstance implements IServiceInstanceInternal {
 
@@ -158,15 +159,18 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 	private final Map<Class<? extends IOperation>, IProcedure> operationsMap;
 
-	private final Map<IProcedureInstanceIdentifier, IProcedure> proceduresMap;
+	private final Map<ProcedureInstanceIdentifier, IProcedure> proceduresMap;
 
-	private List<IConfigurationParameter> serviceParameters;
+	// TODO check how to integrate service parameters
+	private List<ServiceParameter> serviceParameters;
 
-	private Map<IProcedure, List<IConfigurationParameter>> configurationParametersMap;
+	private Map<IProcedure, List<AbstractConfigurationParameter>> configurationParametersMap;
 	
 	private List<IFunctionalResource> functionalResources;
 	
-	private Map<IFunctionalResource, List<IConfigurationParameter>> functionalResourceParametersMap;
+	private Map<IFunctionalResource, List<FunctionalResourceParameter>> functionalResourceParametersMap;
+	
+	private List<Event> events;
 	
 	private IProxyAdmin proxy;
 
@@ -190,12 +194,13 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 		// Data Delivery and Data Processing) the procedure value gets overwritten and
 		// one single procedure is responsible for creating both operations
 		this.operationsMap = new HashMap<Class<? extends IOperation>, IProcedure>();
-		this.proceduresMap = new HashMap<IProcedureInstanceIdentifier, IProcedure>();
+		this.proceduresMap = new HashMap<ProcedureInstanceIdentifier, IProcedure>();
 
 		this.serviceParameters = new ArrayList<>();
 		this.configurationParametersMap = new HashMap<>();
 		this.functionalResources = new ArrayList<>();
 		this.functionalResourceParametersMap = new HashMap<>();
+		this.events = new ArrayList<>();
 
 		// only support for user initiated so far
 		this.bindInitiative = AppRole.USER;
@@ -531,7 +536,13 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 	}
 
 	@Override
-	public Result forwardInformAplOpAck(IConfirmedOperation cop) {
+	public Result forwardInformAplOpAck(IAcknowledgedOperation aop) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public Result forwardInitiatePxyOpAck(IOperation operation, boolean b) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -609,13 +620,18 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 	}
 	
 	@Override
-	public Map<IProcedure, List<IConfigurationParameter>> getConfigurationParametersMap() {
+	public Map<IProcedure, List<AbstractConfigurationParameter>> getConfigurationParametersMap() {
 		return configurationParametersMap;
 	}
 	
 	@Override
-	public Map<IFunctionalResource, List<IConfigurationParameter>> getFunctionalResourceParametersMap() {
+	public Map<IFunctionalResource, List<FunctionalResourceParameter>> getFunctionalResourceParametersMap() {
 		return functionalResourceParametersMap;
+	}
+	
+	@Override
+	public List<Event> getEvents() {
+		return events;
 	}
 	
 	@Override
@@ -628,17 +644,19 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 			setPrimeProcedure(procedure);
 		}
 
+		/* subject to refactoring for the time being
 		for (IConfigurationParameter param : serviceParameters) {
 			if (param.getProcedureType().equals(procedure.getType())) {
-				// remove the procedure configuration parameter with the same identifier (should
-				// not be present anyway) and replace it with the service parameter
-				procedure.getConfigurationParameters().removeIf(p -> p.getIdentifier().equals(param.getIdentifier()));
-				param.getProcedures().add(procedure);
+				// remove the old parameter with the same OID (equals() and hashCode() are equal)
+				procedure.getConfigurationParameters().remove(param);
+				// and add the service parameter with the same OID
 				procedure.getConfigurationParameters().add(param);
+				param.getProcedures().add(procedure);
 			}
 		}
-		configurationParametersMap.put(procedure, procedure.getConfigurationParameters());
+		*/
 		procedure.configure();
+		configurationParametersMap.put(procedure, procedure.getConfigurationParameters());
 
 		registerProcedure(procedure.getDeclaredOperations(), procedure);
 
@@ -651,7 +669,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 	}
 
 	@Override
-	public IProcedure getProcedure(IProcedureInstanceIdentifier identifier) {
+	public IProcedure getProcedure(ProcedureInstanceIdentifier identifier) {
 		return getProceduresMap().get(identifier);
 	}
 
@@ -827,6 +845,11 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 		return this.serviceType;
 	}
 
+	@Override
+	public IServiceInstanceInternal getInternal() {
+		return this;
+	}
+	
 	@Override
 	public AppRole getRole() {
 		return this.role;
@@ -1083,11 +1106,11 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 		this.operationsMap.clear();
 	}
 
-	protected Map<IProcedureInstanceIdentifier, IProcedure> getProceduresMap() {
+	protected Map<ProcedureInstanceIdentifier, IProcedure> getProceduresMap() {
 		return this.proceduresMap;
 	}
 
-	protected void addToProceduresMap(IProcedureInstanceIdentifier procedureIdentifier, IProcedure procedure) {
+	protected void addToProceduresMap(ProcedureInstanceIdentifier procedureIdentifier, IProcedure procedure) {
 		this.proceduresMap.put(procedureIdentifier, procedure);
 	}
 
@@ -1311,16 +1334,6 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 	protected List<ReturnPair> getRemoteReturns() {
 		return remoteReturns;
-	}
-
-	@Override
-	public void update(Observable o, Object arg) {
-		if (AbstractConfigurationParameter.class.isAssignableFrom(o.getClass())) {
-
-			IConfigurationParameter parameter = (IConfigurationParameter) o;
-			// TODO handle dynamically changed configuration parameters
-
-		}
 	}
 
 }

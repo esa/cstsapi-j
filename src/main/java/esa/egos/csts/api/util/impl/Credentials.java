@@ -5,11 +5,11 @@ import java.util.Arrays;
 import org.openmuc.jasn1.ber.types.BerNull;
 import org.openmuc.jasn1.ber.types.BerOctetString;
 
-import esa.egos.csts.api.enums.TimeFormat;
-import esa.egos.csts.api.enums.TimeRes;
-import esa.egos.csts.api.proxy.GenStrUtil;
 import esa.egos.csts.api.util.ICredentials;
-import esa.egos.csts.api.util.ITime;
+import esa.egos.proxy.GenStrUtil;
+import esa.egos.proxy.enums.TimeFormat;
+import esa.egos.proxy.enums.TimeRes;
+import esa.egos.proxy.util.ITime;
 
 public class Credentials implements ICredentials{
 
@@ -131,7 +131,7 @@ public class Credentials implements ICredentials{
 	}
 
 	@Override
-	public ccsds.csts.common.types.Credentials asCredentials() {
+	public ccsds.csts.common.types.Credentials encode() {
 		
 		ccsds.csts.common.types.Credentials cred = new ccsds.csts.common.types.Credentials();
 		
@@ -151,7 +151,7 @@ public class Credentials implements ICredentials{
 	 * @param ccsds.csts.common.types.Credentials performerCredentials
 	 * @return
 	 */
-	public static ICredentials encodeCredentials(ccsds.csts.common.types.Credentials performerCredentials) {
+	public static ICredentials decode(ccsds.csts.common.types.Credentials performerCredentials) {
 		Credentials cred = new Credentials();
 		
 		if(performerCredentials.getUsed() != null)

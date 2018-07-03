@@ -6,21 +6,21 @@ import ccsds.csts.common.operations.pdus.GetInvocation;
 import ccsds.csts.common.operations.pdus.GetPosReturnExt;
 import ccsds.csts.common.operations.pdus.GetReturn;
 import ccsds.csts.common.types.Extended;
-import esa.egos.csts.api.parameters.IListOfParameters;
-import esa.egos.csts.api.parameters.IListOfParametersDiagnostics;
-import esa.egos.csts.api.parameters.IQualifiedParameter;
+import esa.egos.csts.api.parameters.impl.ListOfParameters;
+import esa.egos.csts.api.parameters.impl.ListOfParametersDiagnostics;
+import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 
 public interface IGet extends IConfirmedOperation {
 
-	IListOfParameters getListOfParameters();
+	ListOfParameters getListOfParameters();
 
-	void setListOfParameters(IListOfParameters listOfParameters);
+	void setListOfParameters(ListOfParameters listOfParameters);
 
-	IListOfParametersDiagnostics getListOfParametersDiagnostics();
+	ListOfParametersDiagnostics getListOfParametersDiagnostics();
 
-	void setListOfParametersDiagnostics(IListOfParametersDiagnostics listOfParametersDiagnostics);
+	void setListOfParametersDiagnostics(ListOfParametersDiagnostics listOfParametersDiagnostics);
 
-	List<IQualifiedParameter> getQualifiedParameters();
+	List<QualifiedParameter> getQualifiedParameters();
 
 	/**
 	 * Encodes this operation and returns it as a GetInvocation without any

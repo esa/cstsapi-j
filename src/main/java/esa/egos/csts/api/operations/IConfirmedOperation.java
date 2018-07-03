@@ -1,12 +1,9 @@
 package esa.egos.csts.api.operations;
 
-import ccsds.csts.common.types.StandardInvocationHeader;
-import ccsds.csts.common.types.StandardReturnHeader;
 import esa.egos.csts.api.diagnostics.Diagnostic;
-import esa.egos.csts.api.enums.OperationResult;
-import esa.egos.csts.api.exception.ApiException;
+import esa.egos.csts.api.enumerations.OperationResult;
+import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.util.ICredentials;
-
 
 public interface IConfirmedOperation extends IOperation {
 
@@ -16,9 +13,7 @@ public interface IConfirmedOperation extends IOperation {
     
     ICredentials getPerformerCredentials();
     
-    
     void setDiagnostic(Diagnostic diagnostic);
-    
     
     /**
      * Returns the operation result.
@@ -31,16 +26,6 @@ public interface IConfirmedOperation extends IOperation {
      * Set the result to positive. The diagnostic will be set to null as a consequence.
      */
     void setPositiveResult();
-	
-	StandardInvocationHeader encodeStandardInvocationHeader();
-	
-	void decodeStandardInvocationHeader(StandardInvocationHeader standardInvocationHeader);
-	
-	StandardReturnHeader encodeStandardReturnHeader();
-	
-	void decodeStandardReturnHeader(StandardReturnHeader standardReturnHeader);
-	
-	ccsds.csts.common.types.StandardReturnHeader.Result encodeResult();
 	
 	boolean isBlocking();
 

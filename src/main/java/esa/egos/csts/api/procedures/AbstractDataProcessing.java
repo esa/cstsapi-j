@@ -6,9 +6,9 @@ import java.io.IOException;
 import org.openmuc.jasn1.ber.BerByteArrayOutputStream;
 
 import ccsds.csts.data.processing.pdus.DataProcessingPdu;
-import esa.egos.csts.api.enums.ProcedureTypeEnum;
-import esa.egos.csts.api.exception.ApiException;
-import esa.egos.csts.api.exception.ConfigException;
+import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.exceptions.ConfigException;
+import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.operations.INotify;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IProcessData;
@@ -24,7 +24,7 @@ import esa.egos.csts.api.serviceinstance.states.InactiveState;
 // TODO extend PROCESS-DATA and NOTIFY
 public abstract class AbstractDataProcessing extends AbstractStatefulProcedure implements IDataProcessing {
 
-	private final ProcedureType type = new ProcedureType(ProcedureTypeEnum.bufferedDataDelivery);
+	private final ProcedureType type = new ProcedureType(OIDs.dataProcessing);
 	
 	protected AbstractDataProcessing() {
 		super(new InactiveState());

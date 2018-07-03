@@ -1,6 +1,6 @@
 package esa.egos.csts.api.serviceinstance;
 
-import esa.egos.csts.api.exception.ApiException;
+import esa.egos.csts.api.exceptions.ApiException;
 
 /**
  * The interface is used to control processing of a component providing the

@@ -1,8 +1,8 @@
 package esa.egos.csts.api.serviceinstance;
 
-import esa.egos.csts.api.exception.ApiException;
+import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
-import esa.egos.csts.api.proxy.ISrvProxyInform;
+import esa.egos.proxy.ISrvProxyInform;
 
 public interface IServiceInform extends ISrvProxyInform{
 	

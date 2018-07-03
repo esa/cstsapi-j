@@ -2,16 +2,13 @@ package esa.egos.csts.api.serviceinstance.impl;
 
 import java.util.logging.Level;
 
-import esa.egos.csts.api.enums.AppRole;
-import esa.egos.csts.api.enums.PeerAbortDiagnostics;
-import esa.egos.csts.api.enums.ProcedureRole;
-import esa.egos.csts.api.enums.Result;
-import esa.egos.csts.api.enums.TimeFormat;
-import esa.egos.csts.api.enums.TimeRes;
-import esa.egos.csts.api.exception.ApiException;
-import esa.egos.csts.api.exception.ConfigException;
-import esa.egos.csts.api.exception.NoServiceInstanceStateException;
-import esa.egos.csts.api.exception.OperationTypeUnsupportedException;
+import esa.egos.csts.api.enumerations.AppRole;
+import esa.egos.csts.api.enumerations.ProcedureRole;
+import esa.egos.csts.api.enumerations.Result;
+import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.exceptions.ConfigException;
+import esa.egos.csts.api.exceptions.NoServiceInstanceStateException;
+import esa.egos.csts.api.exceptions.OperationTypeUnsupportedException;
 import esa.egos.csts.api.main.CstsApi;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IConfirmedOperation;
@@ -19,15 +16,18 @@ import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.procedures.IAssociationControl;
 import esa.egos.csts.api.procedures.IProcedure;
 import esa.egos.csts.api.procedures.roles.AssociationControlProvider;
-import esa.egos.csts.api.proxy.IProxyAdmin;
 import esa.egos.csts.api.serviceinstance.AbstractServiceInstance;
 import esa.egos.csts.api.serviceinstance.IServiceInform;
 import esa.egos.csts.api.serviceinstance.ReturnPair;
 import esa.egos.csts.api.serviceinstance.states.ServiceInstanceStateEnum;
-import esa.egos.csts.api.time.CstsDuration;
-import esa.egos.csts.api.time.CstsTime;
-import esa.egos.csts.api.time.ElapsedTimer;
-import esa.egos.csts.api.util.ITime;
+import esa.egos.proxy.IProxyAdmin;
+import esa.egos.proxy.enums.PeerAbortDiagnostics;
+import esa.egos.proxy.enums.TimeFormat;
+import esa.egos.proxy.enums.TimeRes;
+import esa.egos.proxy.time.CstsDuration;
+import esa.egos.proxy.time.CstsTime;
+import esa.egos.proxy.time.ElapsedTimer;
+import esa.egos.proxy.util.ITime;
 
 public class ServiceInstanceProvider extends AbstractServiceInstance {
 

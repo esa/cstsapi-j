@@ -4,21 +4,23 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import esa.egos.csts.api.enums.PeerAbortDiagnostics;
-import esa.egos.csts.api.enums.ProcedureRole;
-import esa.egos.csts.api.enums.Result;
-import esa.egos.csts.api.exception.ApiException;
-import esa.egos.csts.api.exception.NoServiceInstanceStateException;
-import esa.egos.csts.api.exception.OperationTypeUnsupportedException;
-import esa.egos.csts.api.main.ObjectIdentifier;
+import esa.egos.csts.api.enumerations.ProcedureRole;
+import esa.egos.csts.api.enumerations.Result;
+import esa.egos.csts.api.events.Event;
+import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.exceptions.NoServiceInstanceStateException;
+import esa.egos.csts.api.exceptions.OperationTypeUnsupportedException;
+import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
-import esa.egos.csts.api.parameters.IConfigurationParameter;
+import esa.egos.csts.api.parameters.AbstractConfigurationParameter;
+import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.serviceinstance.IServiceInstance;
 import esa.egos.csts.api.serviceinstance.states.IProcedureState;
 import esa.egos.csts.api.serviceinstance.states.IState;
+import esa.egos.proxy.enums.PeerAbortDiagnostics;
 
 public interface IProcedure {
 	
@@ -86,7 +88,7 @@ public interface IProcedure {
 	Result informOperationAck(IAcknowledgedOperation ackOperation);
 	Result informOperationReturn(IConfirmedOperation confOperation);
 	
-	List<IConfigurationParameter> getConfigurationParameters();
+	List<AbstractConfigurationParameter> getConfigurationParameters();
 	// callback perhaps on parameter change
 	
 	<T extends IOperation> T createOperation(Class<T> clazz) throws ApiException;
@@ -97,7 +99,7 @@ public interface IProcedure {
 	 */
 	Set<Class<? extends IOperation>> getDeclaredOperations();
 
-	IProcedureInstanceIdentifier getProcedureInstanceIdentifier();
+	ProcedureInstanceIdentifier getProcedureInstanceIdentifier();
 	
 	boolean getStateful();
 	
@@ -132,5 +134,7 @@ public interface IProcedure {
 	 *            the identifier to match a present ConfigurationParameter
 	 * @return the matched ConfigurationParameter if present, null otherwise
 	 */
-	IConfigurationParameter getConfigurationParameter(ObjectIdentifier identifier);
+	AbstractConfigurationParameter getConfigurationParameter(ObjectIdentifier identifier);
+
+	List<Event> getEvents();
 } 

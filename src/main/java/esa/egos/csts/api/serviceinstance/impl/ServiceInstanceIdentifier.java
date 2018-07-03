@@ -2,7 +2,7 @@ package esa.egos.csts.api.serviceinstance.impl;
 
 import ccsds.csts.common.types.IntUnsigned;
 import ccsds.csts.common.types.PublishedIdentifier;
-import esa.egos.csts.api.main.ObjectIdentifier;
+import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceIdentifier;
 
 public class ServiceInstanceIdentifier implements IServiceInstanceIdentifier {
@@ -114,9 +114,9 @@ public class ServiceInstanceIdentifier implements IServiceInstanceIdentifier {
 	public ccsds.csts.service.instance.id.ServiceInstanceIdentifier encodeSII() {
 		
 		ccsds.csts.service.instance.id.ServiceInstanceIdentifier id = new ccsds.csts.service.instance.id.ServiceInstanceIdentifier();
-		id.setFacilityId(new PublishedIdentifier(getFacilityIdentifier().getOid()));
-		id.setServiceType(new PublishedIdentifier(getCstsTypeIdentifier().getOid()));
-		id.setSpacecraftId(new PublishedIdentifier(getSpacecraftIdentifier().getOid()));
+		id.setFacilityId(new PublishedIdentifier(getFacilityIdentifier().toArray()));
+		id.setServiceType(new PublishedIdentifier(getCstsTypeIdentifier().toArray()));
+		id.setSpacecraftId(new PublishedIdentifier(getSpacecraftIdentifier().toArray()));
 		id.setServiceInstanceNumber(new IntUnsigned(getServiceInstanceNumber()));
 		
 		return id;

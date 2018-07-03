@@ -3,14 +3,15 @@ package esa.egos.csts.api.parameters;
 import java.util.List;
 
 import ccsds.csts.common.types.ListOfParametersEvents;
-import esa.egos.csts.api.enums.ListOfParamatersEnum;
-import esa.egos.csts.api.functionalresources.IFunctionalResourceName;
+import esa.egos.csts.api.enumerations.ListOfParamatersEnum;
+import esa.egos.csts.api.functionalresources.impl.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.impl.FunctionalResourceType;
 import esa.egos.csts.api.procedures.IProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
-import esa.egos.csts.api.types.ILabel;
-import esa.egos.csts.api.types.IName;
+import esa.egos.csts.api.types.Label;
+import esa.egos.csts.api.types.Name;
 
+@Deprecated
 public interface IListOfParameters {
 	
 	ListOfParamatersEnum getListOfParametersEnum();
@@ -23,9 +24,9 @@ public interface IListOfParameters {
 
 	void setFunctionalResourceType(FunctionalResourceType functionalResourceType);
 
-	IFunctionalResourceName getFunctionalResourceName();
+	FunctionalResourceName getFunctionalResourceName();
 	
-	void setFunctionalResourceName(IFunctionalResourceName functionalResourceName);
+	void setFunctionalResourceName(FunctionalResourceName functionalResourceName);
 
 	ProcedureType getProcedureType();
 	
@@ -35,9 +36,9 @@ public interface IListOfParameters {
 	
 	void setProcedureInstanceIdentifier(IProcedureInstanceIdentifier procedureInstanceIdentifier);
 
-	List<ILabel> getParameterLabels();
+	List<Label> getParameterLabels();
 
-	List<IName> getParameterNames();
+	List<Name> getParameterNames();
 
 	ListOfParametersEvents encode();
 

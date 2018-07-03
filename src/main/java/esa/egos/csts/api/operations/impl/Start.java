@@ -16,22 +16,30 @@ import ccsds.csts.common.types.AdditionalText;
 import ccsds.csts.common.types.Embedded;
 import ccsds.csts.common.types.Extended;
 import esa.egos.csts.api.diagnostics.Diagnostic;
-import esa.egos.csts.api.enums.StartDiagnostic;
+import esa.egos.csts.api.enumerations.OperationType;
+import esa.egos.csts.api.enumerations.StartDiagnostic;
 import esa.egos.csts.api.operations.AbstractConfirmedOperation;
 import esa.egos.csts.api.operations.IStart;
-import esa.egos.csts.api.util.impl.ExtensionUtils;
+import esa.egos.csts.api.util.impl.CSTSUtils;
 
 /**
  * The START operation (confirmed)
  */
 public class Start extends AbstractConfirmedOperation implements IStart {
 
+	private final OperationType type = OperationType.START;
+	
 	private final static int versionNumber = 1;
 
 	private StartDiagnostic startDiagnostic;
 
 	public Start() {
 		super(versionNumber);
+	}
+	
+	@Override
+	public OperationType getType() {
+		return type;
 	}
 
 	@Override
@@ -56,7 +64,7 @@ public class Start extends AbstractConfirmedOperation implements IStart {
 
 	@Override
 	public StartInvocation encodeStartInvocation() {
-		return encodeStartInvocation(ExtensionUtils.nonUsedExtension());
+		return encodeStartInvocation(CSTSUtils.nonUsedExtension());
 	}
 
 	@Override
@@ -76,7 +84,7 @@ public class Start extends AbstractConfirmedOperation implements IStart {
 	public StartReturn encodeStartReturn(Extended resultExtension) {
 		return encodeStandardReturnHeader(StartReturn.class, resultExtension);
 	}
-	
+
 	@Override
 	protected void encodeDiagnosticExtension() {
 		if (startDiagnostic != null) {
@@ -92,11 +100,11 @@ public class Start extends AbstractConfirmedOperation implements IStart {
 	protected StartDiagnosticExt encodeStartDiagnosticExt() {
 		StartDiagnosticExt startDiagnosticExt = new StartDiagnosticExt();
 		if (startDiagnostic == StartDiagnostic.UNABLE_TO_COMPLY) {
-			startDiagnosticExt.setUnableToComply(
-					new AdditionalText(startDiagnostic.toString().getBytes(StandardCharsets.UTF_16BE)));
+			startDiagnosticExt
+					.setUnableToComply(new AdditionalText(startDiagnostic.toString().getBytes(StandardCharsets.UTF_8)));
 		} else if (startDiagnostic == StartDiagnostic.OUT_OF_SERVICE) {
-			startDiagnosticExt.setOutOfService(
-					new AdditionalText(startDiagnostic.toString().getBytes(StandardCharsets.UTF_16BE)));
+			startDiagnosticExt
+					.setOutOfService(new AdditionalText(startDiagnostic.toString().getBytes(StandardCharsets.UTF_8)));
 		}
 		// encode with a resizable output stream and an initial capacity of 128 bytes
 		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
@@ -121,7 +129,7 @@ public class Start extends AbstractConfirmedOperation implements IStart {
 	@Override
 	protected void decodeDiagnosticExtension() {
 		if (getDiagnostic().getDiagnosticExtension() != null) {
-			if (ExtensionUtils.equalsIdentifier(getDiagnostic().getDiagnosticExtension(),
+			if (CSTSUtils.equalsIdentifier(getDiagnostic().getDiagnosticExtension(),
 					OidValues.startDiagnosticExt)) {
 				StartDiagnosticExt startDiagnosticExt = new StartDiagnosticExt();
 				try (ByteArrayInputStream is = new ByteArrayInputStream(

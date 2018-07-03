@@ -9,15 +9,14 @@ import java.util.logging.Logger;
 
 import org.junit.Test;
 
-import esa.egos.csts.api.enums.AppRole;
-import esa.egos.csts.api.enums.ListOfParamatersEnum;
-import esa.egos.csts.api.enums.ProcedureRole;
-import esa.egos.csts.api.exception.ApiException;
-import esa.egos.csts.api.exception.NoServiceInstanceStateException;
+import esa.egos.csts.api.enumerations.AppRole;
+import esa.egos.csts.api.enumerations.ListOfParamatersEnum;
+import esa.egos.csts.api.enumerations.ProcedureRole;
+import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.exceptions.NoServiceInstanceStateException;
 import esa.egos.csts.api.main.CstsApi;
 import esa.egos.csts.api.operations.IBind;
 import esa.egos.csts.api.operations.IGet;
-import esa.egos.csts.api.parameters.IListOfParameters;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.procedures.IProcedure;
 import esa.egos.csts.api.procedures.roles.InformationQueryProvider;
@@ -25,7 +24,7 @@ import esa.egos.csts.api.procedures.roles.InformationQueryUser;
 import esa.egos.csts.api.procedures.roles.UnbufferedDataDeliveryProvider;
 import esa.egos.csts.api.procedures.roles.UnbufferedDataDeliveryUser;
 import esa.egos.csts.api.serviceinstance.IServiceInstance;
-import esa.egos.csts.api.util.TimeFactory;
+import esa.egos.proxy.util.TimeFactory;
 
 public class DataDeliveryTest {
 
@@ -142,7 +141,7 @@ public class DataDeliveryTest {
 		try {
 			getOP = siUser.createOperation(IGet.class);
 			
-			IListOfParameters params = new ListOfParameters(ListOfParamatersEnum.EMPTY);
+			ListOfParameters params = new ListOfParameters(ListOfParamatersEnum.EMPTY);
 			
 			getOP.setListOfParameters(params);
 			System.out.println("Send get");

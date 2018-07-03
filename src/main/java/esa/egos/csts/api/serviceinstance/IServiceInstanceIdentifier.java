@@ -1,6 +1,6 @@
 package esa.egos.csts.api.serviceinstance;
 
-import esa.egos.csts.api.main.ObjectIdentifier;
+import esa.egos.csts.api.oids.ObjectIdentifier;
 
 public interface IServiceInstanceIdentifier {
 

@@ -1,11 +1,14 @@
 package esa.egos.csts.api.operations.impl;
 
-import esa.egos.csts.api.enums.AbortOriginator;
-import esa.egos.csts.api.enums.PeerAbortDiagnostics;
+import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.operations.AbstractConfirmedOperation;
 import esa.egos.csts.api.operations.IPeerAbort;
+import esa.egos.proxy.enums.AbortOriginator;
+import esa.egos.proxy.enums.PeerAbortDiagnostics;
 
 public class PeerAbort extends AbstractConfirmedOperation implements IPeerAbort {
+	
+	private final OperationType type = OperationType.PEER_ABORT;
 	
     /**
      * The originator of the PEER-ABORT operation.
@@ -22,6 +25,11 @@ public class PeerAbort extends AbstractConfirmedOperation implements IPeerAbort 
 		
         this.originator = AbortOriginator.AO_invalid;
         this.diagnostic = PeerAbortDiagnostics.PAD_invalid;
+	}
+	
+	@Override
+	public OperationType getType() {
+		return type;
 	}
 
 	@Override

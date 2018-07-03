@@ -1,17 +1,22 @@
 package esa.egos.csts.api.operations.impl;
 
+import java.nio.charset.StandardCharsets;
+
 import ccsds.csts.association.control.types.BindInvocation;
 import ccsds.csts.association.control.types.BindReturn;
+import ccsds.csts.association.control.types.VersionNumber;
 import ccsds.csts.common.types.AuthorityIdentifier;
 import ccsds.csts.common.types.Extended;
 import ccsds.csts.common.types.PortId;
-import esa.egos.csts.api.enums.BindDiagnostics;
-import esa.egos.csts.api.enums.OperationResult;
-import esa.egos.csts.api.exception.ApiException;
-import esa.egos.csts.api.main.ObjectIdentifier;
+import esa.egos.csts.api.enumerations.OperationResult;
+import esa.egos.csts.api.enumerations.OperationType;
+import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.operations.AbstractConfirmedOperation;
 import esa.egos.csts.api.operations.IBind;
-import esa.egos.csts.api.proxy.ServiceType;
+import esa.egos.csts.api.serviceinstance.impl.ServiceType;
+import esa.egos.csts.api.util.impl.CSTSUtils;
+import esa.egos.proxy.enums.BindDiagnostics;
 
 public class Bind extends AbstractConfirmedOperation implements IBind {
 
@@ -35,6 +40,8 @@ public class Bind extends AbstractConfirmedOperation implements IBind {
 	//	service-type							M	
 	//	version-number							M	
 	//	service-instance-identifier				M	
+	
+	private final OperationType type = OperationType.BIND;
 	
     /**
      * The identifier for responding applications
@@ -71,6 +78,11 @@ public class Bind extends AbstractConfirmedOperation implements IBind {
         this.serviceType = null;
 	}
 
+	@Override
+	public OperationType getType() {
+		return type;
+	}
+	
 	@Override
 	public boolean isBlocking() {
 		return true;
@@ -187,26 +199,53 @@ public class Bind extends AbstractConfirmedOperation implements IBind {
 
 	@Override
 	public void setInitiatorIdentifier(AuthorityIdentifier initiatorIdentifier) {
-		setInitiatorIdentifier(initiatorIdentifier.toString());
+		setInitiatorIdentifier(new String(initiatorIdentifier.value, StandardCharsets.UTF_8));
 	}
 
 	@Override
 	public void setResponderIdentifier(AuthorityIdentifier responderIdentifier) {
-		setResponderIdentifier(responderIdentifier.toString());
+		setResponderIdentifier(new String(responderIdentifier.value, StandardCharsets.UTF_8));
 	}
 
 	@Override
 	public void setResponderPortIdentifier(PortId responderPortIdentifier) {
-		setResponderPortIdentifier(responderPortIdentifier.toString());
+		setResponderPortIdentifier(new String(responderPortIdentifier.value, StandardCharsets.UTF_8));
 	}
 
 	@Override
 	public void setServiceType(ccsds.csts.association.control.types.ServiceType serviceType) {
 		
-		ServiceType sType = new ServiceType(new ObjectIdentifier(serviceType.value));
+		ServiceType sType = new ServiceType(ObjectIdentifier.of(serviceType.value));
 		setServiceType(sType);
 	}
 
+	@Override
+	public BindInvocation encodeBindInvocation() {
+		BindInvocation bindInvocation = new BindInvocation();
+		// the invoker credentials etc. in standard invoke header
+		bindInvocation.setStandardInvocationHeader(encodeStandardInvocationHeader());
+
+		// the initiator identifier
+		bindInvocation.setInitiatorIdentifier(new AuthorityIdentifier(getInitiatorIdentifier().getBytes(StandardCharsets.UTF_8)));
+
+		// the responder port identifier
+		bindInvocation.setResponderPortIdentifier(new PortId(getResponderPortIdentifier().getBytes(StandardCharsets.UTF_8)));
+
+		// the service type
+		bindInvocation.setServiceType(new ccsds.csts.association.control.types.ServiceType(getServiceType().getOid().toArray()));
+
+		// the version number
+		bindInvocation.setVersionNumber(new VersionNumber(getOperationVersionNumber()));
+
+		// the service instance identifier
+		//bindInvocation.setServiceInstanceIdentifier(getServiceInstance().getServiceInstanceIdentifier().encodeSII());
+
+		// the extension, if available
+		bindInvocation.setBindInvocationExtension(CSTSUtils.nonUsedExtension());
+		
+		return bindInvocation;
+	}
+	
 	@Override
 	public void decodeBindInvocation(BindInvocation bindInvocation) {
 		
@@ -228,6 +267,14 @@ public class Bind extends AbstractConfirmedOperation implements IBind {
 		// not implemented
 	}
 
+	@Override
+	public BindReturn encodeBindReturn() {
+		BindReturn bindReturn = new BindReturn();
+		bindReturn.setStandardReturnHeader(encodeStandardReturnHeader());
+		bindReturn.setResponderIdentifier(new AuthorityIdentifier(getResponderIdentifier().getBytes(StandardCharsets.UTF_8)));
+		return bindReturn;
+	}
+	
 	@Override
 	public void decodeBindReturn(BindReturn bindReturn) {
 		

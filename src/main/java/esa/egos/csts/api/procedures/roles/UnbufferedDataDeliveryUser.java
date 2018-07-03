@@ -2,10 +2,9 @@ package esa.egos.csts.api.procedures.roles;
 
 import java.nio.charset.StandardCharsets;
 
-import esa.egos.csts.api.enums.Result;
-import esa.egos.csts.api.exception.ApiException;
-import esa.egos.csts.api.exception.NoServiceInstanceStateException;
-import esa.egos.csts.api.operations.IAcknowledgedOperation;
+import esa.egos.csts.api.enumerations.Result;
+import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.exceptions.NoServiceInstanceStateException;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IStart;
@@ -16,7 +15,7 @@ import esa.egos.csts.api.serviceinstance.IServiceInstanceInternal;
 import esa.egos.csts.api.serviceinstance.states.ActiveState;
 import esa.egos.csts.api.serviceinstance.states.InactiveState;
 import esa.egos.csts.api.serviceinstance.states.ServiceInstanceStateEnum;
-import esa.egos.csts.api.types.impl.Time;
+import esa.egos.csts.api.types.Time;
 
 public class UnbufferedDataDeliveryUser extends AbstractUnbufferedDataDelivery {
 
@@ -31,32 +30,17 @@ public class UnbufferedDataDeliveryUser extends AbstractUnbufferedDataDelivery {
 	}
 
 	@Override
-	protected Result doInitiateOperationReturn(IConfirmedOperation confOperation) {
-		return Result.SLE_E_ROLE;
-	}
-
-	@Override
-	protected Result doInitiateOperationAck(IAcknowledgedOperation ackOperation) {
-		return Result.SLE_E_ROLE;
-	}
-
-	@Override
 	protected Result doInformOperationInvoke(IOperation operation) {
 		ITransferData data = (ITransferData) operation;
-		System.out.println(Time.decodeCCSDSMillisToInstant(data.getGenerationTime().getMilliseconds()));
+		System.out.println(Time.decodeCCSDSMillisToInstant(data.getGenerationTime().getValue()));
 		System.out.println(data.getSequenceCounter());
-		System.out.println(new String(data.getData(), StandardCharsets.UTF_16BE));
+		System.out.println(new String(data.getData(), StandardCharsets.UTF_8));
 		return doStateProcessing(operation, true, false);
 	}
 
 	@Override
 	protected Result doInformOperationReturn(IConfirmedOperation confOperation) {
 		return doStateProcessing(confOperation, false, false);
-	}
-
-	@Override
-	protected Result doInformOperationAck(IAcknowledgedOperation ackOperation) {
-		return Result.SLE_E_ROLE;
 	}
 
 	@Override

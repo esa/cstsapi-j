@@ -1,12 +1,13 @@
 package esa.egos.csts.api.serviceinstance.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import esa.egos.csts.api.exception.ApiException;
-import esa.egos.csts.api.main.ObjectIdentifier;
+import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceIdentifier;
 
 public class ServiceInstanceConverter {
@@ -22,6 +23,8 @@ public class ServiceInstanceConverter {
      * The name-value separator.
      */
     private static char valSep = '=';
+    
+    private static String oidSep = ",";
 	
 	public static IServiceInstanceIdentifier decodeServiceInstanceIdentifier(String siiString) throws ApiException{
 		
@@ -95,7 +98,7 @@ public class ServiceInstanceConverter {
             // check and get the name OID
             if(nameAttr.equals("spacecraft") || nameAttr.equals("facility") || nameAttr.equals("type"))
             {
-            	ObjectIdentifier id = ObjectIdentifier.parseOid(sanitizeOid(valAttr));
+            	ObjectIdentifier id = parseOid(sanitizeOid(valAttr));
 
 	            if (id == null)
 	            	throw new ApiException("Invalid name attribute " + nameAttr + " in service instance decoding.");
@@ -129,6 +132,11 @@ public class ServiceInstanceConverter {
 		return santiziedValAttr;
 	}
 
+	private static ObjectIdentifier parseOid(String oid) {
+		int[] oidArray = Arrays.stream(oid.split(oidSep)).mapToInt(Integer::parseInt).toArray();
+		return ObjectIdentifier.of(oidArray);
+	}
+    
 	/**
      * ////////////////////////////////////////////////// Checks the syntax of
      * the supplied attribute-value pairs. This member function can also be used

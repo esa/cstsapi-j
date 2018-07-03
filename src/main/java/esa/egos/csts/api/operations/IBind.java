@@ -4,8 +4,8 @@ import ccsds.csts.association.control.types.BindInvocation;
 import ccsds.csts.association.control.types.BindReturn;
 import ccsds.csts.common.types.AuthorityIdentifier;
 import ccsds.csts.common.types.PortId;
-import esa.egos.csts.api.enums.BindDiagnostics;
-import esa.egos.csts.api.proxy.ServiceType;
+import esa.egos.csts.api.serviceinstance.impl.ServiceType;
+import esa.egos.proxy.enums.BindDiagnostics;
 
 public interface IBind extends IConfirmedOperation{
 
@@ -81,7 +81,11 @@ public interface IBind extends IConfirmedOperation{
     
 	void setVersion(double doubleValue);
 	
+	BindReturn encodeBindReturn();
+	
 	void decodeBindInvocation(BindInvocation bindInvocation);
 
 	void decodeBindReturn(BindReturn bindReturn);
+
+	BindInvocation encodeBindInvocation();
 }

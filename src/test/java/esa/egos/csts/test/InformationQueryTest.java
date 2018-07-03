@@ -10,25 +10,20 @@ import java.util.logging.Logger;
 
 import org.junit.Test;
 
-import ccsds.csts.fw.procedure.parameters.events.directives.OidValues;
-import esa.egos.csts.api.enums.AppRole;
-import esa.egos.csts.api.enums.ListOfParamatersEnum;
-import esa.egos.csts.api.enums.OperationResult;
-import esa.egos.csts.api.enums.ProcedureRole;
-import esa.egos.csts.api.enums.ProcedureTypeEnum;
-import esa.egos.csts.api.enums.ResourceIdentifier;
-import esa.egos.csts.api.enums.TypeIdentifier;
-import esa.egos.csts.api.exception.ApiException;
-import esa.egos.csts.api.exception.NoServiceInstanceStateException;
-import esa.egos.csts.api.functionalresources.IFunctionalResourceName;
+import esa.egos.csts.api.enumerations.AppRole;
+import esa.egos.csts.api.enumerations.OperationResult;
+import esa.egos.csts.api.enumerations.ProcedureRole;
+import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.exceptions.NoServiceInstanceStateException;
 import esa.egos.csts.api.functionalresources.impl.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.impl.FunctionalResourceType;
 import esa.egos.csts.api.main.CstsApi;
-import esa.egos.csts.api.main.ObjectIdentifier;
+import esa.egos.csts.api.oids.OIDs;
+import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.operations.IBind;
 import esa.egos.csts.api.operations.IGet;
-import esa.egos.csts.api.parameters.IQualifiedParameter;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
+import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 import esa.egos.csts.api.procedures.IProcedure;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
@@ -37,11 +32,9 @@ import esa.egos.csts.api.procedures.roles.InformationQueryUser;
 import esa.egos.csts.api.procedures.roles.UnbufferedDataDeliveryProvider;
 import esa.egos.csts.api.procedures.roles.UnbufferedDataDeliveryUser;
 import esa.egos.csts.api.serviceinstance.IServiceInstance;
-import esa.egos.csts.api.types.ILabel;
-import esa.egos.csts.api.types.IName;
-import esa.egos.csts.api.types.impl.Label;
-import esa.egos.csts.api.types.impl.Name;
-import esa.egos.csts.api.util.TimeFactory;
+import esa.egos.csts.api.types.Label;
+import esa.egos.csts.api.types.Name;
+import esa.egos.proxy.util.TimeFactory;
 
 public class InformationQueryTest {
 
@@ -52,7 +45,7 @@ public class InformationQueryTest {
 
 	@Test
 	public void test() {
-
+		
 		Logger rootLogger = LogManager.getLogManager().getLogger("");
 		rootLogger.setLevel(Level.OFF);
 		for (Handler h : rootLogger.getHandlers()) {
@@ -158,22 +151,14 @@ public class InformationQueryTest {
 
 		try {
 			IGet get = siUser.createOperation(IGet.class);
-
-			IName name = new Name(new ObjectIdentifier(OidValues.pCRminimumAllowedDeliveryCycle.value),
-					ResourceIdentifier.PROCEDURE_INSTANCE_IDENTIFIER);
-
-			ProcedureInstanceIdentifier pid = new ProcedureInstanceIdentifier(ProcedureRole.SECONDARY, 0);
-			ProcedureType type = new ProcedureType(ProcedureTypeEnum.informationQuery);
-			pid.initType(type);
-			name.setProcedureInstanceIdentifier(pid);
-
-			ILabel label = new Label(new ObjectIdentifier(2, 2, 2, 2, 2), TypeIdentifier.FUNCTIONAL_RESOURCE_TYPE);
-			FunctionalResourceType ft = new FunctionalResourceType(
-					new ObjectIdentifier(1, 3, 112, 4, 4, 2, 1, 1, 1, 1, 1));
-			label.setFunctionalResourceType(ft);
-			IFunctionalResourceName nm = new FunctionalResourceName(0, ft);
-
-			ListOfParameters lop = new ListOfParameters(ListOfParamatersEnum.PROCEDURE_TYPE);
+			
+			ProcedureType type = new ProcedureType(OIDs.informationQuery);
+			ProcedureInstanceIdentifier pid = new ProcedureInstanceIdentifier(ProcedureRole.SECONDARY, 0, type);
+			//IName name = new Name(new ObjectIdentifier(OidValues.pCRminimumAllowedDeliveryCycle.value), pid);
+			FunctionalResourceType ft = new FunctionalResourceType(ObjectIdentifier.of(1, 3, 112, 4, 4, 2, 1, 1, 1, 1, 1));
+			FunctionalResourceName nm = new FunctionalResourceName(0, ft);
+			//ILabel label = new Label(new ObjectIdentifier(2, 2, 2, 2, 2), ft);
+			ListOfParameters lop = new ListOfParameters(type);
 			lop.setProcedureType(type);
 			get.setListOfParameters(lop);
 			System.out.println("Sending GET...");
@@ -185,7 +170,7 @@ public class InformationQueryTest {
 			}
 			System.out.println("success");
 			if (get.getResult() == OperationResult.RES_positive) {
-				for (IQualifiedParameter qp : get.getQualifiedParameters()) {
+				for (QualifiedParameter qp : get.getQualifiedParameters()) {
 					System.out.println(qp.toString());
 				}
 			} else if (get.getResult() == OperationResult.RES_negative) {
@@ -202,10 +187,10 @@ public class InformationQueryTest {
 					System.out.println(get.getListOfParametersDiagnostics().getUnknownListName());
 					break;
 				case UNKNOWN_PARAMETER_IDENTIFIER:
-					for (ILabel lbl : get.getListOfParametersDiagnostics().getUnknownParameterLabels()) {
+					for (Label lbl : get.getListOfParametersDiagnostics().getUnknownParameterLabels()) {
 						System.out.println(lbl);
 					}
-					for (IName na : get.getListOfParametersDiagnostics().getUnknownParameterNames()) {
+					for (Name na : get.getListOfParametersDiagnostics().getUnknownParameterNames()) {
 						System.out.println(na);
 					}
 					break;

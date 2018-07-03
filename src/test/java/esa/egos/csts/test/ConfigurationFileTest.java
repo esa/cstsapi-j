@@ -4,16 +4,16 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
-import esa.egos.csts.api.enums.AppRole;
-import esa.egos.csts.api.exception.ApiException;
+import esa.egos.csts.api.enumerations.AppRole;
+import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.main.CstsApi;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
-import esa.egos.csts.api.proxy.del.ITranslator;
 import esa.egos.csts.api.serviceinstance.IServiceInform;
 import esa.egos.csts.api.serviceinstance.IServiceInstance;
-import esa.egos.csts.api.util.TimeFactory;
+import esa.egos.proxy.del.ITranslator;
+import esa.egos.proxy.util.TimeFactory;
 
 public class ConfigurationFileTest {
 

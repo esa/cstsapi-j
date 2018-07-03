@@ -1,26 +1,23 @@
 package esa.egos.csts.api.parameters;
 
-import java.util.List;
-
-import esa.egos.csts.api.main.ObjectIdentifier;
+import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 import esa.egos.csts.api.procedures.IProcedure;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
-import esa.egos.csts.api.serviceinstance.IServiceInstance;
+import esa.egos.csts.api.types.Name;
 
+@Deprecated
 public interface IConfigurationParameter extends IParameter {
 
-	ObjectIdentifier getIdentifier();
-
+	Name getName();
+	
 	boolean isReadable();
 
 	boolean isDynamicallyModifiable();
 
-	List<IProcedure> getProcedures();
-
-	ProcedureType getProcedureType();
-
-	boolean isServiceParameter();
+	IProcedure getProcedure();
 	
-	IServiceInstance getServiceInstance();
+	ProcedureType getProcedureType();
+	
+	QualifiedParameter toQualifiedParameter();
 	
 }

@@ -1,39 +1,27 @@
 package esa.egos.csts.api.parameters.impl;
 
-import esa.egos.csts.api.enums.ParameterQualifier;
-import esa.egos.csts.api.enums.ParameterType;
-import esa.egos.csts.api.main.ObjectIdentifier;
+import esa.egos.csts.api.enumerations.ParameterQualifier;
+import esa.egos.csts.api.enumerations.ParameterType;
+import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.parameters.AbstractConfigurationParameter;
-import esa.egos.csts.api.procedures.impl.ProcedureType;
-import esa.egos.csts.api.serviceinstance.IServiceInstance;
-import esa.egos.csts.api.types.IName;
+import esa.egos.csts.api.procedures.IProcedure;
 
 public class IntegerConfigurationParameter extends AbstractConfigurationParameter {
 
 	private long value;
 
 	public IntegerConfigurationParameter(ObjectIdentifier identifier, boolean readable, boolean dynamicallyModifiable,
-			ProcedureType procedureType) {
-		super(identifier, readable, dynamicallyModifiable, procedureType);
-	}
-
-	public IntegerConfigurationParameter(ObjectIdentifier identifier, boolean readable, ProcedureType procedureType,
-			IServiceInstance serviceInstance) {
-		super(identifier, readable, procedureType, serviceInstance);
+			IProcedure procedure) {
+		super(identifier, readable, dynamicallyModifiable, procedure);
+		this.value = 0;
 	}
 
 	public IntegerConfigurationParameter(ObjectIdentifier identifier, boolean readable, boolean dynamicallyModifiable,
-			ProcedureType procedureType, long value) {
-		super(identifier, readable, dynamicallyModifiable, procedureType);
+			IProcedure procedure, long value) {
+		super(identifier, readable, dynamicallyModifiable, procedure);
 		this.value = value;
 	}
 
-	public IntegerConfigurationParameter(ObjectIdentifier identifier, boolean readable, ProcedureType procedureType,
-			IServiceInstance serviceInstance, long value) {
-		super(identifier, readable, procedureType, serviceInstance);
-		this.value = value;
-	}
-	
 	public long getValue() {
 		return value;
 	}
@@ -45,9 +33,9 @@ public class IntegerConfigurationParameter extends AbstractConfigurationParamete
 	}
 	
 	@Override
-	public QualifiedParameter toQualifiedParameter(IName name) {
+	public QualifiedParameter toQualifiedParameter() {
 		QualifiedParameter qualifiedParameter = new QualifiedParameter();
-		qualifiedParameter.setParameterName(name);
+		qualifiedParameter.setParameterName(getName());
 		QualifiedValue qualifiedValue = new QualifiedValue(ParameterQualifier.VALID);
 		ParameterValue parameterValue = new ParameterValue(ParameterType.UNSIGNED_INTEGER);
 		parameterValue.getIntegerParameterValues().add(value);

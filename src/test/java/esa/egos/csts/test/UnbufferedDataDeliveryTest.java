@@ -12,26 +12,25 @@ import java.util.logging.Logger;
 
 import org.junit.Test;
 
-import esa.egos.csts.api.enums.AppRole;
-import esa.egos.csts.api.enums.ProcedureRole;
-import esa.egos.csts.api.enums.TimeEnum;
-import esa.egos.csts.api.exception.ApiException;
-import esa.egos.csts.api.exception.NoServiceInstanceStateException;
+import esa.egos.csts.api.enumerations.AppRole;
+import esa.egos.csts.api.enumerations.ProcedureRole;
+import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.exceptions.NoServiceInstanceStateException;
 import esa.egos.csts.api.main.CstsApi;
 import esa.egos.csts.api.operations.IBind;
 import esa.egos.csts.api.operations.IStart;
 import esa.egos.csts.api.operations.IStop;
 import esa.egos.csts.api.operations.ITransferData;
 import esa.egos.csts.api.procedures.IProcedure;
-import esa.egos.csts.api.procedures.IProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.IUnbufferedDataDelivery;
+import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.roles.InformationQueryProvider;
 import esa.egos.csts.api.procedures.roles.InformationQueryUser;
 import esa.egos.csts.api.procedures.roles.UnbufferedDataDeliveryProvider;
 import esa.egos.csts.api.procedures.roles.UnbufferedDataDeliveryUser;
 import esa.egos.csts.api.serviceinstance.IServiceInstance;
-import esa.egos.csts.api.types.impl.Time;
-import esa.egos.csts.api.util.TimeFactory;
+import esa.egos.csts.api.types.Time;
+import esa.egos.proxy.util.TimeFactory;
 
 public class UnbufferedDataDeliveryTest {
 
@@ -40,7 +39,7 @@ public class UnbufferedDataDeliveryTest {
 	String providerConfigFile = System.getProperty("user.dir") + "/src/test/resources/ProviderConfig1.xml";
 	String sii =  "spacecraft=1,3,112,4,7,0.facility=1,3,112,4,6,0.type=1,3,112,4,4,1,2.serviceinstance=1";
 	
-	IProcedureInstanceIdentifier pid = null;
+	ProcedureInstanceIdentifier pid = null;
 	
 	@Test
 	public void test() {
@@ -154,17 +153,14 @@ public class UnbufferedDataDeliveryTest {
 			IUnbufferedDataDelivery proc = (IUnbufferedDataDelivery) siProvider.getProcedure(pid);
 			
 			int i = 0;
-			
+			String data;
 			try (Scanner scanner = new Scanner(System.in)) {
-				while (!scanner.nextLine().equals("end")) {
+				while (!(data = scanner.nextLine()).equals("end")) {
 					ITransferData transferData = siProvider.createOperation(ITransferData.class);
-					Time time = new Time(TimeEnum.MILLISECONDS);
-					time.setMilliseconds(Time.encodeInstantToCCSDSMillis(Instant.now()));
-					transferData.setGenerationTime(time);
+					transferData.setGenerationTime(new Time(Instant.now()));
 					transferData.setSequenceCounter(i);
-					transferData.setData(("Test message " + i).getBytes(StandardCharsets.UTF_16BE));
+					transferData.setData(data.getBytes(StandardCharsets.UTF_8));
 					proc.addData(transferData);
-					i++;
 				}
 			}
 			System.out.println("Stopping");

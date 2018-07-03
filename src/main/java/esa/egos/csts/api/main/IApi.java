@@ -3,20 +3,20 @@ package esa.egos.csts.api.main;
 import java.util.ArrayList;
 import java.util.Map;
 
-import esa.egos.csts.api.enums.AppRole;
-import esa.egos.csts.api.exception.ApiException;
-import esa.egos.csts.api.logging.IReporter;
+import esa.egos.csts.api.enumerations.AppRole;
+import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.operations.IPeerAbort;
-import esa.egos.csts.api.proxy.IProxyAdmin;
-import esa.egos.csts.api.proxy.ProxyPair;
-import esa.egos.csts.api.proxy.del.ITranslator;
-import esa.egos.csts.api.proxy.xml.ProxyConfig;
-import esa.egos.csts.api.proxy.xml.RemotePeer;
 import esa.egos.csts.api.serviceinstance.IServiceInstance;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceIdentifier;
 import esa.egos.csts.api.util.ICredentials;
-import esa.egos.csts.api.util.ISecAttributes;
-import esa.egos.csts.api.util.ITime;
+import esa.egos.proxy.IProxyAdmin;
+import esa.egos.proxy.ProxyPair;
+import esa.egos.proxy.del.ITranslator;
+import esa.egos.proxy.logging.IReporter;
+import esa.egos.proxy.util.ISecAttributes;
+import esa.egos.proxy.util.ITime;
+import esa.egos.proxy.xml.ProxyConfig;
+import esa.egos.proxy.xml.RemotePeer;
 
 public interface IApi{
 

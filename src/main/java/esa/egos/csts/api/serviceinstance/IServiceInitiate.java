@@ -1,6 +1,6 @@
 package esa.egos.csts.api.serviceinstance;
 
-import esa.egos.csts.api.exception.ApiException;
+import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 

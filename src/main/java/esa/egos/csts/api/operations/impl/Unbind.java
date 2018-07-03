@@ -4,14 +4,18 @@ import ccsds.csts.association.control.types.UnbindInvocation;
 import ccsds.csts.association.control.types.UnbindReturn;
 import ccsds.csts.common.types.Extended;
 import esa.egos.csts.api.diagnostics.Diagnostic;
-import esa.egos.csts.api.enums.UnbindReason;
-import esa.egos.csts.api.exception.ApiException;
+import esa.egos.csts.api.enumerations.OperationType;
+import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.operations.AbstractConfirmedOperation;
 import esa.egos.csts.api.operations.IUnbind;
+import esa.egos.csts.api.util.impl.CSTSUtils;
 import esa.egos.csts.api.util.impl.Credentials;
+import esa.egos.proxy.enums.UnbindReason;
 
 public class Unbind extends AbstractConfirmedOperation implements IUnbind{
 
+	private final OperationType type = OperationType.UNBIND;
+	
 	private final static int versionNumber = 1;
     /**
      * The UNBIND reason.
@@ -22,6 +26,11 @@ public class Unbind extends AbstractConfirmedOperation implements IUnbind{
 		super(versionNumber);
 		
 		this.unbindReason = UnbindReason.UBR_invalid;
+	}
+	
+	@Override
+	public OperationType getType() {
+		return type;
 	}
 
 	@Override
@@ -76,10 +85,15 @@ public class Unbind extends AbstractConfirmedOperation implements IUnbind{
 	}
 
 	@Override
+	public UnbindReturn encodeUnbindReturn() {
+		return encodeStandardReturnHeader(UnbindReturn.class);
+	}
+	
+	@Override
 	public void decodeUnbindReturn(UnbindReturn unbindReturn) {
 		
 		setInvokeId(unbindReturn.getInvokeId());
-		setPerformerCredentials(Credentials.encodeCredentials(unbindReturn.getPerformerCredentials()));
+		setPerformerCredentials(Credentials.decode(unbindReturn.getPerformerCredentials()));
 		ccsds.csts.common.types.StandardReturnHeader.Result result = unbindReturn.getResult();
 		
 		if (result.getPositive() != null)
@@ -88,6 +102,14 @@ public class Unbind extends AbstractConfirmedOperation implements IUnbind{
 			setDiagnostic(Diagnostic.decode(unbindReturn.getResult().getNegative().getDiagnostic()));
 	}
 
+	@Override
+	public UnbindInvocation encodeUnbindInvocation() {
+		UnbindInvocation unbindInvocation = new UnbindInvocation();
+		unbindInvocation.setStandardInvocationHeader(encodeStandardInvocationHeader());
+		unbindInvocation.setUnbindInvocationExtension(CSTSUtils.nonUsedExtension());
+		return unbindInvocation;
+	}
+	
 	@Override
 	public void decodeUnbindInvocation(UnbindInvocation unbindInvocation) {
 		decodeStandardInvocationHeader(unbindInvocation.getStandardInvocationHeader());

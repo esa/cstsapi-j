@@ -1,7 +1,7 @@
 package esa.egos.csts.api.serviceinstance;
 
 import esa.egos.csts.api.operations.IConfirmedOperation;
-import esa.egos.csts.api.time.ElapsedTimer;
+import esa.egos.proxy.time.ElapsedTimer;
 
 public class ReturnPair {
 	

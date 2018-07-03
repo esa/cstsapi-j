@@ -10,7 +10,6 @@ import ccsds.csts.common.types.Diagnostic.ConflictingValues;
 import ccsds.csts.common.types.Diagnostic.ConflictingValues.Appellations;
 import ccsds.csts.common.types.Diagnostic.InvalidParameterValue;
 import ccsds.csts.common.types.Embedded;
-import esa.egos.csts.api.enums.DiagnosticEnum;
 
 public class Diagnostic {
 
@@ -72,28 +71,28 @@ public class Diagnostic {
 		switch (enumeration) {
 		case CONFLICTING_VALUES:
 			ConflictingValues values = new ConflictingValues();
-			values.setText(new AdditionalText(text.getBytes(StandardCharsets.UTF_16BE)));
+			values.setText(new AdditionalText(text.getBytes(StandardCharsets.UTF_8)));
 			Appellations appellations = new Appellations();
 			for (String s : this.appellations) {
-				appellations.getAppellation().add(new Appellation(s.getBytes(StandardCharsets.UTF_16BE)));
+				appellations.getAppellation().add(new Appellation(s.getBytes(StandardCharsets.UTF_8)));
 			}
 			values.setAppellations(appellations);
 			diagnostic.setConflictingValues(values);
 			break;
 		case INVALID_PARAMATER_VALUE:
 			InvalidParameterValue value = new InvalidParameterValue();
-			value.setText(new AdditionalText(text.getBytes(StandardCharsets.UTF_16BE)));
-			value.setAppellation(new Appellation(appellation.getBytes(StandardCharsets.UTF_16BE)));
+			value.setText(new AdditionalText(text.getBytes(StandardCharsets.UTF_8)));
+			value.setAppellation(new Appellation(appellation.getBytes(StandardCharsets.UTF_8)));
 			diagnostic.setInvalidParameterValue(value);
 			break;
 		case EXTENDED:
 			diagnostic.setDiagnosticExtension(diagnosticExtension);
 			break;
 		case OTHER_REASON:
-			diagnostic.setOtherReason(new AdditionalText(text.getBytes(StandardCharsets.UTF_16BE)));
+			diagnostic.setOtherReason(new AdditionalText(text.getBytes(StandardCharsets.UTF_8)));
 			break;
 		case UNSUPPORTED_OPTION:
-			diagnostic.setUnsupportedOption(new AdditionalText(text.getBytes(StandardCharsets.UTF_16BE)));
+			diagnostic.setUnsupportedOption(new AdditionalText(text.getBytes(StandardCharsets.UTF_8)));
 			break;
 		}
 
@@ -106,23 +105,23 @@ public class Diagnostic {
 
 		if (diag.getConflictingValues() != null) {
 			diagnostic = new Diagnostic(DiagnosticEnum.CONFLICTING_VALUES);
-			diagnostic.setText(new String(diag.getConflictingValues().getText().value, StandardCharsets.UTF_16BE));
+			diagnostic.setText(new String(diag.getConflictingValues().getText().value, StandardCharsets.UTF_8));
 			for (Appellation appellation : diag.getConflictingValues().getAppellations().getAppellation()) {
-				diagnostic.getAppellations().add(new String(appellation.value, StandardCharsets.UTF_16BE));
+				diagnostic.getAppellations().add(new String(appellation.value, StandardCharsets.UTF_8));
 			}
 		} else if (diag.getDiagnosticExtension() != null) {
 			diagnostic = new Diagnostic(diag.getDiagnosticExtension());
 		} else if (diag.getInvalidParameterValue() != null) {
 			diagnostic = new Diagnostic(DiagnosticEnum.INVALID_PARAMATER_VALUE);
-			diagnostic.setText(new String(diag.getInvalidParameterValue().getText().value, StandardCharsets.UTF_16BE));
+			diagnostic.setText(new String(diag.getInvalidParameterValue().getText().value, StandardCharsets.UTF_8));
 			diagnostic.setAppellation(
-					new String(diag.getInvalidParameterValue().getAppellation().value, StandardCharsets.UTF_16BE));
+					new String(diag.getInvalidParameterValue().getAppellation().value, StandardCharsets.UTF_8));
 		} else if (diag.getOtherReason() != null) {
 			diagnostic = new Diagnostic(DiagnosticEnum.OTHER_REASON);
-			diagnostic.setText(new String(diag.getOtherReason().value, StandardCharsets.UTF_16BE));
+			diagnostic.setText(new String(diag.getOtherReason().value, StandardCharsets.UTF_8));
 		} else if (diag.getUnsupportedOption() != null) {
 			diagnostic = new Diagnostic(DiagnosticEnum.UNSUPPORTED_OPTION);
-			diagnostic.setText(new String(diag.getUnsupportedOption().value, StandardCharsets.UTF_16BE));
+			diagnostic.setText(new String(diag.getUnsupportedOption().value, StandardCharsets.UTF_8));
 		}
 
 		return diagnostic;

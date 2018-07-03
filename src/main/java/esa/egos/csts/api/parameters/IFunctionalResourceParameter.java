@@ -2,10 +2,15 @@ package esa.egos.csts.api.parameters;
 
 import java.time.LocalDateTime;
 
-import esa.egos.csts.api.main.ObjectIdentifier;
+import esa.egos.csts.api.functionalresources.IFunctionalResource;
+import esa.egos.csts.api.parameters.impl.QualifiedParameter;
+import esa.egos.csts.api.types.Name;
 
+@Deprecated
 public interface IFunctionalResourceParameter extends IParameter {
 
+	Name getName();
+	
 	void setUnit(String unit);
 
 	String getUnit();
@@ -17,10 +22,6 @@ public interface IFunctionalResourceParameter extends IParameter {
 	void setSemanticDefinition(String semanticDefinition);
 
 	String getSemanticDefinition();
-
-	void setIdentifier(ObjectIdentifier identifier);
-
-	ObjectIdentifier getIdentifier();
 
 	void setConfigured(boolean configured);
 
@@ -41,5 +42,9 @@ public interface IFunctionalResourceParameter extends IParameter {
 	void setClassifier(String classifier);
 
 	String getClassifier();
+
+	IFunctionalResource getFunctionalResource();
+	
+	QualifiedParameter toQualifiedParameter();
 
 }

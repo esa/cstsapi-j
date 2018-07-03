@@ -1,12 +1,11 @@
 package esa.egos.csts.api.serviceinstance.impl;
 
-import esa.egos.csts.api.enums.AppRole;
-import esa.egos.csts.api.enums.PeerAbortDiagnostics;
-import esa.egos.csts.api.enums.ProcedureRole;
-import esa.egos.csts.api.enums.Result;
-import esa.egos.csts.api.exception.ApiException;
-import esa.egos.csts.api.exception.NoServiceInstanceStateException;
-import esa.egos.csts.api.exception.OperationTypeUnsupportedException;
+import esa.egos.csts.api.enumerations.AppRole;
+import esa.egos.csts.api.enumerations.ProcedureRole;
+import esa.egos.csts.api.enumerations.Result;
+import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.exceptions.NoServiceInstanceStateException;
+import esa.egos.csts.api.exceptions.OperationTypeUnsupportedException;
 import esa.egos.csts.api.main.CstsApi;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IConfirmedOperation;
@@ -18,6 +17,7 @@ import esa.egos.csts.api.serviceinstance.AbstractServiceInstance;
 import esa.egos.csts.api.serviceinstance.IServiceInform;
 import esa.egos.csts.api.serviceinstance.ReturnPair;
 import esa.egos.csts.api.serviceinstance.states.ServiceInstanceStateEnum;
+import esa.egos.proxy.enums.PeerAbortDiagnostics;
 
 public class ServiceInstanceUser extends AbstractServiceInstance {
 

@@ -1,10 +1,10 @@
 package esa.egos.csts.api.procedures;
 
 import ccsds.csts.common.types.ProcedureInstanceId;
-import esa.egos.csts.api.enums.ProcedureRole;
-import esa.egos.csts.api.exception.ApiException;
+import esa.egos.csts.api.enumerations.ProcedureRole;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 
+@Deprecated
 public interface IProcedureInstanceIdentifier {
 
 	public int getInstanceNumber();
@@ -13,13 +13,6 @@ public interface IProcedureInstanceIdentifier {
 	
 	ProcedureType getType();
 	
-	/**
-	 * Init the procedure type. If already set throws exception.
-	 * @param type
-	 * @throws ApiException
-	 */
-	void initType(ProcedureType type) throws ApiException;
-
 	ProcedureInstanceId encode();
 
 }

@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openmuc.jasn1.ber.types.BerNull;
+
 import ccsds.csts.common.types.QualifiedValues;
 import ccsds.csts.common.types.TypeAndValue;
 import ccsds.csts.common.types.TypeAndValueComplexQualified;
 import ccsds.csts.common.types.TypeAndValueComplexQualified.ComplexSequence;
-import esa.egos.csts.api.enums.ParameterQualifier;
-import esa.egos.csts.api.parameters.IQualifiedValue;
+import esa.egos.csts.api.enumerations.ParameterQualifier;
 
-public class QualifiedValue implements IQualifiedValue {
+public class QualifiedValue {
 
 	private final ParameterQualifier parameterQualifier;
 	private List<ParameterValue> qualifiedParameterValues;
@@ -21,17 +21,14 @@ public class QualifiedValue implements IQualifiedValue {
 		qualifiedParameterValues = new ArrayList<>();
 	}
 
-	@Override
 	public ParameterQualifier getParameterQualifier() {
 		return parameterQualifier;
 	}
 
-	@Override
 	public List<ParameterValue> getQualifiedParameterValues() {
 		return qualifiedParameterValues;
 	}
 
-	@Override
 	public QualifiedValues encode() {
 
 		QualifiedValues qualifiedValues = new QualifiedValues();
@@ -67,8 +64,8 @@ public class QualifiedValue implements IQualifiedValue {
 
 	}
 
-	public static IQualifiedValue decode(QualifiedValues qualifiedValues) {
-		IQualifiedValue qualifiedValue = null;
+	public static QualifiedValue decode(QualifiedValues qualifiedValues) {
+		QualifiedValue qualifiedValue = null;
 		if (qualifiedValues.getError() != null) {
 			qualifiedValue = new QualifiedValue(ParameterQualifier.ERROR);
 		} else if (qualifiedValues.getUnavailable() != null) {

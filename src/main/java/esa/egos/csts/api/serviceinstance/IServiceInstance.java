@@ -2,26 +2,26 @@ package esa.egos.csts.api.serviceinstance;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Observer;
-import java.util.Set;
 
-import esa.egos.csts.api.enums.ProcedureRole;
-import esa.egos.csts.api.exception.ApiException;
-import esa.egos.csts.api.exception.NoServiceInstanceStateException;
+import esa.egos.csts.api.enumerations.ProcedureRole;
+import esa.egos.csts.api.events.Event;
+import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.exceptions.NoServiceInstanceStateException;
 import esa.egos.csts.api.functionalresources.IFunctionalResource;
 import esa.egos.csts.api.main.IApi;
 import esa.egos.csts.api.operations.IBind;
 import esa.egos.csts.api.operations.IOperation;
-import esa.egos.csts.api.parameters.IConfigurationParameter;
+import esa.egos.csts.api.parameters.AbstractConfigurationParameter;
+import esa.egos.csts.api.parameters.impl.FunctionalResourceParameter;
 import esa.egos.csts.api.procedures.IAssociationControl;
 import esa.egos.csts.api.procedures.IProcedure;
-import esa.egos.csts.api.procedures.IProcedureInstanceIdentifier;
-import esa.egos.csts.api.proxy.IProxyAdmin;
-import esa.egos.csts.api.proxy.ISrvProxyInitiate;
+import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.serviceinstance.states.IState;
-import esa.egos.csts.api.util.ITimeoutProcessor;
+import esa.egos.proxy.IProxyAdmin;
+import esa.egos.proxy.ISrvProxyInitiate;
+import esa.egos.proxy.util.ITimeoutProcessor;
 
-public interface IServiceInstance extends IServiceInitiate, IServiceInform, IServiceConfiguration, ITimeoutProcessor, IConcurrent, Observer {
+public interface IServiceInstance extends IServiceInitiate, IServiceInform, IServiceConfiguration, ITimeoutProcessor, IConcurrent {
 
 	// get CstsRole role from API
 	
@@ -39,7 +39,7 @@ public interface IServiceInstance extends IServiceInitiate, IServiceInform, ISer
 	 * @param identifier
 	 * @return
 	 */
-	IProcedure getProcedure(IProcedureInstanceIdentifier identifier);
+	IProcedure getProcedure(ProcedureInstanceIdentifier identifier);
 	
 	/**
 	 * Returns the exact active procedure for that instance number and class name.
@@ -73,11 +73,15 @@ public interface IServiceInstance extends IServiceInitiate, IServiceInform, ISer
 
 	void checkBindInvocation(IBind pbindop, ISrvProxyInitiate passociation) throws ApiException;
 
-	Map<IProcedure, List<IConfigurationParameter>> getConfigurationParametersMap();
+	Map<IProcedure, List<AbstractConfigurationParameter>> getConfigurationParametersMap();
 
 	List<IFunctionalResource> getFunctionalResources();
 
-	Map<IFunctionalResource, List<IConfigurationParameter>> getFunctionalResourceParametersMap();
+	Map<IFunctionalResource, List<FunctionalResourceParameter>> getFunctionalResourceParametersMap();
+
+	List<Event> getEvents();
+
+	IServiceInstanceInternal getInternal();
 
 	// TODO parameters of procedures, read them, update them, be informed of changes, one callback
 }

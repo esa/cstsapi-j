@@ -1,7 +1,7 @@
 package esa.egos.csts.api.operations;
 
-import esa.egos.csts.api.enums.AbortOriginator;
-import esa.egos.csts.api.enums.PeerAbortDiagnostics;
+import esa.egos.proxy.enums.AbortOriginator;
+import esa.egos.proxy.enums.PeerAbortDiagnostics;
 
 public interface IPeerAbort extends IOperation{
     /**

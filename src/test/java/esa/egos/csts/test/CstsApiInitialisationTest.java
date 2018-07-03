@@ -1,9 +1,8 @@
 package esa.egos.csts.test;
 
-import esa.egos.csts.api.enums.AppRole;
-import esa.egos.csts.api.enums.ProcedureRole;
-import esa.egos.csts.api.exception.ApiException;
-import esa.egos.csts.api.logging.IReporter;
+import esa.egos.csts.api.enumerations.AppRole;
+import esa.egos.csts.api.enumerations.ProcedureRole;
+import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.main.CstsApi;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IBind;
@@ -12,11 +11,12 @@ import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.ITransferData;
 import esa.egos.csts.api.procedures.IProcedure;
 import esa.egos.csts.api.procedures.roles.UnbufferedDataDeliveryUser;
-import esa.egos.csts.api.proxy.del.ITranslator;
 import esa.egos.csts.api.serviceinstance.IServiceInform;
 import esa.egos.csts.api.serviceinstance.IServiceInstance;
-import esa.egos.csts.api.util.TimeFactory;
-import esa.egos.csts.api.util.impl.TimeSource;
+import esa.egos.proxy.del.ITranslator;
+import esa.egos.proxy.logging.IReporter;
+import esa.egos.proxy.util.TimeFactory;
+import esa.egos.proxy.util.impl.TimeSource;
 
 public class CstsApiInitialisationTest {
 	

@@ -5,27 +5,31 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
-import esa.egos.csts.api.enums.PeerAbortDiagnostics;
-import esa.egos.csts.api.enums.ProcedureRole;
-import esa.egos.csts.api.enums.Result;
-import esa.egos.csts.api.exception.ApiException;
-import esa.egos.csts.api.exception.NoServiceInstanceStateException;
-import esa.egos.csts.api.exception.OperationTypeUnsupportedException;
-import esa.egos.csts.api.main.ObjectIdentifier;
+import esa.egos.csts.api.enumerations.OperationType;
+import esa.egos.csts.api.enumerations.ProcedureRole;
+import esa.egos.csts.api.enumerations.Result;
+import esa.egos.csts.api.events.Event;
+import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.exceptions.NoServiceInstanceStateException;
+import esa.egos.csts.api.exceptions.OperationTypeUnsupportedException;
+import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
-import esa.egos.csts.api.parameters.IConfigurationParameter;
+import esa.egos.csts.api.parameters.AbstractConfigurationParameter;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.serviceinstance.IServiceInstance;
 import esa.egos.csts.api.serviceinstance.states.IProcedureState;
 import esa.egos.csts.api.serviceinstance.states.IState;
+import esa.egos.proxy.enums.PeerAbortDiagnostics;
 
-public abstract class AbstractProcedure implements IProcedure {
+public abstract class AbstractProcedure implements IProcedure, Observer {
 
 	protected static final Logger LOG = Logger.getLogger(AbstractProcedure.class.getName());
 
@@ -33,23 +37,25 @@ public abstract class AbstractProcedure implements IProcedure {
 
 	private Set<Class<? extends IOperation>> operationsSet;
 
-	private IProcedureInstanceIdentifier procedureInstanceIdentifier;
+	private ProcedureInstanceIdentifier procedureInstanceIdentifier;
 
 	private String associationControlName;
 
 	private Map<Class<? extends IOperation>, Supplier<? extends IOperation>> operationFactoryMap;
 
-	private List<IConfigurationParameter> configurationParameters;
+	private List<AbstractConfigurationParameter> configurationParameters;
 
-	@Override
-	public void abort(PeerAbortDiagnostics diagnostics) {
-		// TODO implement
-
-	}
+	private List<Event> events;
 
 	private IServiceInstance serviceInstance;
 
 	private int version;
+
+	@Override
+	public void abort(PeerAbortDiagnostics diagnostics) {
+		// TODO implement
+	
+	}
 
 	protected AbstractProcedure(IProcedureState state) {
 		this.operationFactoryMap = new HashMap<Class<? extends IOperation>, Supplier<? extends IOperation>>();
@@ -57,15 +63,21 @@ public abstract class AbstractProcedure implements IProcedure {
 		this.operationsSet = new HashSet<Class<? extends IOperation>>();
 		initOperationSet();
 		configurationParameters = new ArrayList<>();
+		events = new ArrayList<>();
 		initState(state);
+		setInitialState();
 	}
 
 	private void initState(IProcedureState state) {
 		this.procedureState = state;
 	}
 
+	private void setInitialState() {
+		
+	}
+	
 	@Override
-	public IProcedureInstanceIdentifier getProcedureInstanceIdentifier() {
+	public ProcedureInstanceIdentifier getProcedureInstanceIdentifier() {
 		return this.procedureInstanceIdentifier;
 	}
 
@@ -79,11 +91,6 @@ public abstract class AbstractProcedure implements IProcedure {
 	@Override
 	public Set<Class<? extends IOperation>> getDeclaredOperations() {
 		return this.operationsSet;
-	}
-
-	public void overwriteParameter(IConfigurationParameter configurationParameter) {
-		configurationParameters.removeIf(p -> p.getIdentifier().equals(configurationParameter.getIdentifier()));
-		configurationParameters.add(configurationParameter);
 	}
 
 	@Override
@@ -104,8 +111,7 @@ public abstract class AbstractProcedure implements IProcedure {
 
 	@Override
 	public void setRole(ProcedureRole procedureRole, int instanceNumber) throws ApiException {
-		this.procedureInstanceIdentifier = new ProcedureInstanceIdentifier(procedureRole, instanceNumber);
-		this.procedureInstanceIdentifier.initType(getType());
+		this.procedureInstanceIdentifier = new ProcedureInstanceIdentifier(procedureRole, instanceNumber, getType());
 	}
 
 	@Override
@@ -119,26 +125,29 @@ public abstract class AbstractProcedure implements IProcedure {
 	}
 
 	@Override
-	public List<IConfigurationParameter> getConfigurationParameters() {
+	public List<AbstractConfigurationParameter> getConfigurationParameters() {
 		return configurationParameters;
 	}
 
+	protected void addConfigurationParameter(AbstractConfigurationParameter confParam) {
+		confParam.addObserver(this);
+		configurationParameters.add(confParam);
+	}
+
 	@Override
-	public IConfigurationParameter getConfigurationParameter(ObjectIdentifier identifier) {
-		return configurationParameters.stream().filter(param -> param.getIdentifier().equals(identifier)).findFirst()
+	public List<Event> getEvents() {
+		return events;
+	}
+
+	@Override
+	public AbstractConfigurationParameter getConfigurationParameter(ObjectIdentifier identifier) {
+		return configurationParameters.stream()
+				.filter(param -> param.getIdentifier().equals(identifier))
+				.findFirst()
 				.orElse(null);
 	}
 
 	protected abstract void initialiseOperationFactory();
-
-	// TODO: move into the AbstractXXXProcedure
-	// {
-	// this.operationFactoryMap.put(IBind.class, this::createBind);
-	// }
-
-	// protected IBind createBind() {
-	// return null;
-	// }
 
 	protected Map<Class<? extends IOperation>, Supplier<? extends IOperation>> getOperationFactoryMap() {
 		return this.operationFactoryMap;
@@ -233,77 +242,93 @@ public abstract class AbstractProcedure implements IProcedure {
 		throw new OperationTypeUnsupportedException(
 				"Operation type of operation " + operation.getClass() + " not supported by " + getName());
 	}
-	
+
 	/**
 	 * Initiates the invocation of the specified operation. The invocation is the
 	 * first initiation in order.
+	 * 
+	 * Override this method, if the concrete procedure is an affected participant.
 	 * 
 	 * @param operation
 	 *            the operation to invoke
 	 * @return the Result Enumeration containing the result of the invocation
 	 */
-	protected abstract Result doInitiateOperationInvoke(IOperation operation);
+	protected Result doInitiateOperationInvoke(IOperation operation) {
+		return Result.SLE_E_ROLE;
+	}
 
 	/**
 	 * Initiates the return of the specified operation. The return is the second
 	 * initiation in order.
 	 * 
+	 * Override this method, if the concrete procedure is an affected participant.
+	 * 
 	 * @param confOperation
 	 *            the confirmed operation to return
 	 * @return the Result Enumeration containing the result of the return
 	 */
-	protected abstract Result doInitiateOperationReturn(IConfirmedOperation confOperation);
+	protected Result doInitiateOperationReturn(IConfirmedOperation confOperation) {
+		return Result.SLE_E_ROLE;
+	}
 
 	/**
 	 * Initiates the acknowledgement of the specified operation. The acknowledgement
 	 * is the third initiation in order.
 	 * 
+	 * Override this method, if the concrete procedure is an affected participant.
+	 * 
 	 * @param ackOperation
 	 *            the acknowledged operation to acknowledge
 	 * @return the Result Enumeration containing the result of the acknowledgement
 	 */
-	protected abstract Result doInitiateOperationAck(IAcknowledgedOperation ackOperation);
+	protected Result doInitiateOperationAck(IAcknowledgedOperation ackOperation) {
+		return Result.SLE_E_ROLE;
+	}
 
 	/**
 	 * This method is called when an invocation of an operation is received. The
 	 * invocation is the first initiation in order.
+	 * 
+	 * Override this method, if the concrete procedure is an affected participant.
 	 * 
 	 * @param operation
 	 *            the invoked operation
 	 * @return the Result Enumeration containing the result of the received
 	 *         invocation
 	 */
-	protected abstract Result doInformOperationInvoke(IOperation operation);
+	protected Result doInformOperationInvoke(IOperation operation) {
+		return Result.SLE_E_ROLE;
+	}
 
 	/**
 	 * This method is called when a return of an operation is received. The return
 	 * is the second initiation in order.
 	 * 
-	 * @param confOperation
-	 *            the returned confirmed operation
-	 * @return the Result Enumeration containing the result of the received return
-	 */
-	protected abstract Result doInformOperationReturn(IConfirmedOperation confOperation);
-
-	/**
-	 * This method is called when an acknowledgement of an operation is received.
-	 * The acknowledgement is the third initiation in order.
+	 * Override this method, if the concrete procedure is an affected participant.
 	 * 
 	 * @param confOperation
 	 *            the returned confirmed operation
 	 * @return the Result Enumeration containing the result of the received return
 	 */
+	protected Result doInformOperationReturn(IConfirmedOperation confOperation) {
+		return Result.SLE_E_ROLE;
+	}
+
 	/**
 	 * This method is called if an acknowledgement of an operation is received. The
 	 * acknowledgement is the third initiation in order.
+	 * 
+	 * Override this method, if the concrete procedure is an affected participant.
 	 * 
 	 * @param ackOperation
 	 *            the returned acknowledged operation
 	 * @return the Result Enumeration containing the result of the acknowledged
 	 *         return
 	 */
-	protected abstract Result doInformOperationAck(IAcknowledgedOperation ackOperation);
-	
+	protected Result doInformOperationAck(IAcknowledgedOperation ackOperation) {
+		return Result.SLE_E_ROLE;
+	}
+
 	@Override
 	public Result initiateOperationInvoke(IOperation operation) {
 		try {
@@ -362,6 +387,36 @@ public abstract class AbstractProcedure implements IProcedure {
 			return Result.E_FAIL;
 		}
 		return doInformOperationReturn(confOperation);
+	}
+
+	public Result invokeOperation(IOperation operation) {
+		return serviceInstance.getInternal().forwardInitiatePxyOpInv(operation, false);
+	}
+
+	public Result returnOperation(IConfirmedOperation confirmedOperation) {
+		return serviceInstance.getInternal().forwardInitiatePxyOpRtn(confirmedOperation, false);
+	}
+
+	public Result acknowledgeOperation(IAcknowledgedOperation acknowledgedOperation) {
+		return serviceInstance.getInternal().forwardInitiatePxyOpAck(acknowledgedOperation, false);
+	}
+
+	public Result acceptInvocation(IOperation operation) {
+		return serviceInstance.getInternal().forwardInformAplOpInv(operation);
+	}
+
+	public Result acceptReturn(IConfirmedOperation confirmedOperation) {
+		return serviceInstance.getInternal().forwardInformAplOpRtn(confirmedOperation);
+	}
+
+	public Result acceptAcknowledgement(IAcknowledgedOperation acknowledgedOperation) {
+		return serviceInstance.getInternal().forwardInformAplOpAck(acknowledgedOperation);
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		// do nothing on default
+		// override for procedure-specific behaviour
 	}
 
 }

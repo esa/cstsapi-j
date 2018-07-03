@@ -6,8 +6,8 @@ import java.util.logging.Logger;
 
 import org.junit.Test;
 
-import esa.egos.csts.api.proxy.impl.EE_APIPX_LocalServerSocket;
-import esa.egos.csts.api.proxy.impl.EE_APIPX_LocalSocket;
+import esa.egos.proxy.impl.EE_APIPX_LocalServerSocket;
+import esa.egos.proxy.impl.EE_APIPX_LocalSocket;
 
 public class LocalServerSocketTest
 {

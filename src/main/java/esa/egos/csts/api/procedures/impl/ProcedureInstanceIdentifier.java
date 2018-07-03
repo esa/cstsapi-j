@@ -1,46 +1,28 @@
 package esa.egos.csts.api.procedures.impl;
 
 import org.openmuc.jasn1.ber.types.BerNull;
-import org.openmuc.jasn1.ber.types.BerObjectIdentifier;
 
 import ccsds.csts.common.types.IntPos;
 import ccsds.csts.common.types.ProcedureInstanceId;
-import esa.egos.csts.api.enums.ProcedureRole;
-import esa.egos.csts.api.exception.ApiException;
-import esa.egos.csts.api.main.ObjectIdentifier;
-import esa.egos.csts.api.procedures.IProcedureInstanceIdentifier;
+import esa.egos.csts.api.enumerations.ProcedureRole;
 
-public class ProcedureInstanceIdentifier implements IProcedureInstanceIdentifier {
-
-	// TODO
-	// procedureType, procedureRole, instancenumber + constructor + getter
-	// replace equals and hashcode and toString
+public class ProcedureInstanceIdentifier {
 
 	private final int instanceNumber;
 	private final ProcedureRole role;
-	private ProcedureType type;
+	private final ProcedureType type;
 
-	public ProcedureInstanceIdentifier(ProcedureRole role, int instanceNumber) {
+	public ProcedureInstanceIdentifier(ProcedureRole role, int instanceNumber, ProcedureType type) {
 		super();
 		this.instanceNumber = instanceNumber;
 		this.role = role;
-	}
-
-	@Override
-	public void initType(ProcedureType type) throws ApiException {
-
-		if (getType() != null)
-			throw new ApiException("Procedure type already set.");
-
 		this.type = type;
 	}
 
-	@Override
 	public int getInstanceNumber() {
 		return this.instanceNumber;
 	}
 
-	@Override
 	public ProcedureRole getRole() {
 		return this.role;
 	}
@@ -82,12 +64,10 @@ public class ProcedureInstanceIdentifier implements IProcedureInstanceIdentifier
 		return true;
 	}
 
-	@Override
 	public ProcedureType getType() {
 		return this.type;
 	}
 
-	@Override
 	public ProcedureInstanceId encode() {
 
 		ProcedureInstanceId pid = new ProcedureInstanceId();
@@ -114,43 +94,27 @@ public class ProcedureInstanceIdentifier implements IProcedureInstanceIdentifier
 		pid.setProcedureRole(encodeRole);
 
 		// set Type (OID)
-		pid.setProcedureType(new ccsds.csts.common.types.ProcedureType(getType().getProcedureTypeOID().getOid()));
+		pid.setProcedureType(new ccsds.csts.common.types.ProcedureType(getType().getIdentifier().toArray()));
 
 		return pid;
 	}
 
-	public static IProcedureInstanceIdentifier decode(ProcedureInstanceId id) {
+	public static ProcedureInstanceIdentifier decode(ProcedureInstanceId id) {
 
-		IProcedureInstanceIdentifier pid = null;
+		ProcedureInstanceIdentifier pid = null;
 
 		if (id.getProcedureRole().getAssociationControl() != null) {
-			pid = new ProcedureInstanceIdentifier(ProcedureRole.ASSOCIATION_CONTROL, 0);
+			pid = new ProcedureInstanceIdentifier(ProcedureRole.ASSOCIATION_CONTROL, 0,
+					ProcedureType.decode(id.getProcedureType()));
 		} else if (id.getProcedureRole().getPrimeProcedure() != null) {
-			pid = new ProcedureInstanceIdentifier(ProcedureRole.PRIME, 0);
+			pid = new ProcedureInstanceIdentifier(ProcedureRole.PRIME, 0, ProcedureType.decode(id.getProcedureType()));
 		} else if (id.getProcedureRole().getSecondaryProcedure() != null) {
 			pid = new ProcedureInstanceIdentifier(ProcedureRole.SECONDARY,
-					id.getProcedureRole().getSecondaryProcedure().intValue());
-		}
-
-		try {
-			if (pid != null)
-				pid.initType(new ProcedureType(new ObjectIdentifier(id.getProcedureType().value)));
-		} catch (ApiException e) {
-			pid = null;
-			// we should have no exception here or else it was overwritten and set before
+					id.getProcedureRole().getSecondaryProcedure().intValue(),
+					ProcedureType.decode(id.getProcedureType()));
 		}
 
 		return pid;
-	}
-
-	public static IProcedureInstanceIdentifier readPID(BerObjectIdentifier id) {
-		IProcedureInstanceIdentifier identifier = null;
-
-		ProcedureInstanceId pid = new ProcedureInstanceId(id.code);
-		// TODO really? not sure
-		identifier = ProcedureInstanceIdentifier.decode(pid);
-
-		return identifier;
 	}
 
 }

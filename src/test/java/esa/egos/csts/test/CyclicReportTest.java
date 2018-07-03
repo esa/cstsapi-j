@@ -10,27 +10,27 @@ import java.util.logging.Logger;
 
 import org.junit.Test;
 
-import esa.egos.csts.api.enums.AppRole;
-import esa.egos.csts.api.enums.ListOfParamatersEnum;
-import esa.egos.csts.api.enums.ProcedureRole;
-import esa.egos.csts.api.enums.ProcedureTypeEnum;
-import esa.egos.csts.api.exception.ApiException;
-import esa.egos.csts.api.exception.NoServiceInstanceStateException;
+import esa.egos.csts.api.enumerations.AppRole;
+import esa.egos.csts.api.enumerations.ListOfParamatersEnum;
+import esa.egos.csts.api.enumerations.ProcedureRole;
+import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.exceptions.NoServiceInstanceStateException;
 import esa.egos.csts.api.main.CstsApi;
+import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.operations.IBind;
 import esa.egos.csts.api.operations.IStart;
 import esa.egos.csts.api.operations.IStop;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.procedures.ICyclicReport;
 import esa.egos.csts.api.procedures.IProcedure;
-import esa.egos.csts.api.procedures.IProcedureInstanceIdentifier;
+import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.procedures.roles.CyclicReportProvider;
 import esa.egos.csts.api.procedures.roles.CyclicReportUser;
 import esa.egos.csts.api.procedures.roles.InformationQueryProvider;
 import esa.egos.csts.api.procedures.roles.InformationQueryUser;
 import esa.egos.csts.api.serviceinstance.IServiceInstance;
-import esa.egos.csts.api.util.TimeFactory;
+import esa.egos.proxy.util.TimeFactory;
 
 public class CyclicReportTest {
 
@@ -39,8 +39,8 @@ public class CyclicReportTest {
 	String providerConfigFile = System.getProperty("user.dir") + "/src/test/resources/ProviderConfig1.xml";
 	String sii =  "spacecraft=1,3,112,4,7,0.facility=1,3,112,4,6,0.type=1,3,112,4,4,1,2.serviceinstance=1";
 	
-	IProcedureInstanceIdentifier pidUser;
-	IProcedureInstanceIdentifier pidProv;
+	ProcedureInstanceIdentifier pidUser;
+	ProcedureInstanceIdentifier pidProv;
 	
 	@Test
 	public void test() {
@@ -150,10 +150,8 @@ public class CyclicReportTest {
 			ICyclicReport procUser = (ICyclicReport) siUser.getProcedure(pidUser);
 			procUser.setDeliveryCycle(2000);
 			ListOfParameters lop = new ListOfParameters(ListOfParamatersEnum.PROCEDURE_TYPE);
-			lop.setProcedureType(new ProcedureType(ProcedureTypeEnum.cyclicReport));
+			lop.setProcedureType(new ProcedureType(OIDs.cyclicReport));
 			procUser.setListOfParameters(lop);
-			
-			ICyclicReport procProv = (ICyclicReport) siProvider.getProcedure(pidProv);
 			
 			System.out.println("Starting");
 			IStart start = siUser.createOperation(IStart.class);

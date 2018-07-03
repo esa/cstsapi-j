@@ -3,36 +3,32 @@ package esa.egos.csts.api.parameters.impl;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.openmuc.jasn1.ber.types.string.BerVisibleString;
 
 import ccsds.csts.common.types.AdditionalText;
 import ccsds.csts.common.types.ListOfParamEventsDiagnostics;
 import ccsds.csts.common.types.ListOfParamEventsDiagnostics.UnknownParamEventIdentifier;
 import ccsds.csts.common.types.ListOfParamEventsDiagnostics.UnknownParamEventIdentifier.CHOICE;
-import esa.egos.csts.api.enums.ListOfParametersDiagnosticsEnum;
-import esa.egos.csts.api.functionalresources.IFunctionalResourceName;
+import esa.egos.csts.api.diagnostics.ListOfParametersDiagnosticsEnum;
 import esa.egos.csts.api.functionalresources.impl.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.impl.FunctionalResourceType;
-import esa.egos.csts.api.parameters.IListOfParametersDiagnostics;
-import esa.egos.csts.api.procedures.IProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
-import esa.egos.csts.api.types.ILabel;
-import esa.egos.csts.api.types.IName;
-import esa.egos.csts.api.types.impl.Label;
-import esa.egos.csts.api.types.impl.Name;
+import esa.egos.csts.api.types.Label;
+import esa.egos.csts.api.types.Name;
 
-public class ListOfParametersDiagnostics implements IListOfParametersDiagnostics {
+public class ListOfParametersDiagnostics {
 
 	private final ListOfParametersDiagnosticsEnum enumeration;
 	private String undefinedDefault;
 	private String unknownListName;
 	private FunctionalResourceType unknownFunctionalResourceType;
-	private IFunctionalResourceName unknownFunctionalResourceName;
+	private FunctionalResourceName unknownFunctionalResourceName;
 	private ProcedureType unknownProcedureType;
-	private IProcedureInstanceIdentifier unknownProcedureInstanceIdentifier;
-	private List<ILabel> unknownParameterLabels;
-	private List<IName> unknownParameterNames;
+	private ProcedureInstanceIdentifier unknownProcedureInstanceIdentifier;
+	private List<Label> unknownParameterLabels;
+	private List<Name> unknownParameterNames;
 
 	public ListOfParametersDiagnostics(ListOfParametersDiagnosticsEnum enumeration) {
 		this.enumeration = enumeration;
@@ -42,87 +38,71 @@ public class ListOfParametersDiagnostics implements IListOfParametersDiagnostics
 		}
 	}
 
-	@Override
 	public String getUndefinedDefault() {
 		return undefinedDefault;
 	}
 
-	@Override
 	public void setUndefinedDefault(String undefinedDefault) {
 		this.undefinedDefault = undefinedDefault;
 	}
 
-	@Override
 	public String getUnknownListName() {
 		return unknownListName;
 	}
 
-	@Override
 	public void setUnknownListName(String unknownListName) {
 		this.unknownListName = unknownListName;
 	}
 
-	@Override
 	public FunctionalResourceType getUnknownFunctionalResourceType() {
 		return unknownFunctionalResourceType;
 	}
 
-	@Override
 	public void setUnknownFunctionalResourceType(FunctionalResourceType unknownFunctionalResourceType) {
 		this.unknownFunctionalResourceType = unknownFunctionalResourceType;
 	}
 
-	@Override
-	public IFunctionalResourceName getUnknownFunctionalResourceName() {
+	public FunctionalResourceName getUnknownFunctionalResourceName() {
 		return unknownFunctionalResourceName;
 	}
 
-	@Override
-	public void setUnknownFunctionalResourceName(IFunctionalResourceName unknownFunctionalResourceName) {
+	public void setUnknownFunctionalResourceName(FunctionalResourceName unknownFunctionalResourceName) {
 		this.unknownFunctionalResourceName = unknownFunctionalResourceName;
 	}
 
-	@Override
 	public ProcedureType getUnknownProcedureType() {
 		return unknownProcedureType;
 	}
 
-	@Override
 	public void setUnknownProcedureType(ProcedureType unknownProcedureType) {
 		this.unknownProcedureType = unknownProcedureType;
 	}
 
-	@Override
-	public IProcedureInstanceIdentifier getUnknownProcedureInstanceIdentifier() {
+	public ProcedureInstanceIdentifier getUnknownProcedureInstanceIdentifier() {
 		return unknownProcedureInstanceIdentifier;
 	}
 
-	@Override
-	public void setUnknownProcedureInstanceIdentifier(IProcedureInstanceIdentifier unknownProcedureInstanceIdentifier) {
+	public void setUnknownProcedureInstanceIdentifier(ProcedureInstanceIdentifier unknownProcedureInstanceIdentifier) {
 		this.unknownProcedureInstanceIdentifier = unknownProcedureInstanceIdentifier;
 	}
 
-	@Override
 	public ListOfParametersDiagnosticsEnum getEnumeration() {
 		return enumeration;
 	}
 
-	@Override
-	public List<ILabel> getUnknownParameterLabels() {
+	public List<Label> getUnknownParameterLabels() {
 		return unknownParameterLabels;
 	}
 
-	@Override
-	public List<IName> getUnknownParameterNames() {
+	public List<Name> getUnknownParameterNames() {
 		return unknownParameterNames;
 	}
 
-	@Override
 	public ListOfParamEventsDiagnostics encode() {
 		ListOfParamEventsDiagnostics diagnostics = new ListOfParamEventsDiagnostics();
 		switch (enumeration) {
 		case UNDEFINED_DEFAULT:
-			diagnostics.setUndefinedDefault(new AdditionalText(undefinedDefault.getBytes(StandardCharsets.UTF_16BE)));
+			diagnostics.setUndefinedDefault(new AdditionalText(undefinedDefault.getBytes(StandardCharsets.UTF_8)));
 			break;
 		case UNKNOWN_FUNCTIONAL_RESOURCE_NAME:
 			diagnostics.setUnknownFunctionalResourceName(unknownFunctionalResourceName.encode());
@@ -132,19 +112,19 @@ public class ListOfParametersDiagnostics implements IListOfParametersDiagnostics
 			break;
 		case UNKNOWN_PARAMETER_IDENTIFIER:
 			diagnostics.setUnknownParamEventIdentifier(new UnknownParamEventIdentifier());
-			for (ILabel label : unknownParameterLabels) {
+			for (Label label : unknownParameterLabels) {
 				CHOICE type = new CHOICE();
 				type.setParamEventLabel(label.encode());
 				diagnostics.getUnknownParamEventIdentifier().getCHOICE().add(type);
 			}
-			for (IName name : unknownParameterNames) {
+			for (Name name : unknownParameterNames) {
 				CHOICE type = new CHOICE();
 				type.setParamEventName(name.encode());
 				diagnostics.getUnknownParamEventIdentifier().getCHOICE().add(type);
 			}
 			break;
 		case UNKNOWN_LIST_NAME:
-			diagnostics.setUnknownListName(new BerVisibleString(unknownListName.getBytes(StandardCharsets.UTF_16BE)));
+			diagnostics.setUnknownListName(new BerVisibleString(unknownListName.getBytes(StandardCharsets.UTF_8)));
 			break;
 		case UNKNOWN_PROCEDURE_INSTANCE_IDENTIFIER:
 			diagnostics.setUnknownProcedureInstanceId(unknownProcedureInstanceIdentifier.encode());
@@ -156,12 +136,12 @@ public class ListOfParametersDiagnostics implements IListOfParametersDiagnostics
 		return diagnostics;
 	}
 
-	public static IListOfParametersDiagnostics decode(ListOfParamEventsDiagnostics diag) {
+	public static ListOfParametersDiagnostics decode(ListOfParamEventsDiagnostics diag) {
 		ListOfParametersDiagnostics diagnostics = null;
 
 		if (diag.getUndefinedDefault() != null) {
 			diagnostics = new ListOfParametersDiagnostics(ListOfParametersDiagnosticsEnum.UNDEFINED_DEFAULT);
-			diagnostics.setUndefinedDefault(new String(diag.getUndefinedDefault().value, StandardCharsets.UTF_16BE));
+			diagnostics.setUndefinedDefault(new String(diag.getUndefinedDefault().value, StandardCharsets.UTF_8));
 		} else if (diag.getUnknownFunctionalResourceName() != null) {
 			diagnostics = new ListOfParametersDiagnostics(
 					ListOfParametersDiagnosticsEnum.UNKNOWN_FUNCTIONAL_RESOURCE_NAME);
@@ -174,7 +154,7 @@ public class ListOfParametersDiagnostics implements IListOfParametersDiagnostics
 					FunctionalResourceType.decode(diag.getUnknownFunctionalResourceType()));
 		} else if (diag.getUnknownListName() != null) {
 			diagnostics = new ListOfParametersDiagnostics(ListOfParametersDiagnosticsEnum.UNKNOWN_LIST_NAME);
-			diagnostics.setUnknownListName(new String(diag.getUnknownListName().value, StandardCharsets.UTF_16BE));
+			diagnostics.setUnknownListName(new String(diag.getUnknownListName().value, StandardCharsets.UTF_8));
 		} else if (diag.getUnknownProcedureInstanceId() != null) {
 			diagnostics = new ListOfParametersDiagnostics(
 					ListOfParametersDiagnosticsEnum.UNKNOWN_PROCEDURE_INSTANCE_IDENTIFIER);

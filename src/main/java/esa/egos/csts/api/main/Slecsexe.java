@@ -10,13 +10,13 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-import esa.egos.csts.api.enums.AppRole;
-import esa.egos.csts.api.enums.Result;
-import esa.egos.csts.api.exception.ApiException;
-import esa.egos.csts.api.proxy.impl.MasterLink;
-import esa.egos.csts.api.proxy.xml.ProviderConfig;
-import esa.egos.csts.api.proxy.xml.ProxyConfig;
-import esa.egos.csts.api.proxy.xml.ProxyRoleEnum;
+import esa.egos.csts.api.enumerations.AppRole;
+import esa.egos.csts.api.enumerations.Result;
+import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.proxy.impl.MasterLink;
+import esa.egos.proxy.xml.ProviderConfig;
+import esa.egos.proxy.xml.ProxyConfig;
+import esa.egos.proxy.xml.ProxyRoleEnum;
 
 public class Slecsexe
 {

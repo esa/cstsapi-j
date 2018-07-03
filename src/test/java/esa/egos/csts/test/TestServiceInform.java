@@ -1,16 +1,16 @@
 package esa.egos.csts.test;
 
-import esa.egos.csts.api.exception.ApiException;
+import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IBind;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IPeerAbort;
 import esa.egos.csts.api.operations.IUnbind;
-import esa.egos.csts.api.proxy.del.ITranslator;
 import esa.egos.csts.api.serviceinstance.IServiceInform;
 import esa.egos.csts.api.serviceinstance.IServiceInitiate;
 import esa.egos.csts.api.serviceinstance.IServiceInstance;
+import esa.egos.proxy.del.ITranslator;
 
 public class TestServiceInform implements IServiceInform {
 	protected IServiceInstance siAdmin;
@@ -51,7 +51,7 @@ public class TestServiceInform implements IServiceInform {
 				// the result value of operations need to be handled by procedures!
 				// temporary exception for Association Control
 				if (IBind.class.isAssignableFrom(operation.getClass())
-						|| !IUnbind.class.isAssignableFrom(operation.getClass())
+						|| IUnbind.class.isAssignableFrom(operation.getClass())
 						|| IPeerAbort.class.isAssignableFrom(operation.getClass())) {
 					cop.setPositiveResult();
 				}

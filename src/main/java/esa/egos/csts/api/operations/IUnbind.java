@@ -2,7 +2,7 @@ package esa.egos.csts.api.operations;
 
 import ccsds.csts.association.control.types.UnbindInvocation;
 import ccsds.csts.association.control.types.UnbindReturn;
-import esa.egos.csts.api.enums.UnbindReason;
+import esa.egos.proxy.enums.UnbindReason;
 
 public interface IUnbind extends IConfirmedOperation{
 
@@ -20,8 +20,12 @@ public interface IUnbind extends IConfirmedOperation{
      */
     void setUnbindReason(UnbindReason reason);
 
+    UnbindReturn encodeUnbindReturn();
+    
 	void decodeUnbindReturn(UnbindReturn unbindReturn);
 
 	void decodeUnbindInvocation(UnbindInvocation unbindInvocation);
+
+	UnbindInvocation encodeUnbindInvocation();
 	
 }

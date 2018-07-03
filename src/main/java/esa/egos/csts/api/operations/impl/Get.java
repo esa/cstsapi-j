@@ -18,32 +18,36 @@ import ccsds.csts.common.operations.pdus.QualifiedParametersSequence;
 import ccsds.csts.common.types.Embedded;
 import ccsds.csts.common.types.Extended;
 import esa.egos.csts.api.diagnostics.Diagnostic;
-import esa.egos.csts.api.enums.OperationResult;
-import esa.egos.csts.api.exception.ApiException;
+import esa.egos.csts.api.enumerations.OperationType;
+import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.operations.AbstractConfirmedOperation;
 import esa.egos.csts.api.operations.IGet;
-import esa.egos.csts.api.parameters.IListOfParameters;
-import esa.egos.csts.api.parameters.IListOfParametersDiagnostics;
-import esa.egos.csts.api.parameters.IQualifiedParameter;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.parameters.impl.ListOfParametersDiagnostics;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
-import esa.egos.csts.api.util.impl.ExtensionUtils;
+import esa.egos.csts.api.util.impl.CSTSUtils;
 
 /**
  * The GET operation (confirmed)
  */
 public class Get extends AbstractConfirmedOperation implements IGet {
 
+	private final OperationType type = OperationType.GET;
+	
 	private final static int versionNumber = 1;
 
-	private IListOfParameters listOfParameters;
-	private List<IQualifiedParameter> qualifiedParameters;
-	private IListOfParametersDiagnostics listOfParametersDiagnostics;
+	private ListOfParameters listOfParameters;
+	private List<QualifiedParameter> qualifiedParameters;
+	private ListOfParametersDiagnostics listOfParametersDiagnostics;
 
 	public Get() {
 		super(versionNumber);
 		qualifiedParameters = new ArrayList<>();
+	}
+	
+	@Override
+	public OperationType getType() {
+		return type;
 	}
 
 	@Override
@@ -52,27 +56,27 @@ public class Get extends AbstractConfirmedOperation implements IGet {
 	}
 
 	@Override
-	public IListOfParameters getListOfParameters() {
+	public ListOfParameters getListOfParameters() {
 		return listOfParameters;
 	}
 
 	@Override
-	public void setListOfParameters(IListOfParameters listOfParameters) {
+	public void setListOfParameters(ListOfParameters listOfParameters) {
 		this.listOfParameters = listOfParameters;
 	}
 
 	@Override
-	public List<IQualifiedParameter> getQualifiedParameters() {
+	public List<QualifiedParameter> getQualifiedParameters() {
 		return qualifiedParameters;
 	}
 
 	@Override
-	public IListOfParametersDiagnostics getListOfParametersDiagnostics() {
+	public ListOfParametersDiagnostics getListOfParametersDiagnostics() {
 		return listOfParametersDiagnostics;
 	}
 
 	@Override
-	public void setListOfParametersDiagnostics(IListOfParametersDiagnostics listOfParametersDiagnostics) {
+	public void setListOfParametersDiagnostics(ListOfParametersDiagnostics listOfParametersDiagnostics) {
 		this.listOfParametersDiagnostics = listOfParametersDiagnostics;
 	}
 
@@ -116,9 +120,7 @@ public class Get extends AbstractConfirmedOperation implements IGet {
 
 	@Override
 	public synchronized void verifyReturnArguments() throws ApiException {
-		if (getResult() == OperationResult.RES_invalid) {
-			throw new ApiException("Invalid operation results.");
-		}
+		super.verifyReturnArguments();
 		boolean unverified = false;
 		if (qualifiedParameters.isEmpty()) {
 			if (getDiagnostic() == null && listOfParametersDiagnostics == null) {
@@ -163,7 +165,7 @@ public class Get extends AbstractConfirmedOperation implements IGet {
 
 	@Override
 	public GetInvocation encodeGetInvocation() {
-		return encodeGetInvocation(ExtensionUtils.nonUsedExtension());
+		return encodeGetInvocation(CSTSUtils.nonUsedExtension());
 	}
 
 	@Override
@@ -207,15 +209,15 @@ public class Get extends AbstractConfirmedOperation implements IGet {
 	public GetPosReturnExt encodeGetPosReturnExt() {
 		GetPosReturnExt getPosReturnExt = new GetPosReturnExt();
 		QualifiedParametersSequence qualifiedParametersSequence = new QualifiedParametersSequence();
-		for (IQualifiedParameter param : qualifiedParameters) {
+		for (QualifiedParameter param : qualifiedParameters) {
 			qualifiedParametersSequence.getQualifiedParameter().add(param.encode());
 		}
 		getPosReturnExt.setQualifiedParameters(qualifiedParametersSequence);
 		// not used per definition
-		getPosReturnExt.setGetPosReturnExtExtension(ExtensionUtils.nonUsedExtension());
+		getPosReturnExt.setGetPosReturnExtExtension(CSTSUtils.nonUsedExtension());
 		// encode with a resizable output stream and an initial capacity of 128 bytes
 		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
-			getPosReturnExt.encode(os, false);
+			getPosReturnExt.encode(os);
 			getPosReturnExt.code = os.getArray();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -231,10 +233,10 @@ public class Get extends AbstractConfirmedOperation implements IGet {
 
 	@Override
 	protected void decodePositiveReturn(Extended positive) {
-		if (ExtensionUtils.equalsIdentifier(positive, OidValues.getPosReturnExt)) {
+		if (CSTSUtils.equalsIdentifier(positive, OidValues.getPosReturnExt)) {
 			GetPosReturnExt getPosReturnExt = new GetPosReturnExt();
 			try (ByteArrayInputStream is = new ByteArrayInputStream(positive.getExternal().getDataValue().value)) {
-				getPosReturnExt.decode(is, false);
+				getPosReturnExt.decode(is);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -278,7 +280,7 @@ public class Get extends AbstractConfirmedOperation implements IGet {
 	@Override
 	protected void decodeDiagnosticExtension() {
 		if (getDiagnostic().getDiagnosticExtension() != null) {
-			if (ExtensionUtils.equalsIdentifier(getDiagnostic().getDiagnosticExtension(), OidValues.getDiagnosticExt)) {
+			if (CSTSUtils.equalsIdentifier(getDiagnostic().getDiagnosticExtension(), OidValues.getDiagnosticExt)) {
 				GetDiagnosticExt getDiagnosticExt = new GetDiagnosticExt();
 				try (ByteArrayInputStream is = new ByteArrayInputStream(
 						getDiagnostic().getDiagnosticExtension().getDataValue().value)) {

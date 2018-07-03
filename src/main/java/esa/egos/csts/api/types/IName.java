@@ -1,24 +1,21 @@
 package esa.egos.csts.api.types;
 
 import ccsds.csts.common.types.Name;
-import esa.egos.csts.api.enums.ResourceIdentifier;
-import esa.egos.csts.api.functionalresources.IFunctionalResourceName;
-import esa.egos.csts.api.main.ObjectIdentifier;
+import esa.egos.csts.api.enumerations.ResourceIdentifier;
+import esa.egos.csts.api.functionalresources.impl.FunctionalResourceName;
+import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.procedures.IProcedureInstanceIdentifier;
 
+@Deprecated
 public interface IName {
 	
 	public ObjectIdentifier getIdentifier();
 	
 	public ResourceIdentifier getResourceIdentifier();
 	
-	public IFunctionalResourceName getFunctionalResourceName();
-	
-	public void setFunctionalResourceName(IFunctionalResourceName functionalResourceName);
+	public FunctionalResourceName getFunctionalResourceName();
 	
 	public IProcedureInstanceIdentifier getProcedureInstanceIdentifier();
-	
-	public void setProcedureInstanceIdentifier(IProcedureInstanceIdentifier procedureInstanceIdentifier);
 	
 	public Name encode();
 	

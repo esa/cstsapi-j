@@ -2,25 +2,32 @@ package esa.egos.csts.api.operations.impl;
 
 import ccsds.csts.common.operations.pdus.NotifyInvocation;
 import ccsds.csts.common.types.Extended;
-import esa.egos.csts.api.exception.ApiException;
+import esa.egos.csts.api.enumerations.OperationType;
+import esa.egos.csts.api.events.EventValue;
+import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.operations.AbstractOperation;
 import esa.egos.csts.api.operations.INotify;
-import esa.egos.csts.api.parameters.impl.EventValue;
-import esa.egos.csts.api.types.IName;
-import esa.egos.csts.api.types.impl.Name;
-import esa.egos.csts.api.types.impl.Time;
-import esa.egos.csts.api.util.impl.ExtensionUtils;
+import esa.egos.csts.api.types.Name;
+import esa.egos.csts.api.types.Time;
+import esa.egos.csts.api.util.impl.CSTSUtils;
 
 public class Notify extends AbstractOperation implements INotify {
 
+	private final OperationType type = OperationType.NOTIFY;
+	
 	private final static int versionNumber = 1;
 
 	private Time eventTime;
-	private IName eventName;
+	private Name eventName;
 	private EventValue eventValue;
 
 	public Notify() {
 		super(versionNumber, false);
+	}
+	
+	@Override
+	public OperationType getType() {
+		return type;
 	}
 
 	@Override
@@ -34,12 +41,12 @@ public class Notify extends AbstractOperation implements INotify {
 	}
 
 	@Override
-	public IName getEventName() {
+	public Name getEventName() {
 		return eventName;
 	}
 
 	@Override
-	public void setEventName(IName eventName) {
+	public void setEventName(Name eventName) {
 		this.eventName = eventName;
 	}
 
@@ -73,7 +80,7 @@ public class Notify extends AbstractOperation implements INotify {
 
 	@Override
 	public NotifyInvocation encodeNotifyInvocation() {
-		return encodeNotifyInvocation(ExtensionUtils.nonUsedExtension());
+		return encodeNotifyInvocation(CSTSUtils.nonUsedExtension());
 	}
 
 	@Override

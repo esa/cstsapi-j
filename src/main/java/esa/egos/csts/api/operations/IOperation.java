@@ -2,9 +2,10 @@ package esa.egos.csts.api.operations;
 
 import ccsds.csts.common.types.InvokeId;
 import ccsds.csts.service.instance.id.ServiceInstanceIdentifier;
-import esa.egos.csts.api.exception.ApiException;
-import esa.egos.csts.api.exception.ConfigException;
-import esa.egos.csts.api.procedures.IProcedureInstanceIdentifier;
+import esa.egos.csts.api.enumerations.OperationType;
+import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.exceptions.ConfigException;
+import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceIdentifier;
 import esa.egos.csts.api.util.ICredentials;
 
@@ -21,9 +22,9 @@ public interface IOperation {
 	int getOperationVersionNumber();
 
 	void setProcedureInstanceIdentifier(
-			IProcedureInstanceIdentifier procedureInstanceIdentifier);
+			ProcedureInstanceIdentifier procedureInstanceIdentifier);
 	
-	IProcedureInstanceIdentifier getProcedureInstanceIdentifier();
+	ProcedureInstanceIdentifier getProcedureInstanceIdentifier();
 	
     /**
      * Returns the Service Instance identifier
@@ -59,5 +60,7 @@ public interface IOperation {
     void setInvokeId(int id);
     
 	void setInvokeId(InvokeId invokeId);
+	
+	OperationType getType();
 	
 }

@@ -1,11 +1,11 @@
 package esa.egos.csts.test;
 
-import esa.egos.csts.api.enums.AlarmLevel;
-import esa.egos.csts.api.enums.Component;
-import esa.egos.csts.api.logging.CstsLogMessageType;
-import esa.egos.csts.api.logging.IReporter;
-import esa.egos.csts.api.procedures.IProcedureInstanceIdentifier;
+import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceIdentifier;
+import esa.egos.proxy.enums.AlarmLevel;
+import esa.egos.proxy.enums.Component;
+import esa.egos.proxy.logging.CstsLogMessageType;
+import esa.egos.proxy.logging.IReporter;
 
 public class TestReporter implements IReporter {
 
@@ -18,7 +18,7 @@ public class TestReporter implements IReporter {
 
 	@Override
 	public void logRecord(IServiceInstanceIdentifier sii,
-			IProcedureInstanceIdentifier procedureIdentifier,
+			ProcedureInstanceIdentifier procedureIdentifier,
 			Component component, AlarmLevel alarm, CstsLogMessageType type,
 			String message) {
 		// TODO Auto-generated method stub

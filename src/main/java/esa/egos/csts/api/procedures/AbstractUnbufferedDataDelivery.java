@@ -2,6 +2,7 @@ package esa.egos.csts.api.procedures;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -10,9 +11,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.openmuc.jasn1.ber.BerByteArrayOutputStream;
 
 import ccsds.csts.unbuffered.data.delivery.pdus.UnbufferedDataDeliveryPdu;
-import esa.egos.csts.api.enums.ProcedureTypeEnum;
-import esa.egos.csts.api.exception.ApiException;
-import esa.egos.csts.api.exception.ConfigException;
+import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.exceptions.ConfigException;
+import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IStart;
 import esa.egos.csts.api.operations.IStop;
@@ -21,13 +22,15 @@ import esa.egos.csts.api.operations.impl.Start;
 import esa.egos.csts.api.operations.impl.Stop;
 import esa.egos.csts.api.operations.impl.TransferData;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
+import esa.egos.csts.api.serviceinstance.IServiceInstanceInternal;
 import esa.egos.csts.api.serviceinstance.states.InactiveState;
+import esa.egos.csts.api.serviceinstance.states.ServiceInstanceStateEnum;
 
 // TODO check how to handle different users of this procedure with one single provider instance
 public abstract class AbstractUnbufferedDataDelivery extends AbstractStatefulProcedure
 		implements IUnbufferedDataDelivery {
 
-	private final ProcedureType type = new ProcedureType(ProcedureTypeEnum.unbufferedDataDelivery);
+	private final ProcedureType type = new ProcedureType(OIDs.unbufferedDataDelivery);
 
 	private ExecutorService executorService;
 	private BlockingQueue<ITransferData> queue;
@@ -38,12 +41,22 @@ public abstract class AbstractUnbufferedDataDelivery extends AbstractStatefulPro
 		executorService = Executors.newSingleThreadExecutor();
 	}
 	
-	protected ExecutorService getExecutorService() {
-		return executorService;
+	@Override
+	public ProcedureType getType() {
+		return type;
 	}
-	
-	protected BlockingQueue<ITransferData> getQueue() {
-		return queue;
+
+	protected synchronized void transferData() {
+		IServiceInstanceInternal serviceInstanceInternal = getServiceInstance().getInternal();
+		try {
+			while (getState().getStateEnum() == ServiceInstanceStateEnum.active) {
+				serviceInstanceInternal.forwardInitiatePxyOpInv(queue.take(), false);
+			}
+		} catch (InterruptedException e) {
+			// shutdown happened here and the exception is desired
+			// TODO check if handling is necessary
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -51,11 +64,14 @@ public abstract class AbstractUnbufferedDataDelivery extends AbstractStatefulPro
 		return queue.add(transferData);
 	}
 	
-	@Override
-	public ProcedureType getType() {
-		return type;
+	protected void activateDataDelivery() {
+		executorService.execute(this::transferData);
 	}
-
+	
+	protected List<Runnable> shutdownDataDelivery() {
+		return executorService.shutdownNow();
+	}
+	
 	protected void initOperationSet() {
 		getDeclaredOperations().add(IStart.class);
 		getDeclaredOperations().add(IStop.class);
