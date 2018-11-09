@@ -3,7 +3,7 @@ package esa.egos.proxy.tml;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import esa.egos.proxy.enums.PeerAbortDiagnostics;
+import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.proxy.tml.types.EE_APIPX_ISP1ProtocolAbortOriginator;
 import esa.egos.proxy.tml.types.EE_APIPX_TMLErrors;
 import esa.egos.proxy.tml.types.EE_APIPX_TMLTimer;
@@ -53,7 +53,7 @@ public class PeerAbortingState implements ITMLState
         {
             if (!this.channel.isLocalPeerAbort())
             {
-                if (PeerAbortDiagnostics.getDiagByCode(ub) != null)
+                if (PeerAbortDiagnostics.getPeerAbortDiagnosticByCode(ub) != null)
                 {
                     // SLE diagnostic
                     // HL.PEER-ABORTind

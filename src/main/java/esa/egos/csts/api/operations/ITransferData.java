@@ -1,11 +1,11 @@
 package esa.egos.csts.api.operations;
 
 import ccsds.csts.common.operations.pdus.TransferDataInvocation;
-import ccsds.csts.common.types.Embedded;
-import ccsds.csts.common.types.Extended;
+import esa.egos.csts.api.extensions.EmbeddedData;
+import esa.egos.csts.api.extensions.Extension;
 import esa.egos.csts.api.types.Time;
 
-public interface ITransferData extends IOperation{
+public interface ITransferData extends IOperation {
 
     void setData(byte[] data);
 
@@ -20,13 +20,15 @@ public interface ITransferData extends IOperation{
 	Time getGenerationTime();
 
 	TransferDataInvocation encodeTransferDataInvocation();
-    
-	TransferDataInvocation encodeTransferDataInvocation(Extended extended);
-
-	TransferDataInvocation encodeTransferDataInvocation(Embedded extendedData);
-
-	TransferDataInvocation encodeTransferDataInvocation(Embedded extendedData, Extended extended);
-
+	
 	void decodeTransferDataInvocation(TransferDataInvocation transferDataInvocation);
+
+	void setEmbeddedData(EmbeddedData embeddedData);
+
+	EmbeddedData getEmbeddedData();
+
+	void setInvocationExtension(EmbeddedData embedded);
+
+	Extension getInvocationExtension();
 	
 }

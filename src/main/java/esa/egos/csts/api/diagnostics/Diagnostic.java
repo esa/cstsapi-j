@@ -1,6 +1,5 @@
 package esa.egos.csts.api.diagnostics;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,122 +8,182 @@ import ccsds.csts.common.types.Appellation;
 import ccsds.csts.common.types.Diagnostic.ConflictingValues;
 import ccsds.csts.common.types.Diagnostic.ConflictingValues.Appellations;
 import ccsds.csts.common.types.Diagnostic.InvalidParameterValue;
-import ccsds.csts.common.types.Embedded;
+import esa.egos.csts.api.extensions.EmbeddedData;
+import esa.egos.csts.api.util.impl.CSTSUtils;
 
+/**
+ * This class represents the Diagnostic of an operation in case the result is
+ * negative.
+ */
 public class Diagnostic {
 
-	private final DiagnosticEnum enumeration;
+	private final DiagnosticType type;
 	private String text;
 	private String appellation;
 	private List<String> appellations;
-	// check if solvable independent of the type Embedded
-	private Embedded diagnosticExtension;
+	private final EmbeddedData diagnosticExtension;
 
-	public Diagnostic(DiagnosticEnum enumeration) {
-		this.enumeration = enumeration;
-		if (this.enumeration == DiagnosticEnum.CONFLICTING_VALUES) {
+	/**
+	 * Instantiates a new Diagnostic specified by its type.
+	 * 
+	 * @param type
+	 *            the Diagnostic type
+	 */
+	public Diagnostic(DiagnosticType type) {
+		this.type = type;
+		if (this.type == DiagnosticType.CONFLICTING_VALUES) {
 			appellations = new ArrayList<>();
 		}
+		diagnosticExtension = null;
 	}
 
-	public Diagnostic(Embedded diagnosticExtension) {
-		this.enumeration = DiagnosticEnum.EXTENDED;
+	/**
+	 * Instantiates a new extended Diagnostic.
+	 * 
+	 * @param diagnosticExtension
+	 *            the Diagnostic extension
+	 */
+	public Diagnostic(EmbeddedData diagnosticExtension) {
+		this.type = DiagnosticType.EXTENDED;
 		this.diagnosticExtension = diagnosticExtension;
 	}
 
+	/**
+	 * Returns the Diagnostic type.
+	 * @return the Diagnostic type
+	 */
+	public DiagnosticType getType() {
+		return type;
+	}
+
+	/**
+	 * Indicates whether this Diagnostic is extended.
+	 * @return true is this Diagnostic is extended, false otherwise
+	 */
+	public boolean isExtended() {
+		return type == DiagnosticType.EXTENDED;
+	}
+
+	/**
+	 * Returns the text.
+	 * @return the text
+	 */
 	public String getText() {
 		return text;
 	}
 
+	/**
+	 * Sets the text.
+	 * @param text the text
+	 */
 	public void setText(String text) {
 		this.text = text;
 	}
 
+	/**
+	 * Returns the appellation.
+	 * @return the appellation
+	 */
 	public String getAppellation() {
 		return appellation;
 	}
 
-	public void setAppellation(String appelation) {
-		this.appellation = appelation;
+	/**
+	 * Sets the appellation.
+	 * @param appellation the appellation
+	 */
+	public void setAppellation(String appellation) {
+		this.appellation = appellation;
 	}
 
-	public DiagnosticEnum getEnumeration() {
-		return enumeration;
-	}
-
+	/**
+	 * Returns the list of appellations.
+	 * @return the list of appellations
+	 */
 	public List<String> getAppellations() {
 		return appellations;
 	}
 
-	public boolean isExtended() {
-		return enumeration == DiagnosticEnum.EXTENDED;
-	}
-
-	public Embedded getDiagnosticExtension() {
+	/**
+	 * Returns the Diagnostic extension.
+	 * @return the Diagnostic extension
+	 */
+	public EmbeddedData getDiagnosticExtension() {
 		return diagnosticExtension;
 	}
 
+	/**
+	 * Encodes this Diagnostic into a CCSDS Diagnostic type.
+	 * 
+	 * @return the CCSDS Diagnostic type representing this Diagnostic
+	 */
 	public ccsds.csts.common.types.Diagnostic encode() {
 
 		ccsds.csts.common.types.Diagnostic diagnostic = new ccsds.csts.common.types.Diagnostic();
 
-		switch (enumeration) {
+		switch (type) {
 		case CONFLICTING_VALUES:
 			ConflictingValues values = new ConflictingValues();
-			values.setText(new AdditionalText(text.getBytes(StandardCharsets.UTF_8)));
+			values.setText(new AdditionalText(CSTSUtils.encodeString(text)));
 			Appellations appellations = new Appellations();
 			for (String s : this.appellations) {
-				appellations.getAppellation().add(new Appellation(s.getBytes(StandardCharsets.UTF_8)));
+				appellations.getAppellation().add(new Appellation(CSTSUtils.encodeString(s)));
 			}
 			values.setAppellations(appellations);
 			diagnostic.setConflictingValues(values);
 			break;
 		case INVALID_PARAMATER_VALUE:
 			InvalidParameterValue value = new InvalidParameterValue();
-			value.setText(new AdditionalText(text.getBytes(StandardCharsets.UTF_8)));
-			value.setAppellation(new Appellation(appellation.getBytes(StandardCharsets.UTF_8)));
+			value.setText(new AdditionalText(CSTSUtils.encodeString(text)));
+			value.setAppellation(new Appellation(CSTSUtils.encodeString(appellation)));
 			diagnostic.setInvalidParameterValue(value);
 			break;
 		case EXTENDED:
-			diagnostic.setDiagnosticExtension(diagnosticExtension);
+			diagnostic.setDiagnosticExtension(diagnosticExtension.encode());
 			break;
 		case OTHER_REASON:
-			diagnostic.setOtherReason(new AdditionalText(text.getBytes(StandardCharsets.UTF_8)));
+			diagnostic.setOtherReason(new AdditionalText(CSTSUtils.encodeString(text)));
 			break;
 		case UNSUPPORTED_OPTION:
-			diagnostic.setUnsupportedOption(new AdditionalText(text.getBytes(StandardCharsets.UTF_8)));
+			diagnostic.setUnsupportedOption(new AdditionalText(CSTSUtils.encodeString(text)));
 			break;
 		}
 
 		return diagnostic;
 	}
 
-	public static Diagnostic decode(ccsds.csts.common.types.Diagnostic diag) {
+	/**
+	 * Decodes a specified CCSDS Diagnostic type.
+	 * 
+	 * @param diagnostic
+	 *            the specified CCSDS Diagnostic type
+	 * @return a new Diagnostic decoded from the specified CCSDS Diagnostic type
+	 */
+	public static Diagnostic decode(ccsds.csts.common.types.Diagnostic diagnostic) {
 
-		Diagnostic diagnostic = null;
+		Diagnostic newDiagnostic = null;
 
-		if (diag.getConflictingValues() != null) {
-			diagnostic = new Diagnostic(DiagnosticEnum.CONFLICTING_VALUES);
-			diagnostic.setText(new String(diag.getConflictingValues().getText().value, StandardCharsets.UTF_8));
-			for (Appellation appellation : diag.getConflictingValues().getAppellations().getAppellation()) {
-				diagnostic.getAppellations().add(new String(appellation.value, StandardCharsets.UTF_8));
+		if (diagnostic.getConflictingValues() != null) {
+			newDiagnostic = new Diagnostic(DiagnosticType.CONFLICTING_VALUES);
+			newDiagnostic.setText(CSTSUtils.decodeString(diagnostic.getConflictingValues().getText().value));
+			for (Appellation appellation : diagnostic.getConflictingValues().getAppellations().getAppellation()) {
+				newDiagnostic.getAppellations().add(CSTSUtils.decodeString(appellation.value));
 			}
-		} else if (diag.getDiagnosticExtension() != null) {
-			diagnostic = new Diagnostic(diag.getDiagnosticExtension());
-		} else if (diag.getInvalidParameterValue() != null) {
-			diagnostic = new Diagnostic(DiagnosticEnum.INVALID_PARAMATER_VALUE);
-			diagnostic.setText(new String(diag.getInvalidParameterValue().getText().value, StandardCharsets.UTF_8));
-			diagnostic.setAppellation(
-					new String(diag.getInvalidParameterValue().getAppellation().value, StandardCharsets.UTF_8));
-		} else if (diag.getOtherReason() != null) {
-			diagnostic = new Diagnostic(DiagnosticEnum.OTHER_REASON);
-			diagnostic.setText(new String(diag.getOtherReason().value, StandardCharsets.UTF_8));
-		} else if (diag.getUnsupportedOption() != null) {
-			diagnostic = new Diagnostic(DiagnosticEnum.UNSUPPORTED_OPTION);
-			diagnostic.setText(new String(diag.getUnsupportedOption().value, StandardCharsets.UTF_8));
+		} else if (diagnostic.getDiagnosticExtension() != null) {
+			newDiagnostic = new Diagnostic(EmbeddedData.decode(diagnostic.getDiagnosticExtension()));
+		} else if (diagnostic.getInvalidParameterValue() != null) {
+			newDiagnostic = new Diagnostic(DiagnosticType.INVALID_PARAMATER_VALUE);
+			newDiagnostic.setText(CSTSUtils.decodeString(diagnostic.getInvalidParameterValue().getText().value));
+			newDiagnostic.setAppellation(CSTSUtils.decodeString(diagnostic.getInvalidParameterValue().getAppellation().value));
+		} else if (diagnostic.getOtherReason() != null) {
+			newDiagnostic = new Diagnostic(DiagnosticType.OTHER_REASON);
+			newDiagnostic.setText(CSTSUtils.decodeString(diagnostic.getOtherReason().value));
+		} else if (diagnostic.getUnsupportedOption() != null) {
+			newDiagnostic = new Diagnostic(DiagnosticType.UNSUPPORTED_OPTION);
+			newDiagnostic.setText(CSTSUtils.decodeString(diagnostic.getUnsupportedOption().value));
 		}
 
-		return diagnostic;
+		return newDiagnostic;
 	}
 
 }

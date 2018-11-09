@@ -2,25 +2,26 @@ package esa.egos.csts.api.operations;
 
 import ccsds.csts.common.operations.pdus.StartInvocation;
 import ccsds.csts.common.operations.pdus.StartReturn;
-import ccsds.csts.common.types.Extended;
-import esa.egos.csts.api.enumerations.StartDiagnostic;
+import esa.egos.csts.api.diagnostics.StartDiagnostic;
+import esa.egos.csts.api.extensions.EmbeddedData;
+import esa.egos.csts.api.extensions.Extension;
 
 public interface IStart extends IConfirmedOperation {
 
-	StartDiagnostic getStartDiagnostics();
+	StartDiagnostic getStartDiagnostic();
 
-	void setStartDiagnostics(StartDiagnostic startDiagnostics);
+	void setStartDiagnostic(StartDiagnostic startDiagnostics);
 
 	StartInvocation encodeStartInvocation();
-
-	StartInvocation encodeStartInvocation(Extended extended);
 
 	void decodeStartInvocation(StartInvocation startInvocation);
 
 	StartReturn encodeStartReturn();
 
-	StartReturn encodeStartReturn(Extended resultExtension);
-
 	void decodeStartReturn(StartReturn startReturn);
+
+	void setInvocationExtension(EmbeddedData embedded);
+
+	Extension getInvocationExtension();
 
 }

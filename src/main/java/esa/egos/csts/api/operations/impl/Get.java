@@ -6,48 +6,62 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openmuc.jasn1.ber.BerByteArrayOutputStream;
-import org.openmuc.jasn1.ber.types.BerEmbeddedPdv.Identification;
-import org.openmuc.jasn1.ber.types.BerOctetString;
 
 import ccsds.csts.common.operations.pdus.GetDiagnosticExt;
 import ccsds.csts.common.operations.pdus.GetInvocation;
 import ccsds.csts.common.operations.pdus.GetPosReturnExt;
 import ccsds.csts.common.operations.pdus.GetReturn;
-import ccsds.csts.common.operations.pdus.OidValues;
 import ccsds.csts.common.operations.pdus.QualifiedParametersSequence;
-import ccsds.csts.common.types.Embedded;
-import ccsds.csts.common.types.Extended;
 import esa.egos.csts.api.diagnostics.Diagnostic;
+import esa.egos.csts.api.diagnostics.ListOfParametersDiagnostics;
 import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.extensions.EmbeddedData;
+import esa.egos.csts.api.extensions.Extension;
+import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.operations.AbstractConfirmedOperation;
 import esa.egos.csts.api.operations.IGet;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
-import esa.egos.csts.api.parameters.impl.ListOfParametersDiagnostics;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
-import esa.egos.csts.api.util.impl.CSTSUtils;
 
 /**
  * The GET operation (confirmed)
  */
 public class Get extends AbstractConfirmedOperation implements IGet {
 
-	private final OperationType type = OperationType.GET;
-	
-	private final static int versionNumber = 1;
+	private static final OperationType TYPE = OperationType.GET;
 
+	/**
+	 * The list of prarameters (invocation).
+	 */
 	private ListOfParameters listOfParameters;
+
+	/**
+	 * The list of qualified parameters (return).
+	 */
 	private List<QualifiedParameter> qualifiedParameters;
+
+	/**
+	 * The list of parameters diagnostic (negative return).
+	 */
 	private ListOfParametersDiagnostics listOfParametersDiagnostics;
 
+	/**
+	 * The invocation extension.
+	 */
+	private Extension invocationExtension;
+
+	/**
+	 * The constructor of a GET operation.
+	 */
 	public Get() {
-		super(versionNumber);
 		qualifiedParameters = new ArrayList<>();
+		invocationExtension = Extension.notUsed();
 	}
-	
+
 	@Override
 	public OperationType getType() {
-		return type;
+		return TYPE;
 	}
 
 	@Override
@@ -78,6 +92,7 @@ public class Get extends AbstractConfirmedOperation implements IGet {
 	@Override
 	public void setListOfParametersDiagnostics(ListOfParametersDiagnostics listOfParametersDiagnostics) {
 		this.listOfParametersDiagnostics = listOfParametersDiagnostics;
+		setDiagnostic(new Diagnostic(encodeGetDiagnosticExt()));
 	}
 
 	@Override
@@ -87,7 +102,7 @@ public class Get extends AbstractConfirmedOperation implements IGet {
 		if (listOfParameters == null) {
 			throw new ApiException("Invalid GET invocation arguments.");
 		}
-		switch (listOfParameters.getListOfParametersEnum()) {
+		switch (listOfParameters.getType()) {
 		case EMPTY:
 			// automatically valid
 			break;
@@ -123,10 +138,10 @@ public class Get extends AbstractConfirmedOperation implements IGet {
 		super.verifyReturnArguments();
 		boolean unverified = false;
 		if (qualifiedParameters.isEmpty()) {
-			if (getDiagnostic() == null && listOfParametersDiagnostics == null) {
+			if (listOfParametersDiagnostics == null) {
 				unverified = true;
 			} else if (listOfParametersDiagnostics != null) {
-				switch (listOfParametersDiagnostics.getEnumeration()) {
+				switch (listOfParametersDiagnostics.getType()) {
 				case UNDEFINED_DEFAULT:
 					unverified = listOfParametersDiagnostics.getUndefinedDefault().isEmpty();
 					break;
@@ -153,7 +168,7 @@ public class Get extends AbstractConfirmedOperation implements IGet {
 			}
 		}
 		if (unverified) {
-			throw new ApiException("Invalid GET returns arguments.");
+			throw new ApiException("Invalid GET return arguments.");
 		}
 	}
 
@@ -164,16 +179,21 @@ public class Get extends AbstractConfirmedOperation implements IGet {
 	}
 
 	@Override
-	public GetInvocation encodeGetInvocation() {
-		return encodeGetInvocation(CSTSUtils.nonUsedExtension());
+	public Extension getInvocationExtension() {
+		return invocationExtension;
 	}
 
 	@Override
-	public GetInvocation encodeGetInvocation(Extended extension) {
+	public void setInvocationExtension(EmbeddedData embedded) {
+		invocationExtension = Extension.of(embedded);
+	}
+
+	@Override
+	public GetInvocation encodeGetInvocation() {
 		GetInvocation getInvocation = new GetInvocation();
 		getInvocation.setStandardInvocationHeader(encodeStandardInvocationHeader());
 		getInvocation.setListOfParameters(listOfParameters.encode());
-		getInvocation.setGetInvocationExtension(extension);
+		getInvocation.setGetInvocationExtension(invocationExtension.encode());
 		return getInvocation;
 	}
 
@@ -181,6 +201,7 @@ public class Get extends AbstractConfirmedOperation implements IGet {
 	public void decodeGetInvocation(GetInvocation getInvocation) {
 		decodeStandardInvocationHeader(getInvocation.getStandardInvocationHeader());
 		listOfParameters = ListOfParameters.decode(getInvocation.getListOfParameters());
+		invocationExtension = Extension.decode(getInvocation.getGetInvocationExtension());
 	}
 
 	@Override
@@ -189,24 +210,11 @@ public class Get extends AbstractConfirmedOperation implements IGet {
 	}
 
 	@Override
-	public GetReturn encodeGetReturn(Extended resultExtension) {
-		return encodeStandardReturnHeader(GetReturn.class, resultExtension);
-	}
-	
-	@Override
-	protected Extended encodePositiveReturn() {
-		Extended positive = new Extended();
-		Embedded external = new Embedded();
-		Identification identification = new Identification();
-		identification.setSyntax(OidValues.getPosReturnExt);
-		external.setIdentification(identification);
-		external.setDataValue(new BerOctetString(encodeGetPosReturnExt().code));
-		positive.setExternal(external);
-		return positive;
+	protected void extendPositiveResult() {
+		setReturnExtension(encodeGetPosReturnExt());
 	}
 
-	@Override
-	public GetPosReturnExt encodeGetPosReturnExt() {
+	private EmbeddedData encodeGetPosReturnExt() {
 		GetPosReturnExt getPosReturnExt = new GetPosReturnExt();
 		QualifiedParametersSequence qualifiedParametersSequence = new QualifiedParametersSequence();
 		for (QualifiedParameter param : qualifiedParameters) {
@@ -214,7 +222,7 @@ public class Get extends AbstractConfirmedOperation implements IGet {
 		}
 		getPosReturnExt.setQualifiedParameters(qualifiedParametersSequence);
 		// not used per definition
-		getPosReturnExt.setGetPosReturnExtExtension(CSTSUtils.nonUsedExtension());
+		getPosReturnExt.setGetPosReturnExtExtension(encodeGetPosReturnExtExtension().encode());
 		// encode with a resizable output stream and an initial capacity of 128 bytes
 		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
 			getPosReturnExt.encode(os);
@@ -223,48 +231,20 @@ public class Get extends AbstractConfirmedOperation implements IGet {
 			e.printStackTrace();
 		}
 
-		return getPosReturnExt;
+		return EmbeddedData.of(OIDs.getPosReturnExt, getPosReturnExt.code);
 	}
 
-	@Override
-	public void decodeGetReturn(GetReturn getReturn) {
-		decodeStandardReturnHeader(getReturn);
+	/**
+	 * This method is called while encoding a positive GET return extension.
+	 * Override this method if a positive GET return extension is used.
+	 * 
+	 * @return the positive GET return extension
+	 */
+	protected Extension encodeGetPosReturnExtExtension() {
+		return Extension.notUsed();
 	}
 
-	@Override
-	protected void decodePositiveReturn(Extended positive) {
-		if (CSTSUtils.equalsIdentifier(positive, OidValues.getPosReturnExt)) {
-			GetPosReturnExt getPosReturnExt = new GetPosReturnExt();
-			try (ByteArrayInputStream is = new ByteArrayInputStream(positive.getExternal().getDataValue().value)) {
-				getPosReturnExt.decode(is);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			decodeGetPosReturnExt(getPosReturnExt);
-		}
-	}
-
-	@Override
-	public void decodeGetPosReturnExt(GetPosReturnExt getPosReturnExt) {
-		for (ccsds.csts.common.types.QualifiedParameter param : getPosReturnExt.getQualifiedParameters()
-				.getQualifiedParameter()) {
-			qualifiedParameters.add(QualifiedParameter.decode(param));
-		}
-	}
-
-	@Override
-	protected void encodeDiagnosticExtension() {
-		if (listOfParametersDiagnostics != null) {
-			Embedded getDiagnosticExt = new Embedded();
-			Identification identification = new Identification();
-			identification.setSyntax(OidValues.getDiagnosticExt);
-			getDiagnosticExt.setIdentification(identification);
-			getDiagnosticExt.setDataValue(new BerOctetString(encodeGetDiagnosticExt().code));
-			setDiagnostic(new Diagnostic(getDiagnosticExt));
-		}
-	}
-
-	protected GetDiagnosticExt encodeGetDiagnosticExt() {
+	private EmbeddedData encodeGetDiagnosticExt() {
 		GetDiagnosticExt getDiagnosticExt = new GetDiagnosticExt();
 		getDiagnosticExt.setCommon(listOfParametersDiagnostics.encode());
 		// encode with a resizable output stream and an initial capacity of 128 bytes
@@ -274,23 +254,65 @@ public class Get extends AbstractConfirmedOperation implements IGet {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return getDiagnosticExt;
+		return EmbeddedData.of(OIDs.getDiagnosticExt, getDiagnosticExt.code);
 	}
 
 	@Override
-	protected void decodeDiagnosticExtension() {
-		if (getDiagnostic().getDiagnosticExtension() != null) {
-			if (CSTSUtils.equalsIdentifier(getDiagnostic().getDiagnosticExtension(), OidValues.getDiagnosticExt)) {
-				GetDiagnosticExt getDiagnosticExt = new GetDiagnosticExt();
-				try (ByteArrayInputStream is = new ByteArrayInputStream(
-						getDiagnostic().getDiagnosticExtension().getDataValue().value)) {
-					getDiagnosticExt.decode(is);
+	public void decodeGetReturn(GetReturn getReturn) {
+		decodeStandardReturnHeader(getReturn);
+	}
+
+	@Override
+	protected void decodePositiveReturn() {
+		if (getReturnExtension().isUsed()) {
+			if (getReturnExtension().getEmbeddedData().getOid().equals(OIDs.getPosReturnExt)) {
+				GetPosReturnExt getPosReturnExt = new GetPosReturnExt();
+				try (ByteArrayInputStream is = new ByteArrayInputStream(getReturnExtension().getEmbeddedData().getData())) {
+					getPosReturnExt.decode(is);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				if (getDiagnosticExt.getCommon() != null) {
-					listOfParametersDiagnostics = ListOfParametersDiagnostics.decode(getDiagnosticExt.getCommon());
-				}
+				decodeGetPosReturnExt(getPosReturnExt);
+			}
+		}
+	}
+
+	private void decodeGetPosReturnExt(GetPosReturnExt getPosReturnExt) {
+		for (ccsds.csts.common.types.QualifiedParameter param : getPosReturnExt.getQualifiedParameters()
+				.getQualifiedParameter()) {
+			qualifiedParameters.add(QualifiedParameter.decode(param));
+		}
+		decodeGetPosReturnExtExtension(Extension.decode(getPosReturnExt.getGetPosReturnExtExtension()));
+	}
+
+	/**
+	 * This method is called while decoding a positive GET return extension.
+	 * Override this method if a positive GET return extension is used.
+	 * 
+	 * @param extension the positive GET return extension
+	 */
+	protected void decodeGetPosReturnExtExtension(Extension extension) {
+		// override is extension is used
+	}
+
+	@Override
+	protected void decodeNegativeReturn() {
+		if (getDiagnostic().isExtended()) {
+			decodeDiagnosticExtension();
+		}
+	}
+	
+	private void decodeDiagnosticExtension() {
+		if (getDiagnostic().getDiagnosticExtension().getOid().equals(OIDs.getDiagnosticExt)) {
+			GetDiagnosticExt getDiagnosticExt = new GetDiagnosticExt();
+			try (ByteArrayInputStream is = new ByteArrayInputStream(
+					getDiagnostic().getDiagnosticExtension().getData())) {
+				getDiagnosticExt.decode(is);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			if (getDiagnosticExt.getCommon() != null) {
+				listOfParametersDiagnostics = ListOfParametersDiagnostics.decode(getDiagnosticExt.getCommon());
 			}
 		}
 	}

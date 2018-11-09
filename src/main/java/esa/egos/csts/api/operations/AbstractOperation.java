@@ -1,65 +1,64 @@
 package esa.egos.csts.api.operations;
 
+import java.util.logging.Logger;
+
 import org.openmuc.jasn1.ber.types.BerNull;
 
 import ccsds.csts.common.types.InvokeId;
 import ccsds.csts.common.types.StandardInvocationHeader;
-import ccsds.csts.service.instance.id.ServiceInstanceIdentifier;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.exceptions.ConfigException;
-import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceIdentifier;
 import esa.egos.csts.api.util.ICredentials;
 import esa.egos.csts.api.util.impl.Credentials;
 
+/**
+ * This class is the base class of all operations.
+ * 
+ * This class specifies all relevant data used for invoking an operation as well
+ * as all necessary routines for encoding and decoding.
+ */
 public abstract class AbstractOperation implements IOperation {
 
-    /**
-     * The credentials of the invoker of the operation. If null, credentials are
-     * not used.
-     */
-    private ICredentials invokerCredentials;
-    
-    private IServiceInstanceIdentifier serviceInstanceIdentifier = null;
-    
-    /**
-     * The invocation identifier of the operation.
-     */
-    private int invokeId = 0;
+	protected final Logger LOG = Logger.getLogger(getClass().getName());
 	
-    /**
-	 * Confirmed/unconfirmed operation. To be set via the constructor.
+	/**
+	 * The credentials of the invoker of the operation. If null, credentials are not
+	 * used.
 	 */
-	private final boolean confirmed;
-
-	private ProcedureInstanceIdentifier procedureIdentifier;
+	private ICredentials invokerCredentials;
 
 	/**
-	 * The operation version number
+	 * The Service Instance Identifier of the operation.
 	 */
-	private final int version;
+	private IServiceInstanceIdentifier serviceInstanceIdentifier = null;
 
-	protected AbstractOperation(int version, boolean confirmed) {
-		this.version = version;
-		this.confirmed = confirmed;
-	}
+	/**
+	 * The invocation identifier of the operation.
+	 */
+	private int invokeIdentifier = 0;
+
+	/**
+	 * The Procedure Instance Identifier of the operation.
+	 */
+	private ProcedureInstanceIdentifier procedureInstanceIdentifier;
 
 	@Override
 	public boolean isConfirmed() {
-		return this.confirmed;
+		return false;
 	}
 
 	@Override
-	public int getInvokeId() {
-		return this.invokeId;
+	public int getInvokeIdentifier() {
+		return this.invokeIdentifier;
 	}
 
 	@Override
-	public void setInvokeId(int id) {
-		this.invokeId = id;
+	public void setInvokeIdentifier(int invokeIdentifier) {
+		this.invokeIdentifier = invokeIdentifier;
 	}
-	
+
 	@Override
 	public IServiceInstanceIdentifier getServiceInstanceIdentifier() {
 		return this.serviceInstanceIdentifier;
@@ -67,47 +66,21 @@ public abstract class AbstractOperation implements IOperation {
 
 	@Override
 	public void setServiceInstanceIdentifier(IServiceInstanceIdentifier siid) throws ConfigException {
-		if (this.serviceInstanceIdentifier == null)
+		if (this.serviceInstanceIdentifier == null) {
 			this.serviceInstanceIdentifier = siid;
-		else 
+		} else {
 			throw new ConfigException("Service instance already set for operation " + toString());
-	}
-
-	@Override
-	public void setServiceInstanceIdentifier(ServiceInstanceIdentifier serviceInstanceIdentifier) {
-		
-		IServiceInstanceIdentifier siid = null;
-		
-		ObjectIdentifier spacecraftIdentifier = ObjectIdentifier.of(serviceInstanceIdentifier.getSpacecraftId().value);
-		ObjectIdentifier facilityIdentifier = ObjectIdentifier.of(serviceInstanceIdentifier.getFacilityId().value);
-		ObjectIdentifier typeIdentifier = ObjectIdentifier.of(serviceInstanceIdentifier.getServiceType().value);
-		int serviceInstanceNumber = serviceInstanceIdentifier.getServiceInstanceNumber().intValue();
-		
-		siid = new esa.egos.csts.api.serviceinstance.impl.ServiceInstanceIdentifier(
-				spacecraftIdentifier, facilityIdentifier, typeIdentifier, serviceInstanceNumber);
-		
-		try {
-			setServiceInstanceIdentifier(siid);
-		} catch (ConfigException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 
 	@Override
 	public ProcedureInstanceIdentifier getProcedureInstanceIdentifier() {
-		return this.procedureIdentifier;
+		return this.procedureInstanceIdentifier;
 	}
 
 	@Override
-	public void setProcedureInstanceIdentifier(
-			ProcedureInstanceIdentifier procedureInstanceIdentifier) {
-		this.procedureIdentifier = procedureInstanceIdentifier;
-	}
-
-	@Override
-	public int getOperationVersionNumber() {
-		return this.version;
+	public void setProcedureInstanceIdentifier(ProcedureInstanceIdentifier procedureInstanceIdentifier) {
+		this.procedureInstanceIdentifier = procedureInstanceIdentifier;
 	}
 
 	@Override
@@ -117,60 +90,67 @@ public abstract class AbstractOperation implements IOperation {
 
 	@Override
 	public void setInvokerCredentials(ICredentials credentials) {
-		
 		this.invokerCredentials = credentials;
 	}
 
-	/**
-	 * @throws ApiException
-	 */
 	@Override
 	public synchronized void verifyInvocationArguments() throws ApiException {
 		// no specific verifications are performed
 		// no checks are defined for IOperation as well, basically Result = OK
 	}
 
-	@Override
-	public void setInvokeId(InvokeId invokeId) {
-		int id = invokeId.intValue();
-		setInvokeId(id);
-	}
-    
-    protected ccsds.csts.common.types.Credentials getEmptyCredentials() {
+	/**
+	 * Creates and returns empty Credentials.
+	 * 
+	 * @return empty Credentials
+	 */
+	protected ccsds.csts.common.types.Credentials getEmptyCredentials() {
 		ccsds.csts.common.types.Credentials cred = new ccsds.csts.common.types.Credentials();
 		cred.setUnused(new BerNull());
 		return cred;
 	}
 
+	/**
+	 * Encodes relevant informations of the operation into a
+	 * StandardInvocationHeader.
+	 * 
+	 * @return the encoded StandardInvocationHeader
+	 */
 	protected final StandardInvocationHeader encodeStandardInvocationHeader() {
-		
+
 		StandardInvocationHeader header = new StandardInvocationHeader();
-		header.setInvokeId(new InvokeId(getInvokeId()));
-		if(getInvokerCredentials() != null)
+		header.setInvokeId(new InvokeId(getInvokeIdentifier()));
+		if (getInvokerCredentials() != null) {
 			header.setInvokerCredentials(getInvokerCredentials().encode());
-		else
+		} else {
 			header.setInvokerCredentials(getEmptyCredentials());
+		}
 		header.setProcedureInstanceId(getProcedureInstanceIdentifier().encode());
-		
+
 		return header;
-		
 	}
-	
+
+	/**
+	 * Decodes the relevant informations of a StandardInvocationHeader into the
+	 * operation.
+	 * 
+	 * @param standardInvocationHeader
+	 *            the encoded StandardInvocationHeader
+	 */
 	protected final void decodeStandardInvocationHeader(StandardInvocationHeader standardInvocationHeader) {
-		setInvokeId(standardInvocationHeader.getInvokeId());
-		setInvokerCredentials(Credentials.decode(standardInvocationHeader.getInvokerCredentials()));
-		setProcedureInstanceIdentifier(ProcedureInstanceIdentifier.decode(standardInvocationHeader.getProcedureInstanceId()));
+		invokeIdentifier = standardInvocationHeader.getInvokeId().intValue();
+		invokerCredentials = Credentials.decode(standardInvocationHeader.getInvokerCredentials());
+		procedureInstanceIdentifier = ProcedureInstanceIdentifier
+				.decode(standardInvocationHeader.getProcedureInstanceId());
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (confirmed ? 1231 : 1237);
 		result = prime * result + ((invokerCredentials == null) ? 0 : invokerCredentials.hashCode());
-		result = prime * result + ((procedureIdentifier == null) ? 0 : procedureIdentifier.hashCode());
+		result = prime * result + ((procedureInstanceIdentifier == null) ? 0 : procedureInstanceIdentifier.hashCode());
 		result = prime * result + ((serviceInstanceIdentifier == null) ? 0 : serviceInstanceIdentifier.hashCode());
-		result = prime * result + version;
 		return result;
 	}
 
@@ -183,24 +163,20 @@ public abstract class AbstractOperation implements IOperation {
 		if (getClass() != obj.getClass())
 			return false;
 		AbstractOperation other = (AbstractOperation) obj;
-		if (confirmed != other.confirmed)
-			return false;
 		if (invokerCredentials == null) {
 			if (other.invokerCredentials != null)
 				return false;
 		} else if (!invokerCredentials.equals(other.invokerCredentials))
 			return false;
-		if (procedureIdentifier == null) {
-			if (other.procedureIdentifier != null)
+		if (procedureInstanceIdentifier == null) {
+			if (other.procedureInstanceIdentifier != null)
 				return false;
-		} else if (!procedureIdentifier.equals(other.procedureIdentifier))
+		} else if (!procedureInstanceIdentifier.equals(other.procedureInstanceIdentifier))
 			return false;
 		if (serviceInstanceIdentifier == null) {
 			if (other.serviceInstanceIdentifier != null)
 				return false;
 		} else if (!serviceInstanceIdentifier.equals(other.serviceInstanceIdentifier))
-			return false;
-		if (version != other.version)
 			return false;
 		return true;
 	}

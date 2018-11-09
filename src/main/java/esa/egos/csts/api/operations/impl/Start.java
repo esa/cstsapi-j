@@ -2,44 +2,46 @@ package esa.egos.csts.api.operations.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
-import org.openmuc.jasn1.ber.BerByteArrayOutputStream;
-import org.openmuc.jasn1.ber.types.BerEmbeddedPdv.Identification;
-import org.openmuc.jasn1.ber.types.BerOctetString;
-
-import ccsds.csts.common.operations.pdus.OidValues;
 import ccsds.csts.common.operations.pdus.StartDiagnosticExt;
 import ccsds.csts.common.operations.pdus.StartInvocation;
 import ccsds.csts.common.operations.pdus.StartReturn;
-import ccsds.csts.common.types.AdditionalText;
-import ccsds.csts.common.types.Embedded;
-import ccsds.csts.common.types.Extended;
 import esa.egos.csts.api.diagnostics.Diagnostic;
+import esa.egos.csts.api.diagnostics.StartDiagnostic;
 import esa.egos.csts.api.enumerations.OperationType;
-import esa.egos.csts.api.enumerations.StartDiagnostic;
+import esa.egos.csts.api.extensions.EmbeddedData;
+import esa.egos.csts.api.extensions.Extension;
+import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.operations.AbstractConfirmedOperation;
 import esa.egos.csts.api.operations.IStart;
-import esa.egos.csts.api.util.impl.CSTSUtils;
 
 /**
  * The START operation (confirmed)
  */
 public class Start extends AbstractConfirmedOperation implements IStart {
 
-	private final OperationType type = OperationType.START;
-	
-	private final static int versionNumber = 1;
+	private static final OperationType TYPE = OperationType.START;
 
+	/**
+	 * The diagnostic (negative return)
+	 */
 	private StartDiagnostic startDiagnostic;
 
+	/**
+	 * The invocation extension
+	 */
+	private Extension invocationExtension;
+
+	/**
+	 * The constructor method of a START operation.
+	 */
 	public Start() {
-		super(versionNumber);
+		invocationExtension = Extension.notUsed();
 	}
-	
+
 	@Override
 	public OperationType getType() {
-		return type;
+		return TYPE;
 	}
 
 	@Override
@@ -48,13 +50,14 @@ public class Start extends AbstractConfirmedOperation implements IStart {
 	}
 
 	@Override
-	public StartDiagnostic getStartDiagnostics() {
+	public StartDiagnostic getStartDiagnostic() {
 		return startDiagnostic;
 	}
 
 	@Override
-	public void setStartDiagnostics(StartDiagnostic startDiagnostics) {
-		this.startDiagnostic = startDiagnostics;
+	public void setStartDiagnostic(StartDiagnostic startDiagnostic) {
+		this.startDiagnostic = startDiagnostic;
+		setDiagnostic(new Diagnostic(encodeStartDiagnosticExt()));
 	}
 
 	@Override
@@ -63,16 +66,27 @@ public class Start extends AbstractConfirmedOperation implements IStart {
 	}
 
 	@Override
-	public StartInvocation encodeStartInvocation() {
-		return encodeStartInvocation(CSTSUtils.nonUsedExtension());
+	public Extension getInvocationExtension() {
+		return invocationExtension;
 	}
 
 	@Override
-	public StartInvocation encodeStartInvocation(Extended extension) {
+	public void setInvocationExtension(EmbeddedData embedded) {
+		invocationExtension = Extension.of(embedded);
+	}
+
+	@Override
+	public StartInvocation encodeStartInvocation() {
 		StartInvocation startInvocation = new StartInvocation();
 		startInvocation.setStandardInvocationHeader(encodeStandardInvocationHeader());
-		startInvocation.setStartInvocationExtension(extension);
+		startInvocation.setStartInvocationExtension(invocationExtension.encode());
 		return startInvocation;
+	}
+
+	@Override
+	public void decodeStartInvocation(StartInvocation startInvocation) {
+		decodeStandardInvocationHeader(startInvocation.getStandardInvocationHeader());
+		invocationExtension = Extension.decode(startInvocation.getStartInvocationExtension());
 	}
 
 	@Override
@@ -80,70 +94,31 @@ public class Start extends AbstractConfirmedOperation implements IStart {
 		return encodeStandardReturnHeader(StartReturn.class);
 	}
 
-	@Override
-	public StartReturn encodeStartReturn(Extended resultExtension) {
-		return encodeStandardReturnHeader(StartReturn.class, resultExtension);
+	private EmbeddedData encodeStartDiagnosticExt() {
+		return EmbeddedData.of(OIDs.startDiagnosticExt, startDiagnostic.encode().code);
 	}
-
-	@Override
-	protected void encodeDiagnosticExtension() {
-		if (startDiagnostic != null) {
-			Embedded diagnosticExtension = new Embedded();
-			Identification identification = new Identification();
-			identification.setSyntax(OidValues.startDiagnosticExt);
-			diagnosticExtension.setIdentification(identification);
-			diagnosticExtension.setDataValue(new BerOctetString(encodeStartDiagnosticExt().code));
-			setDiagnostic(new Diagnostic(diagnosticExtension));
-		}
-	}
-
-	protected StartDiagnosticExt encodeStartDiagnosticExt() {
-		StartDiagnosticExt startDiagnosticExt = new StartDiagnosticExt();
-		if (startDiagnostic == StartDiagnostic.UNABLE_TO_COMPLY) {
-			startDiagnosticExt
-					.setUnableToComply(new AdditionalText(startDiagnostic.toString().getBytes(StandardCharsets.UTF_8)));
-		} else if (startDiagnostic == StartDiagnostic.OUT_OF_SERVICE) {
-			startDiagnosticExt
-					.setOutOfService(new AdditionalText(startDiagnostic.toString().getBytes(StandardCharsets.UTF_8)));
-		}
-		// encode with a resizable output stream and an initial capacity of 128 bytes
-		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
-			startDiagnosticExt.encode(os);
-			startDiagnosticExt.code = os.getArray();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return startDiagnosticExt;
-	}
-
-	@Override
-	public void decodeStartInvocation(StartInvocation startInvocation) {
-		decodeStandardInvocationHeader(startInvocation.getStandardInvocationHeader());
-	}
-
+	
 	@Override
 	public void decodeStartReturn(StartReturn startReturn) {
 		decodeStandardReturnHeader(startReturn);
 	}
 
 	@Override
-	protected void decodeDiagnosticExtension() {
-		if (getDiagnostic().getDiagnosticExtension() != null) {
-			if (CSTSUtils.equalsIdentifier(getDiagnostic().getDiagnosticExtension(),
-					OidValues.startDiagnosticExt)) {
-				StartDiagnosticExt startDiagnosticExt = new StartDiagnosticExt();
-				try (ByteArrayInputStream is = new ByteArrayInputStream(
-						getDiagnostic().getDiagnosticExtension().getDataValue().value)) {
-					startDiagnosticExt.decode(is);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				if (startDiagnosticExt.getUnableToComply() != null) {
-					startDiagnostic = StartDiagnostic.UNABLE_TO_COMPLY;
-				} else if (startDiagnosticExt.getOutOfService() != null) {
-					startDiagnostic = StartDiagnostic.OUT_OF_SERVICE;
-				}
+	protected void decodeNegativeReturn() {
+		if (getDiagnostic().isExtended()) {
+			decodeDiagnosticExtension();
+		}
+	}
+	
+	private void decodeDiagnosticExtension() {
+		if (getDiagnostic().getDiagnosticExtension().getOid().equals(OIDs.startDiagnosticExt)) {
+			StartDiagnosticExt startDiagnosticExt = new StartDiagnosticExt();
+			try (ByteArrayInputStream is = new ByteArrayInputStream(getDiagnostic().getDiagnosticExtension().getData())) {
+				startDiagnosticExt.decode(is);
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
+			startDiagnostic = StartDiagnostic.decode(startDiagnosticExt);
 		}
 	}
 

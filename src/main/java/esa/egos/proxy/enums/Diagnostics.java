@@ -2,7 +2,6 @@ package esa.egos.proxy.enums;
 
 import ccsds.csts.common.types.Diagnostic;
 
-@Deprecated
 public enum Diagnostics {
 
 	D_duplicateInvokeId, 

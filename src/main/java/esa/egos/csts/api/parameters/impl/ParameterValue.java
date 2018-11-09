@@ -1,6 +1,5 @@
 package esa.egos.csts.api.parameters.impl;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +10,6 @@ import org.openmuc.jasn1.ber.types.BerOctetString;
 import org.openmuc.jasn1.ber.types.BerReal;
 import org.openmuc.jasn1.ber.types.string.BerVisibleString;
 
-import ccsds.csts.common.types.Embedded;
 import ccsds.csts.common.types.IntPos;
 import ccsds.csts.common.types.IntUnsigned;
 import ccsds.csts.common.types.PublishedIdentifier;
@@ -23,14 +21,18 @@ import ccsds.csts.common.types.TypeAndValue.Integer;
 import ccsds.csts.common.types.TypeAndValue.IntegerPositive;
 import ccsds.csts.common.types.TypeAndValue.OctetString;
 import esa.egos.csts.api.enumerations.ParameterType;
+import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.types.Duration;
 import esa.egos.csts.api.types.Time;
+import esa.egos.csts.api.util.impl.CSTSUtils;
 
-// TODO check extensibility
+/**
+ * This class represents the CCSDS TypeAndValue type.
+ */
 public class ParameterValue {
 
-	private final ParameterType parameterType;
+	private final ParameterType type;
 	private List<Long> integerParameterValues;
 	private List<Duration> durationParameterValues;
 	private List<String> stringParameterValues;
@@ -39,10 +41,17 @@ public class ParameterValue {
 	private List<Double> realParameterValues;
 	private List<Time> timeParameterValues;
 	private List<ObjectIdentifier> OIDparameterValues;
-	
-	public ParameterValue(ParameterType parameterType) {
-		this.parameterType = parameterType;
-		switch (this.parameterType) {
+	private final EmbeddedData extension;
+
+	/**
+	 * Instantiates a new Parameter Value with its specified type.
+	 * 
+	 * @param type
+	 *            the type of the Parameter Value
+	 */
+	public ParameterValue(ParameterType type) {
+		this.type = type;
+		switch (this.type) {
 		case BOOLEAN:
 			boolParameterValues = new ArrayList<>();
 			break;
@@ -83,47 +92,109 @@ public class ParameterValue {
 			integerParameterValues = new ArrayList<>();
 			break;
 		}
-	}
-	
-	public ParameterType getParameterType() {
-		return parameterType;
+		extension = null;
 	}
 
+	/**
+	 * Instantiates a new extended Parameter Value.
+	 * 
+	 * @param extension
+	 *            the Parameter Value extension
+	 */
+	public ParameterValue(EmbeddedData extension) {
+		type = ParameterType.EXTENDED;
+		this.extension = extension;
+	}
+
+	/**
+	 * Returns the type of this Parameter Value.
+	 * 
+	 * @return the type of this Parameter Value
+	 */
+	public ParameterType getType() {
+		return type;
+	}
+
+	/**
+	 * Returns the list of Integer Parameter Values.
+	 * 
+	 * @return the list of Integer Parameter Values
+	 */
 	public List<Long> getIntegerParameterValues() {
 		return integerParameterValues;
 	}
 
+	/**
+	 * Returns the list of Duration Parameter Values.
+	 * 
+	 * @return the list of Duration Parameter Values
+	 */
 	public List<Duration> getDurationParameterValues() {
 		return durationParameterValues;
 	}
 
+	/**
+	 * Returns the list of String Parameter Values.
+	 * 
+	 * @return the list of String Parameter Values
+	 */
 	public List<String> getStringParameterValues() {
 		return stringParameterValues;
 	}
 
+	/**
+	 * Returns the list of Boolean Parameter Values.
+	 * 
+	 * @return the list of Boolean Parameter Values
+	 */
 	public List<Boolean> getBoolParameterValues() {
 		return boolParameterValues;
 	}
-	
+
+	/**
+	 * Returns the list of Octet String Parameter Values.
+	 * 
+	 * @return the list of Octet String Parameter Values
+	 */
 	public List<byte[]> getOctetStringParameterValues() {
 		return octetStringParameterValues;
 	}
 
+	/**
+	 * Returns the list of Real Parameter Values.
+	 * 
+	 * @return the list of Real Parameter Values
+	 */
 	public List<Double> getRealParameterValues() {
 		return realParameterValues;
 	}
 
+	/**
+	 * Returns the list of Time Parameter Values.
+	 * 
+	 * @return the list of Time Parameter Values
+	 */
 	public List<Time> getTimeParameterValues() {
 		return timeParameterValues;
 	}
 
+	/**
+	 * Returns the list of Object Identifier Parameter Values.
+	 * 
+	 * @return the list of Object Identifier Parameter Values
+	 */
 	public List<ObjectIdentifier> getOIDparameterValues() {
 		return OIDparameterValues;
 	}
-	
+
+	/**
+	 * Encodes these Parameter Value into a CCSDS TypeAndValue type.
+	 * 
+	 * @return the CCSDS TypeAndValue type representing this object
+	 */
 	public TypeAndValue encode() {
 		TypeAndValue typeAndValue = new TypeAndValue();
-		switch (parameterType) {
+		switch (type) {
 		case BOOLEAN:
 			ccsds.csts.common.types.TypeAndValue.Boolean bool = new ccsds.csts.common.types.TypeAndValue.Boolean();
 			for (Boolean b : boolParameterValues) {
@@ -134,7 +205,7 @@ public class ParameterValue {
 		case CHARACTER_STRING:
 			CharacterString characterString = new CharacterString();
 			for (String s : stringParameterValues) {
-				characterString.getBerVisibleString().add(new BerVisibleString(s.getBytes(StandardCharsets.UTF_8)));
+				characterString.getBerVisibleString().add(new BerVisibleString(CSTSUtils.encodeString(s)));
 			}
 			typeAndValue.setCharacterString(characterString);
 			break;
@@ -153,7 +224,7 @@ public class ParameterValue {
 			typeAndValue.setEnumerated(enumerated);
 			break;
 		case EXTENDED:
-			typeAndValue.setTypeAndValueExtension(encodeTypeAndValueExtension());
+			typeAndValue.setTypeAndValueExtension(extension.encode());
 			break;
 		case INTEGER:
 			Integer integer = new Integer();
@@ -216,16 +287,18 @@ public class ParameterValue {
 		}
 		return typeAndValue;
 	}
-	
-	protected Embedded encodeTypeAndValueExtension() {
-		Embedded embedded = new Embedded();
-		// to override if used
-		return embedded;
-	}
-	
+
+	/**
+	 * Decodes a specified CCSDS TypeAndValue type.
+	 * 
+	 * @param typeAndValue
+	 *            the specified CCSDS TypeAndValue type
+	 * @return a new Parameter Value decoded from the specified CCSDS TypeAndValue
+	 *         type
+	 */
 	public static ParameterValue decode(TypeAndValue typeAndValue) {
 		ParameterValue parameterValue = null;
-		
+
 		if (typeAndValue.getBoolean() != null) {
 			parameterValue = new ParameterValue(ParameterType.BOOLEAN);
 			for (BerBoolean bool : typeAndValue.getBoolean().getBerBoolean()) {
@@ -234,7 +307,7 @@ public class ParameterValue {
 		} else if (typeAndValue.getCharacterString() != null) {
 			parameterValue = new ParameterValue(ParameterType.CHARACTER_STRING);
 			for (BerVisibleString string : typeAndValue.getCharacterString().getBerVisibleString()) {
-				parameterValue.getStringParameterValues().add(new String(string.value, StandardCharsets.UTF_8));
+				parameterValue.getStringParameterValues().add(CSTSUtils.decodeString(string.value));
 			}
 		} else if (typeAndValue.getDuration() != null) {
 			parameterValue = new ParameterValue(ParameterType.DURATION);
@@ -247,11 +320,10 @@ public class ParameterValue {
 				parameterValue.getIntegerParameterValues().add(i.longValue());
 			}
 		} else if (typeAndValue.getTypeAndValueExtension() != null) {
-			parameterValue = new ParameterValue(ParameterType.EXTENDED);
-			decodeTypeAndValueExtension(typeAndValue.getTypeAndValueExtension());
+			parameterValue = new ParameterValue(EmbeddedData.decode(typeAndValue.getTypeAndValueExtension()));
 		} else if (typeAndValue.getInteger() != null) {
 			parameterValue = new ParameterValue(ParameterType.INTEGER);
-			for (BerInteger i : typeAndValue.getInteger().getBerInteger() ) {
+			for (BerInteger i : typeAndValue.getInteger().getBerInteger()) {
 				parameterValue.getIntegerParameterValues().add(i.longValue());
 			}
 		} else if (typeAndValue.getObjectIdentifier() != null) {
@@ -261,7 +333,7 @@ public class ParameterValue {
 			}
 		} else if (typeAndValue.getOctetString() != null) {
 			parameterValue = new ParameterValue(ParameterType.OCTET_STRING);
-			for (BerOctetString octets : typeAndValue.getOctetString().getBerOctetString() ) {
+			for (BerOctetString octets : typeAndValue.getOctetString().getBerOctetString()) {
 				parameterValue.getOctetStringParameterValues().add(octets.value);
 			}
 		} else if (typeAndValue.getIntegerPositive() != null) {
@@ -276,7 +348,7 @@ public class ParameterValue {
 			}
 		} else if (typeAndValue.getFloat() != null) {
 			parameterValue = new ParameterValue(ParameterType.REAL);
-			for (BerReal real : typeAndValue.getFloat().getBerReal() ) {
+			for (BerReal real : typeAndValue.getFloat().getBerReal()) {
 				parameterValue.getRealParameterValues().add(real.value);
 			}
 		} else if (typeAndValue.getTime() != null) {
@@ -290,12 +362,8 @@ public class ParameterValue {
 				parameterValue.getIntegerParameterValues().add(i.longValue());
 			}
 		}
-		
+
 		return parameterValue;
 	}
-	
-	protected static void decodeTypeAndValueExtension(Embedded typeAndValueExtension) {
-		// to override if used
-	}
-	
+
 }

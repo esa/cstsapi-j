@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import esa.egos.csts.api.diagnostics.BindDiagnostic;
+import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.enumerations.OperationResult;
 import esa.egos.csts.api.enumerations.Result;
 import esa.egos.csts.api.exceptions.ApiException;
@@ -23,9 +25,7 @@ import esa.egos.proxy.ISrvProxyInitiate;
 import esa.egos.proxy.enums.AbortOriginator;
 import esa.egos.proxy.enums.AlarmLevel;
 import esa.egos.proxy.enums.AssocState;
-import esa.egos.proxy.enums.BindDiagnostics;
 import esa.egos.proxy.enums.BindRole;
-import esa.egos.proxy.enums.PeerAbortDiagnostics;
 import esa.egos.proxy.logging.CstsLogMessageType;
 import esa.egos.proxy.logging.IReporter;
 import esa.egos.proxy.spl.types.SPLEvent;
@@ -103,7 +103,7 @@ public class RespondingAssoc extends Association
     {
         if (getState() != AssocState.sleAST_unbound)
         {
-            doAbort(PeerAbortDiagnostics.PAD_protocolError, AbortOriginator.AO_proxy, true);
+            doAbort(PeerAbortDiagnostics.PROTOCOL_ERROR, AbortOriginator.INTERNAL, true);
             changeState(SPLEvent.PXSPL_rcvBindInvoke, AssocState.sleAST_unbound);
             this.unboundStateIsDisconnected = true;
             releaseAssociation();
@@ -112,7 +112,7 @@ public class RespondingAssoc extends Association
 
         // get a bind operation
         IBind pBind = null;
-        BindDiagnostics diag = BindDiagnostics.BD_invalid;
+        BindDiagnostic diag = BindDiagnostic.INVALID;
         boolean error = false;
         boolean doAlarm = false;
 
@@ -130,7 +130,7 @@ public class RespondingAssoc extends Association
             
             if (pPeerApplData == null)
             {
-                diag = BindDiagnostics.BD_accessDenied;
+                diag = BindDiagnostic.ACCESS_DENIED;
                 error = true;
                 doAlarm = true;
             }
@@ -141,7 +141,7 @@ public class RespondingAssoc extends Association
                 // authenticate the pdu
                 if (!authenticate(poperation, true))
                 {
-                    diag = BindDiagnostics.BD_accessDenied;
+                    diag = BindDiagnostic.ACCESS_DENIED;
                     error = true;
                     doAlarm = true;
                     IServiceInstanceIdentifier psii = pBind.getServiceInstanceIdentifier();
@@ -161,7 +161,7 @@ public class RespondingAssoc extends Association
                     else
                     {
                         // abort the connection
-                        doAbort(PeerAbortDiagnostics.PAD_otherReason, AbortOriginator.AO_proxy, true);
+                        doAbort(PeerAbortDiagnostics.OTHER_REASON, AbortOriginator.INTERNAL, true);
                     }
 
                     // cleanup
@@ -186,17 +186,17 @@ public class RespondingAssoc extends Association
                 }
                 if (pSrvType == null)
                 {
-                    diag = BindDiagnostics.BD_serviceTypeNotSupported;
+                    diag = BindDiagnostic.SERVICE_TYPE_NOT_SUPPORTED;
                     error = true;
                 }
                 else
                 {
                     // set the version number
-                    this.version = pBind.getOperationVersionNumber();
+                    this.version = pBind.getVersionNumber();
                     // check if the version is supported
                     int indexMax = pSrvType.getServerVersion().size();
                     int versionNumber = -1;
-                    int versionNumberBind = pBind.getOperationVersionNumber();
+                    int versionNumberBind = pBind.getVersionNumber();
                     boolean found = false;
 
                     for (int index = 0; index < indexMax; index++)
@@ -218,7 +218,7 @@ public class RespondingAssoc extends Association
 
                     if (!found)
                     {
-                        diag = BindDiagnostics.BD_versionNotSupported;
+                        diag = BindDiagnostic.VERSION_NOT_SUPPORTED;
                         error = true;
                     }
                     else
@@ -323,7 +323,7 @@ public class RespondingAssoc extends Association
         }
         else
         {
-            doAbort(PeerAbortDiagnostics.PAD_protocolError, AbortOriginator.AO_proxy, true);
+            doAbort(PeerAbortDiagnostics.PROTOCOL_ERROR, AbortOriginator.INTERNAL, true);
             changeState(SPLEvent.PXSPL_rcvBindReturn, AssocState.sleAST_unbound);
             this.unboundStateIsDisconnected = true;
             releaseAssociation();
@@ -369,7 +369,7 @@ public class RespondingAssoc extends Association
         }
         else
         {
-            doAbort(PeerAbortDiagnostics.PAD_protocolError, AbortOriginator.AO_proxy, true);
+            doAbort(PeerAbortDiagnostics.PROTOCOL_ERROR, AbortOriginator.INTERNAL, true);
             changeState(SPLEvent.PXSPL_rcvUnbindInvoke, AssocState.sleAST_unbound);
             this.unboundStateIsDisconnected = true;
             releaseAssociation();
@@ -393,7 +393,7 @@ public class RespondingAssoc extends Association
         }
         else
         {
-            doAbort(PeerAbortDiagnostics.PAD_protocolError, AbortOriginator.AO_proxy, true);
+            doAbort(PeerAbortDiagnostics.PROTOCOL_ERROR, AbortOriginator.INTERNAL, true);
             changeState(SPLEvent.PXSPL_rcvUnbindReturn, AssocState.sleAST_unbound);
             this.unboundStateIsDisconnected = true;
             releaseAssociation();
@@ -485,14 +485,14 @@ public class RespondingAssoc extends Association
             pBind.setResponderIdentifier(this.config.getLocalId());
         }
 
-        if (result == OperationResult.RES_positive)
+        if (result == OperationResult.POSITIVE)
         {
             // set the state to bound
             changeState(SPLEvent.PXSPL_initiateBindReturn, AssocState.sleAST_bound);
             // send the bind return to the network
             res = clientPostProcessing(poperation, report, false, false);
         }
-        else if (result == OperationResult.RES_negative)
+        else if (result == OperationResult.NEGATIVE)
         {
             // send the bind return to the network
             res = clientPostProcessing(poperation, report, false, true);

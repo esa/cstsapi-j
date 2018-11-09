@@ -1,12 +1,16 @@
 package esa.egos.csts.api.serviceinstance;
 
+import java.util.List;
+
+import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.enumerations.Result;
+import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
+import esa.egos.csts.api.procedures.IProcedure;
 import esa.egos.proxy.IProxyAdmin;
 import esa.egos.proxy.ISrvProxyInitiate;
-import esa.egos.proxy.enums.PeerAbortDiagnostics;
 
 public interface IServiceInstanceInternal extends IServiceInstance{
 
@@ -43,4 +47,10 @@ public interface IServiceInstanceInternal extends IServiceInstance{
 	IServiceInform getApplicationServiceInform();
 
 	void prepareRelease();
+
+	List<IProcedure> getProcedures();
+
+	void createAssociation() throws ApiException;
+
+	void releaseAssocation() throws ApiException;
 }

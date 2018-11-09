@@ -5,55 +5,67 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import ccsds.csts.association.control.types.PeerAbortDiagnostic;
+import esa.egos.csts.api.diagnostics.BindDiagnostic;
 import esa.egos.csts.api.diagnostics.Diagnostic;
-import esa.egos.csts.api.diagnostics.DiagnosticEnum;
+import esa.egos.csts.api.diagnostics.DiagnosticType;
+import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.enumerations.AppRole;
+import esa.egos.csts.api.enumerations.EventValueType;
 import esa.egos.csts.api.enumerations.OperationResult;
 import esa.egos.csts.api.enumerations.ProcedureRole;
 import esa.egos.csts.api.enumerations.Result;
 import esa.egos.csts.api.events.Event;
+import esa.egos.csts.api.events.EventValue;
+import esa.egos.csts.api.events.IEvent;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.exceptions.ConfigException;
-import esa.egos.csts.api.exceptions.NoServiceInstanceStateException;
-import esa.egos.csts.api.functionalresources.IFunctionalResource;
+import esa.egos.csts.api.functionalresources.impl.FunctionalResourceName;
+import esa.egos.csts.api.functionalresources.impl.FunctionalResourceType;
 import esa.egos.csts.api.main.CstsApi;
 import esa.egos.csts.api.main.IApi;
+import esa.egos.csts.api.oids.OIDs;
+import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IBind;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IPeerAbort;
 import esa.egos.csts.api.operations.IUnbind;
-import esa.egos.csts.api.parameters.AbstractConfigurationParameter;
-import esa.egos.csts.api.parameters.impl.FunctionalResourceParameter;
-import esa.egos.csts.api.parameters.impl.ServiceParameter;
+import esa.egos.csts.api.parameters.IParameter;
 import esa.egos.csts.api.procedures.IAssociationControl;
 import esa.egos.csts.api.procedures.IProcedure;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
+import esa.egos.csts.api.productionstatus.ProductionState;
+import esa.egos.csts.api.productionstatus.ProductionStatus;
 import esa.egos.csts.api.serviceinstance.impl.ServiceType;
-import esa.egos.csts.api.serviceinstance.states.ActiveState;
-import esa.egos.csts.api.serviceinstance.states.IState;
-import esa.egos.csts.api.serviceinstance.states.ReadyState;
-import esa.egos.csts.api.serviceinstance.states.ServiceInstanceStateEnum;
-import esa.egos.csts.api.serviceinstance.states.UnboundState;
+import esa.egos.csts.api.states.service.ServiceState;
+import esa.egos.csts.api.states.service.ServiceStatus;
+import esa.egos.csts.api.states.service.ServiceSubStatus;
+import esa.egos.proxy.IAssocFactory;
 import esa.egos.proxy.IProxyAdmin;
 import esa.egos.proxy.ISrvProxyInitiate;
 import esa.egos.proxy.del.ITranslator;
 import esa.egos.proxy.del.PDUTranslator;
 import esa.egos.proxy.enums.AbortOriginator;
-import esa.egos.proxy.enums.BindDiagnostics;
-import esa.egos.proxy.enums.PeerAbortDiagnostics;
 import esa.egos.proxy.time.CstsDuration;
 import esa.egos.proxy.time.ElapsedTimer;
 import esa.egos.proxy.util.ITime;
 import esa.egos.proxy.util.impl.OperationSequencer;
 
-public abstract class AbstractServiceInstance implements IServiceInstanceInternal {
+public abstract class AbstractServiceInstance implements IServiceInstanceInternal, Observer {
+
+	/**
+	 * The logger.
+	 */
+	protected static final Logger LOG = Logger.getLogger(AbstractServiceInstance.class.getName());
 
 	private final AppRole bindInitiative;
 
@@ -93,11 +105,6 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 	 * The provision period start time.
 	 */
 	private ITime startTime;
-
-	/**
-	 * The logger.
-	 */
-	protected static final Logger LOG = Logger.getLogger(AbstractServiceInstance.class.getName());
 
 	/**
 	 * The IServiceInform interface to the application
@@ -161,27 +168,24 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 	private final Map<ProcedureInstanceIdentifier, IProcedure> proceduresMap;
 
-	// TODO check how to integrate service parameters
-	private List<ServiceParameter> serviceParameters;
-
-	private Map<IProcedure, List<AbstractConfigurationParameter>> configurationParametersMap;
-	
-	private List<IFunctionalResource> functionalResources;
-	
-	private Map<IFunctionalResource, List<FunctionalResourceParameter>> functionalResourceParametersMap;
-	
-	private List<Event> events;
-	
 	private IProxyAdmin proxy;
 
 	private final IApi api;
 
-	/**
-	 * Substate of the service instance (null, ready or active). The main state is
-	 * portrayed through the association control. null = not bound ready = prime
-	 * procedure not active active = prime procedure active
-	 */
-	private IState subState = null;
+	// Extension Taylan BEGIN
+	// TODO check how to integrate Service Parameters
+	// Service Parameters define the initial value of Procedure Configuration
+	// Parameters
+	private List<IEvent> serviceEvents;
+
+	private List<IParameter> externalParameters;
+
+	private List<IEvent> externalEvents;
+
+	private ProductionStatus productionStatus;
+
+	private ServiceState state;
+	// Extension Taylan END
 
 	protected AbstractServiceInstance(CstsApi api, IServiceInform serviceInform, AppRole role,
 			/* ServiceType serviceType, */ IAssociationControl associationControlProcedure) throws ApiException {
@@ -195,12 +199,6 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 		// one single procedure is responsible for creating both operations
 		this.operationsMap = new HashMap<Class<? extends IOperation>, IProcedure>();
 		this.proceduresMap = new HashMap<ProcedureInstanceIdentifier, IProcedure>();
-
-		this.serviceParameters = new ArrayList<>();
-		this.configurationParametersMap = new HashMap<>();
-		this.functionalResources = new ArrayList<>();
-		this.functionalResourceParametersMap = new HashMap<>();
-		this.events = new ArrayList<>();
 
 		// only support for user initiated so far
 		this.bindInitiative = AppRole.USER;
@@ -231,6 +229,38 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 			e.printStackTrace();
 			this.translator = null;
 		}
+
+		this.externalParameters = new ArrayList<>();
+		this.serviceEvents = new ArrayList<>();
+		this.externalEvents = new ArrayList<>();
+
+	}
+
+	@Override
+	public void initialize() {
+		initializeProductionStatus();
+		initializeEvents();
+		initializeState();
+	}
+	
+	private void initializeProductionStatus() {
+		productionStatus = new ProductionStatus();
+		productionStatus.addObserver(this);
+	}
+
+	private void initializeEvents() {
+		FunctionalResourceType type = new FunctionalResourceType(serviceType.getOid());
+		FunctionalResourceName name = new FunctionalResourceName(type,
+				serviceInstanceIdentifier.getServiceInstanceNumber());
+		IEvent statusEvent = new Event(OIDs.svcProductionStatusChangeVersion1, name);
+		serviceEvents.add(statusEvent);
+		IEvent configurationEvent = new Event(OIDs.svcProductionConfigurationChangeVersion1, name);
+		serviceEvents.add(configurationEvent);
+	}
+
+	private void initializeState() {
+		state = new ServiceState(this);
+		state.setStatus(ServiceStatus.UNBOUND);
 	}
 
 	/**
@@ -268,7 +298,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 		// check initiator identifier
 		String bindinitId = bindOp.getInitiatorIdentifier();
 		if (!(bindinitId.toLowerCase()).equals(this.peerId.toLowerCase())) {
-			bindOp.setBindDiagnostic(BindDiagnostics.BD_siNotAccessibleToThisInitiator);
+			bindOp.setBindDiagnostic(BindDiagnostic.SERVICE_INSTANCE_NOT_ACCESSIBLE_TO_THIS_INITIATOR);
 			LOG.fine("Access violation by initiator" + bindinitId);
 			throw new ApiException("Access to initiator " + bindinitId.toLowerCase() + " denied to " + this.peerId
 					+ " in service instance " + toString());
@@ -276,22 +306,23 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 		// check for service type
 		if (!this.serviceType.toString().equals(bindOp.getServiceType().toString())) {
-			bindOp.setBindDiagnostic(BindDiagnostics.BD_inconsistentServiceType);
+			bindOp.setBindDiagnostic(BindDiagnostic.INCONSISTENT_SERVICE_TYPE);
 			throw new ApiException(
 					"Service type for bind " + bindOp.toString() + " inconsistent to service instance " + toString());
 		}
 
 		// check for supported version
-		int vn = bindOp.getOperationVersionNumber();
+		// TODO
+		int vn = bindOp.getVersionNumber();
 		if (vn < 1 || vn > 4) {
-			bindOp.setBindDiagnostic(BindDiagnostics.BD_versionNotSupported);
+			bindOp.setBindDiagnostic(BindDiagnostic.VERSION_NOT_SUPPORTED);
 			throw new ApiException("Bind version not supported for service instance " + toString());
 		}
 
 		if (this.ppEnded) {
 			// the user has ended the provision-period (only provider)
 			// using 'end' in the Unbind operation.
-			bindOp.setBindDiagnostic(BindDiagnostics.BD_invalidTime);
+			bindOp.setBindDiagnostic(BindDiagnostic.OUT_OF_SERVICE);
 			throw new ApiException("Provision period for service instance " + toString() + " already ended");
 		}
 
@@ -304,13 +335,15 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 		currentTime.update();
 		if (!(currentTime.compareTo(this.startTime) > 0 && currentTime.compareTo(this.stopTime) < 0)) {
 			// out of provision period
-			bindOp.setBindDiagnostic(BindDiagnostics.BD_alreadyBound);
+			bindOp.setBindDiagnostic(BindDiagnostic.ALREADY_BOUND);
 			throw new ApiException("Service instance " + toString() + " out of provision period.");
 		}
 
 		// check si state, must be UNBOUND
-		if (getAssociationControlProcedure().getState().getStateEnum() != ServiceInstanceStateEnum.unbound) {
-			bindOp.setBindDiagnostic(BindDiagnostics.BD_alreadyBound);
+		// if (getAssociationControlProcedure().getState().getStateEnum() !=
+		// ServiceInstanceStateEnum.unbound) {
+		if (getStatus() != ServiceStatus.UNBOUND) {
+			bindOp.setBindDiagnostic(BindDiagnostic.ALREADY_BOUND);
 			throw new ApiException("Service instance " + toString() + " already bound.");
 		}
 
@@ -340,7 +373,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 			throw new ApiException(Result.SLE_E_STATE.toString());
 		}
 
-		abort(PeerAbortDiagnostics.PAD_operationalRequirement);
+		abort(PeerAbortDiagnostics.OPERATIONAL_REQUIREMENT);
 
 		this.isStarted = false;
 	}
@@ -367,21 +400,22 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 			this.applicationOpSequencer.reset(Result.SLE_E_UNBINDING);
 		} else if (IBind.class.isAssignableFrom(confOperation.getClass())) {
 			// check if a BIND (return) has been accepted:
-			try {
-				if (getRole() == AppRole.PROVIDER && confOperation.getResult() == OperationResult.RES_negative
-						&& getState().getStateEnum() == ServiceInstanceStateEnum.unbound) {
-					this.proxyOpSequencer.reset(Result.SLE_E_ABORTED);
-					this.applicationOpSequencer.reset(Result.SLE_E_ABORTED);
-					this.pxySeqCount = 0;
-					this.aplSeqCount = 0;
-				}
-			} catch (NoServiceInstanceStateException e) {
-				// we should not get an error here or something major is wrong
+			// try {
+			if (getRole() == AppRole.PROVIDER && confOperation.getResult() == OperationResult.NEGATIVE
+			// && getState().getStateEnum() == ServiceInstanceStateEnum.unbound) {
+					&& getStatus() == ServiceStatus.UNBOUND) {
 				this.proxyOpSequencer.reset(Result.SLE_E_ABORTED);
 				this.applicationOpSequencer.reset(Result.SLE_E_ABORTED);
 				this.pxySeqCount = 0;
 				this.aplSeqCount = 0;
 			}
+			// } catch (NoServiceInstanceStateException e) {
+			// we should not get an error here or something major is wrong
+			// this.proxyOpSequencer.reset(Result.SLE_E_ABORTED);
+			// this.applicationOpSequencer.reset(Result.SLE_E_ABORTED);
+			// this.pxySeqCount = 0;
+			// this.aplSeqCount = 0;
+			// }
 		}
 
 		String txt = operation.toString();
@@ -398,11 +432,11 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 			}
 
 			if (rc == Result.SLE_E_OVERFLOW) {
-				abort(PeerAbortDiagnostics.PAD_communicationsFailure);
+				abort(PeerAbortDiagnostics.COMMUNICATION_FAILURE);
 			} else if (rc == Result.SLE_E_PROTOCOL) {
 				String pstateS = this.pxySrvInit.getAssocState().toString();
 				LOG.fine("Protocol error, PDU: " + operation.toString() + ", proxy state: " + pstateS);
-				abort(PeerAbortDiagnostics.PAD_protocolError);
+				abort(PeerAbortDiagnostics.PROTOCOL_ERROR);
 			}
 
 			return rc;
@@ -422,7 +456,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 			if (!IBind.class.isAssignableFrom(operation.getClass())
 					&& !IUnbind.class.isAssignableFrom(operation.getClass())) {
 				this.invokeId++;
-				confOp.setInvokeId(this.invokeId);
+				confOp.setInvokeIdentifier(this.invokeId);
 			}
 		}
 
@@ -461,12 +495,12 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 		}
 
 		if (rc == Result.SLE_E_OVERFLOW) {
-			abort(PeerAbortDiagnostics.PAD_communicationsFailure);
+			abort(PeerAbortDiagnostics.COMMUNICATION_FAILURE);
 		} else if (rc == Result.SLE_E_PROTOCOL) {
 			String opS = operation.toString();
 			String pstateS = this.pxySrvInit.getAssocState().toString();
 			LOG.fine("Protocol error: " + opS + " " + pstateS);
-			abort(PeerAbortDiagnostics.PAD_protocolError);
+			abort(PeerAbortDiagnostics.PROTOCOL_ERROR);
 		}
 
 		// TODO Result.SLE_S_QUEUED ?
@@ -509,14 +543,16 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 			if (IUnbind.class.isAssignableFrom(cop.getClass())) {
 				this.applicationOpSequencer.reset(Result.SLE_E_UNBINDING);
 				this.proxyOpSequencer.reset(Result.SLE_E_UNBINDING);
-				if (this.role == AppRole.USER && cop.getResult() == OperationResult.RES_negative
-						&& getState().getStateEnum() == ServiceInstanceStateEnum.unbound) {
+				if (this.role == AppRole.USER && cop.getResult() == OperationResult.NEGATIVE
+				// && getState().getStateEnum() == ServiceInstanceStateEnum.unbound) {
+						&& getStatus() == ServiceStatus.UNBOUND) {
 					this.pxySeqCount = 0;
 				}
 			} else if (IBind.class.isAssignableFrom(cop.getClass())) {
 				// check if a BIND (return) has been accepted:
-				if (this.role == AppRole.USER && cop.getResult() == OperationResult.RES_negative
-						&& getState().getStateEnum() == ServiceInstanceStateEnum.unbound) {
+				if (this.role == AppRole.USER && cop.getResult() == OperationResult.NEGATIVE
+				// && getState().getStateEnum() == ServiceInstanceStateEnum.unbound) {
+						&& getStatus() == ServiceStatus.UNBOUND) {
 					this.proxyOpSequencer.reset(Result.SLE_E_ABORTED);
 					this.applicationOpSequencer.reset(Result.SLE_E_ABORTED);
 					this.aplSeqCount = 0;
@@ -540,7 +576,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public Result forwardInitiatePxyOpAck(IOperation operation, boolean b) {
 		// TODO Auto-generated method stub
@@ -556,6 +592,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 	 */
 	protected abstract IAssociationControl initialiseAssociationControl() throws ApiException;
 
+	@Deprecated
 	@Override
 	public <T extends IOperation> T createOperation(Class<T> clazz) throws ApiException {
 		IProcedure factory = getOperationsMap().get(clazz);
@@ -581,7 +618,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 			throw new ConfigException(msg + "Configuration Error: No prime procedure set");
 
 		// Check that only a single prime procedure is set
-		if (this.proceduresMap.values().stream().filter((o) -> o.getPrime()).count() > 1)
+		if (this.proceduresMap.values().stream().filter((o) -> o.isPrime()).count() > 1)
 			throw new ConfigException(msg + "More than one prime procedure set");
 
 		// check if peer identifier is set
@@ -596,6 +633,15 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 		if (this.serviceInstanceIdentifier == null)
 			throw new ConfigException(msg + "Invalid or missing siid");
+		
+		Optional<IProcedure> procedure = getProcedures().stream()
+				.filter(p -> !p.isConfigured())
+				.findAny();
+		
+		if (procedure.isPresent()) {
+			throw new ConfigException(msg + "Procedure " + procedure.get() + " not configured properly.");
+		}
+		
 
 	}
 
@@ -615,57 +661,61 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 	}
 
 	@Override
-	public List<IFunctionalResource> getFunctionalResources() {
-		return functionalResources;
+	public List<IParameter> gatherParameters() {
+		List<IParameter> gatheredParameters = new ArrayList<>();
+		gatheredParameters.addAll(externalParameters);
+		proceduresMap.values().forEach(p -> gatheredParameters.addAll(p.getConfigurationParameters()));
+		return gatheredParameters;
 	}
-	
+
 	@Override
-	public Map<IProcedure, List<AbstractConfigurationParameter>> getConfigurationParametersMap() {
-		return configurationParametersMap;
+	public void addExternalParameter(IParameter parameter) {
+		externalParameters.add(parameter);
 	}
-	
+
 	@Override
-	public Map<IFunctionalResource, List<FunctionalResourceParameter>> getFunctionalResourceParametersMap() {
-		return functionalResourceParametersMap;
+	public void removeExternalParameter(IParameter parameter) {
+		externalParameters.remove(parameter);
 	}
-	
+
 	@Override
-	public List<Event> getEvents() {
-		return events;
+	public List<IEvent> gatherEvents() {
+		List<IEvent> gatheredEvents = new ArrayList<>();
+		gatheredEvents.addAll(serviceEvents);
+		gatheredEvents.addAll(externalEvents);
+		proceduresMap.values().forEach(p -> gatheredEvents.addAll(p.getEvents()));
+		return gatheredEvents;
 	}
-	
+
+	@Override
+	public void addExternalEvent(IEvent parameter) {
+		externalEvents.add(parameter);
+	}
+
+	@Override
+	public void removeExternalEvent(IEvent parameter) {
+		externalEvents.remove(parameter);
+	}
+
+	@Override
+	public List<IEvent> getEvents() {
+		return serviceEvents;
+	}
+
+	@Override
+	public IEvent getEvent(ObjectIdentifier identifier) {
+		return serviceEvents.stream().filter(e -> e.getOid().equals(identifier)).findFirst().orElse(null);
+	}
+
 	@Override
 	public void addProcedure(IProcedure procedure) throws ApiException {
 		addToProceduresMap(procedure.getProcedureInstanceIdentifier(), procedure);
 		// set ServiceInstance in Procedure
 		procedure.setServiceInstance(this);
-
 		if (procedure.getProcedureInstanceIdentifier().getRole() == ProcedureRole.PRIME) {
 			setPrimeProcedure(procedure);
 		}
-
-		/* subject to refactoring for the time being
-		for (IConfigurationParameter param : serviceParameters) {
-			if (param.getProcedureType().equals(procedure.getType())) {
-				// remove the old parameter with the same OID (equals() and hashCode() are equal)
-				procedure.getConfigurationParameters().remove(param);
-				// and add the service parameter with the same OID
-				procedure.getConfigurationParameters().add(param);
-				param.getProcedures().add(procedure);
-			}
-		}
-		*/
-		procedure.configure();
-		configurationParametersMap.put(procedure, procedure.getConfigurationParameters());
-
-		registerProcedure(procedure.getDeclaredOperations(), procedure);
-
-	}
-
-	protected void registerProcedure(Set<Class<? extends IOperation>> declaredOperations, IProcedure procedure) {
-		for (Class<? extends IOperation> clazz : declaredOperations) {
-			addToOperationsMap(clazz, procedure);
-		}
+		procedure.initialize();
 	}
 
 	@Override
@@ -684,17 +734,46 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 	}
 
 	@Override
-	public IState getState() throws NoServiceInstanceStateException {
-		return getAssociationControlProcedure().getState();
+	public ServiceState getState() {
+		return state;
 	}
 
 	@Override
-	public IState getSubState() throws NoServiceInstanceStateException {
-		// TODO: probably no need for exception
-		// if(this.subState == null)
-		// throw new NoServiceInstanceStateException("No substate for service instance
-		// available.");
-		return this.subState;
+	public ServiceStatus getStatus() {
+		return state.getStatus();
+	}
+
+	@Override
+	public boolean isBound() {
+		return state.getStatus() == ServiceStatus.BOUND;
+	}
+
+	@Override
+	public boolean isPrimeProcedureStateful() {
+		return primeProcedure.isStateful();
+	}
+
+	@Override
+	public Optional<Boolean> isActive() {
+		if (primeProcedure.isStateful()) {
+			return Optional.of(state.getSubStatus() == ServiceSubStatus.ACTIVE);
+		} else {
+			return Optional.empty();
+		}
+	}
+
+	@Override
+	public void setState(ServiceStatus status) {
+		if (state.getStatus() != status) {
+			state.setStatus(status);
+		}
+	}
+
+	@Override
+	public void setSubState(ServiceSubStatus subStatus) {
+		if (getState().getSubStatus() != subStatus) {
+			state.setSubStatus(subStatus);
+		}
 	}
 
 	@Override
@@ -846,11 +925,6 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 	}
 
 	@Override
-	public IServiceInstanceInternal getInternal() {
-		return this;
-	}
-	
-	@Override
 	public AppRole getRole() {
 		return this.role;
 	}
@@ -869,7 +943,6 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 	@Override
 	public final void configure() throws ConfigException, ApiException {
-
 		// do all checks here
 		doConfigure();
 		this.isConfigured = true;
@@ -886,14 +959,13 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 		IPeerAbort pa = null;
 
 		try {
-			pa = createOperation(IPeerAbort.class);
-			pa.setProcedureInstanceIdentifier(getAssociationControlProcedure().getProcedureInstanceIdentifier());
+			pa = getAssociationControlProcedure().createOperation(IPeerAbort.class);
 		} catch (ApiException e) {
 			LOG.log(Level.FINE, "CstsApiException ", e);
 			return;
 		}
 
-		pa.setAbortOriginator(AbortOriginator.AO_serviceElement);
+		pa.setAbortOriginator(AbortOriginator.INTERNAL);
 		pa.setPeerAbortDiagnostic(diagnostic);
 
 		this.proxyOpSequencer.reset(Result.SLE_E_ABORTED);
@@ -901,11 +973,11 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 		Result rc;
 
-		try {
-			stateTransition(new UnboundState());
-		} catch (ApiException e) {
-			rc = Result.E_FAIL;
-		}
+		// TODO should be implicitly handled by Association Control
+		/*
+		 * try { stateTransition(new UnboundState()); } catch (ApiException e) { rc =
+		 * Result.E_FAIL; }
+		 */
 
 		rc = forwardInitiatePxyOpInv(pa, false);
 		rc = forwardInformAplOpInv(pa);
@@ -945,8 +1017,8 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 		// check if a BIND invocation was successful and reset
 		// sequencer if necessary:
-		if (getState().getStateEnum() == ServiceInstanceStateEnum.unbound
-				&& IBind.class.isAssignableFrom(operation.getClass())) {
+		// if (getState().getStateEnum() == ServiceInstanceStateEnum.unbound
+		if (getStatus() == ServiceStatus.UNBOUND && IBind.class.isAssignableFrom(operation.getClass())) {
 			this.applicationOpSequencer.reset(Result.SLE_E_ABORTED);
 			throw new ApiException("Bind invocation unsuccessful");
 		} else {
@@ -997,14 +1069,14 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 				if (!IBind.class.isAssignableFrom(operation.getClass())
 						&& !IUnbind.class.isAssignableFrom(operation.getClass())) {
-					int invId = confOperation.getInvokeId();
+					int invId = confOperation.getInvokeIdentifier();
 					for (IConfirmedOperation loopedConfOp : this.localReturns) {
-						int localInvId = loopedConfOp.getInvokeId();
+						int localInvId = loopedConfOp.getInvokeIdentifier();
 						if (localInvId == invId) {
 							// generate and send return
 							// confOperation
 							// .setDiagnostics(Diagnostics.D_duplicateInvokeId);
-							Diagnostic diag = new Diagnostic(DiagnosticEnum.CONFLICTING_VALUES);
+							Diagnostic diag = new Diagnostic(DiagnosticType.CONFLICTING_VALUES);
 							diag.setText("Duplicate invoke ID");
 							diag.getAppellations().add(String.valueOf(localInvId));
 							confOperation.setDiagnostic(diag);
@@ -1022,8 +1094,8 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 		} catch (ApiException e) {
 
-			if (getState().getStateEnum() == ServiceInstanceStateEnum.unbound
-					&& IBind.class.isAssignableFrom(operation.getClass())) {
+			// if (getState().getStateEnum() == ServiceInstanceStateEnum.unbound
+			if (getStatus() == ServiceStatus.UNBOUND && IBind.class.isAssignableFrom(operation.getClass())) {
 				this.proxyOpSequencer.reset(Result.SLE_E_ABORTED);
 				throw e;
 			}
@@ -1070,7 +1142,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 			doInformOpReturn(confOperation);
 
 		} catch (ApiException e) {
-			abort(PeerAbortDiagnostics.PAD_protocolError);
+			abort(PeerAbortDiagnostics.PROTOCOL_ERROR);
 			throw e;
 		} finally {
 			this.proxyOpSequencer.cont(); // TODO: do we need to call this in a case of abort?
@@ -1098,12 +1170,27 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 		return this.operationsMap;
 	}
 
+	@Override
+	public ProductionStatus getProductionStatus() {
+		return productionStatus;
+	}
+
+	@Override
+	public ProductionState getProductionState() {
+		return productionStatus.getCurrentState();
+	}
+
 	protected void addToOperationsMap(Class<? extends IOperation> clazz, IProcedure procedure) {
 		this.operationsMap.put(clazz, procedure);
 	}
 
 	protected void clearOperationsMap() {
 		this.operationsMap.clear();
+	}
+
+	@Override
+	public List<IProcedure> getProcedures() {
+		return proceduresMap.values().stream().collect(Collectors.toList());
 	}
 
 	protected Map<ProcedureInstanceIdentifier, IProcedure> getProceduresMap() {
@@ -1161,41 +1248,6 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 		this.peerId = null;
 	}
 
-	/**
-	 * The function performs a state transition to the new state supplied as input
-	 * argument. The function reports every state-change to the application on the
-	 * reporter interface. If tracing is on, the state-change is also passed to the
-	 * tracing interface.
-	 */
-	@Override
-	public void stateTransition(IState newState) throws ApiException {
-		// if it is a genuine service state from the association control
-		if (newState.isServiceState() && getState() != newState) {
-			String oldStateS = getState().getStateEnum().toString();
-			// getAssociationControlProcedure().setState((IProcedureState) newState); //
-			// TODO really?
-			String newStateS = getState().getStateEnum().toString();
-
-			// log for a state transition
-			String msg = "State transition from " + oldStateS + " to " + newStateS;
-			LOG.fine(msg);
-		}
-		// if we are bound we need a substate
-		if (getState().getStateEnum() == ServiceInstanceStateEnum.bound) {
-
-			if (!newState.isServiceState() && newState.getStateEnum() == ServiceInstanceStateEnum.active
-					&& getState().getSubStateEnum() != newState.getStateEnum()) {
-
-				if (newState.getSubStateEnum() == ServiceInstanceStateEnum.active)
-					this.subState = new ActiveState();
-				else
-					this.subState = new ReadyState();
-			}
-		} else {
-			this.subState = null;
-		}
-	}
-
 	@Override
 	public IProxyAdmin getProxy() {
 		return this.proxy;
@@ -1205,6 +1257,60 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 		this.aplSeqCount = 0;
 		this.pxySeqCount = 0;
 		this.invokeId = 0;
+	}
+
+	/**
+	 * Creates an association object and memories the interface returned by the
+	 * proxy. This function is only allowed to be called for initiating applications
+	 * 
+	 * @throws ApiException
+	 */
+	@Override
+	public void createAssociation() throws ApiException {
+		LOG.finest("Creating association for service instance " + getServiceInstanceIdentifier().toString());
+
+		if (getProxy() != null) {
+			setProxy(null);
+		}
+
+		// get proxy I/F that supports the rspPortId
+		String protId = getApi().getProtocolId(getResponderPortIdentifier());
+
+		IProxyAdmin proxy = getApi().getProxy(protId);
+
+		setProxy(proxy);
+
+		if (getProxy() == null) {
+			String msg = "No proxy available for port ";
+			msg += getResponderPortIdentifier();
+			LOG.fine(msg);
+			throw new ApiException(Result.SLE_E_CONFIG.toString());
+		}
+
+		IAssocFactory af = (IAssocFactory) getProxy();
+		if (af == null) {
+			throw new ApiException("No proxy found for service instance " + toString());
+		}
+
+		ISrvProxyInitiate pi = null;
+		// ISrvProxyInform ppServiceInstance = (ISrvProxyInform) this;
+
+		try {
+			pi = af.createAssociation(ISrvProxyInitiate.class, getServiceType(), this);
+			setProxyInitiate(pi);
+		} catch (ApiException e) {
+			LOG.fine("ApiException " + e);
+			throw e;
+		}
+	}
+
+	@Override
+	public void releaseAssocation() throws ApiException {
+		IAssocFactory af = (IAssocFactory) getProxy();
+		if (af == null) {
+			throw new ApiException("No proxy found for service instance " + toString());
+		}
+		af.destroyAssociation(getProxyInitiate());
 	}
 
 	/**
@@ -1223,12 +1329,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 	 * Clears all pending local return PDUs.
 	 */
 	protected void clearInternalLocalReturns() {
-
-		Iterator<IConfirmedOperation> iter = this.localReturns.listIterator();
-		while (iter.hasNext()) {
-			iter.next();
-			iter.remove();
-		}
+		localReturns.clear();
 	}
 
 	/**
@@ -1302,13 +1403,14 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 	@Override
 	public void protocolAbort(byte[] diagnostic) throws ApiException {
 
-		IPeerAbort pa = createOperation(IPeerAbort.class);
+		IPeerAbort pa = getAssociationControlProcedure().createOperation(IPeerAbort.class);
 		pa.setProcedureInstanceIdentifier(getAssociationControlProcedure().getProcedureInstanceIdentifier());
 
-		pa.setAbortOriginator(AbortOriginator.AO_serviceElement);
-		pa.setPeerAbortDiagnostic(PeerAbortDiagnostics.encode(new PeerAbortDiagnostic(diagnostic)));
+		pa.setAbortOriginator(AbortOriginator.INTERNAL);
+		pa.setPeerAbortDiagnostic(PeerAbortDiagnostics.decode(new PeerAbortDiagnostic(diagnostic)));
 
-		stateTransition(new UnboundState());
+		// TODO should be implicitly handled by Association Control
+		// stateTransition(new UnboundState());
 
 		// inform both sequencer
 		this.applicationOpSequencer.reset(Result.SLE_E_ABORTED);
@@ -1334,6 +1436,23 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 	protected List<ReturnPair> getRemoteReturns() {
 		return remoteReturns;
+	}
+
+	public void changeProductionState(ProductionState state) throws ApiException {
+		productionStatus.transitionTo(state);
+	}
+
+	public void changeProductionConfiguration() {
+		getEvent(OIDs.svcProductionStatusChangeVersion1).fire(EventValue.empty());
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		if (ProductionStatus.class.isInstance(o)) {
+			EventValue value = new EventValue(EventValueType.QUALIFIED_VALUES);
+			value.getQualifiedValues().add(productionStatus.toQualifiedValues());
+			getEvent(OIDs.svcProductionStatusChangeVersion1).fire(value);
+		}
 	}
 
 }

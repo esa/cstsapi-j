@@ -3,6 +3,9 @@ package esa.egos.csts.api.oids;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
+/**
+ * This class represents the CCSDS ObjectIdentifier type.
+ */
 public class ObjectIdentifier {
 
 	private final int[] oidArray;
@@ -11,19 +14,53 @@ public class ObjectIdentifier {
 		this.oidArray = oidArray.clone();
 	}
 
+	/**
+	 * Creates a new Object Identifier from specified Integer values.
+	 * 
+	 * @param oidArray
+	 *            the ordered Integer values representing the Object Identifier
+	 * @return an Object Identifier of the specified Integer values
+	 */
 	public static ObjectIdentifier of(int... oidArray) {
 		return new ObjectIdentifier(oidArray);
 	}
 
+	/**
+	 * Creates a new Object Identifier from another Object Identifier and specified
+	 * Integer values.
+	 * 
+	 * @param oid
+	 *            the prepender Object Identifier
+	 * @param oidArray
+	 *            the ordered Integer values representing the rest of the Object
+	 *            Identifier
+	 * @return an Object Identifier of the specified Object Identifier the specified
+	 *         Integer values
+	 */
 	public static ObjectIdentifier of(ObjectIdentifier oid, int... oidArray) {
 		int[] concatOidArray = IntStream.concat(Arrays.stream(oid.oidArray), Arrays.stream(oidArray)).toArray();
 		return new ObjectIdentifier(concatOidArray);
 	}
 
+	/**
+	 * Returns a cloned array of the internal Object Identifier values. The cloning
+	 * guarantees, that the Object Identifier is not changed externally, since this
+	 * class is considered immutable.
+	 * 
+	 * @return the cloner Object Identifier array
+	 */
 	public int[] toArray() {
 		return oidArray.clone();
 	}
 
+	/**
+	 * Indicates whether the internal Object Identifier array is equal to the
+	 * specified array.
+	 * 
+	 * @param identifier
+	 *            the specified array
+	 * @return true if the arrays are equal, false otherwise
+	 */
 	public boolean equals(int[] identifier) {
 		return Arrays.equals(oidArray, identifier);
 	}

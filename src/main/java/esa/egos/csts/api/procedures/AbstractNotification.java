@@ -2,133 +2,310 @@ package esa.egos.csts.api.procedures;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.openmuc.jasn1.ber.BerByteArrayOutputStream;
-import org.openmuc.jasn1.ber.types.BerEmbeddedPdv.Identification;
-import org.openmuc.jasn1.ber.types.BerOctetString;
 
-import ccsds.csts.common.types.Embedded;
-import ccsds.csts.common.types.Extended;
 import ccsds.csts.notification.pdus.NotificationPdu;
 import ccsds.csts.notification.pdus.NotificationStartDiagnosticExt;
 import ccsds.csts.notification.pdus.NotificationStartInvocExt;
-import ccsds.csts.notification.pdus.OidValues;
+import esa.egos.csts.api.diagnostics.ListOfParametersDiagnostics;
+import esa.egos.csts.api.diagnostics.ListOfParametersDiagnosticsType;
+import esa.egos.csts.api.enumerations.OperationType;
+import esa.egos.csts.api.enumerations.Result;
+import esa.egos.csts.api.events.IEvent;
 import esa.egos.csts.api.exceptions.ApiException;
-import esa.egos.csts.api.exceptions.ConfigException;
+import esa.egos.csts.api.extensions.EmbeddedData;
+import esa.egos.csts.api.extensions.Extension;
 import esa.egos.csts.api.oids.OIDs;
+import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.INotify;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IStart;
 import esa.egos.csts.api.operations.IStop;
-import esa.egos.csts.api.operations.impl.Notify;
-import esa.egos.csts.api.operations.impl.Start;
-import esa.egos.csts.api.operations.impl.Stop;
+import esa.egos.csts.api.parameters.impl.LabelLists;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
-import esa.egos.csts.api.parameters.impl.ListOfParametersDiagnostics;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
-import esa.egos.csts.api.serviceinstance.states.InactiveState;
-import esa.egos.csts.api.util.impl.CSTSUtils;
+import esa.egos.csts.api.types.Label;
+import esa.egos.csts.api.types.LabelList;
+import esa.egos.csts.api.types.Name;
+import esa.egos.csts.api.types.Time;
 
-public abstract class AbstractNotification extends AbstractStatefulProcedure implements INotification {
+public abstract class AbstractNotification extends AbstractStatefulProcedure implements INotificationInternal {
 
-	private final ProcedureType type = new ProcedureType(OIDs.notification);
+	private static final ProcedureType TYPE = new ProcedureType(OIDs.notification);
+	
+	private Set<IEvent> subscribedEvents;
 
+	// defined by User
 	private ListOfParameters listOfEvents;
+	
+	// defined by Provider
 	private ListOfParametersDiagnostics listOfEventsDiagnostics;
+	
+	private boolean running;
 
 	protected AbstractNotification() {
-		super(new InactiveState());
+		subscribedEvents = new HashSet<>();
+		running = false;
 	}
 
 	@Override
 	public ProcedureType getType() {
-		return type;
-	}
-
-	protected ListOfParameters getListOfEvents() {
-		return listOfEvents;
+		return TYPE;
 	}
 	
+	@Override
+	protected void initOperationSet() {
+		addSupportedOperationType(OperationType.START);
+		addSupportedOperationType(OperationType.STOP);
+		addSupportedOperationType(OperationType.NOTIFY);
+	}
+
+	@Override
+	public void terminate() {
+		stopNotification();
+		initializeState();
+	}
+	
+	@Override
+	public Set<IEvent> getSubscribedEvents() {
+		return subscribedEvents;
+	}
+	
+	@Override
+	public ListOfParameters getListOfEvents() {
+		return listOfEvents;
+	}
+
 	@Override
 	public void setListOfEvents(ListOfParameters listOfEvents) {
 		this.listOfEvents = listOfEvents;
 	}
-	
-	protected ListOfParametersDiagnostics getListOfParametersDiagnostics() {
+
+	@Override
+	public ListOfParametersDiagnostics getListOfParametersDiagnostics() {
 		return listOfEventsDiagnostics;
 	}
 
-	protected void setListOfEventsDiagnostics(ListOfParametersDiagnostics listOfParametersDiagnostics) {
+	@Override
+	public void setListOfEventsDiagnostics(ListOfParametersDiagnostics listOfParametersDiagnostics) {
 		this.listOfEventsDiagnostics = listOfParametersDiagnostics;
-	}
-	
-	protected void initOperationSet() {
-		getDeclaredOperations().add(IStart.class);
-		getDeclaredOperations().add(IStop.class);
-		getDeclaredOperations().add(INotify.class);
 	}
 
 	@Override
-	protected void initialiseOperationFactory() {
-		getOperationFactoryMap().put(IStart.class, this::createStart);
-		getOperationFactoryMap().put(IStop.class, this::createStop);
-		getOperationFactoryMap().put(INotify.class, this::createNotify);
+	public synchronized boolean checkNotification() {
+		return processListOfEvents();
 	}
+	
+	@Override
+	public synchronized void startNotification() {
+		running = true;
+	}
+	
+	@Override
+	public synchronized void stopNotification() {
+		subscribedEvents.forEach(e -> e.deleteObserver(this));
+		subscribedEvents.clear();
+		running = false;
+	}
+	
+	protected void observeEvent(IEvent event) {
+		event.addObserver(this);
+		subscribedEvents.add(event);
+	}
+	
+	/**
+	 * Processes the List of Events extension in the START invocation.
+	 * 
+	 * @return true if the List of Events is valid, false otherwise
+	 */
+	protected boolean processListOfEvents() {
 
-	protected IStart createStart() {
-		IStart start = new Start();
-		start.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
-		try {
-			start.setServiceInstanceIdentifier(getServiceInstance().getServiceInstanceIdentifier());
-		} catch (ConfigException e) {
-			e.printStackTrace();
+		LabelLists labelLists = (LabelLists) getConfigurationParameter(OIDs.pNnamedLabelLists);
+		List<IEvent> events = getServiceInstance().gatherEvents();
+		ListOfParametersDiagnostics diag;
+		
+		switch (listOfEvents.getType()) {
+
+		case EMPTY:
+
+			LabelList defaultList = labelLists.queryDefaultList();
+
+			if (defaultList == null) {
+				diag = new ListOfParametersDiagnostics(ListOfParametersDiagnosticsType.UNDEFINED_DEFAULT);
+				diag.setUndefinedDefault(
+						"Default list not defined for Service Instance " + getServiceInstance().toString());
+				setListOfEventsDiagnostics(diag);
+				return false;
+			}
+
+			for (Label label : defaultList.getLabels()) {
+				events.stream()
+				.filter(e -> e.getLabel().equals(label))
+				.forEach(this::observeEvent);
+			}
+			break;
+
+		case FUNCTIONAL_RESOURCE_NAME:
+			
+			events.stream()
+			.filter(e -> listOfEvents.getFunctionalResourceName().equals(e.getName().getFunctionalResourceName()))
+			.forEach(this::observeEvent);
+			
+			if (subscribedEvents.isEmpty()) {
+				diag = new ListOfParametersDiagnostics(ListOfParametersDiagnosticsType.UNKNOWN_FUNCTIONAL_RESOURCE_NAME);
+				diag.setUnknownFunctionalResourceName(listOfEvents.getFunctionalResourceName());
+				setListOfEventsDiagnostics(diag);
+				return false;
+			}
+			break;
+
+		case FUNCTIONAL_RESOURCE_TYPE:
+			
+			events.stream()
+			.filter(e -> listOfEvents.getFunctionalResourceType().equals(e.getLabel().getFunctionalResourceType()))
+			.forEach(this::observeEvent);
+			
+			if (subscribedEvents.isEmpty()) {
+				diag = new ListOfParametersDiagnostics(ListOfParametersDiagnosticsType.UNKNOWN_FUNCTIONAL_RESOURCE_TYPE);
+				diag.setUnknownFunctionalResourceType(listOfEvents.getFunctionalResourceType());
+				setListOfEventsDiagnostics(diag);
+				return false;
+			}
+			break;
+
+		case LABELS_SET:
+			diag = new ListOfParametersDiagnostics(ListOfParametersDiagnosticsType.UNKNOWN_PARAMETER_IDENTIFIER);
+			for (Label label : listOfEvents.getParameterLabels()) {
+				
+				int subscribedEventCount = subscribedEvents.size();
+				events.stream()
+				.filter(e -> e.getLabel().equals(label))
+				.forEach(this::observeEvent);
+				
+				// check if new events were added
+				if (subscribedEvents.size() == subscribedEventCount) {
+					diag.getUnknownParameterLabels().add(label);
+				}
+			}
+			if (!diag.getUnknownParameterLabels().isEmpty()) {
+				setListOfEventsDiagnostics(diag);
+				return false;
+			}
+			break;
+
+		case LIST_NAME:
+
+			LabelList namedList = labelLists.queryList(listOfEvents.getListName());
+
+			if (namedList == null) {
+				diag = new ListOfParametersDiagnostics(ListOfParametersDiagnosticsType.UNKNOWN_LIST_NAME);
+				diag.setUnknownListName("List " + listOfEvents.getListName() + " not defined for Service Instance "
+						+ getServiceInstance());
+				setListOfEventsDiagnostics(diag);
+				return false;
+			}
+
+			for (Label label : namedList.getLabels()) {
+				events.stream()
+				.filter(e -> e.getLabel().equals(label))
+				.forEach(this::observeEvent);
+			}
+			break;
+
+		case NAMES_SET:
+			diag = new ListOfParametersDiagnostics(ListOfParametersDiagnosticsType.UNKNOWN_PARAMETER_IDENTIFIER);
+			
+			for (Name name : listOfEvents.getParameterNames()) {
+				int subscribedEventCount = subscribedEvents.size();
+				
+				events.stream()
+				.filter(e -> e.getName().equals(name))
+				.forEach(this::observeEvent);
+				
+				// check if new events were added
+				if (subscribedEvents.size() == subscribedEventCount) {
+					diag.getUnknownParameterNames().add(name);
+				}
+			}
+			if (!diag.getUnknownParameterNames().isEmpty()) {
+				setListOfEventsDiagnostics(diag);
+				return false;
+			}
+			break;
+
+		case PROCEDURE_INSTANCE_IDENTIFIER:
+			events.stream()
+			.filter(e -> listOfEvents.getProcedureInstanceIdentifier().equals(e.getName().getProcedureInstanceIdentifier()))
+			.forEach(this::observeEvent);
+			if (subscribedEvents.isEmpty()) {
+				diag = new ListOfParametersDiagnostics(ListOfParametersDiagnosticsType.UNKNOWN_PROCEDURE_INSTANCE_IDENTIFIER);
+				diag.setUnknownProcedureInstanceIdentifier(listOfEvents.getProcedureInstanceIdentifier());
+				setListOfEventsDiagnostics(diag);
+				return false;
+			}
+			break;
+
+		case PROCEDURE_TYPE:
+			events.stream()
+			.filter(e -> listOfEvents.getProcedureType().equals(e.getLabel().getProcedureType()))
+			.forEach(this::observeEvent);
+			if (subscribedEvents.isEmpty()) {
+				diag = new ListOfParametersDiagnostics(ListOfParametersDiagnosticsType.UNKNOWN_PROCEDURE_TYPE);
+				diag.setUnknownProcedureType(listOfEvents.getProcedureType());
+				setListOfEventsDiagnostics(diag);
+				return false;
+			}
+			break;
 		}
-		return start;
-	}
 
-	protected IStop createStop() {
-		IStop stop = new Stop();
-		stop.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
-		try {
-			stop.setServiceInstanceIdentifier(getServiceInstance().getServiceInstanceIdentifier());
-		} catch (ConfigException e) {
-			e.printStackTrace();
+		return true;
+	}
+	
+	@Override
+	protected void processIncomingEvent(IEvent event) {
+		if (running) {
+			INotify notify = createNotify();
+			notify.setEventName(event.getName());
+			notify.setEventValue(event.getValue());
+			notify.setEventTime(Time.now());
+			getState().process(notify);
 		}
-		return stop;
 	}
-
-	protected INotify createNotify() {
-		INotify notify = new Notify();
-		notify.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
-		try {
-			notify.setServiceInstanceIdentifier(getServiceInstance().getServiceInstanceIdentifier());
-		} catch (ConfigException e) {
-			e.printStackTrace();
+	
+	@Override
+	public Result initiateOperationInvoke(IOperation operation) {
+		if (operation.getType() == OperationType.START) {
+			IStart start = (IStart) operation;
+			start.setInvocationExtension(encodeInvocationExtension());
 		}
-		return notify;
+		return doInitiateOperationInvoke(operation);
 	}
-
+	
 	@Override
 	public byte[] encodeOperation(IOperation operation, boolean isInvoke) throws ApiException, IOException {
 
 		byte[] encodedOperation;
 		NotificationPdu pdu = new NotificationPdu();
 
-		if (IStart.class.isAssignableFrom(operation.getClass())) {
+		if (operation.getType() == OperationType.START) {
 			IStart start = (IStart) operation;
 			if (isInvoke) {
-				pdu.setStartInvocation(start.encodeStartInvocation(encodeStartInvocationExtension()));
+				pdu.setStartInvocation(start.encodeStartInvocation());
 			} else {
 				pdu.setStartReturn(start.encodeStartReturn());
 			}
-		} else if (IStop.class.isAssignableFrom(operation.getClass())) {
+		} else if (operation.getType() == OperationType.STOP) {
 			IStop stop = (IStop) operation;
 			if (isInvoke) {
 				pdu.setStopInvocation(stop.encodeStopInvocation());
 			} else {
 				pdu.setStopReturn(stop.encodeStopReturn());
 			}
-		} else if (INotify.class.isAssignableFrom(operation.getClass())) {
+		} else if (operation.getType() == OperationType.NOTIFY) {
 			INotify notify = (INotify) operation;
 			if (isInvoke) {
 				pdu.setNotifyInvocation(notify.encodeNotifyInvocation());
@@ -143,26 +320,11 @@ public abstract class AbstractNotification extends AbstractStatefulProcedure imp
 		return encodedOperation;
 	}
 
-	protected Extended encodeStartInvocationExtension() {
-
-		Extended extension = new Extended();
-
-		Embedded startInvocationExtension = new Embedded();
-		Identification identification = new Identification();
-		identification.setSyntax(OidValues.nStartInvocExt);
-		startInvocationExtension.setIdentification(identification);
-		startInvocationExtension.setDataValue(new BerOctetString(encodeInvocationExtension().code));
-
-		extension.setExternal(startInvocationExtension);
-
-		return extension;
-	}
-
-	protected NotificationStartInvocExt encodeInvocationExtension() {
+	private EmbeddedData encodeInvocationExtension() {
 
 		NotificationStartInvocExt invocationExtension = new NotificationStartInvocExt();
 		invocationExtension.setListOfEvents(listOfEvents.encode());
-		invocationExtension.setNotificationStartInvocExtExtension(CSTSUtils.nonUsedExtension());
+		invocationExtension.setNotificationStartInvocExtExtension(encodeStartInvocationExtExtension().encode());
 
 		// encode with a resizable output stream and an initial capacity of 128 bytes
 		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
@@ -172,21 +334,22 @@ public abstract class AbstractNotification extends AbstractStatefulProcedure imp
 			e.printStackTrace();
 		}
 
-		return invocationExtension;
+		return EmbeddedData.of(OIDs.nStartInvocExt, invocationExtension.code);
 	}
 
-	protected Embedded encodeNegativeResultDiagnosticExt() {
-
-		Embedded notificationStartDiagnosticExt = new Embedded();
-		Identification identification = new Identification();
-		identification.setSyntax(OidValues.nStartInvocExt);
-		notificationStartDiagnosticExt.setIdentification(identification);
-		notificationStartDiagnosticExt.setDataValue(new BerOctetString(encodeNotificationStartDiagnosticExt().code));
-
-		return notificationStartDiagnosticExt;
+	/**
+	 * This method should be overridden to encode the extension of a derived
+	 * procedure.
+	 * 
+	 * @return the Extended object representing the extension of the derived
+	 *         procedure
+	 */
+	protected Extension encodeStartInvocationExtExtension() {
+		return Extension.notUsed();
 	}
 
-	protected NotificationStartDiagnosticExt encodeNotificationStartDiagnosticExt() {
+	@Override
+	public EmbeddedData encodeStartDiagnosticExt() {
 
 		NotificationStartDiagnosticExt diagnosticExtension = new NotificationStartDiagnosticExt();
 		if (listOfEventsDiagnostics != null) {
@@ -201,10 +364,30 @@ public abstract class AbstractNotification extends AbstractStatefulProcedure imp
 			e.printStackTrace();
 		}
 
-		return diagnosticExtension;
+		return EmbeddedData.of(OIDs.nStartDiagExt, diagnosticExtension.code);
 
 	}
 
+	@Override
+	public Result informOperationInvoke(IOperation operation) {
+		if (operation.getType() == OperationType.START) {
+			IStart start = (IStart) operation;
+			decodeStartInvocationExtension(start.getInvocationExtension());
+		}
+		return doInformOperationInvoke(operation);
+	}
+	
+	@Override
+	public Result informOperationReturn(IConfirmedOperation confOperation) {
+		if (confOperation.getType() == OperationType.START) {
+			IStart start = (IStart) confOperation;
+			if (start.getStartDiagnostic() != null) {
+				decodeStartDiagnosticExt(start.getStartDiagnostic().getDiagnosticExtension());
+			}
+		}
+		return doInformOperationReturn(confOperation);
+	}
+	
 	@Override
 	public IOperation decodeOperation(byte[] encodedPdu) throws ApiException, IOException {
 
@@ -218,13 +401,10 @@ public abstract class AbstractNotification extends AbstractStatefulProcedure imp
 		if (pdu.getStartInvocation() != null) {
 			IStart start = createStart();
 			start.decodeStartInvocation(pdu.getStartInvocation());
-			decodeStartInvocationExtension(pdu.getStartInvocation().getStartInvocationExtension());
 			operation = start;
 		} else if (pdu.getStartReturn() != null) {
 			IStart start = createStart();
 			start.decodeStartReturn(pdu.getStartReturn());
-			decodeNegativeResultDiagnosticExt(
-					pdu.getStartReturn().getResult().getNegative().getDiagnostic().getDiagnosticExtension());
 			operation = start;
 		} else if (pdu.getStopInvocation() != null) {
 			IStop stop = createStop();
@@ -243,22 +423,35 @@ public abstract class AbstractNotification extends AbstractStatefulProcedure imp
 		return operation;
 	}
 
-	protected void decodeStartInvocationExtension(Extended extension) {
-		if (CSTSUtils.equalsIdentifier(extension, OidValues.nStartInvocExt)) {
+	protected void decodeStartInvocationExtension(Extension extension) {
+		if (extension.isUsed() && extension.getEmbeddedData().getOid().equals(OIDs.nStartInvocExt)) {
 			NotificationStartInvocExt invocationExtension = new NotificationStartInvocExt();
-			try (ByteArrayInputStream is = new ByteArrayInputStream(extension.getExternal().getDataValue().value)) {
+			try (ByteArrayInputStream is = new ByteArrayInputStream(extension.getEmbeddedData().getData())) {
 				invocationExtension.decode(is);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			listOfEvents = ListOfParameters.decode(invocationExtension.getListOfEvents());
+			decodeStartInvocationExtExtension(Extension.decode(invocationExtension.getNotificationStartInvocExtExtension()));
 		}
 	}
 
-	protected void decodeNegativeResultDiagnosticExt(Embedded embedded) {
-		if (CSTSUtils.equalsIdentifier(embedded, OidValues.nStartDiagExt)) {
+	/**
+	 * This method should be overridden to decode the extension of a derived
+	 * procedure.
+	 * 
+	 * @param extension
+	 *            the Extended object representing the extension of the derived
+	 *            procedure
+	 */
+	protected void decodeStartInvocationExtExtension(Extension extension) {
+		// do nothing on default
+	}
+
+	protected void decodeStartDiagnosticExt(EmbeddedData embeddedData) {
+		if (embeddedData.getOid().equals(OIDs.nStartDiagExt)) {
 			NotificationStartDiagnosticExt diagnosticExtension = new NotificationStartDiagnosticExt();
-			try (ByteArrayInputStream is = new ByteArrayInputStream(embedded.getDataValue().value)) {
+			try (ByteArrayInputStream is = new ByteArrayInputStream(embeddedData.getData())) {
 				diagnosticExtension.decode(is);
 			} catch (IOException e) {
 				e.printStackTrace();

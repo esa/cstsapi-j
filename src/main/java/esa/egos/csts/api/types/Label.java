@@ -9,60 +9,120 @@ import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.parameters.impl.ParameterValue;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 
+/**
+ * This class represents the CCSDS Label type.
+ * 
+ * This class is immutable.
+ */
 public class Label {
 
 	private final ObjectIdentifier identifier;
-
 	private final TypeIdentifier typeIdentifier;
-
 	private final FunctionalResourceType functionalResourceType;
-
 	private final ProcedureType procedureType;
 
-	public Label(ObjectIdentifier objectIdentifier, FunctionalResourceType functionalResourceType) {
+	private Label(ObjectIdentifier objectIdentifier, FunctionalResourceType functionalResourceType) {
 		this.identifier = objectIdentifier;
 		typeIdentifier = TypeIdentifier.FUNCTIONAL_RESOURCE_TYPE;
 		this.functionalResourceType = functionalResourceType;
 		procedureType = null;
 	}
 
-	public Label(ObjectIdentifier objectIdentifier, ProcedureType procedureType) {
+	private Label(ObjectIdentifier objectIdentifier, ProcedureType procedureType) {
 		this.identifier = objectIdentifier;
 		typeIdentifier = TypeIdentifier.PROCEDURE_TYPE;
 		this.procedureType = procedureType;
 		functionalResourceType = null;
 	}
 
+	/**
+	 * Returns the Object Identifier.
+	 * 
+	 * @return the Object Identifier
+	 */
 	public ObjectIdentifier getOid() {
 		return identifier;
 	}
 
+	/**
+	 * Returns the type identifier which specifies if this Label holds a Functional
+	 * Resource Type or a Procedure Type.
+	 * 
+	 * @return the type identifier
+	 */
 	public TypeIdentifier getTypeIdentifier() {
 		return typeIdentifier;
 	}
 
+	/**
+	 * Returns the Functional Resource Type if held by this Label.
+	 * 
+	 * @return the Functional Resource Type if held by this Label, null otherwise
+	 */
 	public FunctionalResourceType getFunctionalResourceType() {
 		return functionalResourceType;
 	}
 
+	/**
+	 * Returns the Procedure Type if held by this Label.
+	 * 
+	 * @return the Procedure Type if held by this Label, null otherwise
+	 */
 	public ProcedureType getProcedureType() {
 		return procedureType;
 	}
 
+	/**
+	 * Returns this Label as a Parameter Value for usage in Qualified Values.
+	 * 
+	 * @return this Label as a Parameter Value
+	 */
 	public ParameterValue toParameterValue() {
 		ParameterValue value = new ParameterValue(ParameterType.OBJECT_IDENTIFIER);
 		switch (typeIdentifier) {
 		case FUNCTIONAL_RESOURCE_TYPE:
-			value.getOIDparameterValues().add(functionalResourceType.getObjectIdentifier());
+			value.getOIDparameterValues().add(functionalResourceType.getOid());
 			break;
 		case PROCEDURE_TYPE:
-			value.getOIDparameterValues().add(procedureType.getIdentifier());
+			value.getOIDparameterValues().add(procedureType.getOid());
 			break;
 		}
 		value.getOIDparameterValues().add(identifier);
 		return value;
 	}
 
+	/**
+	 * Creates a new Label from an Object Identifier and Functional Resource Type.
+	 * 
+	 * @param objectIdentifier
+	 *            the Object Identifier
+	 * @param functionalResourceType
+	 *            the Functional Resource Type
+	 * @return a new Label of the specified Object Identifier and Functional
+	 *         Resource Type
+	 */
+	public static Label of(ObjectIdentifier objectIdentifier, FunctionalResourceType functionalResourceType) {
+		return new Label(objectIdentifier, functionalResourceType);
+	}
+
+	/**
+	 * Creates a new Label from an Object Identifier and Procedure Type.
+	 * 
+	 * @param objectIdentifier
+	 *            the Object Identifier
+	 * @param procedureType
+	 *            the Procedure Type
+	 * @return a new Label of the specified Object Identifier and Procedure Type
+	 */
+	public static Label of(ObjectIdentifier objectIdentifier, ProcedureType procedureType) {
+		return new Label(objectIdentifier, procedureType);
+	}
+
+	/**
+	 * Encodes this Label into a CCSDS Label type.
+	 * 
+	 * @return the CCSDS Label type representing this object
+	 */
 	public ccsds.csts.common.types.Label encode() {
 		ccsds.csts.common.types.Label label = new ccsds.csts.common.types.Label();
 		label.setParamOrEventId(new PublishedIdentifier(identifier.toArray()));
@@ -79,6 +139,13 @@ public class Label {
 		return label;
 	}
 
+	/**
+	 * Decodes a specified CCSDS Label type.
+	 * 
+	 * @param label
+	 *            the specified CCSDS Label type
+	 * @return a new Label decoded from the specified CCSDS Label type
+	 */
 	public static Label decode(ccsds.csts.common.types.Label label) {
 		Label newLabel = null;
 		if (label != null) {

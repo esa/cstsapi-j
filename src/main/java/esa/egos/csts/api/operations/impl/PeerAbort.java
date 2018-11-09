@@ -1,45 +1,47 @@
 package esa.egos.csts.api.operations.impl;
 
+import ccsds.csts.association.control.types.PeerAbortInvocation;
+import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.operations.AbstractConfirmedOperation;
 import esa.egos.csts.api.operations.IPeerAbort;
 import esa.egos.proxy.enums.AbortOriginator;
-import esa.egos.proxy.enums.PeerAbortDiagnostics;
 
 public class PeerAbort extends AbstractConfirmedOperation implements IPeerAbort {
-	
-	private final OperationType type = OperationType.PEER_ABORT;
-	
-    /**
-     * The originator of the PEER-ABORT operation.
-     */
-    private AbortOriginator originator;
 
-    /**
-     * The PEER-ABORT diagnostic.
-     */
-    private PeerAbortDiagnostics diagnostic;
-	
-	public PeerAbort(int version) {
-		super(version);
-		
-        this.originator = AbortOriginator.AO_invalid;
-        this.diagnostic = PeerAbortDiagnostics.PAD_invalid;
+	private static final OperationType TYPE = OperationType.PEER_ABORT;
+
+	/**
+	 * The originator of the PEER-ABORT operation.
+	 */
+	private AbortOriginator originator;
+
+	/**
+	 * The PEER-ABORT diagnostic.
+	 */
+	private PeerAbortDiagnostics diagnostic;
+
+	/**
+	 * The constructor of a PEER-ABORT operation.
+	 */
+	public PeerAbort() {
+		originator = AbortOriginator.INVALID;
+		diagnostic = PeerAbortDiagnostics.INVALID;
 	}
-	
+
 	@Override
 	public OperationType getType() {
-		return type;
+		return TYPE;
 	}
 
 	@Override
 	public boolean isBlocking() {
 		return false;
 	}
-	
+
 	@Override
 	public PeerAbortDiagnostics getPeerAbortDiagnostic() {
-		return this.diagnostic;
+		return diagnostic;
 	}
 
 	@Override
@@ -49,7 +51,7 @@ public class PeerAbort extends AbstractConfirmedOperation implements IPeerAbort 
 
 	@Override
 	public AbortOriginator getAbortOriginator() {
-		return this.originator;
+		return originator;
 	}
 
 	@Override
@@ -59,22 +61,33 @@ public class PeerAbort extends AbstractConfirmedOperation implements IPeerAbort 
 
 	@Override
 	public String print(int i) {
-		
-        StringBuilder os = new StringBuilder();
 
-        os.append("Abort Originator       : " + this.originator + "\n");
-        os.append("Service Instance Id    : ");
+		StringBuilder os = new StringBuilder();
 
-        if (getServiceInstanceIdentifier() != null)
-        {
-            String sii_c = getServiceInstanceIdentifier().toString();
-            os.append(sii_c);
-        }
+		os.append("Abort Originator       : " + this.originator + "\n");
+		os.append("Service Instance Id    : ");
 
-        os.append("\n");
-        os.append("Bind Diagnostic        : " + getDiagnostic().toString() + "\n");
+		if (getServiceInstanceIdentifier() != null) {
+			String sii_c = getServiceInstanceIdentifier().toString();
+			os.append(sii_c);
+		}
 
-        return os.toString();
+		os.append("\n");
+		os.append("Bind Diagnostic        : " + getDiagnostic().toString() + "\n");
+
+		return os.toString();
 	}
 
+	@Override
+	public PeerAbortInvocation encodePeerAbortInvocation() {
+		PeerAbortInvocation peerAbortInvocation = new PeerAbortInvocation();
+		peerAbortInvocation.setDiagnostic(diagnostic.encode());
+		return peerAbortInvocation;
+	}
+	
+	@Override
+	public void decodePeerAbortInvocation(PeerAbortInvocation peerAbortInvocation) {
+		diagnostic = PeerAbortDiagnostics.decode(peerAbortInvocation.getDiagnostic());
+	}
+	
 }

@@ -2,26 +2,27 @@ package esa.egos.csts.api.serviceinstance.impl;
 
 import java.util.logging.Level;
 
+import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.enumerations.AppRole;
+import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.enumerations.ProcedureRole;
 import esa.egos.csts.api.enumerations.Result;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.exceptions.ConfigException;
-import esa.egos.csts.api.exceptions.NoServiceInstanceStateException;
 import esa.egos.csts.api.exceptions.OperationTypeUnsupportedException;
 import esa.egos.csts.api.main.CstsApi;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
+import esa.egos.csts.api.operations.IPeerAbort;
 import esa.egos.csts.api.procedures.IAssociationControl;
 import esa.egos.csts.api.procedures.IProcedure;
 import esa.egos.csts.api.procedures.roles.AssociationControlProvider;
 import esa.egos.csts.api.serviceinstance.AbstractServiceInstance;
 import esa.egos.csts.api.serviceinstance.IServiceInform;
 import esa.egos.csts.api.serviceinstance.ReturnPair;
-import esa.egos.csts.api.serviceinstance.states.ServiceInstanceStateEnum;
+import esa.egos.csts.api.states.service.ServiceStatus;
 import esa.egos.proxy.IProxyAdmin;
-import esa.egos.proxy.enums.PeerAbortDiagnostics;
 import esa.egos.proxy.enums.TimeFormat;
 import esa.egos.proxy.enums.TimeRes;
 import esa.egos.proxy.time.CstsDuration;
@@ -92,17 +93,18 @@ public class ServiceInstanceProvider extends AbstractServiceInstance {
             }
 
             LOG.fine("End of service provision period");
-
+            /*
             ServiceInstanceStateEnum serviceState = null;
 			try {
 				serviceState = getState().getStateEnum();
 			} catch (NoServiceInstanceStateException e) {
 				return;
 			}
-            
-            if (serviceState != ServiceInstanceStateEnum.unbound)
+            */
+			//if (serviceState != ServiceInstanceStateEnum.unbound)
+            if (getStatus() != ServiceStatus.UNBOUND)
             {
-                abort(PeerAbortDiagnostics.PAD_endOfServiceProvisionPeriod);
+                abort(PeerAbortDiagnostics.END_OF_SERVICE_PROVISION_PERIOD);
             }
             getApplicationServiceInform().provisionPeriodEnds();
             setProvisionPeriodAsEnded();
@@ -131,7 +133,7 @@ public class ServiceInstanceProvider extends AbstractServiceInstance {
                 String opDump = pop.print(500);
 
                 LOG.fine("Return timer expired for operation " + opDump);
-                
+                /*
                 ServiceInstanceStateEnum serviceState = null;
 				try {
 					serviceState = getState().getStateEnum();
@@ -143,8 +145,10 @@ public class ServiceInstanceProvider extends AbstractServiceInstance {
                 		|| serviceState == ServiceInstanceStateEnum.start_pending
                         || serviceState == ServiceInstanceStateEnum.active 
                         || serviceState == ServiceInstanceStateEnum.stop_pending)
+            	*/
+            	if (getStatus() != ServiceStatus.UNBOUND)
                 {
-                    abort(PeerAbortDiagnostics.PAD_returnTimeout);
+                    abort(PeerAbortDiagnostics.RETURN_TIMEOUT);
                 }
                 
                 return;
@@ -277,6 +281,11 @@ public class ServiceInstanceProvider extends AbstractServiceInstance {
 
 	@Override
 	protected Result doInitiateOpInvoke(IOperation operation){
+		
+		if (operation.getType() == OperationType.PEER_ABORT) {
+			IPeerAbort peerAbort = (IPeerAbort) operation;
+			return getAssociationControlProcedure().initiateOperationInvoke(peerAbort);
+		}
 		
         IProcedure toBeForwardedTo = getProcedure(operation.getProcedureInstanceIdentifier());
         if(toBeForwardedTo != null) 

@@ -2,22 +2,51 @@ package esa.egos.csts.api.procedures.impl;
 
 import esa.egos.csts.api.oids.ObjectIdentifier;
 
+/**
+ * This class represents a Procedure type.
+ * 
+ * This class is immutable.
+ */
 public class ProcedureType {
 
-	private final ObjectIdentifier identifier;
+	private final ObjectIdentifier objectIdentifier;
 
-	public ProcedureType(ObjectIdentifier identifier) {
-		this.identifier = identifier;
+	/**
+	 * Instantiates a new Procedure Type by its given Object Identifier.
+	 * 
+	 * @param objectIdentifier
+	 *            the specified Object Identifier
+	 */
+	public ProcedureType(ObjectIdentifier objectIdentifier) {
+		this.objectIdentifier = objectIdentifier;
 	}
 
-	public ObjectIdentifier getIdentifier() {
-		return identifier;
+	/**
+	 * Returns the Object Identifier.
+	 * 
+	 * @return the Object Identifier
+	 */
+	public ObjectIdentifier getOid() {
+		return objectIdentifier;
 	}
 
+	/**
+	 * Encodes this Procedure Type into a CCSDS ProcedureType type.
+	 * 
+	 * @return the CCSDS ProcedureType type representing this object
+	 */
 	public ccsds.csts.common.types.ProcedureType encode() {
-		return new ccsds.csts.common.types.ProcedureType(identifier.toArray());
+		return new ccsds.csts.common.types.ProcedureType(objectIdentifier.toArray());
 	}
 
+	/**
+	 * Decodes a specified CCSDS ProcedureType type.
+	 * 
+	 * @param procedureType
+	 *            the specified CCSDS ProcedureType type
+	 * @return a new Procedure Type decoded from the specified CCSDS ProcedureType
+	 *         type
+	 */
 	public static ProcedureType decode(ccsds.csts.common.types.ProcedureType procedureType) {
 		return new ProcedureType(ObjectIdentifier.of(procedureType.value));
 	}
@@ -26,7 +55,7 @@ public class ProcedureType {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((identifier == null) ? 0 : identifier.hashCode());
+		result = prime * result + ((objectIdentifier == null) ? 0 : objectIdentifier.hashCode());
 		return result;
 	}
 
@@ -39,17 +68,17 @@ public class ProcedureType {
 		if (getClass() != obj.getClass())
 			return false;
 		ProcedureType other = (ProcedureType) obj;
-		if (identifier == null) {
-			if (other.identifier != null)
+		if (objectIdentifier == null) {
+			if (other.objectIdentifier != null)
 				return false;
-		} else if (!identifier.equals(other.identifier))
+		} else if (!objectIdentifier.equals(other.objectIdentifier))
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "ProcedureType [identifier=" + identifier + "]";
+		return "ProcedureType [identifier=" + objectIdentifier + "]";
 	}
 
 }

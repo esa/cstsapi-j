@@ -1,8 +1,9 @@
 package esa.egos.csts.api.operations;
 
 import ccsds.csts.common.operations.pdus.NotifyInvocation;
-import ccsds.csts.common.types.Extended;
 import esa.egos.csts.api.events.EventValue;
+import esa.egos.csts.api.extensions.EmbeddedData;
+import esa.egos.csts.api.extensions.Extension;
 import esa.egos.csts.api.types.Name;
 import esa.egos.csts.api.types.Time;
 
@@ -22,8 +23,10 @@ public interface INotify extends IOperation {
 
 	NotifyInvocation encodeNotifyInvocation();
 
-	NotifyInvocation encodeNotifyInvocation(Extended extension);
-
 	void decodeNotifyInvocation(NotifyInvocation notifyInvocation);
+
+	void setInvocationExtension(EmbeddedData embedded);
+
+	Extension getInvocationExtension();
 
 }

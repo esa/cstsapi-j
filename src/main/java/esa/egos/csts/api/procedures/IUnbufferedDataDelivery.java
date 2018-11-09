@@ -1,9 +1,11 @@
 package esa.egos.csts.api.procedures;
 
-import esa.egos.csts.api.operations.ITransferData;
+import esa.egos.csts.api.extensions.EmbeddedData;
 
-public interface IUnbufferedDataDelivery extends IProcedure {
+public interface IUnbufferedDataDelivery extends IStatefulProcedure {
 
-	boolean addData(ITransferData transferData);
+	void transferData(byte[] data);
 	
+	void transferData(EmbeddedData embeddedData);
+
 }

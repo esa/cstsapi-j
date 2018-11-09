@@ -40,4 +40,13 @@ public class ServiceType {
 	public String toString() {
 		return "ServiceType [oid=" + oid + ", supportedVersions=" + supportedVersions + "]";
 	}
+	
+	public ccsds.csts.association.control.types.ServiceType encode() {
+		return new ccsds.csts.association.control.types.ServiceType(oid.toArray());
+	}
+	
+	public static ServiceType decode(ccsds.csts.association.control.types.ServiceType serviceType) {
+		return new ServiceType(ObjectIdentifier.of(serviceType.value));
+	}
+	
 }

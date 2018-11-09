@@ -1,23 +1,24 @@
 package esa.egos.csts.api.serviceinstance.impl;
 
+import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.enumerations.AppRole;
+import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.enumerations.ProcedureRole;
 import esa.egos.csts.api.enumerations.Result;
 import esa.egos.csts.api.exceptions.ApiException;
-import esa.egos.csts.api.exceptions.NoServiceInstanceStateException;
 import esa.egos.csts.api.exceptions.OperationTypeUnsupportedException;
 import esa.egos.csts.api.main.CstsApi;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
+import esa.egos.csts.api.operations.IPeerAbort;
 import esa.egos.csts.api.procedures.IAssociationControl;
 import esa.egos.csts.api.procedures.IProcedure;
 import esa.egos.csts.api.procedures.roles.AssociationControlUser;
 import esa.egos.csts.api.serviceinstance.AbstractServiceInstance;
 import esa.egos.csts.api.serviceinstance.IServiceInform;
 import esa.egos.csts.api.serviceinstance.ReturnPair;
-import esa.egos.csts.api.serviceinstance.states.ServiceInstanceStateEnum;
-import esa.egos.proxy.enums.PeerAbortDiagnostics;
+import esa.egos.csts.api.states.service.ServiceStatus;
 
 public class ServiceInstanceUser extends AbstractServiceInstance {
 
@@ -49,17 +50,18 @@ public class ServiceInstanceUser extends AbstractServiceInstance {
                 String opDump = pop.print(500);
 
                 LOG.fine("Return timer expired for operation " + opDump);
-                
+                /*
                 ServiceInstanceStateEnum serviceState = null;
 				try {
 					serviceState = getState().getStateEnum();
 				} catch (NoServiceInstanceStateException e) {
 					return;
 				}
-                
-                if (serviceState != ServiceInstanceStateEnum.unbound)
+                */
+				//if (serviceState != ServiceInstanceStateEnum.unbound)
+                if (getStatus() == ServiceStatus.UNBOUND)
                 {
-                    abort(PeerAbortDiagnostics.PAD_returnTimeout);
+                    abort(PeerAbortDiagnostics.RETURN_TIMEOUT);
                 }
                 
                 return;
@@ -102,6 +104,11 @@ public class ServiceInstanceUser extends AbstractServiceInstance {
 
 	@Override
 	protected Result doInitiateOpInvoke(IOperation operation){
+		
+		if (operation.getType() == OperationType.PEER_ABORT) {
+			IPeerAbort peerAbort = (IPeerAbort) operation;
+			return getAssociationControlProcedure().initiateOperationInvoke(peerAbort);
+		}
 		
         IProcedure toBeForwardedTo = getProcedure(operation.getProcedureInstanceIdentifier());
         if(toBeForwardedTo != null) 
@@ -197,7 +204,10 @@ public class ServiceInstanceUser extends AbstractServiceInstance {
     @Override
     public void prepareRelease()
     {
-        if (this.assocCreated)
+    	// Association Control takes care of releasing after UNBIND
+    	// this method is never called anywhere
+    	/*
+    	if (this.assocCreated)
         {
             IAssociationControl assocControl = (IAssociationControl) getAssociationControlProcedure();
             try {
@@ -209,6 +219,7 @@ public class ServiceInstanceUser extends AbstractServiceInstance {
         }
 
         super.prepareRelease();
+        */
     }
 
 	@Override

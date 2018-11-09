@@ -2,10 +2,9 @@ package esa.egos.csts.api.operations;
 
 import ccsds.csts.association.control.types.BindInvocation;
 import ccsds.csts.association.control.types.BindReturn;
-import ccsds.csts.common.types.AuthorityIdentifier;
-import ccsds.csts.common.types.PortId;
+import esa.egos.csts.api.diagnostics.BindDiagnostic;
+import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.serviceinstance.impl.ServiceType;
-import esa.egos.proxy.enums.BindDiagnostics;
 
 public interface IBind extends IConfirmedOperation{
 
@@ -37,8 +36,6 @@ public interface IBind extends IConfirmedOperation{
      */
     void setInitiatorIdentifier(String id);
     
-	void setInitiatorIdentifier(AuthorityIdentifier initiatorIdentifier);
-
     /**
      * Sets the responder identifier
      * 
@@ -46,8 +43,6 @@ public interface IBind extends IConfirmedOperation{
      */
     void setResponderIdentifier(String id);
     
-	void setResponderIdentifier(AuthorityIdentifier responderIdentifier);	
-
     /**
      * Sets the responder port identifier
      * 
@@ -55,32 +50,24 @@ public interface IBind extends IConfirmedOperation{
      */
     void setResponderPortIdentifier(String port);
     
-    void setResponderPortIdentifier(PortId responderPortIdentifier);
-
     /**
      * Returns the BIND diagnostic
      * 
      * @return the BIND diagnostic
      */
-    BindDiagnostics getBindDiagnostic();
+    BindDiagnostic getBindDiagnostic();
 
     /**
      * Sets the BIND diagnostic
      * 
      * @param diagnostic the BIND diagnostic
      */
-    void setBindDiagnostic(BindDiagnostics diagnostic);
+    void setBindDiagnostic(BindDiagnostic diagnostic);
 	
     void setServiceType(ServiceType type);
     
-	void setServiceType(ccsds.csts.association.control.types.ServiceType serviceType);
-    
     ServiceType getServiceType();
 
-    double getVersion();
-    
-	void setVersion(double doubleValue);
-	
 	BindReturn encodeBindReturn();
 	
 	void decodeBindInvocation(BindInvocation bindInvocation);
@@ -88,4 +75,10 @@ public interface IBind extends IConfirmedOperation{
 	void decodeBindReturn(BindReturn bindReturn);
 
 	BindInvocation encodeBindInvocation();
+
+	int getVersionNumber();
+
+	void setInvocationExtension(EmbeddedData embedded);
+
+	void setVersionNumber(int version);
 }

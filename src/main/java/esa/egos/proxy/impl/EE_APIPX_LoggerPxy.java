@@ -6,6 +6,7 @@ package esa.egos.proxy.impl;
 
 import java.util.logging.Logger;
 
+import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.enumerations.Result;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
@@ -13,7 +14,6 @@ import esa.egos.csts.api.serviceinstance.IServiceInstanceIdentifier;
 import esa.egos.proxy.IDefaultLogger;
 import esa.egos.proxy.enums.AlarmLevel;
 import esa.egos.proxy.enums.Component;
-import esa.egos.proxy.enums.PeerAbortDiagnostics;
 import esa.egos.proxy.logging.CstsLogMessageType;
 import esa.egos.proxy.logging.IReporter;
 
@@ -86,7 +86,7 @@ public class EE_APIPX_LoggerPxy extends EE_APIPX_LinkAdapter implements IDefault
         {
             this.linkClosed = true;
             IServiceInstanceIdentifier psii = null;
-            PeerAbortDiagnostics diag = PeerAbortDiagnostics.PAD_communicationsFailure;
+            PeerAbortDiagnostics diag = PeerAbortDiagnostics.COMMUNICATION_FAILURE;
 
             // the ipc link to the client is broken. Notify the default logger
             if (this.eeAPIPXLink != null)

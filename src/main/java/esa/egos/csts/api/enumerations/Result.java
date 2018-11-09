@@ -1,7 +1,24 @@
 package esa.egos.csts.api.enumerations;
 
 public enum Result {
-    S_OK(0, "S_OK"),
+    
+	/*
+	 * ----------------------------------------------------------------------
+	 * Result codes of the CSTS API
+	 * ----------------------------------------------------------------------
+	 */
+	
+	UNEXPECTED_OPERATION_TYPE,
+	UNSUPPORTED_PROCEDURE_ROLE,
+	NO_EVENTS_SUPPORTED,
+	
+	/*
+	 * ----------------------------------------------------------------------
+	 * Result codes of the proxy
+	 * ----------------------------------------------------------------------
+	 */
+	
+	S_OK(0, "S_OK"),
     NOERROR(0, "NOERROR"),
     NO_ERROR(0, "NO_ERROR"),
     S_FALSE(1, "S_FALSE"),
@@ -19,9 +36,7 @@ public enum Result {
     E_ACCESSDENIED(0x80000009, "E_ACCESSDENIED"), /* General access denied error */
     E_PENDING(0x8000000A, "E_PENDING"), /*
                                          * The data necessary to complete this
-                                         * operation
-                                         */
-    /* is not yet available. */
+                                         * operation is not yet available. */
 
     /*
      * ----------------------------------------------------------------- SLE API
@@ -94,6 +109,9 @@ public enum Result {
 
     private String msg;
 
+    private Result() {
+		
+	}
 
     private Result(int code, String msg)
     {

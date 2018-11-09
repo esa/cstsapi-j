@@ -1,33 +1,50 @@
 package esa.egos.csts.api.operations.impl;
 
 import ccsds.csts.common.operations.pdus.NotifyInvocation;
-import ccsds.csts.common.types.Extended;
 import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.events.EventValue;
 import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.extensions.EmbeddedData;
+import esa.egos.csts.api.extensions.Extension;
 import esa.egos.csts.api.operations.AbstractOperation;
 import esa.egos.csts.api.operations.INotify;
 import esa.egos.csts.api.types.Name;
 import esa.egos.csts.api.types.Time;
-import esa.egos.csts.api.util.impl.CSTSUtils;
 
 public class Notify extends AbstractOperation implements INotify {
 
-	private final OperationType type = OperationType.NOTIFY;
+	private static final OperationType TYPE = OperationType.NOTIFY;
 	
-	private final static int versionNumber = 1;
-
+	/**
+	 * The invocation extension
+	 */
+	private Extension invocationExtension;
+	
+	/**
+	 * The time of an event
+	 */
 	private Time eventTime;
+	
+	/**
+	 * The name of an event
+	 */
 	private Name eventName;
+	
+	/**
+	 * The value of an event
+	 */
 	private EventValue eventValue;
 
+	/**
+	 * The constructor of a NOTIFY operation
+	 */
 	public Notify() {
-		super(versionNumber, false);
+		invocationExtension = Extension.notUsed();
 	}
 	
 	@Override
 	public OperationType getType() {
-		return type;
+		return TYPE;
 	}
 
 	@Override
@@ -61,6 +78,16 @@ public class Notify extends AbstractOperation implements INotify {
 	}
 
 	@Override
+	public Extension getInvocationExtension() {
+		return invocationExtension;
+	}
+
+	@Override
+	public void setInvocationExtension(EmbeddedData embedded) {
+		invocationExtension = Extension.of(embedded);
+	}
+	
+	@Override
 	public void verifyInvocationArguments() throws ApiException {
 		if (eventTime == null) {
 			throw new ApiException("Invalid NOTIFY invocation arguments.");
@@ -80,26 +107,22 @@ public class Notify extends AbstractOperation implements INotify {
 
 	@Override
 	public NotifyInvocation encodeNotifyInvocation() {
-		return encodeNotifyInvocation(CSTSUtils.nonUsedExtension());
-	}
-
-	@Override
-	public NotifyInvocation encodeNotifyInvocation(Extended extension) {
 		NotifyInvocation notifyInvocation = new NotifyInvocation();
 		notifyInvocation.setStandardInvocationHeader(encodeStandardInvocationHeader());
 		notifyInvocation.setEventTime(eventTime.encode());
 		notifyInvocation.setEventName(eventName.encode());
 		notifyInvocation.setEventValue(eventValue.encode());
-		notifyInvocation.setNotifyInvocationExtension(extension);
+		notifyInvocation.setNotifyInvocationExtension(invocationExtension.encode());
 		return notifyInvocation;
 	}
-	
+
 	@Override
 	public void decodeNotifyInvocation(NotifyInvocation notifyInvocation) {
 		decodeStandardInvocationHeader(notifyInvocation.getStandardInvocationHeader());
 		eventTime = Time.decode(notifyInvocation.getEventTime());
 		eventName = Name.decode(notifyInvocation.getEventName());
 		eventValue = EventValue.decode(notifyInvocation.getEventValue());
+		invocationExtension = Extension.decode(notifyInvocation.getNotifyInvocationExtension());
 	}
 
 }

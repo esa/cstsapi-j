@@ -2,15 +2,12 @@ package esa.egos.csts.api.parameters.impl;
 
 import java.time.LocalDateTime;
 
-import esa.egos.csts.api.functionalresources.IFunctionalResource;
+import esa.egos.csts.api.functionalresources.impl.FunctionalResourceName;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.parameters.AbstractParameter;
-import esa.egos.csts.api.types.Name;
 
-public class FunctionalResourceParameter extends AbstractParameter {
+public abstract class FunctionalResourceParameter extends AbstractParameter {
 
-	private final Name name;
-	private final IFunctionalResource functionalResource;
 	private String classifier;
 	private String authorizingEntitiy;
 	private LocalDateTime creationDate;
@@ -20,18 +17,8 @@ public class FunctionalResourceParameter extends AbstractParameter {
 	private double value;
 	private String unit;
 
-	public FunctionalResourceParameter(ObjectIdentifier identifier, IFunctionalResource functionalResource) {
-		super(identifier, functionalResource.getType());
-		this.functionalResource = functionalResource;
-		name = new Name(identifier, functionalResource.getName());
-	}
-	
-	public Name getName() {
-		return name;
-	}
-	
-	public IFunctionalResource getFunctionalResource() {
-		return functionalResource;
+	public FunctionalResourceParameter(ObjectIdentifier identifier, FunctionalResourceName functionalResourceName) {
+		super(identifier, functionalResourceName);
 	}
 	
 	public String getClassifier() {
@@ -96,13 +83,6 @@ public class FunctionalResourceParameter extends AbstractParameter {
 
 	public void setUnit(String unit) {
 		this.unit = unit;
-	}
-
-	public QualifiedParameter toQualifiedParameter() {
-		QualifiedParameter qualifiedParameter = new QualifiedParameter();
-		qualifiedParameter.setParameterName(getName());
-		// TODO fill values
-		return qualifiedParameter;
 	}
 
 }

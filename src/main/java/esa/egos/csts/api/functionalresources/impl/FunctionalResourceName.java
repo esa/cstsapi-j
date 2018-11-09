@@ -2,24 +2,54 @@ package esa.egos.csts.api.functionalresources.impl;
 
 import ccsds.csts.common.types.FunctionalResourceInstanceNumber;
 
+/**
+ * This class represents a Functional Resource Name.
+ * 
+ * This class is immutable.
+ */
 public class FunctionalResourceName {
 
-	private final int instanceNumber;
 	private final FunctionalResourceType functionalResourceType;
+	private final int instanceNumber;
 
-	public FunctionalResourceName(int instanceNumber, FunctionalResourceType functionalResourceType) {
-		this.instanceNumber = instanceNumber;
+	/**
+	 * Instantiates a new Functional Resource Name specified by its type and an
+	 * instance number.
+	 * 
+	 * @param functionalResourceType
+	 *            the specified Functional Resource Type
+	 * @param instanceNumber
+	 *            the specified instance number
+	 */
+	public FunctionalResourceName(FunctionalResourceType functionalResourceType, int instanceNumber) {
 		this.functionalResourceType = functionalResourceType;
+		this.instanceNumber = instanceNumber;
 	}
 
-	public int getInstanceNumber() {
-		return instanceNumber;
-	}
-
+	/**
+	 * Returns the Functional Resource Type.
+	 * 
+	 * @return the Functional Resource Type
+	 */
 	public FunctionalResourceType getType() {
 		return functionalResourceType;
 	}
 
+	/**
+	 * Returns the instance number.
+	 * 
+	 * @return the instance number
+	 */
+	public int getInstanceNumber() {
+		return instanceNumber;
+	}
+
+	/**
+	 * Encodes this Functional Resource Name into a CCSDS FunctionalResourceName
+	 * type.
+	 * 
+	 * @return the CCSDS FunctionalResourceName type representing this object
+	 */
 	public ccsds.csts.common.types.FunctionalResourceName encode() {
 		ccsds.csts.common.types.FunctionalResourceName resourceName = new ccsds.csts.common.types.FunctionalResourceName();
 		resourceName.setFunctionalResourceType(functionalResourceType.encode());
@@ -27,13 +57,21 @@ public class FunctionalResourceName {
 		return resourceName;
 	}
 
+	/**
+	 * Decodes a specified CCSDS FunctionalResourceName type.
+	 * 
+	 * @param functionalResourceName
+	 *            the specified CCSDS FunctionalResourceName type
+	 * @return a new Functional Resource Name decoded from the specified CCSDS
+	 *         FunctionalResourceName type
+	 */
 	public static FunctionalResourceName decode(ccsds.csts.common.types.FunctionalResourceName functionalResourceName) {
 
-		FunctionalResourceName funcResName = new FunctionalResourceName(
-				functionalResourceName.getFunctionalResourceInstanceNumber().intValue(),
-				FunctionalResourceType.decode(functionalResourceName.getFunctionalResourceType()));
+		FunctionalResourceName newFunctionalResourceName = new FunctionalResourceName(
+				FunctionalResourceType.decode(functionalResourceName.getFunctionalResourceType()),
+				functionalResourceName.getFunctionalResourceInstanceNumber().intValue());
 
-		return funcResName;
+		return newFunctionalResourceName;
 	}
 
 	@Override
@@ -66,8 +104,8 @@ public class FunctionalResourceName {
 
 	@Override
 	public String toString() {
-		return "FunctionalResourceName [instanceNumber=" + instanceNumber + ", functionalResourceType="
-				+ functionalResourceType + "]";
+		return "FunctionalResourceName [functionalResourceType=" + functionalResourceType + ", instanceNumber="
+				+ instanceNumber + "]";
 	}
 
 }

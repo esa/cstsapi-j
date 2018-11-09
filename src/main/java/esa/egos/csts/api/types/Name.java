@@ -7,46 +7,104 @@ import esa.egos.csts.api.functionalresources.impl.FunctionalResourceName;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 
+/**
+ * This class represents the CCSDS Name type.
+ * 
+ * This class is immutable.
+ */
 public class Name {
 
 	private final ObjectIdentifier identifier;
-
 	private final ResourceIdentifier resourceIdentifier;
-
 	private final FunctionalResourceName functionalResourceName;
-
 	private final ProcedureInstanceIdentifier procedureInstanceIdentifier;
 
-	public Name(ObjectIdentifier objectIdentifier, FunctionalResourceName functionalResourceName) {
+	private Name(ObjectIdentifier objectIdentifier, FunctionalResourceName functionalResourceName) {
 		this.identifier = objectIdentifier;
 		this.resourceIdentifier = ResourceIdentifier.FUNCTIONAL_RESOURCE_NAME;
 		this.functionalResourceName = functionalResourceName;
 		procedureInstanceIdentifier = null;
 	}
 
-	public Name(ObjectIdentifier objectIdentifier, ProcedureInstanceIdentifier procedureInstanceIdentifier) {
+	private Name(ObjectIdentifier objectIdentifier, ProcedureInstanceIdentifier procedureInstanceIdentifier) {
 		this.identifier = objectIdentifier;
 		this.resourceIdentifier = ResourceIdentifier.PROCEDURE_INSTANCE_IDENTIFIER;
 		this.procedureInstanceIdentifier = procedureInstanceIdentifier;
 		functionalResourceName = null;
 	}
 
+	/**
+	 * Returns the Object Identifier.
+	 * 
+	 * @return the Object Identifier
+	 */
 	public ObjectIdentifier getOid() {
 		return identifier;
 	}
 
+	/**
+	 * Returns the resource identifier which specifies if this Label holds a
+	 * Functional Resource Name or a Procedure Instance Identifier.
+	 * 
+	 * @return the resource identifier
+	 */
 	public ResourceIdentifier getResourceIdentifier() {
 		return resourceIdentifier;
 	}
 
+	/**
+	 * Returns the Functional Resource Name if held by this Label.
+	 * 
+	 * @return the Functional Resource Name if held by this Label, null otherwise
+	 */
 	public FunctionalResourceName getFunctionalResourceName() {
 		return functionalResourceName;
 	}
 
+	/**
+	 * Returns the Procedure Instance Identifier if held by this Label.
+	 * 
+	 * @return the Procedure Instance Identifier if held by this Label, null
+	 *         otherwise
+	 */
 	public ProcedureInstanceIdentifier getProcedureInstanceIdentifier() {
 		return procedureInstanceIdentifier;
 	}
 
+	/**
+	 * Creates a new Label from an Object Identifier and Functional Resource Name.
+	 * 
+	 * @param objectIdentifier
+	 *            the Object Identifier
+	 * @param functionalResourceName
+	 *            the Functional Resource Name
+	 * @return a new Label of the specified Object Identifier and Functional
+	 *         Resource Name
+	 */
+	public static Name of(ObjectIdentifier objectIdentifier, FunctionalResourceName functionalResourceName) {
+		return new Name(objectIdentifier, functionalResourceName);
+	}
+
+	/**
+	 * Creates a new Label from an Object Identifier and Procedure Instance
+	 * Identifier.
+	 * 
+	 * @param objectIdentifier
+	 *            the Object Identifier
+	 * @param procedureInstanceIdentifier
+	 *            the Procedure Instance Identifier
+	 * @return a new Label of the specified Object Identifier and Procedure Instance
+	 *         Identifier
+	 */
+	public static Name of(ObjectIdentifier objectIdentifier, ProcedureInstanceIdentifier procedureInstanceIdentifier) {
+		return new Name(objectIdentifier, procedureInstanceIdentifier);
+	}
+
+	/**
+	 * Encodes this Name into a CCSDS Name type.
+	 * 
+	 * @return the CCSDS Name type representing this object
+	 */
 	public ccsds.csts.common.types.Name encode() {
 		ccsds.csts.common.types.Name name = new ccsds.csts.common.types.Name();
 		name.setParamOrEventOrDirectiveId(new PublishedIdentifier(identifier.toArray()));
@@ -63,6 +121,13 @@ public class Name {
 		return name;
 	}
 
+	/**
+	 * Decodes a specified CCSDS Name type.
+	 * 
+	 * @param name
+	 *            the specified CCSDS Name type
+	 * @return a new Name decoded from the specified CCSDS Name type
+	 */
 	public static Name decode(ccsds.csts.common.types.Name name) {
 		Name newName = null;
 		if (name != null) {
@@ -126,5 +191,5 @@ public class Name {
 				+ ", functionalResourceName=" + functionalResourceName + ", procedureInstanceIdentifier="
 				+ procedureInstanceIdentifier + "]";
 	}
-	
+
 }

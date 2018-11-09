@@ -6,59 +6,68 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.openmuc.jasn1.ber.BerByteArrayOutputStream;
-import org.openmuc.jasn1.ber.types.BerEmbeddedPdv.Identification;
-import org.openmuc.jasn1.ber.types.BerOctetString;
 
-import ccsds.csts.common.types.AdditionalText;
-import ccsds.csts.common.types.Embedded;
-import ccsds.csts.common.types.Extended;
 import ccsds.csts.common.types.IntPos;
 import ccsds.csts.cyclic.report.pdus.CyclicReportStartDiagnosticExt;
 import ccsds.csts.cyclic.report.pdus.CyclicReportStartInvocExt;
 import ccsds.csts.cyclic.report.pdus.CyclicReportTransferDataInvocDataRef;
 import ccsds.csts.cyclic.report.pdus.CyclicReportTransferDataInvocDataRef.QualifiedParameters;
-import ccsds.csts.cyclic.report.pdus.OidValues;
-import ccsds.csts.unbuffered.data.delivery.pdus.UnbufferedDataDeliveryPdu;
 import esa.egos.csts.api.diagnostics.CyclicReportStartDiagnostic;
-import esa.egos.csts.api.enumerations.OperationResult;
+import esa.egos.csts.api.diagnostics.CyclicReportStartDiagnosticType;
+import esa.egos.csts.api.diagnostics.ListOfParametersDiagnostics;
+import esa.egos.csts.api.diagnostics.ListOfParametersDiagnosticsType;
 import esa.egos.csts.api.enumerations.OperationType;
-import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.enumerations.Result;
+import esa.egos.csts.api.extensions.EmbeddedData;
+import esa.egos.csts.api.extensions.Extension;
 import esa.egos.csts.api.oids.OIDs;
+import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IStart;
-import esa.egos.csts.api.operations.IStop;
 import esa.egos.csts.api.operations.ITransferData;
+import esa.egos.csts.api.parameters.IParameter;
+import esa.egos.csts.api.parameters.impl.IntegerConfigurationParameter;
+import esa.egos.csts.api.parameters.impl.LabelLists;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
-import esa.egos.csts.api.parameters.impl.ListOfParametersDiagnostics;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
-import esa.egos.csts.api.util.impl.CSTSUtils;
+import esa.egos.csts.api.types.Label;
+import esa.egos.csts.api.types.LabelList;
+import esa.egos.csts.api.types.Name;
+import esa.egos.csts.api.types.Time;
 
-public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDelivery implements ICyclicReport {
+public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDelivery implements ICyclicReportInternal {
 
-	private final ProcedureType type = new ProcedureType(OIDs.cyclicReport);
+	private static final ProcedureType TYPE = new ProcedureType(OIDs.cyclicReport);
 
 	private ScheduledExecutorService executorService;
 
+	// defined by User
 	private long deliveryCycle;
 	private ListOfParameters listOfParameters;
+	
+	// defined by Provider
 	private List<QualifiedParameter> qualifiedParameters;
-	private ListOfParametersDiagnostics listOfParametersDiagnostics;
 	private CyclicReportStartDiagnostic startDiagnostic;
 	private long sequenceCounter;
 
+	private boolean running;
+	private ScheduledFuture<?> cyclicReport;
+
 	protected AbstractCyclicReport() {
-		super();
 		executorService = Executors.newSingleThreadScheduledExecutor();
 		qualifiedParameters = new ArrayList<>();
 		sequenceCounter = 0;
+		running = false;
 	}
 
 	@Override
 	public ProcedureType getType() {
-		return type;
+		return TYPE;
 	}
 
 	protected ScheduledExecutorService getExecutorService() {
@@ -86,16 +95,6 @@ public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliver
 	}
 
 	@Override
-	public ListOfParametersDiagnostics getListOfParametersDiagnostics() {
-		return listOfParametersDiagnostics;
-	}
-
-	@Override
-	public void setListOfParametersDiagnostics(ListOfParametersDiagnostics listOfParametersDiagnostics) {
-		this.listOfParametersDiagnostics = listOfParametersDiagnostics;
-	}
-
-	@Override
 	public List<QualifiedParameter> getQualifiedParameters() {
 		return qualifiedParameters;
 	}
@@ -110,7 +109,46 @@ public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliver
 		this.startDiagnostic = startDiagnostic;
 	}
 
-	protected long incrementSequenceCounter() {
+	@Override
+	public void terminate() {
+		stopCyclicReport();
+		executorService.shutdownNow();
+		executorService = Executors.newSingleThreadScheduledExecutor();
+		initializeState();
+	}
+	
+	@Override
+	public synchronized boolean checkCyclicReport() {
+		return !running && processListOfParameters();
+	}
+	
+	@Override
+	public synchronized void startCyclicReport() {
+		if (!running) {
+			cyclicReport = executorService.scheduleAtFixedRate(this::createAndTransferData, 0, deliveryCycle, TimeUnit.MILLISECONDS);
+			running = true;
+		}
+	}
+
+	@Override
+	public synchronized void stopCyclicReport() {
+		if (running) {
+			cyclicReport.cancel(true);
+			running = false;
+		}
+	}
+
+	@Override
+	public IntegerConfigurationParameter getMinimumAllowedDeliveryCycle() {
+		return (IntegerConfigurationParameter) getConfigurationParameter(OIDs.pCRminimumAllowedDeliveryCycle);
+	}
+
+	@Override
+	public LabelLists getLabelLists() {
+		return (LabelLists) getConfigurationParameter(OIDs.pCRnamedLabelLists);
+	}
+
+	private synchronized long getCurrentSequenceCounter() {
 		long tmp = sequenceCounter++;
 		if (sequenceCounter < 0) {
 			sequenceCounter = 0;
@@ -118,63 +156,258 @@ public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliver
 		return tmp;
 	}
 
+	/**
+	 * Processes the List of Parameters extension in the START invocation, returns
+	 * the result and writes the List of Parameters Diagnostics if the result is
+	 * negative.
+	 * 
+	 * @return true if the List of Parameters is valid, false otherwise
+	 */
+	protected synchronized boolean processListOfParameters() {
+
+		LabelLists labelLists = (LabelLists) getConfigurationParameter(OIDs.pCRnamedLabelLists);
+		List<IParameter> parameters = getServiceInstance().gatherParameters();
+		ListOfParametersDiagnostics diag;
+		boolean valid;
+		switch (listOfParameters.getType()) {
+
+		case EMPTY:
+
+			LabelList defaultList = labelLists.queryDefaultList();
+
+			if (defaultList != null) {
+				return true;
+			}
+			diag = new ListOfParametersDiagnostics(ListOfParametersDiagnosticsType.UNDEFINED_DEFAULT);
+			diag.setUndefinedDefault(
+					"Default list not defined for Service Instance " + getServiceInstance().toString());
+			startDiagnostic = new CyclicReportStartDiagnostic(CyclicReportStartDiagnosticType.COMMON);
+			startDiagnostic.setListOfParametersDiagnostics(diag);
+			break;
+
+		case FUNCTIONAL_RESOURCE_NAME:
+
+			valid = parameters.stream()
+			.filter(p -> listOfParameters.getFunctionalResourceName().equals(p.getName().getFunctionalResourceName()))
+			.count() > 0;
+
+			if (valid) {
+				return true;
+			}
+
+			diag = new ListOfParametersDiagnostics(ListOfParametersDiagnosticsType.UNKNOWN_FUNCTIONAL_RESOURCE_NAME);
+			diag.setUnknownFunctionalResourceName(listOfParameters.getFunctionalResourceName());
+			startDiagnostic = new CyclicReportStartDiagnostic(CyclicReportStartDiagnosticType.COMMON);
+			startDiagnostic.setListOfParametersDiagnostics(diag);
+			break;
+
+		case FUNCTIONAL_RESOURCE_TYPE:
+
+			valid = parameters.stream()
+			.filter(p -> listOfParameters.getFunctionalResourceType().equals(p.getLabel().getFunctionalResourceType()))
+			.count() > 0;
+
+			if (valid) {
+				return true;
+			}
+
+			diag = new ListOfParametersDiagnostics(ListOfParametersDiagnosticsType.UNKNOWN_FUNCTIONAL_RESOURCE_TYPE);
+			diag.setUnknownFunctionalResourceType(listOfParameters.getFunctionalResourceType());
+			startDiagnostic = new CyclicReportStartDiagnostic(CyclicReportStartDiagnosticType.COMMON);
+			startDiagnostic.setListOfParametersDiagnostics(diag);
+			break;
+
+		case LABELS_SET:
+			diag = new ListOfParametersDiagnostics(ListOfParametersDiagnosticsType.UNKNOWN_PARAMETER_IDENTIFIER);
+			for (Label label : listOfParameters.getParameterLabels()) {
+				valid = parameters.stream()
+						.filter(p -> p.getLabel().equals(label))
+						.count() > 0;
+				if (!valid) {
+					diag.getUnknownParameterLabels().add(label);
+				}
+			}
+			if (diag.getUnknownParameterLabels().isEmpty()) {
+				return true;
+			}
+			startDiagnostic = new CyclicReportStartDiagnostic(CyclicReportStartDiagnosticType.COMMON);
+			startDiagnostic.setListOfParametersDiagnostics(diag);
+			break;
+
+		case LIST_NAME:
+
+			LabelList namedList = labelLists.queryList(listOfParameters.getListName());
+
+			if (namedList != null) {
+				return true;
+			}
+
+			diag = new ListOfParametersDiagnostics(ListOfParametersDiagnosticsType.UNKNOWN_LIST_NAME);
+			diag.setUnknownListName("List " + listOfParameters.getListName() + " not defined for Service Instance "
+					+ getServiceInstance());
+			startDiagnostic = new CyclicReportStartDiagnostic(CyclicReportStartDiagnosticType.COMMON);
+			startDiagnostic.setListOfParametersDiagnostics(diag);
+			break;
+
+		case NAMES_SET:
+			diag = new ListOfParametersDiagnostics(ListOfParametersDiagnosticsType.UNKNOWN_PARAMETER_IDENTIFIER);
+			for (Name name : listOfParameters.getParameterNames()) {
+				valid = parameters.stream()
+						.filter(p -> p.getName().equals(name))
+						.count() > 0;
+				if (!valid) {
+					diag.getUnknownParameterNames().add(name);
+				}
+			}
+			if (diag.getUnknownParameterNames().isEmpty()) {
+				return true;
+			}
+			startDiagnostic = new CyclicReportStartDiagnostic(CyclicReportStartDiagnosticType.COMMON);
+			startDiagnostic.setListOfParametersDiagnostics(diag);
+			break;
+
+		case PROCEDURE_INSTANCE_IDENTIFIER:
+
+			valid = parameters.stream()
+			.filter(p -> listOfParameters.getProcedureInstanceIdentifier().equals(p.getName().getProcedureInstanceIdentifier()))
+			.count() > 0;
+
+			if (valid) {
+				return true;
+			}
+
+			diag = new ListOfParametersDiagnostics(
+					ListOfParametersDiagnosticsType.UNKNOWN_PROCEDURE_INSTANCE_IDENTIFIER);
+			diag.setUnknownProcedureInstanceIdentifier(listOfParameters.getProcedureInstanceIdentifier());
+			startDiagnostic = new CyclicReportStartDiagnostic(CyclicReportStartDiagnosticType.COMMON);
+			startDiagnostic.setListOfParametersDiagnostics(diag);
+			break;
+
+		case PROCEDURE_TYPE:
+
+			valid = parameters.stream()
+					.filter(p -> listOfParameters.getProcedureType().equals(p.getLabel().getProcedureType()))
+					.count() > 0;
+
+			if (valid) {
+				return true;
+			}
+
+			diag = new ListOfParametersDiagnostics(ListOfParametersDiagnosticsType.UNKNOWN_PROCEDURE_TYPE);
+			diag.setUnknownProcedureType(listOfParameters.getProcedureType());
+			startDiagnostic = new CyclicReportStartDiagnostic(CyclicReportStartDiagnosticType.COMMON);
+			startDiagnostic.setListOfParametersDiagnostics(diag);
+			break;
+
+		}
+
+		return false;
+	}
+
+	protected synchronized void generateQualifiedParameters() {
+
+		LabelLists labelLists = (LabelLists) getConfigurationParameter(OIDs.pCRnamedLabelLists);
+		List<IParameter> parameters = getServiceInstance().gatherParameters();
+		switch (listOfParameters.getType()) {
+
+		case EMPTY:
+
+			LabelList defaultList = labelLists.queryDefaultList();
+
+			if (defaultList == null) {
+				return;
+			}
+
+			for (Label label : defaultList.getLabels()) {
+				parameters.stream()
+				.filter(p -> p.getLabel().equals(label))
+				.forEach(p -> qualifiedParameters.add(p.toQualifiedParameter()));
+			}
+			break;
+
+		case FUNCTIONAL_RESOURCE_NAME:
+			parameters.stream()
+			.filter(p -> listOfParameters.getFunctionalResourceName().equals(p.getName().getFunctionalResourceName()))
+			.forEach(p -> qualifiedParameters.add(p.toQualifiedParameter()));
+			break;
+
+		case FUNCTIONAL_RESOURCE_TYPE:
+			parameters.stream()
+			.filter(p -> listOfParameters.getFunctionalResourceType().equals(p.getLabel().getFunctionalResourceType()))
+			.forEach(p -> qualifiedParameters.add(p.toQualifiedParameter()));
+			break;
+
+		case LABELS_SET:
+			for (Label label : listOfParameters.getParameterLabels()) {
+				parameters.stream()
+				.filter(p -> p.getLabel().equals(label))
+				.forEach(p -> qualifiedParameters.add(p.toQualifiedParameter()));
+			}
+			break;
+
+		case LIST_NAME:
+
+			LabelList namedList = labelLists.queryList(listOfParameters.getListName());
+
+			if (namedList == null) {
+				return;
+			}
+
+			for (Label label : namedList.getLabels()) {
+				parameters.stream()
+				.filter(p -> p.getLabel().equals(label))
+				.forEach(p -> qualifiedParameters.add(p.toQualifiedParameter()));
+			}
+			break;
+
+		case NAMES_SET:
+			for (Name name : listOfParameters.getParameterNames()) {
+				parameters.stream()
+				.filter(p -> p.getName().equals(name))
+				.forEach(p -> qualifiedParameters.add(p.toQualifiedParameter()));
+			}
+			break;
+
+		case PROCEDURE_INSTANCE_IDENTIFIER:
+			parameters.stream()
+			.filter(p -> listOfParameters.getProcedureInstanceIdentifier().equals(p.getName().getProcedureInstanceIdentifier()))
+			.forEach(p -> qualifiedParameters.add(p.toQualifiedParameter()));
+			break;
+
+		case PROCEDURE_TYPE:
+			parameters.stream()
+			.filter(p -> listOfParameters.getProcedureType().equals(p.getLabel().getProcedureType()))
+			.forEach(p -> qualifiedParameters.add(p.toQualifiedParameter()));
+			break;
+		}
+
+	}
+
+	protected synchronized void createAndTransferData() {
+		generateQualifiedParameters();
+		ITransferData data = createTransferData();
+		data.setGenerationTime(Time.now());
+		data.setSequenceCounter(getCurrentSequenceCounter());
+		data.setEmbeddedData(encodeDataRefinement());
+		getState().process(data);
+		getQualifiedParameters().clear();
+	}
+
 	@Override
-	public byte[] encodeOperation(IOperation operation, boolean isInvoke) throws ApiException, IOException {
-
-		byte[] encodedOperation;
-		UnbufferedDataDeliveryPdu pdu = new UnbufferedDataDeliveryPdu();
-
+	public Result initiateOperationInvoke(IOperation operation) {
 		if (operation.getType() == OperationType.START) {
 			IStart start = (IStart) operation;
-			if (isInvoke) {
-				pdu.setStartInvocation(start.encodeStartInvocation(encodeStartInvocationExtension()));
-			} else {
-				pdu.setStartReturn(start.encodeStartReturn());
-			}
-		} else if (operation.getType() == OperationType.STOP) {
-			IStop stop = (IStop) operation;
-			if (isInvoke) {
-				pdu.setStopInvocation(stop.encodeStopInvocation());
-			} else {
-				pdu.setStopReturn(stop.encodeStopReturn());
-			}
-		} else if (operation.getType() == OperationType.TRANSFER_DATA) {
-			ITransferData transferData = (ITransferData) operation;
-			if (isInvoke) {
-				pdu.setTransferDataInvocation(
-						transferData.encodeTransferDataInvocation(encodeTransferDataRefinement()));
-			}
+			start.setInvocationExtension(encodeInvocationExtension());
 		}
-
-		try (BerByteArrayOutputStream berBAOStream = new BerByteArrayOutputStream(10, true)) {
-			pdu.encode(berBAOStream);
-			encodedOperation = berBAOStream.getArray();
-		}
-
-		return encodedOperation;
+		return doInitiateOperationInvoke(operation);
 	}
-
-	protected final Extended encodeStartInvocationExtension() {
-
-		Extended extension = new Extended();
-
-		Embedded startInvocationExtension = new Embedded();
-		Identification identification = new Identification();
-		identification.setSyntax(OidValues.crStartInvocExt);
-		startInvocationExtension.setIdentification(identification);
-		startInvocationExtension.setDataValue(new BerOctetString(encodeInvocationExtension().code));
-
-		extension.setExternal(startInvocationExtension);
-
-		return extension;
-	}
-
-	protected final CyclicReportStartInvocExt encodeInvocationExtension() {
+	
+	private EmbeddedData encodeInvocationExtension() {
 
 		CyclicReportStartInvocExt invocationExtension = new CyclicReportStartInvocExt();
 		invocationExtension.setDeliveryCycle(new IntPos(deliveryCycle));
 		invocationExtension.setListOfParameters(listOfParameters.encode());
-		invocationExtension.setCyclicReportStartInvocExtExtension(encodeStartInvocationExtExtension());
+		invocationExtension.setCyclicReportStartInvocExtExtension(encodeStartInvocationExtExtension().encode());
 
 		// encode with a resizable output stream and an initial capacity of 128 bytes
 		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
@@ -184,32 +417,26 @@ public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliver
 			e.printStackTrace();
 		}
 
-		return invocationExtension;
+		return EmbeddedData.of(OIDs.crStartInvocExt, invocationExtension.code);
 	}
 
 	/**
 	 * This method should be overridden to encode the extension of a derived
 	 * procedure.
 	 * 
-	 * @return the Extended object representing the extension of the derived
+	 * @return the Extension object representing the extension of the derived
 	 *         procedure
 	 */
-	protected Extended encodeStartInvocationExtExtension() {
-		return CSTSUtils.nonUsedExtension();
+	protected Extension encodeStartInvocationExtExtension() {
+		return Extension.notUsed();
 	}
 
-	protected Embedded encodeTransferDataRefinement() {
-
-		Embedded transferDataRefinement = new Embedded();
-		Identification identification = new Identification();
-		identification.setSyntax(OidValues.crTransferDataInvocDataRef);
-		transferDataRefinement.setIdentification(identification);
-		transferDataRefinement.setDataValue(new BerOctetString(encodeDataRefinement().code));
-
-		return transferDataRefinement;
+	@Override
+	public EmbeddedData encodeStartDiagnosticExt() {
+		return EmbeddedData.of(OIDs.crStartDiagExt, startDiagnostic.encode().code);
 	}
-
-	protected CyclicReportTransferDataInvocDataRef encodeDataRefinement() {
+	
+	private EmbeddedData encodeDataRefinement() {
 
 		CyclicReportTransferDataInvocDataRef dataRefinement = new CyclicReportTransferDataInvocDataRef();
 		QualifiedParameters qualifiedParameters = new QualifiedParameters();
@@ -217,8 +444,7 @@ public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliver
 			qualifiedParameters.getQualifiedParameter().add(param.encode());
 		}
 		dataRefinement.setQualifiedParameters(qualifiedParameters);
-		// not used per definition
-		dataRefinement.setCyclicReportTransferDataInvocDataRefExtension(CSTSUtils.nonUsedExtension());
+		dataRefinement.setCyclicReportTransferDataInvocDataRefExtension(encodeInvocDataRefExtension().encode());
 
 		// encode with a resizable output stream and an initial capacity of 128 bytes
 		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
@@ -228,93 +454,47 @@ public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliver
 			e.printStackTrace();
 		}
 
-		return dataRefinement;
+		return EmbeddedData.of(OIDs.crTransferDataInvocDataRef, dataRefinement.code);
 	}
-
-	protected Embedded encodeNegativeResultDiagnosticExt() {
-
-		Embedded cyclicReportStartDiagnosticExt = new Embedded();
-		Identification identification = new Identification();
-		identification.setSyntax(OidValues.crStartDiagExt);
-		cyclicReportStartDiagnosticExt.setIdentification(identification);
-		cyclicReportStartDiagnosticExt.setDataValue(new BerOctetString(encodeCyclicReportStartDiagnosticExt().code));
-
-		return cyclicReportStartDiagnosticExt;
-	}
-
-	protected CyclicReportStartDiagnosticExt encodeCyclicReportStartDiagnosticExt() {
-
-		CyclicReportStartDiagnosticExt diagnosticExtension = new CyclicReportStartDiagnosticExt();
-		if (startDiagnostic == CyclicReportStartDiagnostic.COMMON) {
-			diagnosticExtension.setCommon(listOfParametersDiagnostics.encode());
-		} else if (startDiagnostic == CyclicReportStartDiagnostic.OUT_OF_RANGE) {
-			diagnosticExtension.setOutOfRange(new AdditionalText(CSTSUtils.encodeString(startDiagnostic.toString())));
-		}
-		// encode with a resizable output stream and an initial capacity of 128 bytes
-		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
-			diagnosticExtension.encode(os);
-			diagnosticExtension.code = os.getArray();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return diagnosticExtension;
-
+	
+	protected Extension encodeInvocDataRefExtension() {
+		return Extension.notUsed();
 	}
 
 	@Override
-	public IOperation decodeOperation(byte[] encodedPdu) throws ApiException, IOException {
-
-		UnbufferedDataDeliveryPdu pdu = new UnbufferedDataDeliveryPdu();
-
-		try (ByteArrayInputStream is = new ByteArrayInputStream(encodedPdu)) {
-			pdu.decode(is);
+	public Result informOperationInvoke(IOperation operation) {
+		if (operation.getType() == OperationType.START) {
+			IStart start = (IStart) operation;
+			decodeStartInvocationExtension(start.getInvocationExtension());
+		} else if (operation.getType() == OperationType.TRANSFER_DATA) {
+			ITransferData transferData = (ITransferData) operation;
+			decodeTransferDataRefinement(transferData.getEmbeddedData());
 		}
-
-		IOperation operation = null;
-
-		if (pdu.getStartInvocation() != null) {
-			IStart start = createStart();
-			start.decodeStartInvocation(pdu.getStartInvocation());
-			decodeStartInvocationExtension(pdu.getStartInvocation().getStartInvocationExtension());
-			operation = start;
-		} else if (pdu.getStartReturn() != null) {
-			IStart start = createStart();
-			start.decodeStartReturn(pdu.getStartReturn());
-			if (start.getResult() == OperationResult.RES_negative) {
-				decodeNegativeResultDiagnosticExt(
-						pdu.getStartReturn().getResult().getNegative().getDiagnostic().getDiagnosticExtension());
-			}
-			operation = start;
-		} else if (pdu.getStopInvocation() != null) {
-			IStop stop = createStop();
-			stop.decodeStopInvocation(pdu.getStopInvocation());
-			operation = stop;
-		} else if (pdu.getStopReturn() != null) {
-			IStop stop = createStop();
-			stop.decodeStopReturn(pdu.getStopReturn());
-			operation = stop;
-		} else if (pdu.getTransferDataInvocation() != null) {
-			ITransferData transferData = createTransferData();
-			transferData.decodeTransferDataInvocation(pdu.getTransferDataInvocation());
-			decodeTransferDataRefinement(pdu.getTransferDataInvocation().getData().getExtendedData());
-			operation = transferData;
-		}
-
-		return operation;
+		return doInformOperationInvoke(operation);
 	}
-
-	protected void decodeStartInvocationExtension(Extended extension) {
-		if (CSTSUtils.equalsIdentifier(extension, OidValues.crStartInvocExt)) {
+	
+	@Override
+	public Result informOperationReturn(IConfirmedOperation confOperation) {
+		if (confOperation.getType() == OperationType.START) {
+			IStart start = (IStart) confOperation;
+			if (start.getStartDiagnostic() != null) {
+				decodeStartDiagnosticExt(start.getStartDiagnostic().getDiagnosticExtension());
+			}
+		}
+		return doInformOperationReturn(confOperation);
+	}
+	
+	private void decodeStartInvocationExtension(Extension extension) {
+		if (extension.isUsed() && extension.getEmbeddedData().getOid().equals(OIDs.crStartInvocExt)) {
 			CyclicReportStartInvocExt invocationExtension = new CyclicReportStartInvocExt();
-			try (ByteArrayInputStream is = new ByteArrayInputStream(extension.getExternal().getDataValue().value)) {
+			try (ByteArrayInputStream is = new ByteArrayInputStream(extension.getEmbeddedData().getData())) {
 				invocationExtension.decode(is);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			deliveryCycle = invocationExtension.getDeliveryCycle().longValue();
 			listOfParameters = ListOfParameters.decode(invocationExtension.getListOfParameters());
-			decodeStartInvocationExtExtension(invocationExtension.getCyclicReportStartInvocExtExtension());
+			decodeStartInvocationExtExtension(Extension.decode(invocationExtension.getCyclicReportStartInvocExtExtension()));
 		}
 	}
 
@@ -326,39 +506,40 @@ public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliver
 	 *            the Extended object representing the extension of the derived
 	 *            procedure
 	 */
-	protected void decodeStartInvocationExtExtension(Extended extension) {
-
+	protected void decodeStartInvocationExtExtension(Extension extension) {
+		// do nothing on default
 	}
 
-	protected void decodeTransferDataRefinement(Embedded embedded) {
-		if (CSTSUtils.equalsIdentifier(embedded, OidValues.crTransferDataInvocDataRef)) {
+	protected void decodeTransferDataRefinement(EmbeddedData embeddedData) {
+		if (embeddedData.getOid().equals(OIDs.crTransferDataInvocDataRef)) {
 			CyclicReportTransferDataInvocDataRef dataRefinement = new CyclicReportTransferDataInvocDataRef();
-			try (ByteArrayInputStream is = new ByteArrayInputStream(embedded.getDataValue().value)) {
+			try (ByteArrayInputStream is = new ByteArrayInputStream(embeddedData.getData())) {
 				dataRefinement.decode(is);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			qualifiedParameters.clear();
 			for (ccsds.csts.common.types.QualifiedParameter param : dataRefinement.getQualifiedParameters()
 					.getQualifiedParameter()) {
 				qualifiedParameters.add(QualifiedParameter.decode(param));
 			}
+			decodeInvocDataRefExtension(Extension.decode(dataRefinement.getCyclicReportTransferDataInvocDataRefExtension()));
 		}
 	}
 
-	protected void decodeNegativeResultDiagnosticExt(Embedded embedded) {
-		if (CSTSUtils.equalsIdentifier(embedded, OidValues.crStartDiagExt)) {
-			CyclicReportStartDiagnosticExt diagnosticExtension = new CyclicReportStartDiagnosticExt();
-			try (ByteArrayInputStream is = new ByteArrayInputStream(embedded.getDataValue().value)) {
-				diagnosticExtension.decode(is);
+	protected void decodeInvocDataRefExtension(Extension extension) {
+		
+	}
+
+	protected void decodeStartDiagnosticExt(EmbeddedData embeddedData) {
+		if (embeddedData.getOid().equals(OIDs.crStartDiagExt)) {
+			CyclicReportStartDiagnosticExt cyclicReportStartDiagnosticExt = new CyclicReportStartDiagnosticExt();
+			try (ByteArrayInputStream is = new ByteArrayInputStream(embeddedData.getData())) {
+				cyclicReportStartDiagnosticExt.decode(is);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			if (diagnosticExtension.getCommon() != null) {
-				startDiagnostic = CyclicReportStartDiagnostic.COMMON;
-				listOfParametersDiagnostics = ListOfParametersDiagnostics.decode(diagnosticExtension.getCommon());
-			} else if (diagnosticExtension.getOutOfRange() != null) {
-				startDiagnostic = CyclicReportStartDiagnostic.OUT_OF_RANGE;
-			}
+			startDiagnostic = CyclicReportStartDiagnostic.decode(cyclicReportStartDiagnosticExt);
 		}
 	}
 

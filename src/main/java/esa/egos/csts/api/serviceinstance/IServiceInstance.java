@@ -1,22 +1,25 @@
 package esa.egos.csts.api.serviceinstance;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 import esa.egos.csts.api.enumerations.ProcedureRole;
 import esa.egos.csts.api.events.Event;
+import esa.egos.csts.api.events.IEvent;
 import esa.egos.csts.api.exceptions.ApiException;
-import esa.egos.csts.api.exceptions.NoServiceInstanceStateException;
-import esa.egos.csts.api.functionalresources.IFunctionalResource;
 import esa.egos.csts.api.main.IApi;
+import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.operations.IBind;
 import esa.egos.csts.api.operations.IOperation;
-import esa.egos.csts.api.parameters.AbstractConfigurationParameter;
-import esa.egos.csts.api.parameters.impl.FunctionalResourceParameter;
+import esa.egos.csts.api.parameters.IParameter;
 import esa.egos.csts.api.procedures.IAssociationControl;
 import esa.egos.csts.api.procedures.IProcedure;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
-import esa.egos.csts.api.serviceinstance.states.IState;
+import esa.egos.csts.api.productionstatus.ProductionState;
+import esa.egos.csts.api.productionstatus.ProductionStatus;
+import esa.egos.csts.api.states.service.ServiceState;
+import esa.egos.csts.api.states.service.ServiceStatus;
+import esa.egos.csts.api.states.service.ServiceSubStatus;
 import esa.egos.proxy.IProxyAdmin;
 import esa.egos.proxy.ISrvProxyInitiate;
 import esa.egos.proxy.util.ITimeoutProcessor;
@@ -53,17 +56,11 @@ public interface IServiceInstance extends IServiceInitiate, IServiceInform, ISer
 	
 	IProcedure getPrimeProcedure();
 	
-	IState getState() throws NoServiceInstanceStateException;
-	
-	IState getSubState() throws NoServiceInstanceStateException;
-	
 	IAssociationControl getAssociationControlProcedure();
 	
 	boolean getProvisionPeriodEnded();
 	
 	<T extends IOperation> T createOperation(Class<T> clazz) throws ApiException;
-
-	void stateTransition(IState state) throws ApiException;
 
 	IProxyAdmin getProxy();
 
@@ -73,15 +70,41 @@ public interface IServiceInstance extends IServiceInitiate, IServiceInform, ISer
 
 	void checkBindInvocation(IBind pbindop, ISrvProxyInitiate passociation) throws ApiException;
 
-	Map<IProcedure, List<AbstractConfigurationParameter>> getConfigurationParametersMap();
+	List<IEvent> getEvents();
 
-	List<IFunctionalResource> getFunctionalResources();
+	ProductionState getProductionState();
 
-	Map<IFunctionalResource, List<FunctionalResourceParameter>> getFunctionalResourceParametersMap();
+	IEvent getEvent(ObjectIdentifier identifier);
 
-	List<Event> getEvents();
+	List<IParameter> gatherParameters();
 
-	IServiceInstanceInternal getInternal();
+	List<IEvent> gatherEvents();
+
+	void setSubState(ServiceSubStatus subStatus);
+
+	void setState(ServiceStatus status);
+
+	Optional<Boolean> isActive();
+
+	boolean isBound();
+
+	ServiceState getState();
+
+	ProductionStatus getProductionStatus();
+
+	boolean isPrimeProcedureStateful();
+
+	void removeExternalEvent(IEvent event);
+
+	void addExternalEvent(IEvent event);
+
+	void removeExternalParameter(IParameter parameter);
+
+	void addExternalParameter(IParameter parameter);
+
+	ServiceStatus getStatus();
+
+	void initialize();
 
 	// TODO parameters of procedures, read them, update them, be informed of changes, one callback
 }

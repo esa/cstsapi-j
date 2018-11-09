@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.enumerations.OperationResult;
 import esa.egos.csts.api.enumerations.Result;
 import esa.egos.csts.api.exceptions.ApiException;
@@ -20,7 +21,6 @@ import esa.egos.proxy.enums.AbortOriginator;
 import esa.egos.proxy.enums.AlarmLevel;
 import esa.egos.proxy.enums.AssocState;
 import esa.egos.proxy.enums.BindRole;
-import esa.egos.proxy.enums.PeerAbortDiagnostics;
 import esa.egos.proxy.logging.CstsLogMessageType;
 import esa.egos.proxy.logging.IReporter;
 import esa.egos.proxy.spl.types.SPLEvent;
@@ -86,7 +86,7 @@ public class InitiatingAssoc extends Association
             LOG.finest("BIND received: " + poperation);
         }
 
-        doAbort(PeerAbortDiagnostics.PAD_protocolError, AbortOriginator.AO_proxy, true);
+        doAbort(PeerAbortDiagnostics.PROTOCOL_ERROR, AbortOriginator.INTERNAL, true);
         changeState(SPLEvent.PXSPL_rcvBindInvoke, AssocState.sleAST_unbound);
         this.unboundStateIsDisconnected = true;
         releaseAssociation();
@@ -118,7 +118,7 @@ public class InitiatingAssoc extends Association
         else if (getState() == AssocState.sleAST_bindPending)
         {
             // get a bind operation
-            PeerAbortDiagnostics diag = PeerAbortDiagnostics.PAD_invalid;
+            PeerAbortDiagnostics diag = PeerAbortDiagnostics.INVALID;
             boolean error = false;
 
             IBind pBind = (IBind) poperation;
@@ -142,7 +142,7 @@ public class InitiatingAssoc extends Association
 
                 if (pPeerApplData == null)
                 {
-                    diag = PeerAbortDiagnostics.PAD_accessDenied;
+                    diag = PeerAbortDiagnostics.ACCESS_DENIED;
                     error = true;
                 }
                 else
@@ -150,13 +150,13 @@ public class InitiatingAssoc extends Association
                     // check if the responder is the expected one
                     if (rspid.compareTo(this.responderIdentifier) != 0)
                     {
-                        diag = PeerAbortDiagnostics.PAD_unexpectedResponderId;
+                        diag = PeerAbortDiagnostics.UNEXPECTED_RESPONDER_ID;
                         error = true;
                     }
                     else
                     {
                         // send the bind return to the service instance
-                        if (pBind.getResult() == OperationResult.RES_positive)
+                        if (pBind.getResult() == OperationResult.POSITIVE)
                         {
                             // set the state to bound
                             changeState(SPLEvent.PXSPL_rcvBindReturn, AssocState.sleAST_bound);
@@ -204,7 +204,7 @@ public class InitiatingAssoc extends Association
                     String mess = "Operation rejected. " + diag.toString() + tmp;
                     notify(CstsLogMessageType.ALARM, AlarmLevel.sleAL_authFailure, 1002, mess, psii);
                     // abort the association
-                    doAbort(diag, AbortOriginator.AO_proxy, true);
+                    doAbort(diag, AbortOriginator.INTERNAL, true);
                     changeState(SPLEvent.PXSPL_rcvBindReturn, AssocState.sleAST_unbound);
                     this.unboundStateIsDisconnected = true;
                     // delete the association
@@ -220,7 +220,7 @@ public class InitiatingAssoc extends Association
         }
         else
         {
-            doAbort(PeerAbortDiagnostics.PAD_protocolError, AbortOriginator.AO_proxy, true);
+            doAbort(PeerAbortDiagnostics.PROTOCOL_ERROR, AbortOriginator.INTERNAL, true);
             changeState(SPLEvent.PXSPL_rcvBindReturn, AssocState.sleAST_unbound);
             this.unboundStateIsDisconnected = true;
             releaseAssociation();
@@ -244,7 +244,7 @@ public class InitiatingAssoc extends Association
         }
         else
         {
-            doAbort(PeerAbortDiagnostics.PAD_protocolError, AbortOriginator.AO_proxy, true);
+            doAbort(PeerAbortDiagnostics.PROTOCOL_ERROR, AbortOriginator.INTERNAL, true);
             changeState(SPLEvent.PXSPL_rcvUnbindInvoke, AssocState.sleAST_unbound);
             this.unboundStateIsDisconnected = true;
             releaseAssociation();
@@ -320,7 +320,7 @@ public class InitiatingAssoc extends Association
         }
         else
         {
-            doAbort(PeerAbortDiagnostics.PAD_protocolError, AbortOriginator.AO_proxy, true);
+            doAbort(PeerAbortDiagnostics.PROTOCOL_ERROR, AbortOriginator.INTERNAL, true);
             changeState(SPLEvent.PXSPL_rcvUnbindReturn, AssocState.sleAST_unbound);
             this.unboundStateIsDisconnected = true;
             releaseAssociation();
@@ -428,7 +428,7 @@ public class InitiatingAssoc extends Association
             else
             {
                 // set the version number
-                this.version = pBind.getOperationVersionNumber();
+                this.version = pBind.getVersionNumber();
                 // assign authentication mode and security attributes to the
                 // association
                 setSecurityAttributes(rspid);

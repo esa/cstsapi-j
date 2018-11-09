@@ -8,10 +8,10 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.proxy.LogMsg;
 import esa.egos.proxy.enums.Component;
-import esa.egos.proxy.enums.PeerAbortDiagnostics;
 import esa.egos.proxy.logging.CstsLogMessageType;
 import esa.egos.proxy.logging.IReporter;
 import esa.egos.proxy.spl.IChannelInform;
@@ -703,7 +703,7 @@ public abstract class Channel implements IChannelInitiate, ITimeoutProcessor
         {
             if (isPeerAbort)
             {
-                logError("Urgent data not received " + PeerAbortDiagnostics.getDiagByCode(diagnosticByte)
+                logError("Urgent data not received " + PeerAbortDiagnostics.getPeerAbortDiagnosticByCode(diagnosticByte)
                         .toString());
                 chInform.rcvPeerAbort(diagnosticByte, (originator == EE_APIPX_ISP1ProtocolAbortOriginator.localTML));
             }

@@ -1,9 +1,10 @@
 package esa.egos.csts.api.operations;
 
+import ccsds.csts.association.control.types.PeerAbortInvocation;
+import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.proxy.enums.AbortOriginator;
-import esa.egos.proxy.enums.PeerAbortDiagnostics;
 
-public interface IPeerAbort extends IOperation{
+public interface IPeerAbort extends IOperation {
     /**
      * Returns the PEER ABORT diagnostic
      * 
@@ -31,5 +32,9 @@ public interface IPeerAbort extends IOperation{
      * @param originator the PEER ABORT originator
      */
     void setAbortOriginator(AbortOriginator originator);
+
+	void decodePeerAbortInvocation(PeerAbortInvocation peerAbortInvocation);
+
+	PeerAbortInvocation encodePeerAbortInvocation();
     
 }

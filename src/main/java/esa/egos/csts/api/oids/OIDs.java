@@ -1,5 +1,8 @@
 package esa.egos.csts.api.oids;
 
+/**
+ * This class represents all predefined Object Identifiers of the CSTS.
+ */
 public class OIDs {
 
 	public static final ObjectIdentifier css = ObjectIdentifier.of(1, 3, 112, 4, 4);

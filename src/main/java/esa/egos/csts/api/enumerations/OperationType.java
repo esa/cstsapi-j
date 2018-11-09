@@ -11,5 +11,9 @@ public enum OperationType {
 	CONFIRMED_PROCESS_DATA,
 	NOTIFY,
 	GET,
-	EXECUTE_DIRECTIVE;
+	EXECUTE_DIRECTIVE,
+	// dummy operation types for the encoding / decoding
+	// TODO check if necessary
+	RETURN_BUFFER,
+	FORWARD_BUFFER;
 }

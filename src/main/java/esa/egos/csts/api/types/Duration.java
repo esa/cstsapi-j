@@ -3,32 +3,59 @@ package esa.egos.csts.api.types;
 import java.time.temporal.ChronoUnit;
 
 import ccsds.csts.common.types.IntUnsigned;
-import esa.egos.csts.api.enumerations.DurationEnum;
+import esa.egos.csts.api.enumerations.DurationType;
 
+/**
+ * This class represents the CCSDS Duration type.
+ * 
+ * A duration specifies a type which represents its SI unit as seconds,
+ * milliseconds or microseconds. This type is used encoding and encoding.
+ * 
+ * However, since {@link java.time.Duration} is used as the internal duration
+ * type, there are no limitations regarding SI units.
+ * 
+ * This class is immutable.
+ */
 public class Duration {
 
-	private final DurationEnum enumeration;
-	private java.time.Duration duration;
+	private final DurationType type;
+	private final java.time.Duration duration;
 
-	public Duration(DurationEnum enumeration) {
-		this.enumeration = enumeration;
+	private Duration(DurationType type, java.time.Duration duration) {
+		this.type = type;
+		this.duration = duration;
 	}
 
+	/**
+	 * Returns the duration.
+	 * 
+	 * @return the duration
+	 */
 	public java.time.Duration getDuration() {
 		return duration;
 	}
 
-	public void setDuration(java.time.Duration duration) {
-		this.duration = duration;
+	/**
+	 * Returns the duration type.
+	 * 
+	 * @return the duration type
+	 */
+	public DurationType getType() {
+		return type;
 	}
 
-	public DurationEnum getEnumeration() {
-		return enumeration;
+	public static Duration of(DurationType type, java.time.Duration duration) {
+		return new Duration(type, duration);
 	}
 
+	/**
+	 * Encodes this Duration into a CCSDS Duration type.
+	 * 
+	 * @return the CCSDS Duration type representing this object
+	 */
 	public ccsds.csts.common.types.Duration encode() {
 		ccsds.csts.common.types.Duration duration = new ccsds.csts.common.types.Duration();
-		switch (enumeration) {
+		switch (type) {
 		case MICROSECONDS:
 			duration.setMicroseconds(new IntUnsigned(this.duration.toNanos() / 1000));
 			break;
@@ -42,19 +69,26 @@ public class Duration {
 		return duration;
 	}
 
-	public static Duration decode(ccsds.csts.common.types.Duration dur) {
-		Duration duration = null;
-		if (dur.getMicroseconds() != null) {
-			duration = new Duration(DurationEnum.MICROSECONDS);
-			duration.setDuration(java.time.Duration.of(dur.getMicroseconds().longValue(), ChronoUnit.MICROS));
-		} else if (dur.getMilliseconds() != null) {
-			duration = new Duration(DurationEnum.MILLISECONDS);
-			duration.setDuration(java.time.Duration.ofMillis(dur.getMilliseconds().longValue()));
-		} else if (dur.getSeconds() != null) {
-			duration = new Duration(DurationEnum.SECONDS);
-			duration.setDuration(java.time.Duration.ofSeconds(dur.getSeconds().longValue()));
+	/**
+	 * Decodes a specified CCSDS Duration type.
+	 * 
+	 * @param duration
+	 *            the specified CCSDS Duration type
+	 * @return a new Duration decoded from the specified CCSDS Duration type
+	 */
+	public static Duration decode(ccsds.csts.common.types.Duration duration) {
+		Duration newDuration = null;
+		if (duration.getMicroseconds() != null) {
+			newDuration = new Duration(DurationType.MICROSECONDS,
+					java.time.Duration.of(duration.getMicroseconds().longValue(), ChronoUnit.MICROS));
+		} else if (duration.getMilliseconds() != null) {
+			newDuration = new Duration(DurationType.MILLISECONDS,
+					java.time.Duration.ofMillis(duration.getMilliseconds().longValue()));
+		} else if (duration.getSeconds() != null) {
+			newDuration = new Duration(DurationType.SECONDS,
+					java.time.Duration.ofSeconds(duration.getSeconds().longValue()));
 		}
-		return duration;
+		return newDuration;
 	}
 
 }

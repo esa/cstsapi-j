@@ -1,8 +1,5 @@
 package esa.egos.csts.api.operations;
 
-import org.openmuc.jasn1.ber.types.BerNull;
-
-import ccsds.csts.common.types.Extended;
 import ccsds.csts.common.types.InvokeId;
 import ccsds.csts.common.types.StandardReturnHeader;
 import ccsds.csts.common.types.StandardReturnHeader.Result;
@@ -10,18 +7,27 @@ import ccsds.csts.common.types.StandardReturnHeader.Result.Negative;
 import esa.egos.csts.api.diagnostics.Diagnostic;
 import esa.egos.csts.api.enumerations.OperationResult;
 import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.extensions.EmbeddedData;
+import esa.egos.csts.api.extensions.Extension;
 import esa.egos.csts.api.util.ICredentials;
 import esa.egos.csts.api.util.impl.Credentials;
 
+/**
+ * This class is the base class for all confirmed operations.
+ * 
+ * This class inherits all relevant data from the base class of operations and
+ * specifies additional logic for confirmed operations.
+ */
 public abstract class AbstractConfirmedOperation extends AbstractOperation implements IConfirmedOperation {
-
-	private final static boolean isConfirmed = true;
 
 	/**
 	 * The result of the operation.
 	 */
 	private OperationResult operationResult;
 
+	/**
+	 * The Diagnostic of the operation.
+	 */
 	private Diagnostic diagnostic;
 
 	/**
@@ -30,10 +36,23 @@ public abstract class AbstractConfirmedOperation extends AbstractOperation imple
 	 */
 	private ICredentials performerCredentials;
 
-	protected AbstractConfirmedOperation(int version) {
-		super(version, isConfirmed);
-		this.operationResult = OperationResult.RES_invalid;
+	/**
+	 * The return extension of the operation.
+	 */
+	private Extension returnExtension;
+
+	/**
+	 * Constructor of a confirmed operation.
+	 */
+	protected AbstractConfirmedOperation() {
+		this.operationResult = OperationResult.INVALID;
 		this.performerCredentials = null;
+		this.returnExtension = Extension.notUsed();
+	}
+
+	@Override
+	public boolean isConfirmed() {
+		return true;
 	}
 
 	@Override
@@ -43,12 +62,12 @@ public abstract class AbstractConfirmedOperation extends AbstractOperation imple
 
 	@Override
 	public void setPositiveResult() {
-		this.operationResult = OperationResult.RES_positive;
+		this.operationResult = OperationResult.POSITIVE;
 	}
 
 	@Override
 	public void setNegativeResult() {
-		this.operationResult = OperationResult.RES_negative;
+		this.operationResult = OperationResult.NEGATIVE;
 	}
 
 	@Override
@@ -59,7 +78,7 @@ public abstract class AbstractConfirmedOperation extends AbstractOperation imple
 	@Override
 	public void setDiagnostic(Diagnostic diagnostic) {
 		this.diagnostic = diagnostic;
-		this.operationResult = OperationResult.RES_negative;
+		this.operationResult = OperationResult.NEGATIVE;
 	}
 
 	@Override
@@ -77,27 +96,34 @@ public abstract class AbstractConfirmedOperation extends AbstractOperation imple
 	 */
 	@Override
 	public synchronized void verifyReturnArguments() throws ApiException {
-		if (this.operationResult == OperationResult.RES_invalid) {
+		if (this.operationResult == OperationResult.INVALID) {
 			throw new ApiException("Invalid operation results.");
-		} else if (this.operationResult == OperationResult.RES_negative) {
+		} else if (this.operationResult == OperationResult.NEGATIVE) {
 			if (this.diagnostic == null) {
 				throw new ApiException("No diagnostics.");
 			}
 		}
 	}
 
-	protected final StandardReturnHeader encodeStandardReturnHeader() {
-		StandardReturnHeader header = new StandardReturnHeader();
-		header.setInvokeId(new InvokeId(getInvokeId()));
-		if (getPerformerCredentials() != null) {
-			header.setPerformerCredentials(getPerformerCredentials().encode());
-		} else {
-			header.setPerformerCredentials(getEmptyCredentials());
-		}
-		header.setResult(encodeResult());
-		return header;
+	@Override
+	public Extension getReturnExtension() {
+		return returnExtension;
 	}
 
+	@Override
+	public void setReturnExtension(EmbeddedData embedded) {
+		returnExtension = Extension.of(embedded);
+	}
+
+	/**
+	 * Encodes the relevant informations of the operation into a
+	 * StandardReturnHeader subclass.
+	 * 
+	 * @param cls
+	 *            the class object directly inheriting from the
+	 *            StandardInvocationHeader class
+	 * @return the encoded StandardInvocationHeader subclass
+	 */
 	protected final <T extends StandardReturnHeader> T encodeStandardReturnHeader(Class<T> cls) {
 
 		T header = null;
@@ -111,7 +137,7 @@ public abstract class AbstractConfirmedOperation extends AbstractOperation imple
 			System.err.println("Illegal access while instantiating class " + cls);
 			e.printStackTrace();
 		}
-		header.setInvokeId(new InvokeId(getInvokeId()));
+		header.setInvokeId(new InvokeId(getInvokeIdentifier()));
 
 		if (getPerformerCredentials() != null) {
 			header.setPerformerCredentials(getPerformerCredentials().encode());
@@ -123,71 +149,40 @@ public abstract class AbstractConfirmedOperation extends AbstractOperation imple
 		return header;
 	}
 
-	protected final <T extends StandardReturnHeader> T encodeStandardReturnHeader(Class<T> cls,
-			Extended resultExtension) {
-
-		T header = null;
-
-		try {
-			header = cls.newInstance();
-		} catch (InstantiationException e) {
-			System.err.println("Could not instantiate class " + cls);
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			System.err.println("Illegal access while instantiating class " + cls);
-			e.printStackTrace();
-		}
-		header.setInvokeId(new InvokeId(getInvokeId()));
-
-		if (getPerformerCredentials() != null) {
-			header.setPerformerCredentials(getPerformerCredentials().encode());
-		} else {
-			header.setPerformerCredentials(getEmptyCredentials());
-		}
-
-		header.setResult(encodeResult(resultExtension));
-		return header;
-	}
-
+	/**
+	 * Encodes the result of the operation.
+	 * 
+	 * @return the encoded Result
+	 */
 	private Result encodeResult() {
 
 		Result result = new Result();
 
-		// RES_positive
-		if (operationResult == OperationResult.RES_positive) {
-			result.setPositive(encodePositiveReturn());
-		}
-		// RES_negative
-		else {
+		if (operationResult == OperationResult.POSITIVE) {
+			extendPositiveResult();
+			result.setPositive(returnExtension.encode());
+		} else {
+			extendNegativeResult();
 			result.setNegative(encodeNegativeReturn());
 		}
 
 		return result;
 	}
 
-	private Result encodeResult(Extended extension) {
-		Result result = new Result();
-		if (operationResult == OperationResult.RES_positive) {
-			result.setPositive(extension);
-		} else {
-			result.setNegative(encodeNegativeReturn(extension));
-		}
-		return result;
+	/**
+	 * This method is called while encoding the result. Override this method, if the
+	 * operation has an extended positive return.
+	 */
+	protected void extendPositiveResult() {
+		// no extended positive return here
 	}
 
 	/**
-	 * Encodes and returns the positive Result.
-	 * 
-	 * Override this method for extended positive Results. Instead of setNotUsed(new
-	 * BerNull()) use setExternal(external) If not overridden, the extension is not
-	 * used.
-	 * 
-	 * @return Extended the extension
+	 * This method is called while encoding the result. Override this method, if the
+	 * operation has an negative return.
 	 */
-	protected Extended encodePositiveReturn() {
-		Extended pos = new Extended();
-		pos.setNotUsed(new BerNull());
-		return pos;
+	protected void extendNegativeResult() {
+		// no extended negative return here
 	}
 
 	/**
@@ -197,101 +192,56 @@ public abstract class AbstractConfirmedOperation extends AbstractOperation imple
 	 */
 	private Negative encodeNegativeReturn() {
 		Negative negative = new Negative();
-		encodeDiagnosticExtension();
 		negative.setDiagnostic(diagnostic.encode());
-		negative.setNegExtension(encodeNegativeReturnExt());
-		return negative;
-	}
-
-	private Negative encodeNegativeReturn(Extended extension) {
-		Negative negative = new Negative();
-		encodeDiagnosticExtension();
-		negative.setDiagnostic(diagnostic.encode());
-		negative.setNegExtension(extension);
+		negative.setNegExtension(returnExtension.encode());
 		return negative;
 	}
 
 	/**
-	 * Encodes an extended Diagnostic, if the derived operation has one. This method
-	 * gets called in the process of encoding a negative return. Override this
-	 * method to implement an extended diagnostic extensions.
-	 */
-	protected void encodeDiagnosticExtension() {
-		// no extended diagnostic here
-	}
-
-	/**
-	 * Encodes and returns the negative result diagnostic extension.
+	 * Decodes the relevant informations of a StandardReturnHeader into the
+	 * operation.
 	 * 
-	 * Override this method for extended the negative diagnostic extension. If not
-	 * overridden, the extension is not used.
-	 * 
-	 * @return Extended the extension
+	 * @param standardReturnHeader
 	 */
-	protected Extended encodeNegativeReturnExt() {
-		Extended neg = new Extended();
-		neg.setNotUsed(new BerNull());
-		return neg;
-	}
-
 	protected final void decodeStandardReturnHeader(StandardReturnHeader standardReturnHeader) {
-		setInvokeId(standardReturnHeader.getInvokeId());
-		setPerformerCredentials(Credentials.decode(standardReturnHeader.getPerformerCredentials()));
-		if (standardReturnHeader.getResult().getPositive() != null) {
+		setInvokeIdentifier(standardReturnHeader.getInvokeId().intValue());
+		performerCredentials = Credentials.decode(standardReturnHeader.getPerformerCredentials());
+		decodeResult(standardReturnHeader.getResult());
+	}
+
+	private void decodeResult(Result result) {
+		if (result.getPositive() != null) {
 			setPositiveResult();
-			decodePositiveReturn(standardReturnHeader.getResult().getPositive());
-		} else if (standardReturnHeader.getResult().getNegative() != null) {
-			setDiagnostic(Diagnostic.decode(standardReturnHeader.getResult().getNegative().getDiagnostic()));
-			decodeNegativeReturn(standardReturnHeader.getResult().getNegative());
+			returnExtension = Extension.decode(result.getPositive());
+			decodePositiveReturn();
+		} else if (result.getNegative() != null) {
+			setDiagnostic(Diagnostic.decode(result.getNegative().getDiagnostic()));
+			returnExtension = Extension.decode(result.getNegative().getNegExtension());
+			decodeNegativeReturn();
 		}
 	}
 
 	/**
-	 * Decodes the positive result and sets the operation to having received a
-	 * positive response. setPositiveResult();
-	 * 
-	 * Override if extension is used.
-	 * 
-	 * @param positive
-	 *            Extended
+	 * This method is called while decoding a positive return. Override this method
+	 * if the operation has an extended positive return.
 	 */
-	protected void decodePositiveReturn(Extended positive) {
-
+	protected void decodePositiveReturn() {
+		// override if a positive return extension is used
 	}
 
 	/**
-	 * Decodes the negative result and sets the diagnostics.
-	 * 
-	 * @param negative
-	 *            Negative
+	 * This method is called while decoding a negative return. Override this method
+	 * if the operation has an extended negative return.
 	 */
-	private void decodeNegativeReturn(Negative negative) {
-		diagnostic = Diagnostic.decode(negative.getDiagnostic());
-		decodeDiagnosticExtension();
-		decodeNegativeReturnExt(negative.getNegExtension());
-	}
-
-	protected void decodeDiagnosticExtension() {
-
-	}
-
-	/**
-	 * Decodes the negative result diagnostic extension.
-	 * 
-	 * Override if extension is used.
-	 * 
-	 * @param negExtension
-	 *            Extended
-	 */
-	protected void decodeNegativeReturnExt(Extended negExtension) {
-
+	protected void decodeNegativeReturn() {
+		// override if a Diagnostic or negative return extension is used
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + getInvokeId();
+		result = prime * result + getInvokeIdentifier();
 		result = prime * result + ((operationResult == null) ? 0 : operationResult.hashCode());
 		result = prime * result + ((performerCredentials == null) ? 0 : performerCredentials.hashCode());
 		return result;
@@ -308,7 +258,7 @@ public abstract class AbstractConfirmedOperation extends AbstractOperation imple
 		if (getClass() != obj.getClass())
 			return false;
 		IConfirmedOperation other = (IConfirmedOperation) obj;
-		if (getInvokeId() != other.getInvokeId())
+		if (getInvokeIdentifier() != other.getInvokeIdentifier())
 			return false;
 		return true;
 	}

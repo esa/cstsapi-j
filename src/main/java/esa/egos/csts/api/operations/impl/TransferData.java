@@ -6,33 +6,54 @@ import org.openmuc.jasn1.ber.types.BerOctetString;
 
 import ccsds.csts.common.operations.pdus.TransferDataInvocation;
 import ccsds.csts.common.types.AbstractChoice;
-import ccsds.csts.common.types.Embedded;
-import ccsds.csts.common.types.Extended;
 import ccsds.csts.common.types.IntUnsigned;
 import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.extensions.EmbeddedData;
+import esa.egos.csts.api.extensions.Extension;
 import esa.egos.csts.api.operations.AbstractOperation;
 import esa.egos.csts.api.operations.ITransferData;
 import esa.egos.csts.api.types.Time;
-import esa.egos.csts.api.util.impl.CSTSUtils;
 
 public class TransferData extends AbstractOperation implements ITransferData {
 
-	private final OperationType type = OperationType.TRANSFER_DATA;
+	private static final OperationType TYPE = OperationType.TRANSFER_DATA;
 	
-	private final static int versionNumber = 1;
-
+	/**
+	 * The generation time
+	 */
 	private Time generationTime;
+	
+	/**
+	 * The sequence counter
+	 */
 	private long sequenceCounter;
+	
+	/**
+	 * The encoded data
+	 */
 	private byte[] data;
+	
+	/**
+	 * The embedded data
+	 */
+	private EmbeddedData embeddedData;
+	
+	/**
+	 * The invocation extension
+	 */
+	private Extension invocationExtension;
 
+	/**
+	 * The constructor of a TRANSFER-DATA operation.
+	 */
 	public TransferData() {
-		super(versionNumber, false);
+		invocationExtension = Extension.notUsed();
 	}
 	
 	@Override
 	public OperationType getType() {
-		return type;
+		return TYPE;
 	}
 
 	@Override
@@ -66,6 +87,26 @@ public class TransferData extends AbstractOperation implements ITransferData {
 	}
 
 	@Override
+	public EmbeddedData getEmbeddedData() {
+		return embeddedData;
+	}
+	
+	@Override
+	public void setEmbeddedData(EmbeddedData embeddedData) {
+		this.embeddedData = embeddedData;
+	}
+	
+	@Override
+	public Extension getInvocationExtension() {
+		return invocationExtension;
+	}
+
+	@Override
+	public void setInvocationExtension(EmbeddedData embedded) {
+		invocationExtension = Extension.of(embedded);
+	}
+	
+	@Override
 	public void verifyInvocationArguments() throws ApiException {
 		if (generationTime == null) {
 			throw new ApiException("Invalid TRANSFER-DATA invocation arguments.");
@@ -73,7 +114,7 @@ public class TransferData extends AbstractOperation implements ITransferData {
 		if (sequenceCounter < 0) {
 			throw new ApiException("Invalid TRANSFER-DATA invocation arguments.");
 		}
-		if (data == null) {
+		if (data == null && embeddedData == null) {
 			throw new ApiException("Invalid TRANSFER-DATA invocation arguments.");
 		}
 	}
@@ -86,37 +127,18 @@ public class TransferData extends AbstractOperation implements ITransferData {
 
 	@Override
 	public TransferDataInvocation encodeTransferDataInvocation() {
-		return encodeTransferDataInvocation(CSTSUtils.nonUsedExtension());
-	}
-
-	@Override
-	public TransferDataInvocation encodeTransferDataInvocation(Embedded extendedData) {
-		return encodeTransferDataInvocation(extendedData, CSTSUtils.nonUsedExtension());
-	}
-
-	@Override
-	public TransferDataInvocation encodeTransferDataInvocation(Extended extension) {
 		TransferDataInvocation transferDataInvocation = new TransferDataInvocation();
 		transferDataInvocation.setStandardInvocationHeader(encodeStandardInvocationHeader());
 		transferDataInvocation.setGenerationTime(generationTime.encode());
 		transferDataInvocation.setSequenceCounter(new IntUnsigned(sequenceCounter));
 		AbstractChoice choice = new AbstractChoice();
-		choice.setOpaqueString(new BerOctetString(data));
+		if (data != null) {
+			choice.setOpaqueString(new BerOctetString(data));
+		} else if (embeddedData != null) {
+			choice.setExtendedData(embeddedData.encode());
+		}
 		transferDataInvocation.setData(choice);
-		transferDataInvocation.setTransferDataInvocationExtension(extension);
-		return transferDataInvocation;
-	}
-
-	@Override
-	public TransferDataInvocation encodeTransferDataInvocation(Embedded extendedData, Extended extension) {
-		TransferDataInvocation transferDataInvocation = new TransferDataInvocation();
-		transferDataInvocation.setStandardInvocationHeader(encodeStandardInvocationHeader());
-		transferDataInvocation.setGenerationTime(generationTime.encode());
-		transferDataInvocation.setSequenceCounter(new IntUnsigned(sequenceCounter));
-		AbstractChoice choice = new AbstractChoice();
-		choice.setExtendedData(extendedData);
-		transferDataInvocation.setData(choice);
-		transferDataInvocation.setTransferDataInvocationExtension(extension);
+		transferDataInvocation.setTransferDataInvocationExtension(invocationExtension.encode());
 		return transferDataInvocation;
 	}
 
@@ -127,7 +149,10 @@ public class TransferData extends AbstractOperation implements ITransferData {
 		sequenceCounter = transferDataInvocation.getSequenceCounter().longValue();
 		if (transferDataInvocation.getData().getOpaqueString() != null) {
 			data = transferDataInvocation.getData().getOpaqueString().value;
+		} else if (transferDataInvocation.getData().getExtendedData() != null) {
+			embeddedData = EmbeddedData.decode(transferDataInvocation.getData().getExtendedData());
 		}
+		invocationExtension = Extension.decode(transferDataInvocation.getTransferDataInvocationExtension());
 	}
 
 }

@@ -1,6 +1,5 @@
 package esa.egos.proxy.enums;
 
-@Deprecated
 public enum DiagnosticType {
 	
 	DT_noDiagnostics,

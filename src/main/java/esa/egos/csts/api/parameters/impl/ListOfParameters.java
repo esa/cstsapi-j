@@ -1,6 +1,5 @@
 package esa.egos.csts.api.parameters.impl;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,17 +10,18 @@ import org.openmuc.jasn1.ber.types.string.BerVisibleString;
 import ccsds.csts.common.types.ListOfParametersEvents;
 import ccsds.csts.common.types.ListOfParametersEvents.ParamEventLabels;
 import ccsds.csts.common.types.ListOfParametersEvents.ParamEventNames;
-import esa.egos.csts.api.enumerations.ListOfParamatersEnum;
+import esa.egos.csts.api.enumerations.ListOfParamatersType;
 import esa.egos.csts.api.functionalresources.impl.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.impl.FunctionalResourceType;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.Name;
+import esa.egos.csts.api.util.impl.CSTSUtils;
 
 public class ListOfParameters {
 
-	private final ListOfParamatersEnum enumeration;
+	private final ListOfParamatersType type;
 	private String listName;
 	private FunctionalResourceType functionalResourceType;
 	private FunctionalResourceName functionalResourceName;
@@ -30,58 +30,58 @@ public class ListOfParameters {
 	private List<Label> parameterLabels;
 	private List<Name> parameterNames;
 
-	public ListOfParameters(ListOfParamatersEnum enumeration) {
-		this.enumeration = enumeration;
-		if (this.enumeration == ListOfParamatersEnum.LABELS_SET) {
+	public ListOfParameters(ListOfParamatersType type) {
+		this.type = type;
+		if (this.type == ListOfParamatersType.LABELS_SET) {
 			parameterLabels = new ArrayList<>();
-		} else if (this.enumeration == ListOfParamatersEnum.NAMES_SET) {
+		} else if (this.type == ListOfParamatersType.NAMES_SET) {
 			parameterNames = new ArrayList<>();
 		}
 	}
 
 	public ListOfParameters() {
-		enumeration = ListOfParamatersEnum.EMPTY;
+		type = ListOfParamatersType.EMPTY;
 	}
 
 	public ListOfParameters(String listName) {
-		enumeration = ListOfParamatersEnum.LIST_NAME;
+		type = ListOfParamatersType.LIST_NAME;
 		this.listName = listName;
 	}
 
 	public ListOfParameters(FunctionalResourceType functionalResourceType) {
-		enumeration = ListOfParamatersEnum.FUNCTIONAL_RESOURCE_TYPE;
+		type = ListOfParamatersType.FUNCTIONAL_RESOURCE_TYPE;
 		this.functionalResourceType = functionalResourceType;
 	}
 
 	public ListOfParameters(FunctionalResourceName functionalResourceName) {
-		enumeration = ListOfParamatersEnum.FUNCTIONAL_RESOURCE_NAME;
+		type = ListOfParamatersType.FUNCTIONAL_RESOURCE_NAME;
 		this.functionalResourceName = functionalResourceName;
 	}
 
 	public ListOfParameters(ProcedureType procedureType) {
-		enumeration = ListOfParamatersEnum.PROCEDURE_TYPE;
+		type = ListOfParamatersType.PROCEDURE_TYPE;
 		this.procedureType = procedureType;
 	}
 
 	public ListOfParameters(ProcedureInstanceIdentifier procedureInstanceIdentifier) {
-		enumeration = ListOfParamatersEnum.PROCEDURE_INSTANCE_IDENTIFIER;
+		type = ListOfParamatersType.PROCEDURE_INSTANCE_IDENTIFIER;
 		this.procedureInstanceIdentifier = procedureInstanceIdentifier;
 	}
 
 	public ListOfParameters(Label... labels) {
-		enumeration = ListOfParamatersEnum.LABELS_SET;
+		type = ListOfParamatersType.LABELS_SET;
 		parameterLabels = new ArrayList<>();
 		parameterLabels.addAll(Arrays.asList(labels));
 	}
 
 	public ListOfParameters(Name... names) {
-		enumeration = ListOfParamatersEnum.NAMES_SET;
+		type = ListOfParamatersType.NAMES_SET;
 		parameterNames = new ArrayList<>();
 		parameterNames.addAll(Arrays.asList(names));
 	}
-	
-	public ListOfParamatersEnum getListOfParametersEnum() {
-		return enumeration;
+
+	public ListOfParamatersType getType() {
+		return type;
 	}
 
 	public String getListName() {
@@ -132,14 +132,18 @@ public class ListOfParameters {
 		return parameterNames;
 	}
 
+	public static ListOfParameters empty() {
+		return new ListOfParameters(ListOfParamatersType.EMPTY);
+	}
+
 	public ListOfParametersEvents encode() {
 		ListOfParametersEvents listOfParametersEvents = new ListOfParametersEvents();
-		switch (enumeration) {
+		switch (type) {
 		case EMPTY:
 			listOfParametersEvents.setEmpty(new BerNull());
 			break;
 		case LIST_NAME:
-			listOfParametersEvents.setListName(new BerVisibleString(listName.getBytes(StandardCharsets.UTF_8)));
+			listOfParametersEvents.setListName(new BerVisibleString(CSTSUtils.encodeString(listName)));
 			break;
 		case FUNCTIONAL_RESOURCE_TYPE:
 			listOfParametersEvents.setFunctionalResourceType(functionalResourceType.encode());
@@ -178,7 +182,7 @@ public class ListOfParameters {
 		if (params.getEmpty() != null) {
 			list = new ListOfParameters();
 		} else if (params.getListName() != null) {
-			list = new ListOfParameters(new String(params.getListName().value, StandardCharsets.UTF_8));
+			list = new ListOfParameters(CSTSUtils.decodeString(params.getListName().value));
 		} else if (params.getFunctionalResourceType() != null) {
 			list = new ListOfParameters(FunctionalResourceType.decode(params.getFunctionalResourceType()));
 		} else if (params.getFunctionalResourceName() != null) {
@@ -188,11 +192,9 @@ public class ListOfParameters {
 		} else if (params.getProcedureInstanceId() != null) {
 			list = new ListOfParameters(ProcedureInstanceIdentifier.decode(params.getProcedureInstanceId()));
 		} else if (params.getParamEventLabels() != null) {
-			list = new ListOfParameters(
-					params.getParamEventLabels().getLabel().stream().map(Label::decode).toArray(Label[]::new));
+			list = new ListOfParameters(params.getParamEventLabels().getLabel().stream().map(Label::decode).toArray(Label[]::new));
 		} else if (params.getParamEventNames() != null) {
-			list = new ListOfParameters(
-					params.getParamEventNames().getName().stream().map(Name::decode).toArray(Name[]::new));
+			list = new ListOfParameters(params.getParamEventNames().getName().stream().map(Name::decode).toArray(Name[]::new));
 		}
 
 		return list;

@@ -10,7 +10,7 @@ public interface IServiceInstanceIdentifier {
     ObjectIdentifier getSpacecraftIdentifier();
 	boolean getInitialFormatUsed();
 	
-	ccsds.csts.service.instance.id.ServiceInstanceIdentifier encodeSII();
+	ccsds.csts.service.instance.id.ServiceInstanceIdentifier encode();
 	
 	String toAscii();
 	

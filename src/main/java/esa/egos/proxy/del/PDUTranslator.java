@@ -148,7 +148,7 @@ public class PDUTranslator implements ITranslator{
 		if(pdu.getPeerAbortInvocation() != null)
 		{
 			isInvoke.setReference(true);
-			return decode(-1, pdu.getPeerAbortInvocation().getDiagnostic(),AbortOriginator.AO_proxy);
+			return decode(-1, pdu.getPeerAbortInvocation().getDiagnostic(),AbortOriginator.INTERNAL);
 		}
 		// BindReturn
 		if(pdu.getBindReturn() != null){
@@ -176,12 +176,31 @@ public class PDUTranslator implements ITranslator{
 		// StopReturn
 		if(pdu.getStopReturn() != null){
 			isInvoke.setReference(false);
-			return AssocTranslator.decodeStopReturn(getReturnOp(pdu.getStopReturn().getInvokeId()),pdu);
+			return AssocTranslator.decodeStopReturn(getReturnOp(pdu.getStopReturn().getInvokeId()),pdu); 
 		}
 		// UnbindReturn
 		if(pdu.getUnbindReturn() != null){
 			isInvoke.setReference(false);  
-			return AssocTranslator.decodeUnbindReturn(getReturnOp(pdu.getUnbindReturn().getInvokeId()), pdu);
+			return AssocTranslator.decodeUnbindReturn(getUnbindReturnOp(), pdu);
+		}
+		
+		if (pdu.getReturnBuffer() != null) {
+			isInvoke.setReference(true);
+			if(this.serviceInstance != null)
+				if (pdu.getReturnBuffer().getTransferDataOrNotification().get(0).getTransferDataInvocation() != null) {
+					identifier = ProcedureInstanceIdentifier.decode(
+							pdu.getReturnBuffer().getTransferDataOrNotification().get(0).getTransferDataInvocation().getStandardInvocationHeader().getProcedureInstanceId());
+				} else if (pdu.getReturnBuffer().getTransferDataOrNotification().get(0).getNotifyInvocation() != null) {
+					identifier = ProcedureInstanceIdentifier.decode(
+							pdu.getReturnBuffer().getTransferDataOrNotification().get(0).getNotifyInvocation().getStandardInvocationHeader().getProcedureInstanceId());
+				}
+		}
+		
+		if (pdu.getForwardBuffer() != null) {
+			isInvoke.setReference(true);
+			if(this.serviceInstance != null)
+				identifier = ProcedureInstanceIdentifier.decode(
+						pdu.getForwardBuffer().getProcessDataInvocation().get(0).getStandardInvocationHeader().getProcedureInstanceId());
 		}
 		
 		// we are from within the API, so we know the service instance and relay
@@ -205,6 +224,19 @@ public class PDUTranslator implements ITranslator{
 		}	
 		
 		return bindOp;
+	}
+	
+	private IOperation getUnbindReturnOp() throws ApiException {
+		IUnbind unbindOp = null;
+		
+		if(this.pendingUnbind != null){
+			unbindOp = this.pendingUnbind;
+			this.pendingUnbind = null;
+		}else{
+			throw new ApiException("No pending bind return.");
+		}	
+		
+		return unbindOp;
 	}
 
 	private IOperation getReturnOp(InvokeId invokeId) throws ApiException {
@@ -300,7 +332,7 @@ public class PDUTranslator implements ITranslator{
             pConfOp = (IConfirmedOperation) operation;
             if (pConfOp != null)
             {
-                int invokeId = pConfOp.getInvokeId();
+                int invokeId = pConfOp.getInvokeIdentifier();
                 this.accessPendingReturn.lock();
                 // check if the invoke id is already in the map
                 if (this.pendingReturn.get(new Integer(invokeId)) != null)

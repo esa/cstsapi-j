@@ -1,180 +1,163 @@
 package esa.egos.csts.api.operations.impl;
 
-import java.nio.charset.StandardCharsets;
-
 import ccsds.csts.association.control.types.BindInvocation;
 import ccsds.csts.association.control.types.BindReturn;
 import ccsds.csts.association.control.types.VersionNumber;
 import ccsds.csts.common.types.AuthorityIdentifier;
-import ccsds.csts.common.types.Extended;
 import ccsds.csts.common.types.PortId;
+import ccsds.csts.common.types.StandardReturnHeader;
+import esa.egos.csts.api.diagnostics.BindDiagnostic;
+import esa.egos.csts.api.diagnostics.Diagnostic;
 import esa.egos.csts.api.enumerations.OperationResult;
 import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.exceptions.ApiException;
-import esa.egos.csts.api.oids.ObjectIdentifier;
+import esa.egos.csts.api.exceptions.ConfigException;
+import esa.egos.csts.api.extensions.EmbeddedData;
+import esa.egos.csts.api.extensions.Extension;
 import esa.egos.csts.api.operations.AbstractConfirmedOperation;
 import esa.egos.csts.api.operations.IBind;
+import esa.egos.csts.api.serviceinstance.impl.ServiceInstanceIdentifier;
 import esa.egos.csts.api.serviceinstance.impl.ServiceType;
 import esa.egos.csts.api.util.impl.CSTSUtils;
-import esa.egos.proxy.enums.BindDiagnostics;
 
 public class Bind extends AbstractConfirmedOperation implements IBind {
 
-	//  BIND Invocation Parameters
-	//	Item			Parameter					Ref.	Status	Support	Values Allowed	Supported
-	//	bindInv-1		invokerCredentials			E4.3	M			
-	//	bindInv-2		invokeId					E4.3	M			
-	//	bindInv-3		procedureInstanceId			E4.3	M				AV1	
-	//	bindInv-4		initiatorIdentifier			E4.5	M			
-	//	bindInv-5		responderPortIdentifier		E4.5	M			
-	//	bindInv-6		serviceType					E4.5	M			
-	//	bindInv-7		versionNumber				E4.5	M			
-	//	bindInv-8		serviceInstanceIdentifier	E4.5	M			
-	//	bindInv-9		bindInvocationExtension		E4.5	M				AV2
+	private static final OperationType TYPE = OperationType.BIND;
 
-	//	Parameters								Invocation	Return
-	//	Standard Operation Header (confirmed)	M			M
-	//	initiator-identifier					M	
-	//	responder-identifier								M
-	//	responder-port-identifier				M	
-	//	service-type							M	
-	//	version-number							M	
-	//	service-instance-identifier				M	
+	/**
+	 * The identifier for initiating applications
+	 */
+	private String initiatorIdentifier;
 	
-	private final OperationType type = OperationType.BIND;
+	/**
+	 * The responder port identifier
+	 */
+	private String responderPortIdentifier;
 	
-    /**
-     * The identifier for responding applications
-     */
-    private String responderId;
+	/**
+	 * The service type
+	 */
+	private ServiceType serviceType;
+	
+	/**
+	 * The version number which is passed from the Association Control to the operation
+	 */
+	private int versionNumber;
+	
+	/**
+	 * The identifier for responding applications
+	 */
+	private String responderIdentifier;
 
-    /**
-     * The responder port identifier
-     */
-    private String responderPortId;
-    
-    /**
-     * The identifier for initiating applications
-     */
-    private String initiatorId;
-    
-    private ServiceType serviceType;
-    
-    /**
-     * The bind diagnostics
-     */
-    private BindDiagnostics diagnostics;
+	/**
+	 * The bind diagnostics
+	 */
+	private BindDiagnostic diagnostics;
 
-	private double bindVersion;
-	
-	public Bind(int version) {
-		super(version);
-		
-        this.initiatorId = null;
-        this.responderId = null;
-        this.responderPortId = null;
-        this.diagnostics = BindDiagnostics.BD_invalid;
-        
-        this.serviceType = null;
+	/**
+	 * The invocation extension
+	 */
+	private Extension invocationExtension;
+
+	/**
+	 * The constructor of a BIND operation
+	 */
+	public Bind() {
+		diagnostics = BindDiagnostic.INVALID;
+		invocationExtension = Extension.notUsed();
 	}
 
 	@Override
 	public OperationType getType() {
-		return type;
+		return TYPE;
 	}
-	
+
 	@Override
 	public boolean isBlocking() {
 		return true;
 	}
-	
+
 	@Override
 	public String getInitiatorIdentifier() {
-		return this.initiatorId;
+		return this.initiatorIdentifier;
 	}
 
 	@Override
 	public String getResponderIdentifier() {
-		return this.responderId;
+		return this.responderIdentifier;
 	}
 
 	@Override
 	public String getResponderPortIdentifier() {
-		return this.responderPortId;
+		return this.responderPortIdentifier;
 	}
 
 	@Override
 	public void setInitiatorIdentifier(String id) {
-		this.initiatorId = id;
+		this.initiatorIdentifier = id;
 	}
 
 	@Override
 	public void setResponderIdentifier(String id) {
-		this.responderId = id;
+		this.responderIdentifier = id;
 	}
 
 	@Override
 	public void setResponderPortIdentifier(String port) {
-		this.responderPortId = port;
+		this.responderPortIdentifier = port;
 	}
 
 	@Override
-	public BindDiagnostics getBindDiagnostic() {
-		return this.diagnostics;
+	public BindDiagnostic getBindDiagnostic() {
+		return diagnostics;
 	}
 
 	@Override
-	public void setBindDiagnostic(BindDiagnostics diagnostic) {
+	public void setBindDiagnostic(BindDiagnostic diagnostic) {
 		this.diagnostics = diagnostic;
+		setDiagnostic(new Diagnostic(diagnostic.encode()));
 	}
 
 	@Override
-	public void verifyReturnArguments() throws ApiException {
-		super.verifyReturnArguments();
-		
-        if (this.diagnostics == BindDiagnostics.BD_invalid)
-        {
-            if (getResult() == OperationResult.RES_negative)
-            {
-                throw new ApiException("Invalid Bind return arguments");
-            }
-        }
+	public void setInvocationExtension(EmbeddedData embedded) {
+		invocationExtension = Extension.of(embedded);
+	}
+	
+	@Override
+	public int getVersionNumber() {
+		return versionNumber;
 	}
 
+	@Override
+	public void setVersionNumber(int versionNumber) {
+		this.versionNumber = versionNumber;
+	}
+	
 	@Override
 	public void verifyInvocationArguments() throws ApiException {
 		super.verifyInvocationArguments();
-		
-        if (getResponderPortIdentifier() == null || getResponderIdentifier() == null 
-        		|| getServiceInstanceIdentifier() == null || getOperationVersionNumber() == 0
-                || getServiceType() == null)
-        {
-            throw new ApiException("Invalid Bind invocation arguments");
-        }
+		if (getResponderPortIdentifier() == null || getResponderIdentifier() == null
+				|| getServiceInstanceIdentifier() == null || getVersionNumber() == 0
+				|| getServiceType() == null) {
+			throw new ApiException("Invalid Bind invocation arguments");
+		}
+	}
+	
+	@Override
+	public void verifyReturnArguments() throws ApiException {
+		super.verifyReturnArguments();
+		if (diagnostics == BindDiagnostic.INVALID) {
+			if (getResult() == OperationResult.NEGATIVE) {
+				throw new ApiException("Invalid Bind return arguments");
+			}
+		}
 	}
 
 	@Override
 	public String print(int i) {
-		
-        StringBuilder os = new StringBuilder();
-
-        os.append("Initiator Identifier   : " + this.initiatorId + "\n");
-        os.append("Responder Identifier   : " + this.responderId + "\n");
-        os.append("Rsp Port Identifier    : " + this.responderPortId + "\n");
-        os.append("Service Instance Id    : ");
-
-        if (getServiceInstanceIdentifier() != null)
-        {
-            String sii_c = getServiceInstanceIdentifier().toString();
-            os.append(sii_c);
-        }
-
-        os.append("\n");
-        os.append("Service Type           : " + this.serviceType.toString() + "\n");
-        os.append("Version                : " + this.bindVersion + "\n");
-        os.append("Bind Diagnostic        : " + getDiagnostic().toString() + "\n");
-
-        return os.toString();
+		return "Bind [responderId=" + responderIdentifier + ", responderPortId=" + responderPortIdentifier + ", initiatorId="
+				+ initiatorIdentifier + ", serviceType=" + serviceType + ", diagnostics=" + diagnostics
+				+ ", invocationExtension=" + invocationExtension + ", version=" + versionNumber + "]";
 	}
 
 	@Override
@@ -188,97 +171,69 @@ public class Bind extends AbstractConfirmedOperation implements IBind {
 	}
 
 	@Override
-	public double getVersion() {
-		return this.bindVersion;
-	}
-
-	@Override
-	public void setVersion(double doubleValue) {
-		this.bindVersion = doubleValue;
-	}
-
-	@Override
-	public void setInitiatorIdentifier(AuthorityIdentifier initiatorIdentifier) {
-		setInitiatorIdentifier(new String(initiatorIdentifier.value, StandardCharsets.UTF_8));
-	}
-
-	@Override
-	public void setResponderIdentifier(AuthorityIdentifier responderIdentifier) {
-		setResponderIdentifier(new String(responderIdentifier.value, StandardCharsets.UTF_8));
-	}
-
-	@Override
-	public void setResponderPortIdentifier(PortId responderPortIdentifier) {
-		setResponderPortIdentifier(new String(responderPortIdentifier.value, StandardCharsets.UTF_8));
-	}
-
-	@Override
-	public void setServiceType(ccsds.csts.association.control.types.ServiceType serviceType) {
-		
-		ServiceType sType = new ServiceType(ObjectIdentifier.of(serviceType.value));
-		setServiceType(sType);
-	}
-
-	@Override
 	public BindInvocation encodeBindInvocation() {
+
 		BindInvocation bindInvocation = new BindInvocation();
+
 		// the invoker credentials etc. in standard invoke header
 		bindInvocation.setStandardInvocationHeader(encodeStandardInvocationHeader());
 
 		// the initiator identifier
-		bindInvocation.setInitiatorIdentifier(new AuthorityIdentifier(getInitiatorIdentifier().getBytes(StandardCharsets.UTF_8)));
+		bindInvocation.setInitiatorIdentifier(new AuthorityIdentifier(CSTSUtils.encodeString(initiatorIdentifier)));
 
 		// the responder port identifier
-		bindInvocation.setResponderPortIdentifier(new PortId(getResponderPortIdentifier().getBytes(StandardCharsets.UTF_8)));
+		bindInvocation.setResponderPortIdentifier(new PortId(CSTSUtils.encodeString(responderPortIdentifier)));
 
 		// the service type
-		bindInvocation.setServiceType(new ccsds.csts.association.control.types.ServiceType(getServiceType().getOid().toArray()));
+		bindInvocation.setServiceType(serviceType.encode());
 
 		// the version number
-		bindInvocation.setVersionNumber(new VersionNumber(getOperationVersionNumber()));
+		bindInvocation.setVersionNumber(new VersionNumber(getVersionNumber()));
 
 		// the service instance identifier
-		//bindInvocation.setServiceInstanceIdentifier(getServiceInstance().getServiceInstanceIdentifier().encodeSII());
+		bindInvocation.setServiceInstanceIdentifier(getServiceInstanceIdentifier().encode());
 
 		// the extension, if available
-		bindInvocation.setBindInvocationExtension(CSTSUtils.nonUsedExtension());
-		
+		bindInvocation.setBindInvocationExtension(invocationExtension.encode());
+
 		return bindInvocation;
 	}
-	
+
 	@Override
 	public void decodeBindInvocation(BindInvocation bindInvocation) {
-		
-		decodeStandardInvocationHeader(bindInvocation.getStandardInvocationHeader());
-		setInitiatorIdentifier(bindInvocation.getInitiatorIdentifier());
-		setResponderPortIdentifier(bindInvocation.getResponderPortIdentifier());
-		setServiceInstanceIdentifier(bindInvocation.getServiceInstanceIdentifier());
-		setServiceType(bindInvocation.getServiceType());
-		setVersion(bindInvocation.getVersionNumber().value.doubleValue());
-		
-		setExtension(bindInvocation.getBindInvocationExtension());
-	}
 
-	/**
-	 * Override for extension usage
-	 * @param bindInvocationExtension
-	 */
-	protected void setExtension(Extended bindInvocationExtension) {
-		// not implemented
+		decodeStandardInvocationHeader(bindInvocation.getStandardInvocationHeader());
+		initiatorIdentifier = CSTSUtils.decodeString(bindInvocation.getInitiatorIdentifier().value);
+		responderPortIdentifier = CSTSUtils.decodeString(bindInvocation.getResponderPortIdentifier().value);
+		serviceType = ServiceType.decode(bindInvocation.getServiceType());
+		versionNumber = bindInvocation.getVersionNumber().intValue();
+
+		try {
+			setServiceInstanceIdentifier(ServiceInstanceIdentifier.decode(bindInvocation.getServiceInstanceIdentifier()));
+		} catch (ConfigException e) {
+			e.printStackTrace();
+		}
+
+		invocationExtension = Extension.decode(bindInvocation.getBindInvocationExtension());
+
 	}
 
 	@Override
 	public BindReturn encodeBindReturn() {
 		BindReturn bindReturn = new BindReturn();
-		bindReturn.setStandardReturnHeader(encodeStandardReturnHeader());
-		bindReturn.setResponderIdentifier(new AuthorityIdentifier(getResponderIdentifier().getBytes(StandardCharsets.UTF_8)));
+		bindReturn.setStandardReturnHeader(encodeStandardReturnHeader(StandardReturnHeader.class));
+		bindReturn.setResponderIdentifier(new AuthorityIdentifier(CSTSUtils.encodeString(responderIdentifier)));
 		return bindReturn;
 	}
-	
+
 	@Override
 	public void decodeBindReturn(BindReturn bindReturn) {
-		
-		setResponderIdentifier(bindReturn.getResponderIdentifier());
 		decodeStandardReturnHeader(bindReturn.getStandardReturnHeader());
+		if (getResult() == OperationResult.NEGATIVE) {
+			if (getDiagnostic().isExtended()) {
+				diagnostics = BindDiagnostic.decode(getDiagnostic().getDiagnosticExtension());
+			}
+		}
+		responderIdentifier = CSTSUtils.decodeString(bindReturn.getResponderIdentifier().value);
 	}
 }

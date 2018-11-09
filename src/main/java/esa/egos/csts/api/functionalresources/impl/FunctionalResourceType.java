@@ -2,22 +2,52 @@ package esa.egos.csts.api.functionalresources.impl;
 
 import esa.egos.csts.api.oids.ObjectIdentifier;
 
+/**
+ * This class represents a Functional Resource Type.
+ * 
+ * This class is immutable.
+ */
 public class FunctionalResourceType {
 
 	private final ObjectIdentifier objectIdentifier;
 
+	/**
+	 * Instantiates a new Functional Resource Type by its given Object Identifier.
+	 * 
+	 * @param objectIdentifier
+	 *            the specified Object Identifier
+	 */
 	public FunctionalResourceType(ObjectIdentifier objectIdentifier) {
 		this.objectIdentifier = objectIdentifier;
 	}
 
-	public ObjectIdentifier getObjectIdentifier() {
+	/**
+	 * Returns the Object Identifier.
+	 * 
+	 * @return the Object Identifier
+	 */
+	public ObjectIdentifier getOid() {
 		return objectIdentifier;
 	}
-	
+
+	/**
+	 * Encodes this Functional Resource Type into a CCSDS FunctionalResourceType
+	 * type.
+	 * 
+	 * @return the CCSDS FunctionalResourceType type representing this object
+	 */
 	public ccsds.csts.common.types.FunctionalResourceType encode() {
 		return new ccsds.csts.common.types.FunctionalResourceType(objectIdentifier.toArray());
 	}
-	
+
+	/**
+	 * Decodes a specified CCSDS FunctionalResourceType type.
+	 * 
+	 * @param functionalResourceType
+	 *            the specified CCSDS FunctionalResourceType type
+	 * @return a new Functional Resource Type decoded from the specified CCSDS
+	 *         FunctionalResourceType type
+	 */
 	public static FunctionalResourceType decode(ccsds.csts.common.types.FunctionalResourceType functionalResourceType) {
 		return new FunctionalResourceType(ObjectIdentifier.of(functionalResourceType.value));
 	}
@@ -46,5 +76,10 @@ public class FunctionalResourceType {
 			return false;
 		return true;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "FunctionalResourceType [objectIdentifier=" + objectIdentifier + "]";
+	}
+
 }

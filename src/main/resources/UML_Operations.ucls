@@ -78,28 +78,28 @@
     </display>  
   </interface>  
   <generalization id="9">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <generalization id="10">    
     <end type="SOURCE" refId="6"/>    
     <end type="TARGET" refId="1"/>  
   </generalization>  
-  <realization id="10">    
+  <realization id="11">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="4"/>  
+  </realization>  
+  <realization id="12">    
     <end type="SOURCE" refId="5"/>    
     <end type="TARGET" refId="6"/>  
   </realization>  
-  <generalization id="11">    
-    <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <realization id="12">    
+  <realization id="13">    
     <end type="SOURCE" refId="2"/>    
     <end type="TARGET" refId="1"/>  
   </realization>  
-  <realization id="13">    
+  <realization id="14">    
     <end type="SOURCE" refId="7"/>    
     <end type="TARGET" refId="8"/>  
-  </realization>  
-  <realization id="14">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="4"/>  
   </realization>  
   <generalization id="15">    
     <end type="SOURCE" refId="8"/>    
@@ -110,8 +110,8 @@
     <end type="TARGET" refId="1"/>  
   </generalization>  
   <generalization id="17">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="2"/>  
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="3"/>  
   </generalization>  
   <generalization id="18">    
     <end type="SOURCE" refId="3"/>    

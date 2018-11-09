@@ -8,6 +8,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.enumerations.Result;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.exceptions.ApiResultException;
@@ -29,7 +30,6 @@ import esa.egos.proxy.enums.AlarmLevel;
 import esa.egos.proxy.enums.AssocState;
 import esa.egos.proxy.enums.BindRole;
 import esa.egos.proxy.enums.Component;
-import esa.egos.proxy.enums.PeerAbortDiagnostics;
 import esa.egos.proxy.logging.CstsLogMessageType;
 import esa.egos.proxy.logging.IReporter;
 import esa.egos.proxy.spl.types.SPLEvent;
@@ -390,7 +390,7 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 				}
 			} catch (ApiException | IOException e) {
 				this.suspendXmit = false;
-				String mess = PeerAbortDiagnostics.PAD_encodingError.toString() + ":" + e.getMessage();
+				String mess = PeerAbortDiagnostics.ENCODING_ERROR.toString() + ":" + e.getMessage();
 				notify(CstsLogMessageType.ALARM, AlarmLevel.sleAL_localAbort, 1004, mess, null);
 			}
 		} else {
@@ -573,7 +573,7 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 				}
 			}
 		} else if (this.state == AssocState.sleAST_bindPending || this.state == AssocState.sleAST_remoteUnbindPending) {
-			doAbort(PeerAbortDiagnostics.PAD_protocolError, AbortOriginator.AO_proxy, true);
+			doAbort(PeerAbortDiagnostics.PROTOCOL_ERROR, AbortOriginator.INTERNAL, true);
 			return Result.SLE_E_PROTOCOL;
 		}
 
@@ -616,7 +616,7 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 				}
 			}
 		} else if (this.state == AssocState.sleAST_bindPending || this.state == AssocState.sleAST_remoteUnbindPending) {
-			doAbort(PeerAbortDiagnostics.PAD_protocolError, AbortOriginator.AO_proxy, true);
+			doAbort(PeerAbortDiagnostics.PROTOCOL_ERROR, AbortOriginator.INTERNAL, true);
 			return Result.SLE_E_PROTOCOL;
 		}
 
@@ -640,7 +640,7 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 
 		AbortOriginator ao = pPeerAbort.getAbortOriginator();
 
-		if (this.channelInitiate != null && ao != AbortOriginator.AO_peer && sendToPeer) {
+		if (this.channelInitiate != null && ao != AbortOriginator.PEER && sendToPeer) {
 			// send the peer abort to the remote proxy
 			int diag = -1;
 
@@ -651,7 +651,7 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 			this.objMutex.lock();
 		}
 
-		if (ao == AbortOriginator.AO_peer) {
+		if (ao == AbortOriginator.PEER) {
 			changeState(SPLEvent.PXSPL_rcvPeerAbort, AssocState.sleAST_unbound);
 		} else {
 			changeState(SPLEvent.PXSPL_initiatePeerAbort, AssocState.sleAST_unbound);
@@ -660,7 +660,7 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 		this.unboundStateIsDisconnected = true;
 
 		// send a peer abort operation to the client
-		if (this.srvProxyInform != null && (ao == AbortOriginator.AO_peer || ao == AbortOriginator.AO_proxy)) {
+		if (this.srvProxyInform != null && (ao == AbortOriginator.PEER || ao == AbortOriginator.INTERNAL)) {
 			// send the peer abort operation
 			long seqc = this.sequenceCounter++;
 
@@ -1138,7 +1138,7 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 		} catch (ApiResultException e) {
 			if (e.getResult() == Result.SLE_E_INVALIDPDU) {
 				// the pdu is not the expected one
-				String mess = PeerAbortDiagnostics.PAD_encodingError.toString() + " : " + e.getMessage();
+				String mess = PeerAbortDiagnostics.ENCODING_ERROR.toString() + " : " + e.getMessage();
 				notify(CstsLogMessageType.ALARM, AlarmLevel.sleAL_localAbort, 1004, mess, null);
 
 				if (this.role == BindRole.BR_responder && this.state == AssocState.sleAST_unbound) {
@@ -1155,15 +1155,15 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 					// delete the association
 					releaseAssociation();
 				} else {
-					doAbort(PeerAbortDiagnostics.PAD_encodingError, AbortOriginator.AO_proxy, true);
+					doAbort(PeerAbortDiagnostics.ENCODING_ERROR, AbortOriginator.INTERNAL, true);
 				}
 			} else if (e.getResult() == Result.E_FAIL) {
-				String mess = PeerAbortDiagnostics.PAD_encodingError.toString() + " : " + e.getMessage();
+				String mess = PeerAbortDiagnostics.ENCODING_ERROR.toString() + " : " + e.getMessage();
 				notify(CstsLogMessageType.ALARM, AlarmLevel.sleAL_localAbort, 1004, mess, null);
 
-				doAbort(PeerAbortDiagnostics.PAD_encodingError, AbortOriginator.AO_proxy, true);
+				doAbort(PeerAbortDiagnostics.ENCODING_ERROR, AbortOriginator.INTERNAL, true);
 			} else if (e.getResult() == Result.E_PENDING) {
-				doAbort(PeerAbortDiagnostics.PAD_unsolicitedInvokeId, AbortOriginator.AO_proxy, true);
+				doAbort(PeerAbortDiagnostics.UNSOLICITED_INVOKE_ID, AbortOriginator.INTERNAL, true);
 			} else {
 				// res == S_OK
 				// for bind invoke pdu, the authenticate is done after
@@ -1201,7 +1201,7 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 										this.objMutex.unlock();
 										this.channelInitiate.sendReset();
 										this.objMutex.lock();
-										doAbort(PeerAbortDiagnostics.PAD_otherReason, AbortOriginator.AO_proxy, false);
+										doAbort(PeerAbortDiagnostics.OTHER_REASON, AbortOriginator.INTERNAL, false);
 									}
 								} else if (this.role == BindRole.BR_initiator
 										&& IBind.class.isAssignableFrom(poperation.getClass())) {
@@ -1215,10 +1215,10 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 									// abort the connection, but do not send
 									// peer abort
 									// to peer
-									doAbort(PeerAbortDiagnostics.PAD_otherReason, AbortOriginator.AO_proxy, false);
+									doAbort(PeerAbortDiagnostics.OTHER_REASON, AbortOriginator.INTERNAL, false);
 								} else {
 									// abort the connection
-									doAbort(PeerAbortDiagnostics.PAD_otherReason, AbortOriginator.AO_proxy, true);
+									doAbort(PeerAbortDiagnostics.OTHER_REASON, AbortOriginator.INTERNAL, true);
 								}
 
 								// cleanup
@@ -1247,7 +1247,7 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 		// check the PDU type
 		if (res != Result.S_OK) {
 			// abort the association
-			doAbort(PeerAbortDiagnostics.PAD_encodingError, AbortOriginator.AO_proxy, true);
+			doAbort(PeerAbortDiagnostics.ENCODING_ERROR, AbortOriginator.INTERNAL, true);
 		}
 
 		return res;
@@ -1262,9 +1262,9 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 		AbortOriginator abortOriginator;
 
 		if (peerabortOriginatorIsLocal) {
-			abortOriginator = AbortOriginator.AO_proxy;
+			abortOriginator = AbortOriginator.INTERNAL;
 		} else {
-			abortOriginator = AbortOriginator.AO_peer;
+			abortOriginator = AbortOriginator.PEER;
 		}
 
 		IOperation poperation = null;
@@ -1272,8 +1272,8 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 		try {
 			poperation = getSrvProxyInform().getTranslator().decode(peerabortDiag, null, abortOriginator);
 		} catch (ApiException e) {
-			doAbort(PeerAbortDiagnostics.PAD_encodingError, AbortOriginator.AO_proxy, true);
-			String mess = PeerAbortDiagnostics.PAD_encodingError.toString() + " : " + e.getMessage();
+			doAbort(PeerAbortDiagnostics.ENCODING_ERROR, AbortOriginator.INTERNAL, true);
+			String mess = PeerAbortDiagnostics.ENCODING_ERROR.toString() + " : " + e.getMessage();
 			notify(CstsLogMessageType.ALARM, AlarmLevel.sleAL_localAbort, 1004, mess, null);
 		}
 
@@ -1363,7 +1363,7 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 				this.objMutex.lock();
 				res = Result.SLE_S_TRANSMITTED;
 			} catch (ApiException | IOException e) {
-				String mess = PeerAbortDiagnostics.PAD_encodingError.toString() + " : " + e.getMessage();
+				String mess = PeerAbortDiagnostics.ENCODING_ERROR.toString() + " : " + e.getMessage();
 				notify(CstsLogMessageType.ALARM, AlarmLevel.sleAL_localAbort, 1004, mess, null);
 			}
 		} else {

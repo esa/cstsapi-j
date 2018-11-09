@@ -2,65 +2,236 @@ package esa.egos.csts.api.procedures;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.List;
 
 import org.openmuc.jasn1.ber.BerByteArrayOutputStream;
 
 import ccsds.csts.information.query.pdus.InformationQueryPdu;
+import esa.egos.csts.api.diagnostics.ListOfParametersDiagnostics;
+import esa.egos.csts.api.diagnostics.ListOfParametersDiagnosticsType;
+import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.exceptions.ApiException;
-import esa.egos.csts.api.exceptions.ConfigException;
+import esa.egos.csts.api.functionalresources.impl.FunctionalResourceName;
+import esa.egos.csts.api.functionalresources.impl.FunctionalResourceType;
 import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.operations.IGet;
 import esa.egos.csts.api.operations.IOperation;
-import esa.egos.csts.api.operations.impl.Get;
+import esa.egos.csts.api.parameters.IParameter;
+import esa.egos.csts.api.parameters.impl.LabelLists;
+import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
-import esa.egos.csts.api.serviceinstance.states.InactiveState;
+import esa.egos.csts.api.types.Label;
+import esa.egos.csts.api.types.LabelList;
+import esa.egos.csts.api.types.Name;
 
-public abstract class AbstractInformationQuery extends AbstractStatelessProcedure implements IInformationQuery {
+public abstract class AbstractInformationQuery extends AbstractProcedure implements IInformationQuery {
 
-	private final ProcedureType type = new ProcedureType(OIDs.informationQuery);
-
-	protected AbstractInformationQuery() {
-		super(new InactiveState());
-	}
+	private static final ProcedureType TYPE = new ProcedureType(OIDs.informationQuery);
 
 	@Override
 	public ProcedureType getType() {
-		return type;
+		return TYPE;
 	}
 
 	@Override
 	protected void initOperationSet() {
-		getDeclaredOperations().add(IGet.class);
+		addSupportedOperationType(OperationType.GET);
 	}
 
 	@Override
-	protected void initialiseOperationFactory() {
-		getOperationFactoryMap().put(IGet.class, this::createGet);
+	public void terminate() {
+		// nothing to clean up
+	}
+	
+	protected LabelLists getLabelLists() {
+		return (LabelLists) getConfigurationParameter(OIDs.pIQnamedLabelLists);
 	}
 
-	/**
-	 * Creates a new GET operation and sets relevant information.
-	 * 
-	 * @return the created GET operation
-	 */
-	protected IGet createGet() {
-		IGet get = new Get();
-		get.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
-		try {
-			get.setServiceInstanceIdentifier(getServiceInstance().getServiceInstanceIdentifier());
-		} catch (ConfigException e) {
-			e.printStackTrace();
+	protected List<IParameter> getParameters() {
+		return getServiceInstance().gatherParameters();
+	}
+
+	private void processLabelList(LabelList list, IGet get) {
+
+		if (list == null) {
+			ListOfParametersDiagnostics diag = new ListOfParametersDiagnostics(
+					ListOfParametersDiagnosticsType.UNDEFINED_DEFAULT);
+			diag.setUndefinedDefault("Default list not defined for Service Instance " + getServiceInstance().toString());
+			get.setListOfParametersDiagnostics(diag);
+			return;
 		}
-		return get;
+
+		for (Label label : list.getLabels()) {
+			getParameters().stream()
+			.filter(p -> p.getLabel().equals(label))
+			.forEach(p -> get.getQualifiedParameters().add(p.toQualifiedParameter()));
+		}
+
+		get.setPositiveResult();
 	}
 
+	private void processFunctionalResourceName(FunctionalResourceName funcResName, IGet get) {
+
+		getParameters().stream()
+		.filter(p -> funcResName.equals(p.getName().getFunctionalResourceName()))
+		.forEach(p -> get.getQualifiedParameters().add(p.toQualifiedParameter()));
+		
+		if (!get.getQualifiedParameters().isEmpty()) {
+			get.setPositiveResult();
+		} else {
+			ListOfParametersDiagnostics diag = new ListOfParametersDiagnostics(
+					ListOfParametersDiagnosticsType.UNKNOWN_FUNCTIONAL_RESOURCE_NAME);
+			diag.setUnknownFunctionalResourceName(funcResName);
+			get.setListOfParametersDiagnostics(diag);
+		}
+
+	}
+
+	private void processFunctionalResourceType(FunctionalResourceType type, IGet get) {
+		
+		getParameters().stream()
+		.filter(p -> type.equals(p.getLabel().getFunctionalResourceType()))
+		.forEach(p -> get.getQualifiedParameters().add(p.toQualifiedParameter()));
+		
+		if (!get.getQualifiedParameters().isEmpty()) {
+			get.setPositiveResult();
+		} else {
+			ListOfParametersDiagnostics diag = new ListOfParametersDiagnostics(
+					ListOfParametersDiagnosticsType.UNKNOWN_FUNCTIONAL_RESOURCE_TYPE);
+			diag.setUnknownFunctionalResourceType(get.getListOfParameters().getFunctionalResourceType());
+			get.setListOfParametersDiagnostics(diag);
+		}
+		
+	}
+
+	private void processLabelsSet(List<Label> labels, IGet get) {
+
+		ListOfParametersDiagnostics diag = new ListOfParametersDiagnostics(
+				ListOfParametersDiagnosticsType.UNKNOWN_PARAMETER_IDENTIFIER);
+
+		for (Label label : labels) {
+			
+			getParameters().stream()
+			.filter(p -> p.getLabel().equals(label))
+			.forEach(p -> get.getQualifiedParameters().add(p.toQualifiedParameter()));
+			
+			if (get.getQualifiedParameters().isEmpty()) {
+				diag.getUnknownParameterLabels().add(label);
+			}
+		}
+
+		if (diag.getUnknownParameterLabels().isEmpty()) {
+			get.setPositiveResult();
+		} else {
+			get.setListOfParametersDiagnostics(diag);
+		}
+
+	}
+
+	private void processNamesSet(List<Name> names, IGet get) {
+
+		ListOfParametersDiagnostics diag = new ListOfParametersDiagnostics(
+				ListOfParametersDiagnosticsType.UNKNOWN_PARAMETER_IDENTIFIER);
+
+		for (Name name : names) {
+			getParameters().stream()
+			.filter(p -> p.getName().equals(name))
+			.forEach(p -> get.getQualifiedParameters().add(p.toQualifiedParameter()));
+			
+			if (!get.getQualifiedParameters().isEmpty()) {
+				diag.getUnknownParameterNames().add(name);
+			}
+		}
+		
+		if (diag.getUnknownParameterNames().isEmpty()) {
+			get.setPositiveResult();
+		} else {
+			get.setListOfParametersDiagnostics(diag);
+		}
+		
+	}
+
+	private void processPid(ProcedureInstanceIdentifier pid, IGet get) {
+
+		getParameters().stream()
+		.filter(p -> pid.equals(p.getName().getProcedureInstanceIdentifier()))
+		.forEach(p -> get.getQualifiedParameters().add(p.toQualifiedParameter()));
+		
+		if (!get.getQualifiedParameters().isEmpty()) {
+			get.setPositiveResult();
+		} else {
+			ListOfParametersDiagnostics diag = new ListOfParametersDiagnostics(
+					ListOfParametersDiagnosticsType.UNKNOWN_PROCEDURE_INSTANCE_IDENTIFIER);
+			diag.setUnknownProcedureInstanceIdentifier(pid);
+			get.setListOfParametersDiagnostics(diag);
+		}
+		
+	}
+
+	private void processProcedureType(ProcedureType type, IGet get) {
+		
+		getParameters().stream()
+		.filter(p -> type.equals(p.getLabel().getProcedureType()))
+		.forEach(p -> get.getQualifiedParameters().add(p.toQualifiedParameter()));
+		
+		if (!get.getQualifiedParameters().isEmpty()) {
+			get.setPositiveResult();
+		} else {
+			ListOfParametersDiagnostics diag = new ListOfParametersDiagnostics(
+					ListOfParametersDiagnosticsType.UNKNOWN_PROCEDURE_TYPE);
+			diag.setUnknownProcedureType(type);
+			get.setListOfParametersDiagnostics(diag);
+		}
+		
+	}
+
+	protected void processGetInvocation(IGet get) {
+		
+		switch (get.getListOfParameters().getType()) {
+
+		case EMPTY:
+			processLabelList(getLabelLists().queryDefaultList(), get);
+			break;
+
+		case FUNCTIONAL_RESOURCE_NAME:
+			processFunctionalResourceName(get.getListOfParameters().getFunctionalResourceName(), get);
+			break;
+
+		case FUNCTIONAL_RESOURCE_TYPE:
+			processFunctionalResourceType(get.getListOfParameters().getFunctionalResourceType(), get);
+			break;
+
+		case LABELS_SET:
+			processLabelsSet(get.getListOfParameters().getParameterLabels(), get);
+			break;
+
+		case LIST_NAME:
+			processLabelList(getLabelLists().queryList(get.getListOfParameters().getListName()), get);
+			break;
+
+		case NAMES_SET:
+			processNamesSet(get.getListOfParameters().getParameterNames(), get);
+			break;
+
+		case PROCEDURE_INSTANCE_IDENTIFIER:
+			processPid(get.getListOfParameters().getProcedureInstanceIdentifier(), get);
+			break;
+
+		case PROCEDURE_TYPE:
+			processProcedureType(get.getListOfParameters().getProcedureType(), get);
+			break;
+
+		}
+
+	}
+	
 	@Override
 	public byte[] encodeOperation(IOperation operation, boolean isInvoke) throws ApiException, IOException {
 
 		byte[] encodedOperation;
 		InformationQueryPdu pdu = new InformationQueryPdu();
 
-		if (IGet.class.isAssignableFrom(operation.getClass())) {
+		if (operation.getType() == OperationType.GET) {
 			IGet get = (IGet) operation;
 			if (isInvoke) {
 				pdu.setGetInvocation(get.encodeGetInvocation());

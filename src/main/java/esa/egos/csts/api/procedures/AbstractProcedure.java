@@ -6,34 +6,56 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
-import java.util.Observer;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.enumerations.ProcedureRole;
 import esa.egos.csts.api.enumerations.Result;
-import esa.egos.csts.api.events.Event;
+import esa.egos.csts.api.events.IEvent;
 import esa.egos.csts.api.exceptions.ApiException;
-import esa.egos.csts.api.exceptions.NoServiceInstanceStateException;
+import esa.egos.csts.api.exceptions.ConfigException;
 import esa.egos.csts.api.exceptions.OperationTypeUnsupportedException;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
+import esa.egos.csts.api.operations.IBind;
 import esa.egos.csts.api.operations.IConfirmedOperation;
+import esa.egos.csts.api.operations.IConfirmedProcessData;
+import esa.egos.csts.api.operations.IGet;
+import esa.egos.csts.api.operations.INotify;
 import esa.egos.csts.api.operations.IOperation;
-import esa.egos.csts.api.parameters.AbstractConfigurationParameter;
+import esa.egos.csts.api.operations.IPeerAbort;
+import esa.egos.csts.api.operations.IProcessData;
+import esa.egos.csts.api.operations.IStart;
+import esa.egos.csts.api.operations.IStop;
+import esa.egos.csts.api.operations.ITransferData;
+import esa.egos.csts.api.operations.IUnbind;
+import esa.egos.csts.api.operations.impl.Bind;
+import esa.egos.csts.api.operations.impl.ConfirmedProcessData;
+import esa.egos.csts.api.operations.impl.Get;
+import esa.egos.csts.api.operations.impl.Notify;
+import esa.egos.csts.api.operations.impl.PeerAbort;
+import esa.egos.csts.api.operations.impl.ProcessData;
+import esa.egos.csts.api.operations.impl.Start;
+import esa.egos.csts.api.operations.impl.Stop;
+import esa.egos.csts.api.operations.impl.TransferData;
+import esa.egos.csts.api.operations.impl.Unbind;
+import esa.egos.csts.api.parameters.IConfigurationParameter;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.serviceinstance.IServiceInstance;
-import esa.egos.csts.api.serviceinstance.states.IProcedureState;
-import esa.egos.csts.api.serviceinstance.states.IState;
-import esa.egos.proxy.enums.PeerAbortDiagnostics;
+import esa.egos.csts.api.serviceinstance.IServiceInstanceInternal;
 
-public abstract class AbstractProcedure implements IProcedure, Observer {
+/**
+ * The abstract base class for all Procedures.
+ * 
+ * This class defines all necessary data and routines for Stateless and Stateful
+ * Procedures.
+ */
+public abstract class AbstractProcedure implements IProcedure {
 
-	protected static final Logger LOG = Logger.getLogger(AbstractProcedure.class.getName());
-
-	private IProcedureState procedureState;
+	protected final Logger LOGGER = Logger.getLogger(getClass().getName());
 
 	private Set<Class<? extends IOperation>> operationsSet;
 
@@ -43,75 +65,131 @@ public abstract class AbstractProcedure implements IProcedure, Observer {
 
 	private Map<Class<? extends IOperation>, Supplier<? extends IOperation>> operationFactoryMap;
 
-	private List<AbstractConfigurationParameter> configurationParameters;
+	private Set<OperationType> supportedOperationTypes;
 
-	private List<Event> events;
+	private List<IConfigurationParameter> configurationParameters;
+
+	private List<IEvent> events;
 
 	private IServiceInstance serviceInstance;
 
 	private int version;
 
-	@Override
-	public void abort(PeerAbortDiagnostics diagnostics) {
-		// TODO implement
-	
-	}
-
-	protected AbstractProcedure(IProcedureState state) {
-		this.operationFactoryMap = new HashMap<Class<? extends IOperation>, Supplier<? extends IOperation>>();
-		initialiseOperationFactory();
-		this.operationsSet = new HashSet<Class<? extends IOperation>>();
+	protected AbstractProcedure() {
+		supportedOperationTypes = new HashSet<>();
+		operationFactoryMap = new HashMap<Class<? extends IOperation>, Supplier<? extends IOperation>>();
+		operationsSet = new HashSet<Class<? extends IOperation>>();
 		initOperationSet();
 		configurationParameters = new ArrayList<>();
 		events = new ArrayList<>();
-		initState(state);
-		setInitialState();
 	}
 
-	private void initState(IProcedureState state) {
-		this.procedureState = state;
+	@Override
+	public boolean isStateful() {
+		return false;
 	}
 
-	private void setInitialState() {
-		
+	public Set<OperationType> getSupportedOperationTypes() {
+		return supportedOperationTypes;
 	}
-	
+
+	public void addSupportedOperationType(OperationType type) {
+		supportedOperationTypes.add(type);
+		switch (type) {
+		case BIND:
+			operationsSet.add(IBind.class);
+			operationFactoryMap.put(IBind.class, this::createBind);
+			break;
+		case CONFIRMED_PROCESS_DATA:
+			operationsSet.add(IConfirmedProcessData.class);
+			operationFactoryMap.put(IConfirmedProcessData.class, this::createConfirmedProcessData);
+			break;
+		case EXECUTE_DIRECTIVE:
+			// TODO
+			break;
+		case GET:
+			operationsSet.add(IGet.class);
+			operationFactoryMap.put(IGet.class, this::createGet);
+			break;
+		case NOTIFY:
+			operationsSet.add(INotify.class);
+			operationFactoryMap.put(INotify.class, this::createNotify);
+			break;
+		case PEER_ABORT:
+			operationsSet.add(IPeerAbort.class);
+			operationFactoryMap.put(IPeerAbort.class, this::createPeerAbort);
+			break;
+		case PROCESS_DATA:
+			operationsSet.add(IProcessData.class);
+			operationFactoryMap.put(IProcessData.class, this::createProcessData);
+			break;
+		case START:
+			operationsSet.add(IStart.class);
+			operationFactoryMap.put(IStart.class, this::createStart);
+			break;
+		case STOP:
+			operationsSet.add(IStop.class);
+			operationFactoryMap.put(IStop.class, this::createStop);
+			break;
+		case TRANSFER_DATA:
+			operationsSet.add(ITransferData.class);
+			operationFactoryMap.put(ITransferData.class, this::createTransferData);
+			break;
+		case UNBIND:
+			operationsSet.add(IUnbind.class);
+			operationFactoryMap.put(IUnbind.class, this::createUnbind);
+			break;
+		default:
+			break;
+		}
+	}
+
 	@Override
 	public ProcedureInstanceIdentifier getProcedureInstanceIdentifier() {
-		return this.procedureInstanceIdentifier;
+		return procedureInstanceIdentifier;
 	}
 
 	protected abstract void initOperationSet();
 
 	@Override
-	public boolean getPrime() {
+	public boolean isPrime() {
 		return (getProcedureInstanceIdentifier().getRole() == ProcedureRole.PRIME);
 	}
 
 	@Override
 	public Set<Class<? extends IOperation>> getDeclaredOperations() {
-		return this.operationsSet;
+		return operationsSet;
 	}
 
 	@Override
-	public void configure() {
+	public void initialize() {
+		initializeConfigurationParameters();
+		initializeEvents();
+	}
 
+	protected void initializeConfigurationParameters() {
+		// override this method if a procedure has Configuration Parameters
+	}
+
+	protected void initializeEvents() {
+		// override this method if a procedure has Events
 	}
 
 	@Override
 	public <T extends IOperation> T createOperation(Class<T> clazz) throws ApiException {
+
+		if (!operationsSet.contains(clazz)) {
+			throw new OperationTypeUnsupportedException(
+					"Operation type of operation " + clazz + " not supported by " + getName());
+		}
+
+		@SuppressWarnings("unchecked")
 		Supplier<T> opCreator = (Supplier<T>) getOperationFactoryMap().get(clazz);
 		if (opCreator != null) {
 			return opCreator.get();
 		}
 		throw new ApiException("Cannot find an operation factory for operation type " + clazz.getName()
 				+ " inside procedure " + getName());
-
-	}
-
-	@Override
-	public void setRole(ProcedureRole procedureRole, int instanceNumber) throws ApiException {
-		this.procedureInstanceIdentifier = new ProcedureInstanceIdentifier(procedureRole, instanceNumber, getType());
 	}
 
 	@Override
@@ -120,34 +198,54 @@ public abstract class AbstractProcedure implements IProcedure, Observer {
 	}
 
 	@Override
+	public void setRole(ProcedureRole procedureRole, int instanceNumber) throws ApiException {
+		this.procedureInstanceIdentifier = new ProcedureInstanceIdentifier(getType(), procedureRole, instanceNumber);
+	}
+
+	@Override
+	public boolean isConfigured() {
+		return configurationParameters.stream()
+				.filter(p -> !p.isConfigured())
+				.count() == 0;
+	}
+	
+	@Override
 	public void setServiceInstance(IServiceInstance serviceInstance) {
 		this.serviceInstance = serviceInstance;
 	}
 
 	@Override
-	public List<AbstractConfigurationParameter> getConfigurationParameters() {
+	public List<IConfigurationParameter> getConfigurationParameters() {
 		return configurationParameters;
 	}
 
-	protected void addConfigurationParameter(AbstractConfigurationParameter confParam) {
+	protected void addConfigurationParameter(IConfigurationParameter confParam) {
 		confParam.addObserver(this);
 		configurationParameters.add(confParam);
 	}
 
+	protected void removeConfigurationParameter(IConfigurationParameter confParam) {
+		confParam.deleteObserver(this);
+		configurationParameters.remove(confParam);
+	}
+
 	@Override
-	public List<Event> getEvents() {
+	public List<IEvent> getEvents() {
 		return events;
 	}
 
 	@Override
-	public AbstractConfigurationParameter getConfigurationParameter(ObjectIdentifier identifier) {
+	public IEvent getEvent(ObjectIdentifier event) {
+		return events.stream().filter(e -> e.getOid().equals(event)).findFirst().orElse(null);
+	}
+
+	@Override
+	public IConfigurationParameter getConfigurationParameter(ObjectIdentifier identifier) {
 		return configurationParameters.stream()
-				.filter(param -> param.getIdentifier().equals(identifier))
+				.filter(param -> param.getOid().equals(identifier))
 				.findFirst()
 				.orElse(null);
 	}
-
-	protected abstract void initialiseOperationFactory();
 
 	protected Map<Class<? extends IOperation>, Supplier<? extends IOperation>> getOperationFactoryMap() {
 		return this.operationFactoryMap;
@@ -163,23 +261,13 @@ public abstract class AbstractProcedure implements IProcedure, Observer {
 		this.version = version;
 	}
 
-	protected void setName(String name) {
-		this.associationControlName = name;
-	}
-
 	@Override
 	public String getName() {
 		return this.associationControlName;
 	}
 
-	@Override
-	public IProcedureState getState() {
-		return this.procedureState;
-	}
-
-	@Override
-	public IState getServiceInstanceState() throws NoServiceInstanceStateException {
-		return getServiceInstance().getState();
+	protected void setName(String name) {
+		this.associationControlName = name;
 	}
 
 	@Override
@@ -187,60 +275,177 @@ public abstract class AbstractProcedure implements IProcedure, Observer {
 		return this.serviceInstance;
 	}
 
-	@Override
-	public void setState(IProcedureState state) {
-
-		// in case we want to do tracing etc later
-		if (getState() == state) {
-			return;
-		} else {
-			try {
-				changeState(state);
-			} catch (ApiException e) {
-				// TODO Needs decent error handling
-				e.printStackTrace();
-			}
-		}
-
-		this.procedureState = state;
-	}
-
-	protected void changeState(IProcedureState state) throws ApiException {
-
-		IProcedureState oldState = getState();
-
-		// in case we want to do tracing etc later
-		LOG.fine("Procedure state transiton from " + oldState != null ? "no state"
-				: oldState.getName() + " to " + state.getName());
-
-		stateTransition(state);
-	}
-
-	protected abstract Result doStateProcessing(IOperation operation, boolean isInvoke, boolean originatorIsNetwork);
-
-	/**
-	 * Transition the state in the service instance if necessary. Only the
-	 * association control and prime procedures do this.
-	 * 
-	 * @param state
-	 * @throws ApiException
-	 */
-	protected void stateTransition(IState state) throws ApiException {
-
-		// only prime procedures and association controls do a state transition
-		if (getPrime() || getRole() == ProcedureRole.ASSOCIATION_CONTROL) {
-			getServiceInstance().stateTransition(state);
-		}
-	}
-
 	public void checkSupportedOperationType(IOperation operation) throws OperationTypeUnsupportedException {
-		for (Class<? extends IOperation> c : operationsSet) {
-			if (c.isAssignableFrom(operation.getClass())) {
-				return;
-			}
+		if (!supportedOperationTypes.contains(operation.getType())) {
+			throw new OperationTypeUnsupportedException(
+					"Operation type of operation " + operation.getType() + " not supported by " + getName());
 		}
-		throw new OperationTypeUnsupportedException(
-				"Operation type of operation " + operation.getClass() + " not supported by " + getName());
+	}
+
+	public IAssociationControl getAssociationControl() {
+		return serviceInstance.getAssociationControlProcedure();
+	}
+
+	@Override
+	public void raiseProtocolError() {
+		if (getRole() != ProcedureRole.ASSOCIATION_CONTROL) {
+			//getServiceInstance().raiseProtocolError();
+		}
+	}
+
+	@Override
+	public Result initiateOperationInvoke(IOperation operation) {
+		return doInitiateOperationInvoke(operation);
+	}
+
+	@Override
+	public Result initiateOperationReturn(IConfirmedOperation confOperation) {
+		return doInitiateOperationReturn(confOperation);
+	}
+
+	@Override
+	public Result initiateOperationAck(IAcknowledgedOperation ackOperation) {
+		return doInitiateOperationAck(ackOperation);
+	}
+
+	@Override
+	public Result informOperationInvoke(IOperation operation) {
+		return doInformOperationInvoke(operation);
+	}
+
+	@Override
+	public Result informOperationReturn(IConfirmedOperation confOperation) {
+		return doInformOperationReturn(confOperation);
+	}
+
+	@Override
+	public Result informOperationAck(IAcknowledgedOperation ackOperation) {
+		return doInformOperationAck(ackOperation);
+	}
+
+	protected IBind createBind() {
+		IBind bind = new Bind();
+		bind.setServiceType(getServiceInstance().getServiceType());
+		bind.setInitiatorIdentifier(getServiceInstance().getApi().getProxySettings().getLocalId());
+		bind.setResponderIdentifier(getServiceInstance().getPeerIdentifier());
+		bind.setResponderPortIdentifier(getServiceInstance().getResponderPortIdentifier());
+		bind.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
+		bind.setVersionNumber(getVersion());
+		try {
+			bind.setServiceInstanceIdentifier(getServiceInstance().getServiceInstanceIdentifier());
+		} catch (ConfigException e) {
+			LOGGER.log(Level.WARNING, "Could not create BIND operation.", e);
+			return null;
+		}
+		return bind;
+	}
+
+	protected IUnbind createUnbind() {
+		IUnbind unbind = new Unbind();
+		unbind.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
+		try {
+			unbind.setServiceInstanceIdentifier(getServiceInstance().getServiceInstanceIdentifier());
+		} catch (ConfigException e) {
+			LOGGER.log(Level.WARNING, "Could not create UNBIND operation.", e);
+			return null;
+		}
+		return unbind;
+	}
+
+	protected IPeerAbort createPeerAbort() {
+		IPeerAbort peerAbort = new PeerAbort();
+		peerAbort.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
+		try {
+			peerAbort.setServiceInstanceIdentifier(getServiceInstance().getServiceInstanceIdentifier());
+		} catch (ConfigException e) {
+			LOGGER.log(Level.WARNING, "Could not create PEER-ABORT operation.", e);
+			return null;
+		}
+		return peerAbort;
+	}
+
+	protected IStart createStart() {
+		IStart start = new Start();
+		start.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
+		try {
+			start.setServiceInstanceIdentifier(getServiceInstance().getServiceInstanceIdentifier());
+		} catch (ConfigException e) {
+			LOGGER.log(Level.WARNING, "Could not create START operation.", e);
+			return null;
+		}
+		return start;
+	}
+
+	protected IStop createStop() {
+		IStop stop = new Stop();
+		stop.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
+		try {
+			stop.setServiceInstanceIdentifier(getServiceInstance().getServiceInstanceIdentifier());
+		} catch (ConfigException e) {
+			LOGGER.log(Level.WARNING, "Could not create STOP operation.", e);
+			return null;
+		}
+		return stop;
+	}
+
+	protected ITransferData createTransferData() {
+		ITransferData transferData = new TransferData();
+		transferData.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
+		try {
+			transferData.setServiceInstanceIdentifier(getServiceInstance().getServiceInstanceIdentifier());
+		} catch (ConfigException e) {
+			LOGGER.log(Level.WARNING, "Could not create TRANSFER-DATA operation.", e);
+			return null;
+		}
+		return transferData;
+	}
+
+	protected IProcessData createProcessData() {
+		IProcessData processData = new ProcessData();
+		processData.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
+		try {
+			processData.setServiceInstanceIdentifier(getServiceInstance().getServiceInstanceIdentifier());
+		} catch (ConfigException e) {
+			LOGGER.log(Level.WARNING, "Could not create PROCESS-DATA (unconfirmed) operation.", e);
+			return null;
+		}
+		return processData;
+	}
+
+	protected IConfirmedProcessData createConfirmedProcessData() {
+		IConfirmedProcessData confirmedProcessData = new ConfirmedProcessData();
+		confirmedProcessData.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
+		try {
+			confirmedProcessData.setServiceInstanceIdentifier(getServiceInstance().getServiceInstanceIdentifier());
+		} catch (ConfigException e) {
+			LOGGER.log(Level.WARNING, "Could not create PROCESS-DATA (confirmed) operation.", e);
+			return null;
+		}
+		return confirmedProcessData;
+	}
+
+	protected INotify createNotify() {
+		INotify notify = new Notify();
+		notify.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
+		try {
+			notify.setServiceInstanceIdentifier(getServiceInstance().getServiceInstanceIdentifier());
+		} catch (ConfigException e) {
+			LOGGER.log(Level.WARNING, "Could not create NOTIFY operation.", e);
+			return null;
+		}
+		return notify;
+	}
+
+	protected IGet createGet() {
+		IGet get = new Get();
+		get.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
+		try {
+			get.setServiceInstanceIdentifier(getServiceInstance().getServiceInstanceIdentifier());
+		} catch (ConfigException e) {
+			LOGGER.log(Level.WARNING, "Could not create GET operation.", e);
+			return null;
+		}
+		return get;
 	}
 
 	/**
@@ -254,7 +459,7 @@ public abstract class AbstractProcedure implements IProcedure, Observer {
 	 * @return the Result Enumeration containing the result of the invocation
 	 */
 	protected Result doInitiateOperationInvoke(IOperation operation) {
-		return Result.SLE_E_ROLE;
+		return Result.UNSUPPORTED_PROCEDURE_ROLE;
 	}
 
 	/**
@@ -268,7 +473,7 @@ public abstract class AbstractProcedure implements IProcedure, Observer {
 	 * @return the Result Enumeration containing the result of the return
 	 */
 	protected Result doInitiateOperationReturn(IConfirmedOperation confOperation) {
-		return Result.SLE_E_ROLE;
+		return Result.UNSUPPORTED_PROCEDURE_ROLE;
 	}
 
 	/**
@@ -282,7 +487,7 @@ public abstract class AbstractProcedure implements IProcedure, Observer {
 	 * @return the Result Enumeration containing the result of the acknowledgement
 	 */
 	protected Result doInitiateOperationAck(IAcknowledgedOperation ackOperation) {
-		return Result.SLE_E_ROLE;
+		return Result.UNSUPPORTED_PROCEDURE_ROLE;
 	}
 
 	/**
@@ -297,7 +502,7 @@ public abstract class AbstractProcedure implements IProcedure, Observer {
 	 *         invocation
 	 */
 	protected Result doInformOperationInvoke(IOperation operation) {
-		return Result.SLE_E_ROLE;
+		return Result.UNSUPPORTED_PROCEDURE_ROLE;
 	}
 
 	/**
@@ -311,7 +516,7 @@ public abstract class AbstractProcedure implements IProcedure, Observer {
 	 * @return the Result Enumeration containing the result of the received return
 	 */
 	protected Result doInformOperationReturn(IConfirmedOperation confOperation) {
-		return Result.SLE_E_ROLE;
+		return Result.UNSUPPORTED_PROCEDURE_ROLE;
 	}
 
 	/**
@@ -326,97 +531,75 @@ public abstract class AbstractProcedure implements IProcedure, Observer {
 	 *         return
 	 */
 	protected Result doInformOperationAck(IAcknowledgedOperation ackOperation) {
-		return Result.SLE_E_ROLE;
+		return Result.UNSUPPORTED_PROCEDURE_ROLE;
+	}
+
+	private IServiceInstanceInternal getInternal() {
+		return getAssociationControl().getServiceInstanceInternal();
 	}
 
 	@Override
-	public Result initiateOperationInvoke(IOperation operation) {
-		try {
-			checkSupportedOperationType(operation);
-		} catch (OperationTypeUnsupportedException e) {
-			return Result.E_FAIL;
-		}
-		return doInitiateOperationInvoke(operation);
+	public Result forwardInvocationToProxy(IOperation operation) {
+		return getInternal().forwardInitiatePxyOpInv(operation, false);
 	}
 
 	@Override
-	public Result initiateOperationAck(IAcknowledgedOperation ackOperation) {
-		try {
-			checkSupportedOperationType(ackOperation);
-		} catch (OperationTypeUnsupportedException e) {
-			return Result.E_FAIL;
-		}
-		return doInitiateOperationAck(ackOperation);
+	public Result forwardReturnToProxy(IConfirmedOperation confirmedOperation) {
+		return getInternal().forwardInitiatePxyOpRtn(confirmedOperation, false);
 	}
 
 	@Override
-	public Result initiateOperationReturn(IConfirmedOperation confOperation) {
-		try {
-			checkSupportedOperationType(confOperation);
-		} catch (OperationTypeUnsupportedException e) {
-			return Result.E_FAIL;
-		}
-		return doInitiateOperationReturn(confOperation);
+	public Result forwardAcknowledgementToProxy(IAcknowledgedOperation acknowledgedOperation) {
+		return getInternal().forwardInitiatePxyOpAck(acknowledgedOperation, false);
 	}
 
 	@Override
-	public Result informOperationInvoke(IOperation operation) {
-		try {
-			checkSupportedOperationType(operation);
-		} catch (OperationTypeUnsupportedException e) {
-			return Result.E_FAIL;
-		}
-		return doInformOperationInvoke(operation);
+	public Result forwardInvocationToApplication(IOperation operation) {
+		return getInternal().forwardInformAplOpInv(operation);
 	}
 
 	@Override
-	public Result informOperationAck(IAcknowledgedOperation ackOperation) {
-		try {
-			checkSupportedOperationType(ackOperation);
-		} catch (OperationTypeUnsupportedException e) {
-			return Result.E_FAIL;
-		}
-		return doInformOperationAck(ackOperation);
+	public Result forwardReturnToApplication(IConfirmedOperation confirmedOperation) {
+		return getInternal().forwardInformAplOpRtn(confirmedOperation);
 	}
 
 	@Override
-	public Result informOperationReturn(IConfirmedOperation confOperation) {
-		try {
-			checkSupportedOperationType(confOperation);
-		} catch (OperationTypeUnsupportedException e) {
-			return Result.E_FAIL;
-		}
-		return doInformOperationReturn(confOperation);
+	public Result forwardAcknowledgementToApplication(IAcknowledgedOperation acknowledgedOperation) {
+		return getInternal().forwardInformAplOpAck(acknowledgedOperation);
 	}
 
-	public Result invokeOperation(IOperation operation) {
-		return serviceInstance.getInternal().forwardInitiatePxyOpInv(operation, false);
-	}
-
-	public Result returnOperation(IConfirmedOperation confirmedOperation) {
-		return serviceInstance.getInternal().forwardInitiatePxyOpRtn(confirmedOperation, false);
-	}
-
-	public Result acknowledgeOperation(IAcknowledgedOperation acknowledgedOperation) {
-		return serviceInstance.getInternal().forwardInitiatePxyOpAck(acknowledgedOperation, false);
-	}
-
-	public Result acceptInvocation(IOperation operation) {
-		return serviceInstance.getInternal().forwardInformAplOpInv(operation);
-	}
-
-	public Result acceptReturn(IConfirmedOperation confirmedOperation) {
-		return serviceInstance.getInternal().forwardInformAplOpRtn(confirmedOperation);
-	}
-
-	public Result acceptAcknowledgement(IAcknowledgedOperation acknowledgedOperation) {
-		return serviceInstance.getInternal().forwardInformAplOpAck(acknowledgedOperation);
-	}
-
-	@Override
-	public void update(Observable o, Object arg) {
+	/**
+	 * This methods gets called when a configuration parameter of the procedure has
+	 * been changed.
+	 * 
+	 * @param parameter
+	 *            the changed configuration parameter
+	 */
+	protected void processConfigurationChange(IConfigurationParameter parameter) {
 		// do nothing on default
-		// override for procedure-specific behaviour
+	}
+
+	/**
+	 * This methods gets called when an event that is being observed by the
+	 * procedure has been fired.
+	 * 
+	 * @param parameter
+	 *            the fired event
+	 */
+	protected void processIncomingEvent(IEvent event) {
+		// do nothing on default
+	}
+
+	@Override
+	public synchronized final void update(Observable o, Object arg) {
+		// only parameters and events are observed by procedures
+		if (IConfigurationParameter.class.isInstance(o)) {
+			LOGGER.fine("The Configuration Parameter " + o + " has been changed.");
+			processConfigurationChange((IConfigurationParameter) o);
+		} else if (IEvent.class.isInstance(o)) {
+			LOGGER.fine("The Event " + o + " has been changed.");
+			processIncomingEvent((IEvent) o);
+		}
 	}
 
 }

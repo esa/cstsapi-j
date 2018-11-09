@@ -1,0 +1,12 @@
+package esa.egos.csts.api.enumerations;
+
+public enum ListOfParamatersType {
+	EMPTY,
+	LIST_NAME,
+	FUNCTIONAL_RESOURCE_TYPE,
+	FUNCTIONAL_RESOURCE_NAME,
+	PROCEDURE_TYPE,
+	PROCEDURE_INSTANCE_IDENTIFIER,
+	LABELS_SET,
+	NAMES_SET;
+}

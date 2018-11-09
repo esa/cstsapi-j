@@ -29,7 +29,7 @@ public class AssocTranslator {
 		if (pdu.getBindInvocation() == null)
 			throw new ApiException("No bind data for Assoc Translator transmitted.");
 
-		IBind bind = new Bind(pdu.getBindInvocation().getVersionNumber().intValue());
+		IBind bind = new Bind();
 		bind.decodeBindInvocation(pdu.getBindInvocation());
 
 		return bind;
@@ -57,8 +57,14 @@ public class AssocTranslator {
 		return unbind;
 	}
 	
-	public static IOperation decodeUnbindReturn(IOperation unbindReturnOp, CstsFrameworkPdu pdu) {
-		return null;
+	public static IOperation decodeUnbindReturn(IOperation unbindReturnOp, CstsFrameworkPdu pdu) throws ApiException {
+		if (pdu.getUnbindReturn() == null)
+			throw new ApiException("No unbind data for Assoc Translator transmitted.");
+		
+		IUnbind unbind = (IUnbind) unbindReturnOp;
+		unbind.decodeUnbindReturn(pdu.getUnbindReturn());
+		
+		return unbind;
 	}
 
 	public static IOperation decodeStartInvocation(CstsFrameworkPdu pdu) throws ApiException {

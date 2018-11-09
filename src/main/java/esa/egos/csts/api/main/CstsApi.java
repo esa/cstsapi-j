@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import esa.egos.csts.api.diagnostics.BindDiagnostic;
 import esa.egos.csts.api.enumerations.AppRole;
 import esa.egos.csts.api.enumerations.Result;
 import esa.egos.csts.api.exceptions.ApiException;
@@ -25,7 +26,7 @@ import esa.egos.csts.api.serviceinstance.impl.ServiceInstanceConverter;
 import esa.egos.csts.api.serviceinstance.impl.ServiceInstanceProvider;
 import esa.egos.csts.api.serviceinstance.impl.ServiceInstanceUser;
 import esa.egos.csts.api.serviceinstance.impl.ServiceType;
-import esa.egos.csts.api.serviceinstance.states.ServiceInstanceStateEnum;
+import esa.egos.csts.api.states.service.ServiceStatus;
 import esa.egos.csts.api.util.ICredentials;
 import esa.egos.proxy.ILocator;
 import esa.egos.proxy.IProxyAdmin;
@@ -33,7 +34,6 @@ import esa.egos.proxy.ISrvProxyInform;
 import esa.egos.proxy.ISrvProxyInitiate;
 import esa.egos.proxy.ProxyPair;
 import esa.egos.proxy.del.ITranslator;
-import esa.egos.proxy.enums.BindDiagnostics;
 import esa.egos.proxy.logging.IReporter;
 import esa.egos.proxy.spl.ProxyAdmin;
 import esa.egos.proxy.util.ISecAttributes;
@@ -318,6 +318,8 @@ public class CstsApi implements IApi, ILocator{
 			return null;
 		}
 		
+		serviceInstance.initialize();
+		
 		// TODO more to add?
 		
 		this.serviceInstanceList.add(serviceInstance);
@@ -361,6 +363,8 @@ public class CstsApi implements IApi, ILocator{
 			return null;
 		}
 		
+		serviceInstance.initialize();
+		
 		// TODO more to add?
 		
 		this.serviceInstanceList.add(serviceInstance);
@@ -372,7 +376,8 @@ public class CstsApi implements IApi, ILocator{
 		// TODO if unbound remove from map
 		
 		if(this.serviceInstanceList.contains(serviceInstance) 
-				&& serviceInstance.getState().getStateEnum() == ServiceInstanceStateEnum.unbound){
+				//&& serviceInstance.getState().getStateEnum() == ServiceInstanceStateEnum.unbound){
+				&& serviceInstance.getStatus() == ServiceStatus.UNBOUND){
 			
 			// TODO serviceInstance.destroy();
 			// serviceInstance.getAssociationControlProcedure().releaseAssoc(); ?
@@ -537,7 +542,7 @@ public class CstsApi implements IApi, ILocator{
             } // is configured
         } // end iteration
 
-        pbindop.setBindDiagnostic(BindDiagnostics.BD_noSuchServiceInstance);
+        pbindop.setBindDiagnostic(BindDiagnostic.NO_SUCH_SERVICE_INSTANCE);
 
         throw new ApiException("Service instance for " + passociation.toString() + " unknown.");
  
@@ -551,7 +556,7 @@ public class CstsApi implements IApi, ILocator{
 	@Override
 	public IPeerAbort createAbort() throws ApiException {
 		// TODO Test
-		PeerAbort peerAbort = new PeerAbort(1);
+		IPeerAbort peerAbort = new PeerAbort();
 		return peerAbort;
 	}
 
@@ -575,4 +580,5 @@ public class CstsApi implements IApi, ILocator{
 		
 		return null;
 	}
+	
 }
