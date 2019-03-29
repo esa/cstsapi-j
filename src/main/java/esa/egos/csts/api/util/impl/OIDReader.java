@@ -16,8 +16,8 @@ import java.util.stream.Stream;
 
 /**
  * This class provides static methods to read ASN.1 files and extract all
- * defined Object Identifier. These Object Identifier are used to generate a new
- * Java class, fitting into the structure of the CSTS API.
+ * defined Object Identifiers. These Object Identifiers are used to generate a
+ * new Java class, fitting into the structure of the CSTS API.
  */
 public class OIDReader {
 
@@ -28,7 +28,7 @@ public class OIDReader {
 	 * of the specified ASN.1 file in a hierarchical representation.
 	 * 
 	 * The generated Java class will specify the Object Identifiers in the following
-	 * way:
+	 * notation:
 	 * 
 	 * public static final ObjectIdentifier css = ObjectIdentifier.of(1, 3, 112, 4, 4);
 	 * public static final ObjectIdentifier csts = ObjectIdentifier.of(css, 1);
@@ -98,7 +98,7 @@ public class OIDReader {
 	 * of the specified ASN.1 file in a flat representation.
 	 * 
 	 * The generated Java class will specify the Object Identifiers in the following
-	 * way:
+	 * notation:
 	 * 
 	 * public static final ObjectIdentifier css = ObjectIdentifier.of(1, 3, 112, 4, 4);
 	 * public static final ObjectIdentifier csts = ObjectIdentifier.of(1, 3, 112, 4, 4, 1);

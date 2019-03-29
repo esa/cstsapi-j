@@ -14,25 +14,28 @@ import esa.egos.csts.api.extensions.Extension;
 import esa.egos.csts.api.operations.AbstractOperation;
 import esa.egos.csts.api.operations.IProcessData;
 
+/**
+ * This class represents a PROCESS-DATA (unconfirmed) operation.
+ */
 public class ProcessData extends AbstractOperation implements IProcessData {
 
 	private static final OperationType TYPE = OperationType.PROCESS_DATA;
-	
+
 	/**
 	 * The data unit ID
 	 */
 	private long dataUnitID;
-	
+
 	/**
 	 * The encoded data
 	 */
 	private byte[] data;
-	
+
 	/**
 	 * The embedded data
 	 */
 	private EmbeddedData embeddedData;
-	
+
 	/**
 	 * The invocation extension
 	 */
@@ -44,19 +47,19 @@ public class ProcessData extends AbstractOperation implements IProcessData {
 	public ProcessData() {
 		invocationExtension = Extension.notUsed();
 	}
-	
+
 	@Override
 	public OperationType getType() {
 		return TYPE;
 	}
 
 	@Override
-	public long getDataUnitID() {
+	public long getDataUnitId() {
 		return dataUnitID;
 	}
 
 	@Override
-	public void setDataUnitID(long dataUnitID) {
+	public void setDataUnitId(long dataUnitID) {
 		this.dataUnitID = dataUnitID;
 	}
 
@@ -71,6 +74,16 @@ public class ProcessData extends AbstractOperation implements IProcessData {
 	}
 
 	@Override
+	public EmbeddedData getEmbeddedData() {
+		return embeddedData;
+	}
+
+	@Override
+	public void setEmbeddedData(EmbeddedData embeddedData) {
+		this.embeddedData = embeddedData;
+	}
+	
+	@Override
 	public Extension getInvocationExtension() {
 		return invocationExtension;
 	}
@@ -79,7 +92,7 @@ public class ProcessData extends AbstractOperation implements IProcessData {
 	public void setInvocationExtension(EmbeddedData embedded) {
 		invocationExtension = Extension.of(embedded);
 	}
-	
+
 	@Override
 	public void verifyInvocationArguments() throws ApiException {
 		if (dataUnitID < 0) {
@@ -119,6 +132,12 @@ public class ProcessData extends AbstractOperation implements IProcessData {
 			data = processDataInvocation.getData().getOpaqueString().value;
 		}
 		invocationExtension = Extension.decode(processDataInvocation.getProcessDataInvocationExtension());
+	}
+
+	@Override
+	public String toString() {
+		return "ProcessData [dataUnitID=" + dataUnitID + ", data=" + Arrays.toString(data) + ", embeddedData="
+				+ embeddedData + ", invocationExtension=" + invocationExtension + "]";
 	}
 
 }

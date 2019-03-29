@@ -35,7 +35,7 @@ import esa.egos.proxy.xml.LogicalPort;
 import esa.egos.proxy.xml.ProviderConfig;
 import esa.egos.proxy.xml.ProxyConfig;
 import esa.egos.proxy.xml.ProxyRoleEnum;
-import esa.egos.proxy.xml.ServerType;
+import esa.egos.proxy.xml.ConfigServiceType;
 import esa.egos.proxy.xml.UserConfig;
 
 /**
@@ -483,10 +483,10 @@ public class ProxyAdmin implements IProxy
         
         if (sleAppRole == AppRole.PROVIDER)
         {
-        	ArrayList<ServerType> pSrvTypeList = this.config.getServerTypeList();
-        	ServerType pSrvType = null;
-        	for(ServerType serverType: pSrvTypeList){
-        		if(serverType.getServerId().equals(srvType.getOid().toString()))
+        	ArrayList<ConfigServiceType> pSrvTypeList = this.config.getServiceTypeList();
+        	ConfigServiceType pSrvType = null;
+        	for(ConfigServiceType serverType: pSrvTypeList){
+        		if(serverType.getServiceId().equals(srvType.getOid().toString()))
         			pSrvType = serverType;
         	}
             if (pSrvType == null)

@@ -17,7 +17,7 @@ public class ProxyConfig {
 	private String csAddress;
 	private String reportingAdress;
 
-	private ArrayList<ServerType> serverTypeList;
+	private ArrayList<ConfigServiceType> serviceTypeList;
 
 	private ArrayList<RemotePeer> remotePeerList;
 
@@ -30,6 +30,8 @@ public class ProxyConfig {
 	private int maxDeadFactor;
 	private int minHB;
 	private int maxHB;
+	
+	private TransferType transferType;
 
 	/**
 	 * 
@@ -44,9 +46,10 @@ public class ProxyConfig {
 		this.authenticationDelay = userConfig.getAuthenticationDelay();
 		this.transmissionQueueSize = userConfig.getTransmissionQueueSize();
 		this.logicalPortList = createFromForeignPortList(userConfig.getForeignLogicalPortList());
-		this.serverTypeList = userConfig.getServerTypeList();
+		this.serviceTypeList = userConfig.getServiceTypeList();
 		this.remotePeerList = userConfig.getRemotePeerList();
 		this.portList = userConfig.getPortList();
+		this.setTransferType(userConfig.getTransferType());
 	}
 
 	/**
@@ -62,7 +65,7 @@ public class ProxyConfig {
 		this.authenticationDelay = providerConfig.getAuthenticationDelay();
 		this.transmissionQueueSize = providerConfig.getTransmissionQueueSize();
 		this.logicalPortList = createFromLocalPortList(providerConfig.getLocalLogicalPortList());
-		this.serverTypeList = providerConfig.getServerTypeList();
+		this.serviceTypeList = providerConfig.getServiceTypeList();
 		this.remotePeerList = providerConfig.getRemotePeerList();
 		this.portList = providerConfig.getPortList();
 		
@@ -73,6 +76,7 @@ public class ProxyConfig {
 		this.maxHB = providerConfig.getMaxHB();
 		this.minDeadFactor = providerConfig.getMinDeadFactor();
 		this.maxDeadFactor = providerConfig.getMaxDeadFactor();
+		this.setTransferType(providerConfig.getTransferType());
 	}
 	
 	private ArrayList<LogicalPort> createFromForeignPortList(ArrayList<ForeignLogicalPort> ports){
@@ -172,12 +176,12 @@ public class ProxyConfig {
 		this.logicalPortList = logicalPortList;
 	}
 
-	public ArrayList<ServerType> getServerTypeList() {
-		return serverTypeList;
+	public ArrayList<ConfigServiceType> getServiceTypeList() { 
+		return serviceTypeList;
 	}
 
-	public void setServerTypeList(ArrayList<ServerType> serverTypeList) {
-		this.serverTypeList = serverTypeList;
+	public void setServiceTypeList(ArrayList<ConfigServiceType> serviceTypeList) {
+		this.serviceTypeList = serviceTypeList;
 	}
 
 	public ArrayList<RemotePeer> getRemotePeerList() {
@@ -271,6 +275,14 @@ public class ProxyConfig {
 
 	public void setMaxDeadFactor(int maxDeadFactor) {
 		this.maxDeadFactor = maxDeadFactor;
+	}
+
+	public TransferType getTransferType() {
+		return transferType;
+	}
+
+	public void setTransferType(TransferType transferType) {
+		this.transferType = transferType;
 	}
 
 }

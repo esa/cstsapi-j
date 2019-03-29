@@ -1,8 +1,10 @@
 package esa.egos.proxy;
 
 import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
+import esa.egos.csts.api.operations.IPeerAbort;
 import esa.egos.proxy.del.ITranslator;
 
 /**
@@ -39,6 +41,8 @@ public interface ISrvProxyInform
      * @throws SleApiException
      */
     void informOpReturn(IConfirmedOperation poperation, long seqCount) throws ApiException;
+    
+    void informOpAck(IAcknowledgedOperation operation, long seqCount) throws ApiException;
 
     /**
      * Pdu transmitted.
@@ -54,7 +58,12 @@ public interface ISrvProxyInform
      * @param diagnostic
      * @throws SleApiException
      */
-    void protocolAbort(byte[] diagnostic) throws ApiException;
+    void protocolAbort() throws ApiException;
     
 	ITranslator getTranslator();
+	
+	void provisionPeriodEnds();
+	
+	IPeerAbort createAbort() throws ApiException;
+	
 }

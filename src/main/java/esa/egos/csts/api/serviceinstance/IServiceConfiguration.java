@@ -109,7 +109,7 @@ public interface IServiceConfiguration {
      * 
      * @return
      */
-    AppRole getBindInitiative() throws ApiException;
+    //AppRole getBindInitiative() throws ApiException;
 
     /**
      * Gets responder port identifier.

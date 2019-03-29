@@ -1,6 +1,7 @@
 package esa.egos.csts.api.serviceinstance;
 
 import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 
@@ -13,7 +14,7 @@ public interface IServiceInitiate {
      * @param seqCount sequence counter
      * @throws ApiException
      */
-	void initiateOpInvoke(IOperation operation, long seqCount) throws ApiException;
+	void initiateOpInvoke(IOperation operation) throws ApiException;
 	
     /**
      * Initiates operation return.
@@ -22,9 +23,9 @@ public interface IServiceInitiate {
      * @param seqCount sequence counter
      * @throws ApiException
      */
-	void initiateOpReturn(IConfirmedOperation confOperation, long seqCount) throws ApiException;
+	void initiateOpReturn(IConfirmedOperation confOperation) throws ApiException;
 	
-	//acknowledge?? if not internally
+	void initiateOpAcknowledgement(IAcknowledgedOperation ackOperation) throws ApiException;
 	
 	
 }

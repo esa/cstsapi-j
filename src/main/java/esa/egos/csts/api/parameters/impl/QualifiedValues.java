@@ -72,8 +72,8 @@ public class QualifiedValues {
 				typeAndValueComplexQualified.setTypeAndValue(parameterValues.get(0).encode());
 			} else {
 				ComplexSequence complexSequence = new ComplexSequence();
-				for (ParameterValue p : parameterValues) {
-					complexSequence.getTypeAndValue().add(p.encode());
+				for (ParameterValue value : parameterValues) {
+					complexSequence.getTypeAndValue().add(value.encode());
 				}
 				typeAndValueComplexQualified.setComplexSequence(complexSequence);
 			}
@@ -112,9 +112,11 @@ public class QualifiedValues {
 				for (TypeAndValue value : qualifiedValues.getValid().getComplexSequence().getTypeAndValue()) {
 					newQualifiedValues.getParameterValues().add(ParameterValue.decode(value));
 				}
+			} else if (qualifiedValues.getValid().getComplexSet() != null) {
+				for (TypeAndValue value : qualifiedValues.getValid().getComplexSet().getTypeAndValue()) {
+					newQualifiedValues.getParameterValues().add(ParameterValue.decode(value));
+				}
 			}
-			// ComplexSet will remain unused, since ComplexSequence provides the same
-			// semantics in terms of Java
 		}
 		return newQualifiedValues;
 	}

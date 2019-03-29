@@ -6,6 +6,7 @@ import java.util.Observer;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.Name;
+import esa.egos.csts.api.types.Time;
 
 /**
  * The Event Interface.
@@ -54,6 +55,21 @@ public interface IEvent {
 	void setValue(EventValue value);
 
 	/**
+	 * Returns the Event time.
+	 * 
+	 * @return the Event time
+	 */
+	Time getTime();
+
+	/**
+	 * Sets the Event time.
+	 * 
+	 * @param time
+	 *            the Event time
+	 */
+	void setTime(Time time);
+
+	/**
 	 * Notifies all observers.
 	 */
 	void fire();
@@ -65,6 +81,17 @@ public interface IEvent {
 	 *            the specified Event Value
 	 */
 	void fire(EventValue value);
+
+	/**
+	 * Sets the Event Value and Event time to the specified values and notifies all
+	 * observers.
+	 * 
+	 * @param value
+	 *            the specified Event Value
+	 * @param time
+	 *            the specified Event time
+	 */
+	void fire(EventValue value, Time time);
 
 	/**
 	 * {@link Observable#addObserver(Observer)}

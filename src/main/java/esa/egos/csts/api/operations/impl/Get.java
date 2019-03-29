@@ -25,7 +25,7 @@ import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 
 /**
- * The GET operation (confirmed)
+ * This class represents a GET operation.
  */
 public class Get extends AbstractConfirmedOperation implements IGet {
 
@@ -267,7 +267,8 @@ public class Get extends AbstractConfirmedOperation implements IGet {
 		if (getReturnExtension().isUsed()) {
 			if (getReturnExtension().getEmbeddedData().getOid().equals(OIDs.getPosReturnExt)) {
 				GetPosReturnExt getPosReturnExt = new GetPosReturnExt();
-				try (ByteArrayInputStream is = new ByteArrayInputStream(getReturnExtension().getEmbeddedData().getData())) {
+				try (ByteArrayInputStream is = new ByteArrayInputStream(
+						getReturnExtension().getEmbeddedData().getData())) {
 					getPosReturnExt.decode(is);
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -289,7 +290,8 @@ public class Get extends AbstractConfirmedOperation implements IGet {
 	 * This method is called while decoding a positive GET return extension.
 	 * Override this method if a positive GET return extension is used.
 	 * 
-	 * @param extension the positive GET return extension
+	 * @param extension
+	 *            the positive GET return extension
 	 */
 	protected void decodeGetPosReturnExtExtension(Extension extension) {
 		// override is extension is used
@@ -301,7 +303,7 @@ public class Get extends AbstractConfirmedOperation implements IGet {
 			decodeDiagnosticExtension();
 		}
 	}
-	
+
 	private void decodeDiagnosticExtension() {
 		if (getDiagnostic().getDiagnosticExtension().getOid().equals(OIDs.getDiagnosticExt)) {
 			GetDiagnosticExt getDiagnosticExt = new GetDiagnosticExt();
@@ -315,6 +317,13 @@ public class Get extends AbstractConfirmedOperation implements IGet {
 				listOfParametersDiagnostics = ListOfParametersDiagnostics.decode(getDiagnosticExt.getCommon());
 			}
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "Get [listOfParameters=" + listOfParameters + ", qualifiedParameters=" + qualifiedParameters
+				+ ", listOfParametersDiagnostics=" + listOfParametersDiagnostics + ", invocationExtension="
+				+ invocationExtension + "]";
 	}
 
 }

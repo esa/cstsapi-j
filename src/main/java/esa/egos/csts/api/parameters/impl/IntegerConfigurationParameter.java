@@ -19,14 +19,11 @@ public class IntegerConfigurationParameter extends AbstractConfigurationParamete
 	 * Instantiates a new Integer Configuration Parameter without configuring its
 	 * value.
 	 * 
-	 * @param identifier
-	 *            the Object Identifier
-	 * @param readable
-	 *            whether if this instance is readable
-	 * @param dynamicallyModifiable
-	 *            whether if this instance is dynamically modifiable
-	 * @param procedure
-	 *            the Procedure being configured
+	 * @param identifier            the Object Identifier
+	 * @param readable              whether if this instance is readable
+	 * @param dynamicallyModifiable whether if this instance is dynamically
+	 *                              modifiable
+	 * @param procedure             the Procedure being configured
 	 */
 	public IntegerConfigurationParameter(ObjectIdentifier identifier, boolean readable, boolean dynamicallyModifiable,
 			IProcedure procedure) {
@@ -36,16 +33,12 @@ public class IntegerConfigurationParameter extends AbstractConfigurationParamete
 	/**
 	 * Instantiates a new Integer Configuration Parameter and configures its value.
 	 * 
-	 * @param identifier
-	 *            the Object Identifier
-	 * @param readable
-	 *            whether if this instance is readable
-	 * @param dynamicallyModifiable
-	 *            whether if this instance is dynamically modifiable
-	 * @param procedure
-	 *            the Procedure being configured
-	 * @param value
-	 *            the initial value
+	 * @param identifier            the Object Identifier
+	 * @param readable              whether if this instance is readable
+	 * @param dynamicallyModifiable whether if this instance is dynamically
+	 *                              modifiable
+	 * @param procedure             the Procedure being configured
+	 * @param value                 the initial value
 	 */
 	public IntegerConfigurationParameter(ObjectIdentifier identifier, boolean readable, boolean dynamicallyModifiable,
 			IProcedure procedure, long value) {
@@ -67,10 +60,9 @@ public class IntegerConfigurationParameter extends AbstractConfigurationParamete
 	 * Initializes the value, if the Configuration Parameter has not been
 	 * configured.
 	 * 
-	 * @param value
-	 *            the initial value
+	 * @param value the initial value
 	 */
-	public void initializeValue(long value) {
+	public synchronized void initializeValue(long value) {
 		if (!isConfigured()) {
 			this.value = value;
 			setConfigured(true);
@@ -80,11 +72,10 @@ public class IntegerConfigurationParameter extends AbstractConfigurationParamete
 	/**
 	 * Sets the value.
 	 * 
-	 * @param value
-	 *            the value
+	 * @param value the value
 	 */
-	public void setValue(long value) {
-		if (!isDynamicallyModifiable()) {
+	public synchronized void setValue(long value) {
+		if (!procedureIsBound() && !isDynamicallyModifiable()) {
 			throw new ConfigurationParameterNotModifiableException();
 		}
 		this.value = value;
@@ -101,7 +92,7 @@ public class IntegerConfigurationParameter extends AbstractConfigurationParamete
 
 	/**
 	 * Returns this Configuration Parameter as Qualified Values for usage in a
-	 * Qualified Parameter.
+	 * Qualified Parameter or Event Value.
 	 * 
 	 * @return this Configuration Parameter as Qualified Values
 	 */

@@ -8,6 +8,10 @@ import esa.egos.csts.api.operations.AbstractOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IReturnBuffer;
 
+/**
+ * This class is a dummy operation representing the return buffer type used in
+ * the Buffered Data Delivery.
+ */
 public class ReturnBuffer extends AbstractOperation implements IReturnBuffer {
 
 	private static final OperationType TYPE = OperationType.RETURN_BUFFER;
@@ -30,6 +34,11 @@ public class ReturnBuffer extends AbstractOperation implements IReturnBuffer {
 
 	@Override
 	public String print(int i) {
+		return "ReturnBuffer [returnBuffer=" + returnBuffer + "]";
+	}
+
+	@Override
+	public String toString() {
 		return "ReturnBuffer [returnBuffer=" + returnBuffer + "]";
 	}
 

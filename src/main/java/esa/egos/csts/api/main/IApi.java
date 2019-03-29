@@ -3,10 +3,6 @@ package esa.egos.csts.api.main;
 import java.util.ArrayList;
 import java.util.Map;
 
-import esa.egos.csts.api.enumerations.AppRole;
-import esa.egos.csts.api.exceptions.ApiException;
-import esa.egos.csts.api.operations.IPeerAbort;
-import esa.egos.csts.api.serviceinstance.IServiceInstance;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceIdentifier;
 import esa.egos.csts.api.util.ICredentials;
 import esa.egos.proxy.IProxyAdmin;
@@ -18,19 +14,17 @@ import esa.egos.proxy.util.ITime;
 import esa.egos.proxy.xml.ProxyConfig;
 import esa.egos.proxy.xml.RemotePeer;
 
-public interface IApi{
+public interface IApi extends ICstsApi {
 
 	ISecAttributes createSecAttributes();
 
 	ICredentials createCredentials();
 
 	ITime createTime();
-	
+
 	IReporter getReporter();
 
 	String getApiName();
-	
-	AppRole getRole();
 
 	IProxyAdmin getProxy(String protId);
 
@@ -42,14 +36,6 @@ public interface IApi{
 
 	Map<String, ProxyPair> getProxyList();
 
-	void start() throws ApiException;
-	
-	void stop();
-	
-	IServiceInstance getServiceInstance(IServiceInstanceIdentifier id);
-
-	IPeerAbort createAbort() throws ApiException;
-
 	ITranslator getTranslator(IServiceInstanceIdentifier serviceInstanceIdentifier);
-	
+
 }

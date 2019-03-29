@@ -10,7 +10,7 @@ import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.util.impl.CSTSUtils;
 
 /**
- * The Diagnostic of a START operation in case the a negative result must be
+ * The Diagnostic of a START operation in case a negative result must be
  * returned.
  */
 public class StartDiagnostic {
@@ -22,8 +22,7 @@ public class StartDiagnostic {
 	/**
 	 * Instantiates a new START Diagnostic specified by its type.
 	 * 
-	 * @param type
-	 *            the START Diagnostic type
+	 * @param type the START Diagnostic type
 	 */
 	public StartDiagnostic(StartDiagnosticType type) {
 		this.type = type;
@@ -33,10 +32,8 @@ public class StartDiagnostic {
 	/**
 	 * Instantiates a new START Diagnostic specified by its type and message.
 	 * 
-	 * @param type
-	 *            the START Diagnostic type
-	 * @param message
-	 *            the START Diagnostic message
+	 * @param type    the START Diagnostic type
+	 * @param message the START Diagnostic message
 	 */
 	public StartDiagnostic(StartDiagnosticType type, String message) {
 		this.type = type;
@@ -47,8 +44,7 @@ public class StartDiagnostic {
 	/**
 	 * Instantiates a new extended START Diagnostic.
 	 * 
-	 * @param diagnosticExtension
-	 *            the START Diagnostic extension
+	 * @param diagnosticExtension the START Diagnostic extension
 	 */
 	public StartDiagnostic(EmbeddedData diagnosticExtension) {
 		type = StartDiagnosticType.EXTENDED;
@@ -85,8 +81,7 @@ public class StartDiagnostic {
 	/**
 	 * Sets the Diagnostic message.
 	 * 
-	 * @param message
-	 *            the Diagnostic message
+	 * @param message the Diagnostic message
 	 */
 	public void setMessage(String message) {
 		this.message = message;
@@ -136,8 +131,7 @@ public class StartDiagnostic {
 	/**
 	 * Decodes a specified CCSDS StartDiagnosticExt type.
 	 * 
-	 * @param diagnostic
-	 *            the specified CCSDS StartDiagnosticExt type
+	 * @param diagnostic the specified CCSDS StartDiagnosticExt type
 	 * @return a new START Diagnostic decoded from the specified CCSDS
 	 *         StartDiagnosticExt type
 	 */

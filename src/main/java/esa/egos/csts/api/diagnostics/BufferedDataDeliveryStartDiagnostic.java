@@ -146,38 +146,37 @@ public class BufferedDataDeliveryStartDiagnostic {
 	/**
 	 * Decodes a specified CCSDS BuffDataDelStartDiagnosticExt type.
 	 * 
-	 * @param diagnostic
+	 * @param diagnostics
 	 *            the specified CCSDS BuffDataDelStartDiagnosticExt type
 	 * @return a new Buffered Data Delivery START Diagnostic decoded from the
 	 *         specified CCSDS BuffDataDelStartDiagnosticExt type
 	 */
-	public static BufferedDataDeliveryStartDiagnostic decode(BuffDataDelStartDiagnosticExt diagnostic) {
+	public static BufferedDataDeliveryStartDiagnostic decode(BuffDataDelStartDiagnosticExt diagnostics) {
 
-		BufferedDataDeliveryStartDiagnostic newDiagnostic = null;
+		BufferedDataDeliveryStartDiagnostic newDiagnostics = null;
 
-		if (diagnostic.getBuffDataDelStartDiagnosticExtExtension() != null) {
-			newDiagnostic = new BufferedDataDeliveryStartDiagnostic(
-					EmbeddedData.decode(diagnostic.getBuffDataDelStartDiagnosticExtExtension()));
-		} else if (diagnostic.getInconsistentTime() != null) {
-			newDiagnostic = new BufferedDataDeliveryStartDiagnostic(
+		if (diagnostics.getBuffDataDelStartDiagnosticExtExtension() != null) {
+			newDiagnostics = new BufferedDataDeliveryStartDiagnostic(
+					EmbeddedData.decode(diagnostics.getBuffDataDelStartDiagnosticExtExtension()));
+		} else if (diagnostics.getInconsistentTime() != null) {
+			newDiagnostics = new BufferedDataDeliveryStartDiagnostic(
 					BufferedDataDeliveryStartDiagnosticType.INCONSISTENT_TIME,
-					CSTSUtils.decodeString(diagnostic.getInconsistentTime().value));
-		} else if (diagnostic.getInvalidStartGenerationTime() != null) {
-			newDiagnostic = new BufferedDataDeliveryStartDiagnostic(
+					CSTSUtils.decodeString(diagnostics.getInconsistentTime().value));
+		} else if (diagnostics.getInvalidStartGenerationTime() != null) {
+			newDiagnostics = new BufferedDataDeliveryStartDiagnostic(
 					BufferedDataDeliveryStartDiagnosticType.INVALID_START_GENERATION_TIME,
-					CSTSUtils.decodeString(diagnostic.getInvalidStartGenerationTime().value));
-		} else if (diagnostic.getInvalidStopGenerationTime() != null) {
-			newDiagnostic = new BufferedDataDeliveryStartDiagnostic(
+					CSTSUtils.decodeString(diagnostics.getInvalidStartGenerationTime().value));
+		} else if (diagnostics.getInvalidStopGenerationTime() != null) {
+			newDiagnostics = new BufferedDataDeliveryStartDiagnostic(
 					BufferedDataDeliveryStartDiagnosticType.INVALID_STOP_GENERATION_TIME,
-					CSTSUtils.decodeString(diagnostic.getInvalidStopGenerationTime().value));
-		} else if (diagnostic.getMissingTimeValue() != null) {
-			newDiagnostic = new BufferedDataDeliveryStartDiagnostic(
+					CSTSUtils.decodeString(diagnostics.getInvalidStopGenerationTime().value));
+		} else if (diagnostics.getMissingTimeValue() != null) {
+			newDiagnostics = new BufferedDataDeliveryStartDiagnostic(
 					BufferedDataDeliveryStartDiagnosticType.MISSING_TIME_VALUE,
-					CSTSUtils.decodeString(diagnostic.getMissingTimeValue().value));
+					CSTSUtils.decodeString(diagnostics.getMissingTimeValue().value));
 		}
 
-		return newDiagnostic;
-
+		return newDiagnostics;
 	}
 
 }

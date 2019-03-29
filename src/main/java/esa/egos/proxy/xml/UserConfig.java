@@ -21,15 +21,24 @@ import javax.xml.bind.annotation.XmlType;
     "startupTimer",
     "nonUseHeartbeat",
     "authenticationDelay",
-    "serverTypeList",
+    "serviceTypeList",
     "remotePeerList",
     "foreignLogicalPortList",
-    "portList"
+    "portList",
+    "transferType"
 })
 
 @XmlRootElement(name = "UserConfig")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UserConfig {
+
+	public TransferType getTransferType() {
+		return transferType;
+	}
+
+	public void setTransferType(TransferType transferType) {
+		this.transferType = transferType;
+	}
 
 	@XmlAttribute(name = "proxy_role", required = true)
 	private ProxyRoleEnum role;
@@ -46,10 +55,10 @@ public class UserConfig {
 	@XmlAttribute(name = "transmit_queue_size")
 	private int transmissionQueueSize;
 
-	@XmlElementWrapper(name = "server_types", required = false)
+	@XmlElementWrapper(name = "service_types", required = false)
 	// XmlElement sets the name of the entities
-	@XmlElement(name = "server_type")
-	private ArrayList<ServerType> serverTypeList;
+	@XmlElement(name = "service_type")
+	private ArrayList<ConfigServiceType> serviceTypeList;
 	
 	@XmlElementWrapper(name = "remote_peers", required = true)
 	// XmlElement sets the name of the entities
@@ -63,6 +72,9 @@ public class UserConfig {
 	
 	@XmlElement(name = "portlist", required = true)
 	private PortList portList;
+	
+	@XmlAttribute(name = "transfer_type", required = true)
+	private TransferType transferType;
 	
 	public ProxyRoleEnum getRole() {
 		return this.role;
@@ -120,12 +132,12 @@ public class UserConfig {
 		this.localPw = localPw;
 	}
 
-	public ArrayList<ServerType> getServerTypeList() {
-		return serverTypeList;
+	public ArrayList<ConfigServiceType> getServiceTypeList() {
+		return serviceTypeList;
 	}
 
-	public void setServerTypeList(ArrayList<ServerType> serverTypeList) {
-		this.serverTypeList = serverTypeList;
+	public void setServiceTypeList(ArrayList<ConfigServiceType> serviceTypeList) {
+		this.serviceTypeList = serviceTypeList;
 	}
 
 	public ArrayList<ForeignLogicalPort> getForeignLogicalPortList() {

@@ -9,8 +9,6 @@ import ccsds.csts.common.types.Extended;
 
 /**
  * This class represents the CCSDS Extended type.
- * 
- * This class is immutable.
  */
 public class Extension {
 
@@ -94,6 +92,11 @@ public class Extension {
 			extension.setEmbedded(EmbeddedData.decode(extended.getExternal()));
 		}
 		return extension;
+	}
+
+	@Override
+	public String toString() {
+		return "Extension [embeddedData=" + embeddedData + "]";
 	}
 
 }

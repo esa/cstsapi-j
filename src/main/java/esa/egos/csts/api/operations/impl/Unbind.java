@@ -7,6 +7,9 @@ import esa.egos.csts.api.extensions.Extension;
 import esa.egos.csts.api.operations.AbstractConfirmedOperation;
 import esa.egos.csts.api.operations.IUnbind;
 
+/**
+ * This class represents a UNBIND operation.
+ */
 public class Unbind extends AbstractConfirmedOperation implements IUnbind {
 
 	private static final OperationType TYPE = OperationType.UNBIND;
@@ -51,7 +54,7 @@ public class Unbind extends AbstractConfirmedOperation implements IUnbind {
 		decodeStandardInvocationHeader(unbindInvocation.getStandardInvocationHeader());
 		invocationExtension = Extension.decode(unbindInvocation.getUnbindInvocationExtension());
 	}
-	
+
 	@Override
 	public UnbindReturn encodeUnbindReturn() {
 		return encodeStandardReturnHeader(UnbindReturn.class);
@@ -60,6 +63,11 @@ public class Unbind extends AbstractConfirmedOperation implements IUnbind {
 	@Override
 	public void decodeUnbindReturn(UnbindReturn unbindReturn) {
 		decodeStandardReturnHeader(unbindReturn);
+	}
+
+	@Override
+	public String toString() {
+		return "Unbind [invocationExtension=" + invocationExtension + "]";
 	}
 
 }

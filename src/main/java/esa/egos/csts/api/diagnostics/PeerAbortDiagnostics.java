@@ -23,6 +23,7 @@ public enum PeerAbortDiagnostics {
 	DUPLICATE_INVOKE_ID(49, "duplicate invoke id"),
 	INVALID_PROCEDURE_INSTANCE_IDENTIFIER(50, "invalid procedure instance identifier"),
 	UNRECOGNIZED_TYPE(51, "unrecognized type"),
+	FORWARD_BUFFER_TOO_LARGE(70, "forward buffer too large"),
 	OTHER_REASON(126, "other reason"),
 	INVALID(-1, "invalid");
 

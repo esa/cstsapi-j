@@ -11,8 +11,8 @@ import ccsds.csts.common.types.ListOfParametersEvents;
 import ccsds.csts.common.types.ListOfParametersEvents.ParamEventLabels;
 import ccsds.csts.common.types.ListOfParametersEvents.ParamEventNames;
 import esa.egos.csts.api.enumerations.ListOfParamatersType;
-import esa.egos.csts.api.functionalresources.impl.FunctionalResourceName;
-import esa.egos.csts.api.functionalresources.impl.FunctionalResourceType;
+import esa.egos.csts.api.functionalresources.FunctionalResourceName;
+import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.types.Label;
@@ -198,6 +198,14 @@ public class ListOfParameters {
 		}
 
 		return list;
+	}
+	
+	@Override
+	public String toString() {
+		return "ListOfParameters [type=" + type + ", listName=" + listName + ", functionalResourceType="
+				+ functionalResourceType + ", functionalResourceName=" + functionalResourceName + ", procedureType="
+				+ procedureType + ", procedureInstanceIdentifier=" + procedureInstanceIdentifier + ", parameterLabels="
+				+ parameterLabels + ", parameterNames=" + parameterNames + "]";
 	}
 
 }

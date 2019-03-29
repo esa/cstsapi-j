@@ -2,7 +2,7 @@ package esa.egos.csts.api.parameters.impl;
 
 import java.time.LocalDateTime;
 
-import esa.egos.csts.api.functionalresources.impl.FunctionalResourceName;
+import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.parameters.AbstractParameter;
 

@@ -260,9 +260,7 @@ public class EE_APIPX_ChannelPxy extends IEE_APIPX_LoggerAdapter implements ICha
      */
     @Override
     public void sendReset()
-    {
-        // FIXME: remove        
-        new Exception().printStackTrace();
+    {    
 
         AssocChannel_Mess mess = new AssocChannel_Mess();
         byte[] messByteArray = mess.toByteArray();
@@ -474,5 +472,29 @@ public class EE_APIPX_ChannelPxy extends IEE_APIPX_LoggerAdapter implements ICha
     {
     	// Nothing to do here
     }
+
+	@Override
+	public void sendSLEPDUBlocking(byte[] data, boolean last) {
+        Header_Mess header = new Header_Mess(last, MessId.mid_SlePdu.getCode(), data.length);
+        this.mutex.lock();
+
+        byte[] headerArray = header.toByteArray();
+        byte[] newArray = new byte[headerArray.length + data.length];
+        System.arraycopy(headerArray, 0, newArray, 0, headerArray.length);
+        System.arraycopy(data, 0, newArray, headerArray.length, data.length);
+        
+        // TODO MB 10 seconds blocking
+        sendMessage(newArray,eeAPIPXLink , 10);
+
+        this.mutex.unlock();
+
+        if (last)
+        {
+            if (this.ieeChannelInform != null)
+            {
+                this.ieeChannelInform = null;
+            }
+        }
+	}
 
 }

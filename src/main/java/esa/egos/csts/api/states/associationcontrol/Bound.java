@@ -2,45 +2,52 @@ package esa.egos.csts.api.states.associationcontrol;
 
 import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.enumerations.OperationType;
-import esa.egos.csts.api.enumerations.Result;
+import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IPeerAbort;
 import esa.egos.csts.api.operations.IUnbind;
-import esa.egos.csts.api.procedures.IAssociationControl;
+import esa.egos.csts.api.procedures.associationcontrol.IAssociationControlInternal;
 
 public class Bound extends AssociationControlState {
 
-	public Bound(IAssociationControl procedure) {
+	public Bound(IAssociationControlInternal procedure) {
 		super(procedure, Status.BOUND);
 	}
 
 	@Override
-	public synchronized Result process(IOperation operation, boolean initiate) {
+	public synchronized CstsResult process(IOperation operation, boolean isInvocation) {
 		
-		IAssociationControl procedure = getProcedure();
+		IAssociationControlInternal procedure = getProcedure();
 		
 		if (operation.getType() == OperationType.UNBIND) {
 			IUnbind unbind = (IUnbind) operation;
 			if (procedure.getServiceInstance().isPrimeProcedureStateful()
 					&& procedure.getServiceInstance().isActive().get()) {
 				procedure.abort(PeerAbortDiagnostics.PROTOCOL_ERROR);
-				return Result.SLE_E_ABORTED;
+				return CstsResult.ABORTED;
 			} else {
-				procedure.setState(new UnbindPending(procedure));
+				procedure.setState(new Unbound(procedure));
 				unbind.setPositiveResult();
-				return procedure.forwardInvocationToApplication(unbind);
+				procedure.forwardInvocationToApplication(unbind);
+				CstsResult result = procedure.forwardReturnToProxy(unbind);
+				procedure.terminateProcedures();
+				procedure.terminate();
+				return result;
 			}
 		} else if (operation.getType() == OperationType.PEER_ABORT) {
 			IPeerAbort peerAbort = (IPeerAbort) operation;
-			procedure.terminateProcedures();
-			if (initiate) {
-				return procedure.forwardInvocationToProxy(peerAbort);
+			CstsResult result;
+			if (isInvocation) {
+				result = procedure.forwardInvocationToProxy(peerAbort);
 			} else {
-				return procedure.forwardInvocationToApplication(peerAbort);
+				result = procedure.forwardInvocationToApplication(peerAbort);
 			}
+			procedure.terminateProcedures();
+			procedure.terminate();
+			return result;
 		} else {
 			procedure.abort(PeerAbortDiagnostics.PROTOCOL_ERROR);
-			return Result.SLE_E_ABORTED;
+			return CstsResult.ABORTED;
 		}
 	}
 

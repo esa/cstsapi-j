@@ -3,7 +3,7 @@ package esa.egos.csts.api.types;
 import ccsds.csts.common.types.FRorProcedureName;
 import ccsds.csts.common.types.PublishedIdentifier;
 import esa.egos.csts.api.enumerations.ResourceIdentifier;
-import esa.egos.csts.api.functionalresources.impl.FunctionalResourceName;
+import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 

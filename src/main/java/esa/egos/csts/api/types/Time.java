@@ -30,8 +30,7 @@ import esa.egos.csts.api.enumerations.TimeType;
 public class Time {
 
 	private static final LocalDate CCSDS_EPOCH_DATE = LocalDate.of(1958, 1, 1);
-	private static final LocalDateTime CCSDS_EPOCH_DATE_TIME = LocalDateTime.of(CCSDS_EPOCH_DATE,
-			LocalTime.of(0, 0, 0));
+	private static final LocalDateTime CCSDS_EPOCH_DATE_TIME = LocalDateTime.of(CCSDS_EPOCH_DATE, LocalTime.of(0, 0, 0));
 
 	private final byte[] value;
 	private final TimeType type;
@@ -68,13 +67,11 @@ public class Time {
 	/**
 	 * Creates a Time object from the specified value array.
 	 * 
-	 * @param value
-	 *            the specified value array which must be of length 8 for CCSDS day
-	 *            segmented time code in milliseconds, or of length 10 for CCSDS day
-	 *            segmented time code in picoseconds
+	 * @param value the specified value array which must be of length 8 for CCSDS
+	 *              day segmented time code in milliseconds, or of length 10 for
+	 *              CCSDS day segmented time code in picoseconds
 	 * @return a new Time object of the specified value array
-	 * @throws IllegalArgumentException
-	 *             if the value array is not of length 8 or 10
+	 * @throws IllegalArgumentException if the value array is not of length 8 or 10
 	 */
 	public static Time of(byte[] value) {
 		if (value.length != 8 && value.length != 10) {
@@ -87,8 +84,7 @@ public class Time {
 	/**
 	 * Creates a Time object from the specified Instant object.
 	 * 
-	 * @param instant
-	 *            the specified Instant object
+	 * @param instant the specified Instant object
 	 * @return a new Time object of the specified LocalDateTime object which is
 	 *         encoded in the CCSDS day segmented time code in milliseconds, since
 	 *         there is no support for picoseconds in the Java 8 LocalDateTime API
@@ -100,8 +96,7 @@ public class Time {
 	/**
 	 * Creates a Time object from the specified LocalDateTime object.
 	 * 
-	 * @param localDateTime
-	 *            the specified LocalDateTime object
+	 * @param localDateTime the specified LocalDateTime object
 	 * @return a new Time object of the specified LocalDateTime object which is
 	 *         encoded in the CCSDS day segmented time code in milliseconds, since
 	 *         there is no support for picoseconds in the Java 8 LocalDateTime API
@@ -173,6 +168,96 @@ public class Time {
 	}
 
 	/**
+	 * Indicates whether this Time is after the specified Time.
+	 * 
+	 * @param other the specified Time
+	 * @return true if the specified Time is after this Time, false otherwise
+	 */
+	public boolean isAfter(Time other) {
+		return toLocalDateTime().isAfter(other.toLocalDateTime());
+	}
+
+	/**
+	 * Indicates whether this Time is equal to the specified Time.
+	 * 
+	 * @param other the specified Time
+	 * @return true if the specified Time is equal to this Time, false otherwise
+	 */
+	public boolean isEqual(Time other) {
+		return toLocalDateTime().isEqual(other.toLocalDateTime());
+	}
+
+	/**
+	 * Indicates whether this Time is before the specified Time.
+	 * 
+	 * @param other the specified Time
+	 * @return true if the specified Time is before this Time, false otherwise
+	 */
+	public boolean isBefore(Time other) {
+		return toLocalDateTime().isBefore(other.toLocalDateTime());
+	}
+
+	/**
+	 * Indicates whether this Time is after the specified {@link LocalDateTime}.
+	 * 
+	 * @param other the specified Time
+	 * @return true if the specified {@link LocalDateTime} is after this Time, false otherwise
+	 */
+	public boolean isAfter(LocalDateTime other) {
+		return toLocalDateTime().isAfter(other);
+	}
+
+	/**
+	 * Indicates whether this Time is equal to the specified {@link LocalDateTime}.
+	 * 
+	 * @param other the specified Time
+	 * @return true if the specified {@link LocalDateTime} is equal to this Time, false otherwise
+	 */
+	public boolean isEqual(LocalDateTime other) {
+		return toLocalDateTime().isEqual(other);
+	}
+
+	/**
+	 * Indicates whether this Time is before the specified {@link LocalDateTime}.
+	 * 
+	 * @param other the specified Time
+	 * @return true if the specified {@link LocalDateTime} is before this Time, false otherwise
+	 */
+	public boolean isBefore(LocalDateTime other) {
+		return toLocalDateTime().isBefore(other);
+	}
+
+	/**
+	 * Indicates whether this Time is after the specified {@link Instant}.
+	 * 
+	 * @param other the specified Time
+	 * @return true if the specified {@link Instant} is after this Time, false otherwise
+	 */
+	public boolean isAfter(Instant other) {
+		return toInstant().isAfter(other);
+	}
+
+	/**
+	 * Indicates whether this Time is equal to the specified {@link Instant}.
+	 * 
+	 * @param other the specified Time
+	 * @return true if the specified {@link Instant} is equal this Time, false otherwise
+	 */
+	public boolean isEqual(Instant other) {
+		return toInstant().equals(other);
+	}
+
+	/**
+	 * Indicates whether this Time is before the specified {@link Instant}.
+	 * 
+	 * @param other the specified Time
+	 * @return true if the specified {@link Instant} is before this Time, false otherwise
+	 */
+	public boolean isBefore(Instant other) {
+		return toInstant().isBefore(other);
+	}
+
+	/**
 	 * Encodes this Time object into a CCSDS Time type.
 	 * 
 	 * @return the CCSDS Time type representing this Time object
@@ -190,8 +275,7 @@ public class Time {
 	/**
 	 * Decodes a specified CCSDS Time type.
 	 * 
-	 * @param time
-	 *            the specified CCSDS Time type
+	 * @param time the specified CCSDS Time type
 	 * @return a new Time object decoded from the specified CCSDS Duration type
 	 */
 	public static Time decode(ccsds.csts.common.types.Time time) {
@@ -208,8 +292,7 @@ public class Time {
 	 * Encodes a given Instant object to CCSDS day segmented time code in
 	 * milliseconds.
 	 * 
-	 * @param instant
-	 *            the specified Instant object
+	 * @param instant the specified Instant object
 	 * @return a byte array with the length of 8, containing the CCSDS day segmented
 	 *         time code in milliseconds
 	 */
@@ -221,8 +304,7 @@ public class Time {
 	 * Encodes a given LocalDateTime object to CCSDS day segmented time code in
 	 * milliseconds.
 	 * 
-	 * @param localDateTime
-	 *            the specified LocalDateTime object
+	 * @param localDateTime the specified LocalDateTime object
 	 * @return a byte array with the length of 8, containing the CCSDS day segmented
 	 *         time code in milliseconds
 	 */
@@ -267,9 +349,8 @@ public class Time {
 	/**
 	 * Decodes a given CCSDS day segmented time code in milliseconds to Instant.
 	 * 
-	 * @param CCSDSMillis
-	 *            the specified byte array with the length of 8, containing the
-	 *            CCSDS day segmented time code in milliseconds
+	 * @param CCSDSMillis the specified byte array with the length of 8, containing
+	 *                    the CCSDS day segmented time code in milliseconds
 	 * @return the decoded Instant object
 	 */
 	public static Instant decodeCCSDSMillisToInstant(byte[] CCSDSMillis) {
@@ -280,9 +361,8 @@ public class Time {
 	 * Decodes a given CCSDS day segmented time code in milliseconds to
 	 * LocalDateTime.
 	 * 
-	 * @param CCSDSMillis
-	 *            the specified byte array with the length of 8, containing the
-	 *            CCSDS day segmented time code in milliseconds
+	 * @param CCSDSMillis the specified byte array with the length of 8, containing
+	 *                    the CCSDS day segmented time code in milliseconds
 	 * @return the decoded LocalDateTime object
 	 */
 	public static LocalDateTime decodeCCSDSMillisToLocalDateTime(byte[] CCSDSMillis) {
@@ -323,13 +403,11 @@ public class Time {
 	 * Note: LocalDateTime (Java 8) does not support picoseconds. The picoseconds
 	 * need to be specified as an integer value, which is encoded in the result.
 	 * 
-	 * @param instant
-	 *            the specified Instant object which will automatically be truncated
-	 *            to milliseconds, since microseconds and nanoseconds are specified
-	 *            using the picoseconds parameter
-	 * @param picosOfMilli
-	 *            the specified picoseconds of milliseconds, where 0 <= picosOfMilli
-	 *            <= 999,999,999
+	 * @param instant      the specified Instant object which will automatically be
+	 *                     truncated to milliseconds, since microseconds and
+	 *                     nanoseconds are specified using the picoseconds parameter
+	 * @param picosOfMilli the specified picoseconds of milliseconds, where 0 <=
+	 *                     picosOfMilli <= 999,999,999
 	 * @return a byte array with the length of 8, containing the CCSDS day segmented
 	 *         time code in picoseconds
 	 */
@@ -344,13 +422,12 @@ public class Time {
 	 * Note: LocalDateTime (Java 8) does not support picoseconds. The picoseconds
 	 * need to be specified as an integer value, which is encoded in the result.
 	 * 
-	 * @param localDateTime
-	 *            the specified LocalDateTime object which will automatically be
-	 *            truncated to milliseconds, since microseconds and nanoseconds are
-	 *            specified using the picoseconds parameter
-	 * @param picosOfMilli
-	 *            the specified picoseconds of milliseconds, where 0 <= picosOfMilli
-	 *            <= 999,999,999
+	 * @param localDateTime the specified LocalDateTime object which will
+	 *                      automatically be truncated to milliseconds, since
+	 *                      microseconds and nanoseconds are specified using the
+	 *                      picoseconds parameter
+	 * @param picosOfMilli  the specified picoseconds of milliseconds, where 0 <=
+	 *                      picosOfMilli <= 999,999,999
 	 * @return a byte array with the length of 8, containing the CCSDS day segmented
 	 *         time code in picoseconds
 	 */
@@ -395,9 +472,8 @@ public class Time {
 	 * Note: LocalDateTime (Java 8) does not support picoseconds. The returned
 	 * LocalDateTime object will be truncated to nanosecond resolution.
 	 * 
-	 * @param CCSDSPicos
-	 *            the specified byte array with the length of 8, containing the
-	 *            CCSDS day segmented time code in picoseconds
+	 * @param CCSDSPicos the specified byte array with the length of 8, containing
+	 *                   the CCSDS day segmented time code in picoseconds
 	 * @return the decoded Instant object
 	 */
 	public static Instant decodeCCSDSPicosToInstant(byte[] CCSDSPicos) {
@@ -411,9 +487,8 @@ public class Time {
 	 * Note: LocalDateTime (Java 8) does not support picoseconds. The returned
 	 * LocalDateTime object will be truncated to nanosecond resolution.
 	 * 
-	 * @param CCSDSPicos
-	 *            the specified byte array with the length of 8, containing the
-	 *            CCSDS day segmented time code in picoseconds
+	 * @param CCSDSPicos the specified byte array with the length of 8, containing
+	 *                   the CCSDS day segmented time code in picoseconds
 	 * @return the decoded LocalDateTime object
 	 */
 	public static LocalDateTime decodeCCSDSPicosToLocalDateTime(byte[] CCSDSPicos) {
@@ -433,8 +508,7 @@ public class Time {
 		long millisOfDay = Integer.toUnsignedLong(buffer.getInt());
 
 		if (millisOfDay < 0 || millisOfDay > 86399999) {
-			throw new IllegalArgumentException(
-					"Invalid value for milliseconds of day (0 - 86399999): " + Long.toUnsignedString(millisOfDay));
+			throw new IllegalArgumentException("Invalid value for milliseconds of day (0 - 86399999): " + Long.toUnsignedString(millisOfDay));
 		}
 
 		// nanoseconds of days derived from milliseconds
@@ -444,8 +518,7 @@ public class Time {
 		long picosOfMilli = Integer.toUnsignedLong(buffer.getInt());
 
 		if (picosOfMilli < 0 || picosOfMilli > 999999999) {
-			throw new IllegalArgumentException(
-					"Invalid value for picoseconds of miliseconds (0 - 999999999): " + picosOfMilli);
+			throw new IllegalArgumentException("Invalid value for picoseconds of miliseconds (0 - 999999999): " + picosOfMilli);
 		}
 
 		// convert manually, since there is no support for picosecond conversion through

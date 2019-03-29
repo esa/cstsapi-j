@@ -26,6 +26,15 @@ public interface IChannelInitiate
      * @param last
      */
     void sendSLEPDU(byte[] data, boolean last);
+    
+    /**
+     * Sends an encoded PDU, blocking.
+     * 
+     * @param data
+     * @param lg
+     * @param last
+     */
+    void sendSLEPDUBlocking(byte[] data, boolean last);
 
     /**
      * Sends a DISCONNECT request.

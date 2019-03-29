@@ -1,5 +1,6 @@
 package esa.egos.proxy;
 
+import esa.egos.csts.api.enumerations.Result;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
@@ -26,7 +27,7 @@ public interface ISrvProxyInitiate
      * @param seqCount sequence counter
      * @throws SleApiException
      */
-    void initiateOpInvoke(IOperation poperation, boolean reportTransmission, long seqCount) throws ApiException;
+    Result initiateOpInvoke(IOperation poperation, boolean reportTransmission, long seqCount) throws ApiException;
 
     /**
      * Initiates operation return.
@@ -51,4 +52,6 @@ public interface ISrvProxyInitiate
      * @return
      */
     AssocState getAssocState();
+
+	void discardOperation(IOperation operation);
 }

@@ -5,13 +5,13 @@ import java.io.IOException;
 import ccsds.csts.association.control.types.PeerAbortDiagnostic;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.operations.IOperation;
-import esa.egos.csts.api.serviceinstance.IServiceInstance;
+import esa.egos.csts.api.serviceinstance.IServiceInstanceInternal;
 import esa.egos.proxy.enums.AbortOriginator;
 import esa.egos.proxy.util.impl.Reference;
 
 public interface ITranslator {
 
-	void initialise(IServiceInstance serviceInstance) throws ApiException;
+	void initialise(IServiceInstanceInternal serviceInstance) throws ApiException;
 	
 	IOperation decode(byte[] data, Reference<Boolean> isInvoke) throws ApiException, IOException;
 	

@@ -16,9 +16,9 @@ import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IPeerAbort;
 import esa.egos.csts.api.operations.IUnbind;
-import esa.egos.csts.api.procedures.IProcedure;
+import esa.egos.csts.api.procedures.IProcedureInternal;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
-import esa.egos.csts.api.serviceinstance.IServiceInstance;
+import esa.egos.csts.api.serviceinstance.IServiceInstanceInternal;
 import esa.egos.proxy.enums.AbortOriginator;
 import esa.egos.proxy.util.impl.Reference;
 
@@ -27,7 +27,7 @@ public class PDUTranslator implements ITranslator{
     private IBind pendingBind;
 	private IUnbind pendingUnbind;
     
-	private IServiceInstance serviceInstance;
+	private IServiceInstanceInternal serviceInstance;
 	
     private final ReentrantLock accessPendingReturn;
     private final TreeMap<Integer, IConfirmedOperation> pendingReturn;
@@ -160,6 +160,12 @@ public class PDUTranslator implements ITranslator{
 			isInvoke.setReference(false);
 			return AssocTranslator.decodeGetReturn(getReturnOp(pdu.getGetReturn().getInvokeId()),pdu);
 		}
+
+		// TODO Milena check if this is suitable
+		// ExecuteDirectiveAcknowledgment
+		if(pdu.getExecuteDirectiveAcknowledge() != null)
+			return AssocTranslator.decodeExecuteDirectiveAcknowledgement(peekReturnOp(pdu.getExecuteDirectiveAcknowledge().getInvokeId()),pdu);
+		
 		// ExecuteDirectiveReturn
 		if(pdu.getExecuteDirectiveReturn() != null)
 			return AssocTranslator.decodeExecuteDirectiveReturn(getReturnOp(pdu.getExecuteDirectiveReturn().getInvokeId()),pdu);
@@ -206,7 +212,7 @@ public class PDUTranslator implements ITranslator{
 		// we are from within the API, so we know the service instance and relay
 		if(identifier != null){
 		
-			IProcedure procedure = this.serviceInstance.getProcedure(identifier);
+			IProcedureInternal procedure = this.serviceInstance.getProcedureInternal(identifier);
 			operation = procedure.decodeOperation(data);
 		}
 		
@@ -238,7 +244,7 @@ public class PDUTranslator implements ITranslator{
 		
 		return unbindOp;
 	}
-
+	
 	private IOperation getReturnOp(InvokeId invokeId) throws ApiException {
 		IConfirmedOperation op = null;
 		
@@ -262,6 +268,25 @@ public class PDUTranslator implements ITranslator{
 		return op;
 	}
 
+	// TODO Milena check if this is suitable
+	private IOperation peekReturnOp(InvokeId invokeId) throws ApiException {
+		IConfirmedOperation op = null;
+		
+		int index = invokeId.intValue();
+		
+        this.accessPendingReturn.lock();
+        // take the operation in the map
+        op = this.pendingReturn.get(index);
+        if (op == null)
+        {
+            // no pending return
+            throw new ApiException("No pending return for invoke id " + invokeId);
+        }
+        this.accessPendingReturn.unlock();
+		
+		return op;
+	}
+	
 	@Override
 	public IOperation decode(int diagnostic, PeerAbortDiagnostic peerAbortDiagnostic, AbortOriginator abortOriginator) throws ApiException {
 		
@@ -282,7 +307,7 @@ public class PDUTranslator implements ITranslator{
 		
 		ProcedureInstanceIdentifier identifier = operation.getProcedureInstanceIdentifier();
 		
-		IProcedure procedure = this.serviceInstance.getProcedure(identifier);
+		IProcedureInternal procedure = this.serviceInstance.getProcedureInternal(identifier);
 		output = procedure.encodeOperation(operation, invoke);
 		
 		if (operation.isConfirmed()) {
@@ -386,7 +411,7 @@ public class PDUTranslator implements ITranslator{
 	}
 
 	@Override
-	public void initialise(IServiceInstance serviceInstance) throws ApiException{
+	public void initialise(IServiceInstanceInternal serviceInstance) throws ApiException{
 		if(this.serviceInstance == null)
 			this.serviceInstance = serviceInstance;
 		else

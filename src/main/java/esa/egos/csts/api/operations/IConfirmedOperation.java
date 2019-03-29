@@ -7,13 +7,15 @@ import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.extensions.Extension;
 import esa.egos.csts.api.util.ICredentials;
 
+/**
+ * The base interface of all confirmed operation.
+ */
 public interface IConfirmedOperation extends IOperation {
 
 	/**
 	 * Verifies the return arguments.
 	 * 
-	 * @throws ApiException
-	 *             if the return arguments could not be verified
+	 * @throws ApiException if the return arguments could not be verified
 	 */
 	void verifyReturnArguments() throws ApiException;
 
@@ -34,8 +36,7 @@ public interface IConfirmedOperation extends IOperation {
 	/**
 	 * Sets the return extension.
 	 * 
-	 * @param embeddedData
-	 *            the return extension
+	 * @param embeddedData the return extension
 	 */
 	void setReturnExtension(EmbeddedData embeddedData);
 
@@ -65,15 +66,22 @@ public interface IConfirmedOperation extends IOperation {
 	Diagnostic getDiagnostic();
 
 	/**
-	 * Sets the diagnostic.
+	 * Specifies the diagnostic of this operation and sets the result to negative.
 	 * 
-	 * @param diagnostic
-	 *            the diagnostic.
+	 * @param diagnostic the diagnostic.
 	 */
 	void setDiagnostic(Diagnostic diagnostic);
 
 	/**
-	 * Return the performer credentials.
+	 * Specifies an extended diagnostic of this operation and sets the result to
+	 * negative.
+	 * 
+	 * @param diagnosticExtension the diagnostic extension
+	 */
+	void setDiagnostic(EmbeddedData diagnosticExtension);
+
+	/**
+	 * Returns the performer credentials.
 	 * 
 	 * @return the performer credentials
 	 */
@@ -82,8 +90,7 @@ public interface IConfirmedOperation extends IOperation {
 	/**
 	 * Sets the performer credentials.
 	 * 
-	 * @param credentials
-	 *            the performer credentials
+	 * @param credentials the performer credentials
 	 */
 	void setPerformerCredentials(ICredentials credentials);
 

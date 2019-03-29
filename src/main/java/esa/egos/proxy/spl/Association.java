@@ -13,6 +13,7 @@ import esa.egos.csts.api.enumerations.Result;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.exceptions.ApiResultException;
 import esa.egos.csts.api.main.IApi;
+import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IBind;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
@@ -74,6 +75,7 @@ import esa.egos.proxy.xml.RemotePeer;
  * counting, two mutex are needed.
  */
 public abstract class Association implements ISrvProxyInitiate, IChannelInform {
+
 	private static final Logger LOG = Logger.getLogger(Association.class.getName());
 
 	/**
@@ -522,7 +524,7 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 			if (this.srvProxyInform != null) {
 				this.objMutex.unlock();
 				try {
-					this.srvProxyInform.protocolAbort(diagnostic.getDiagAsByteArray());
+					this.srvProxyInform.protocolAbort();
 				} catch (ApiException e) {
 					LOG.log(Level.FINE, "CstsApiException ", e);
 				} finally {
@@ -606,7 +608,16 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 					}
 					this.objMutex.unlock();
 					try {
-						this.srvProxyInform.informOpReturn(pConfOp, seqc);
+						if (pConfOp.isAcknowledged()) {
+							IAcknowledgedOperation ackOp = (IAcknowledgedOperation) pConfOp;
+							if (ackOp.isAcknowledgement()) {
+								this.srvProxyInform.informOpAck(ackOp, seqc);
+							} else {
+								this.srvProxyInform.informOpReturn(pConfOp, seqc);
+							}
+						} else {
+							this.srvProxyInform.informOpReturn(pConfOp, seqc);
+						}
 					} catch (ApiException e) {
 						LOG.log(Level.FINE, "CstsApiException ", e);
 						return Result.E_FAIL;
@@ -725,7 +736,7 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 		}
 
 		try {
-			pPeerAbort = this.api.createAbort();
+			pPeerAbort = this.srvProxyInform.createAbort();
 		} catch (ApiException e) {
 			LOG.log(Level.FINE, "CstsApiException ", e);
 			return Result.E_FAIL;
@@ -923,7 +934,7 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 	 * @throws ApiException
 	 */
 	@Override
-	public void initiateOpInvoke(IOperation operation, boolean reportTransmission, long seqCount) throws ApiException {
+	public Result initiateOpInvoke(IOperation operation, boolean reportTransmission, long seqCount) throws ApiException {
 		Result res = Result.S_OK;
 		if (LOG.isLoggable(Level.FINE)) {
 			LOG.fine("Before locking obj mutex");
@@ -967,6 +978,8 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 				LOG.fine("After unlocking obj mutex");
 			}
 		}
+
+		return res;
 	}
 
 	/**
@@ -1698,6 +1711,11 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 
 	public void setRole(BindRole role) {
 		this.role = role;
+	}
+	
+	@Override
+	public void discardOperation(IOperation operation) {
+		this.iOperation.remove(this.iOperation.indexOf(operation));
 	}
 
 }

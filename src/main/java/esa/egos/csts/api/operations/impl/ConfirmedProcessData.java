@@ -15,12 +15,15 @@ import esa.egos.csts.api.extensions.Extension;
 import esa.egos.csts.api.operations.AbstractConfirmedOperation;
 import esa.egos.csts.api.operations.IConfirmedProcessData;
 
+/**
+ * This class represents a PROCESS-DATA (confirmed) operation.
+ */
 public class ConfirmedProcessData extends AbstractConfirmedOperation implements IConfirmedProcessData {
 
 	private static final OperationType TYPE = OperationType.CONFIRMED_PROCESS_DATA;
-	
+
 	/**
-	 * The datat unit ID
+	 * The data unit ID
 	 */
 	private long dataUnitID;
 
@@ -28,18 +31,21 @@ public class ConfirmedProcessData extends AbstractConfirmedOperation implements 
 	 * The encoded data
 	 */
 	private byte[] data;
-	
+
 	/**
 	 * The embedded data
 	 */
 	private EmbeddedData embeddedData;
-	
+
+	/**
+	 * The invocation extension
+	 */
 	private Extension invocationExtension;
 
 	public ConfirmedProcessData() {
 		invocationExtension = Extension.notUsed();
 	}
-	
+
 	@Override
 	public OperationType getType() {
 		return TYPE;
@@ -51,12 +57,12 @@ public class ConfirmedProcessData extends AbstractConfirmedOperation implements 
 	}
 
 	@Override
-	public long getDataUnitID() {
+	public long getDataUnitId() {
 		return dataUnitID;
 	}
 
 	@Override
-	public void setDataUnitID(long dataUnitID) {
+	public void setDataUnitId(long dataUnitID) {
 		this.dataUnitID = dataUnitID;
 	}
 
@@ -70,6 +76,16 @@ public class ConfirmedProcessData extends AbstractConfirmedOperation implements 
 		this.data = data;
 	}
 
+	@Override
+	public EmbeddedData getEmbeddedData() {
+		return embeddedData;
+	}
+
+	@Override
+	public void setEmbeddedData(EmbeddedData embeddedData) {
+		this.embeddedData = embeddedData;
+	}
+	
 	public Extension getInvocationExtension() {
 		return invocationExtension;
 	}
@@ -77,7 +93,7 @@ public class ConfirmedProcessData extends AbstractConfirmedOperation implements 
 	public void setInvocationExtension(EmbeddedData embedded) {
 		invocationExtension = Extension.of(embedded);
 	}
-	
+
 	@Override
 	public void verifyInvocationArguments() throws ApiException {
 		if (dataUnitID < 0) {
@@ -123,10 +139,16 @@ public class ConfirmedProcessData extends AbstractConfirmedOperation implements 
 	public ProcessDataReturn encodeProcessDataReturn() {
 		return encodeStandardReturnHeader(ProcessDataReturn.class);
 	}
-	
+
 	@Override
 	public void decodeProcessDataReturn(ProcessDataReturn processDataReturn) {
 		decodeStandardReturnHeader(processDataReturn);
+	}
+
+	@Override
+	public String toString() {
+		return "ConfirmedProcessData [dataUnitID=" + dataUnitID + ", data=" + Arrays.toString(data) + ", embeddedData="
+				+ embeddedData + ", invocationExtension=" + invocationExtension + "]";
 	}
 
 }

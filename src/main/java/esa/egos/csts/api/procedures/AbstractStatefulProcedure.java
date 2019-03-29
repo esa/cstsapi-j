@@ -10,9 +10,9 @@ import esa.egos.csts.api.states.service.ServiceSubStatus;
  * This class inherits all relevant data and routines of standard Procedures and
  * extends its functionality with States for the underlying State Pattern.
  */
-public abstract class AbstractStatefulProcedure extends AbstractProcedure implements IStatefulProcedure {
+public abstract class AbstractStatefulProcedure extends AbstractProcedure implements IStatefulProcedureInternal {
 
-	private State<? extends IStatefulProcedure> state;
+	private State<? extends IStatefulProcedureInternal> state;
 
 	@Override
 	public void initialize() {
@@ -32,17 +32,17 @@ public abstract class AbstractStatefulProcedure extends AbstractProcedure implem
 	}
 
 	@Override
-	public State<? extends IStatefulProcedure> getState() {
+	public State<? extends IStatefulProcedureInternal> getState() {
 		return state;
 	}
 
 	@Override
-	public void setState(State<? extends IStatefulProcedure> state) {
+	public void setState(State<? extends IStatefulProcedureInternal> state) {
 		if (isPrime()) {
 			if (state.isActive()) {
-				getServiceInstance().setSubState(ServiceSubStatus.ACTIVE);
+				getServiceInstanceInternal().setSubState(ServiceSubStatus.ACTIVE);
 			} else if (!state.isActive()) {
-				getServiceInstance().setSubState(ServiceSubStatus.READY);
+				getServiceInstanceInternal().setSubState(ServiceSubStatus.READY);
 			}
 		}
 		this.state = state;

@@ -15,30 +15,33 @@ import esa.egos.csts.api.operations.AbstractOperation;
 import esa.egos.csts.api.operations.ITransferData;
 import esa.egos.csts.api.types.Time;
 
+/**
+ * This class represents a TRANSFER-DATA operation.
+ */
 public class TransferData extends AbstractOperation implements ITransferData {
 
 	private static final OperationType TYPE = OperationType.TRANSFER_DATA;
-	
+
 	/**
 	 * The generation time
 	 */
 	private Time generationTime;
-	
+
 	/**
 	 * The sequence counter
 	 */
 	private long sequenceCounter;
-	
+
 	/**
 	 * The encoded data
 	 */
 	private byte[] data;
-	
+
 	/**
 	 * The embedded data
 	 */
 	private EmbeddedData embeddedData;
-	
+
 	/**
 	 * The invocation extension
 	 */
@@ -50,7 +53,7 @@ public class TransferData extends AbstractOperation implements ITransferData {
 	public TransferData() {
 		invocationExtension = Extension.notUsed();
 	}
-	
+
 	@Override
 	public OperationType getType() {
 		return TYPE;
@@ -90,12 +93,12 @@ public class TransferData extends AbstractOperation implements ITransferData {
 	public EmbeddedData getEmbeddedData() {
 		return embeddedData;
 	}
-	
+
 	@Override
 	public void setEmbeddedData(EmbeddedData embeddedData) {
 		this.embeddedData = embeddedData;
 	}
-	
+
 	@Override
 	public Extension getInvocationExtension() {
 		return invocationExtension;
@@ -105,7 +108,7 @@ public class TransferData extends AbstractOperation implements ITransferData {
 	public void setInvocationExtension(EmbeddedData embedded) {
 		invocationExtension = Extension.of(embedded);
 	}
-	
+
 	@Override
 	public void verifyInvocationArguments() throws ApiException {
 		if (generationTime == null) {
@@ -153,6 +156,13 @@ public class TransferData extends AbstractOperation implements ITransferData {
 			embeddedData = EmbeddedData.decode(transferDataInvocation.getData().getExtendedData());
 		}
 		invocationExtension = Extension.decode(transferDataInvocation.getTransferDataInvocationExtension());
+	}
+
+	@Override
+	public String toString() {
+		return "TransferData [generationTime=" + generationTime + ", sequenceCounter=" + sequenceCounter + ", data="
+				+ Arrays.toString(data) + ", embeddedData=" + embeddedData + ", invocationExtension="
+				+ invocationExtension + "]";
 	}
 
 }

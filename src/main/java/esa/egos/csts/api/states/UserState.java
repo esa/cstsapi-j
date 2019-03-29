@@ -1,18 +1,18 @@
 package esa.egos.csts.api.states;
 
-import esa.egos.csts.api.enumerations.Result;
+import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.operations.IOperation;
-import esa.egos.csts.api.procedures.IStatefulProcedure;
+import esa.egos.csts.api.procedures.IStatefulProcedureInternal;
 
-public class UserState<T extends IStatefulProcedure> extends State<T> {
+public class UserState extends State<IStatefulProcedureInternal> {
 
-	public UserState(T procedure) {
+	public UserState(IStatefulProcedureInternal procedure) {
 		super(procedure);
 	}
 
 	@Override
-	public Result process(IOperation operation) {
-		return Result.SLE_S_IGNORED;
+	public CstsResult process(IOperation operation) {
+		return CstsResult.IGNORED;
 	}
 
 	@Override

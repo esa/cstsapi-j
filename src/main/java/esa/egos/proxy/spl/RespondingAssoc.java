@@ -32,7 +32,7 @@ import esa.egos.proxy.spl.types.SPLEvent;
 import esa.egos.proxy.tml.ISP1ProtocolAbortDiagnostics;
 import esa.egos.proxy.xml.ProxyConfig;
 import esa.egos.proxy.xml.RemotePeer;
-import esa.egos.proxy.xml.ServerType;
+import esa.egos.proxy.xml.ConfigServiceType;
 
 
 /**
@@ -178,10 +178,10 @@ public class RespondingAssoc extends Association
                 }
 
                 // check if the service type is supported
-                ArrayList<ServerType> pSrvTypeList = this.config.getServerTypeList();
-                ServerType pSrvType = null;
-                for(ServerType serverType: pSrvTypeList){
-                	if(serverType.getServerId().equals(pBind.getServiceType().getOid().toString()))
+                ArrayList<ConfigServiceType> pSrvTypeList = this.config.getServiceTypeList();
+                ConfigServiceType pSrvType = null;
+                for(ConfigServiceType serverType: pSrvTypeList){
+                	if(serverType.getServiceId().equals(pBind.getServiceType().getOid().toString()))
                 		pSrvType = serverType;
                 }
                 if (pSrvType == null)
@@ -194,14 +194,14 @@ public class RespondingAssoc extends Association
                     // set the version number
                     this.version = pBind.getVersionNumber();
                     // check if the version is supported
-                    int indexMax = pSrvType.getServerVersion().size();
+                    int indexMax = pSrvType.getServiceVersion().size();
                     int versionNumber = -1;
                     int versionNumberBind = pBind.getVersionNumber();
                     boolean found = false;
 
                     for (int index = 0; index < indexMax; index++)
                     {
-                        versionNumber = pSrvType.getServerVersion().get(index);
+                        versionNumber = pSrvType.getServiceVersion().get(index);
                         if (versionNumber != -1)
                         {
                             if (versionNumber == versionNumberBind)

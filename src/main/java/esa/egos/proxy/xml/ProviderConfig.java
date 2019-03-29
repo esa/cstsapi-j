@@ -32,10 +32,10 @@ public class ProviderConfig {
 	@XmlAttribute(name = "transmit_queue_size")
 	private int transmissionQueueSize;
 
-	@XmlElementWrapper(name = "server_types", required = false)
+	@XmlElementWrapper(name = "service_types", required = false)
 	// XmlElement sets the name of the entities
-	@XmlElement(name = "server_type")
-	protected ArrayList<ServerType> serverTypeList;
+	@XmlElement(name = "service_type")
+	protected ArrayList<ConfigServiceType> serviceTypeList;
 	
 	@XmlElementWrapper(name = "remote_peers", required = true)
 	// XmlElement sets the name of the entities
@@ -62,6 +62,9 @@ public class ProviderConfig {
 	private int minHB;
 	@XmlAttribute(name = "max_heartbeat")
 	private int maxHB;
+	
+	@XmlAttribute(name = "transfer_type", required = true)
+	private TransferType transferType;
 	
 	@XmlElement(name = "portlist", required = true)
 	private PortList portList;
@@ -99,6 +102,12 @@ public class ProviderConfig {
 	public int getStartupTimer() {
 		return startupTimer;
 	}
+	public TransferType getTransferType() {
+		return transferType;
+	}
+	public void setTransferType(TransferType transferType) {
+		this.transferType = transferType;
+	}
 	public void setStartupTimer(int startupTimer) {
 		this.startupTimer = startupTimer;
 	}
@@ -120,11 +129,11 @@ public class ProviderConfig {
 	public void setAuthenticationDelay(int authenticationDelay) {
 		this.authenticationDelay = authenticationDelay;
 	}
-	public ArrayList<ServerType> getServerTypeList() {
-		return serverTypeList;
+	public ArrayList<ConfigServiceType> getServiceTypeList() {
+		return serviceTypeList;
 	}
-	public void setServerTypeList(ArrayList<ServerType> serverTypeList) {
-		this.serverTypeList = serverTypeList;
+	public void setServiceTypeList(ArrayList<ConfigServiceType> serverTypeList) {
+		this.serviceTypeList = serverTypeList;
 	}
 	public ArrayList<RemotePeer> getRemotePeerList() {
 		return remotePeerList;

@@ -3,11 +3,14 @@ package esa.egos.csts.api.operations.impl;
 import ccsds.csts.association.control.types.PeerAbortInvocation;
 import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.enumerations.OperationType;
-import esa.egos.csts.api.operations.AbstractConfirmedOperation;
+import esa.egos.csts.api.operations.AbstractOperation;
 import esa.egos.csts.api.operations.IPeerAbort;
 import esa.egos.proxy.enums.AbortOriginator;
 
-public class PeerAbort extends AbstractConfirmedOperation implements IPeerAbort {
+/**
+ * This class represents a PEER-ABORT operation.
+ */
+public class PeerAbort extends AbstractOperation implements IPeerAbort {
 
 	private static final OperationType TYPE = OperationType.PEER_ABORT;
 
@@ -35,11 +38,6 @@ public class PeerAbort extends AbstractConfirmedOperation implements IPeerAbort 
 	}
 
 	@Override
-	public boolean isBlocking() {
-		return false;
-	}
-
-	@Override
 	public PeerAbortDiagnostics getPeerAbortDiagnostic() {
 		return diagnostic;
 	}
@@ -61,21 +59,7 @@ public class PeerAbort extends AbstractConfirmedOperation implements IPeerAbort 
 
 	@Override
 	public String print(int i) {
-
-		StringBuilder os = new StringBuilder();
-
-		os.append("Abort Originator       : " + this.originator + "\n");
-		os.append("Service Instance Id    : ");
-
-		if (getServiceInstanceIdentifier() != null) {
-			String sii_c = getServiceInstanceIdentifier().toString();
-			os.append(sii_c);
-		}
-
-		os.append("\n");
-		os.append("Bind Diagnostic        : " + getDiagnostic().toString() + "\n");
-
-		return os.toString();
+		return "PeerAbort [originator=" + originator + ", diagnostic=" + diagnostic + "]";
 	}
 
 	@Override
@@ -84,10 +68,15 @@ public class PeerAbort extends AbstractConfirmedOperation implements IPeerAbort 
 		peerAbortInvocation.setDiagnostic(diagnostic.encode());
 		return peerAbortInvocation;
 	}
-	
+
 	@Override
 	public void decodePeerAbortInvocation(PeerAbortInvocation peerAbortInvocation) {
 		diagnostic = PeerAbortDiagnostics.decode(peerAbortInvocation.getDiagnostic());
 	}
-	
+
+	@Override
+	public String toString() {
+		return "PeerAbort [originator=" + originator + ", diagnostic=" + diagnostic + "]";
+	}
+
 }

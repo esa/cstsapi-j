@@ -5,24 +5,24 @@
 
   <xs:complexType name="providerConfig">
     <xs:sequence>
-      <xs:element name="server_types" minOccurs="0">
+      <xs:element name="service_types" minOccurs="0">
         <xs:complexType>
           <xs:sequence>
-            <xs:element name="server_type" type="serverType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="service_type" type="configServiceType" minOccurs="0" maxOccurs="unbounded"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>
       <xs:element name="remote_peers">
         <xs:complexType>
           <xs:sequence>
-            <xs:element name="remote_peer" type="remotePeer" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="remote_peer" type="remotePeer" maxOccurs="unbounded"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>
       <xs:element name="local_logical_ports">
         <xs:complexType>
           <xs:sequence>
-            <xs:element name="logical_port" type="localLogicalPort" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="logical_port" type="localLogicalPort" maxOccurs="unbounded"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>
@@ -35,16 +35,17 @@
     <xs:attribute name="non_useheartbeat" type="xs:boolean" use="required"/>
     <xs:attribute name="authentication_delay" type="xs:int" use="required"/>
     <xs:attribute name="transmit_queue_size" type="xs:int" use="required"/>
-    <xs:attribute name="cs_address" type="xs:string"/>
-    <xs:attribute name="default_reporting_address" type="xs:string"/>
+    <xs:attribute name="cs_address" type="xs:string" use="required"/>
+    <xs:attribute name="default_reporting_address" type="xs:string" use="required"/>
     <xs:attribute name="use_nagel" type="xs:boolean" use="required"/>
     <xs:attribute name="min_deadfactor" type="xs:int" use="required"/>
     <xs:attribute name="max_deadfactor" type="xs:int" use="required"/>
     <xs:attribute name="min_heartbeat" type="xs:int" use="required"/>
     <xs:attribute name="max_heartbeat" type="xs:int" use="required"/>
+    <xs:attribute name="transfer_type" type="transferType" use="required"/>
   </xs:complexType>
 
-  <xs:complexType name="serverType">
+  <xs:complexType name="configServiceType">
     <xs:sequence>
       <xs:element name="srv_versions">
         <xs:complexType>
@@ -105,6 +106,13 @@
       <xs:enumeration value="NONE"/>
       <xs:enumeration value="BIND_ONLY"/>
       <xs:enumeration value="ALL"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="transferType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="TIMELY"/>
+      <xs:enumeration value="COMPLETE"/>
     </xs:restriction>
   </xs:simpleType>
 </xs:schema>

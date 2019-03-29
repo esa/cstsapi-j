@@ -2,11 +2,12 @@ package esa.egos.csts.api.events;
 
 import java.util.Observable;
 
-import esa.egos.csts.api.functionalresources.impl.FunctionalResourceName;
+import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.Name;
+import esa.egos.csts.api.types.Time;
 
 /**
  * This class represents an Event.
@@ -19,6 +20,7 @@ public class Event extends Observable implements IEvent {
 	private final Label label;
 	private final Name name;
 	private EventValue value;
+	private Time time;
 
 	/**
 	 * Instantiates a new Event from the specified Object Identifier and Functional
@@ -33,6 +35,7 @@ public class Event extends Observable implements IEvent {
 		label = Label.of(identifier, functionalResourceName.getType());
 		name = Name.of(identifier, functionalResourceName);
 		value = EventValue.empty();
+		time = Time.now();
 	}
 
 	/**
@@ -48,6 +51,7 @@ public class Event extends Observable implements IEvent {
 		label = Label.of(identifier, procedureInstanceIdentifier.getType());
 		name = Name.of(identifier, procedureInstanceIdentifier);
 		value = EventValue.empty();
+		time = Time.now();
 	}
 
 	@Override
@@ -74,6 +78,16 @@ public class Event extends Observable implements IEvent {
 	public void setValue(EventValue value) {
 		this.value = value;
 	}
+	
+	@Override
+	public Time getTime() {
+		return time;
+	}
+	
+	@Override
+	public void setTime(Time time) {
+		this.time = time;
+	}
 
 	@Override
 	public void fire() {
@@ -84,6 +98,14 @@ public class Event extends Observable implements IEvent {
 	@Override
 	public void fire(EventValue value) {
 		this.value = value;
+		setChanged();
+		notifyObservers();
+	}
+	
+	@Override
+	public void fire(EventValue value, Time time) {
+		this.value = value;
+		this.time = time;
 		setChanged();
 		notifyObservers();
 	}

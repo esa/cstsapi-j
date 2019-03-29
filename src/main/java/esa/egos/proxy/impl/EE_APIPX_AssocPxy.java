@@ -35,7 +35,7 @@ import esa.egos.proxy.xml.AuthenticationMode;
 import esa.egos.proxy.xml.ProxyConfig;
 import esa.egos.proxy.xml.ProxyRoleEnum;
 import esa.egos.proxy.xml.RemotePeer;
-import esa.egos.proxy.xml.ServerType;
+import esa.egos.proxy.xml.ConfigServiceType;
 
 
 /**
@@ -769,12 +769,12 @@ public class EE_APIPX_AssocPxy extends EE_APIPX_LinkAdapter implements IChannelI
             return true;
         }
 
-        ServerType pSrvType = null;
-        ArrayList<ServerType> pSrvTypeList = null;
-        pSrvTypeList = this.config.getServerTypeList();
-        for (ServerType serverType: pSrvTypeList){
+        ConfigServiceType pSrvType = null;
+        ArrayList<ConfigServiceType> pSrvTypeList = null;
+        pSrvTypeList = this.config.getServiceTypeList();
+        for (ConfigServiceType serverType: pSrvTypeList){
         	
-        	if(serverType.getServerId().equals(bindop.getServiceType().getOid().toString())
+        	if(serverType.getServiceId().equals(bindop.getServiceType().getOid().toString())
         			//&& serverType.getServerVersion().contains(bindop.getServiceType().getVersions())
         			)
         		pSrvType = serverType;
@@ -787,12 +787,12 @@ public class EE_APIPX_AssocPxy extends EE_APIPX_LinkAdapter implements IChannelI
         }
 
         // check if the version number match one entry in the database
-        int indexMax = pSrvType.getServerVersion().size();
+        int indexMax = pSrvType.getServiceVersion().size();
         int versionNumberBind = bindop.getVersionNumber();
         boolean found = false;
         for (int index = 0; index < indexMax; index++)
         {
-            int versionNumber = pSrvType.getServerVersion().get(index);
+            int versionNumber = pSrvType.getServiceVersion().get(index);
             if (versionNumber == versionNumberBind)
             {
                 found = true;

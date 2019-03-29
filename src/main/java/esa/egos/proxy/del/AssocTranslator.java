@@ -4,6 +4,7 @@ import ccsds.csts.pdus.CstsFrameworkPdu;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.operations.IBind;
 import esa.egos.csts.api.operations.IConfirmedProcessData;
+import esa.egos.csts.api.operations.IExecuteDirective;
 import esa.egos.csts.api.operations.IGet;
 import esa.egos.csts.api.operations.INotify;
 import esa.egos.csts.api.operations.IOperation;
@@ -14,6 +15,7 @@ import esa.egos.csts.api.operations.ITransferData;
 import esa.egos.csts.api.operations.IUnbind;
 import esa.egos.csts.api.operations.impl.Bind;
 import esa.egos.csts.api.operations.impl.ConfirmedProcessData;
+import esa.egos.csts.api.operations.impl.ExecuteDirective;
 import esa.egos.csts.api.operations.impl.Get;
 import esa.egos.csts.api.operations.impl.Notify;
 import esa.egos.csts.api.operations.impl.ProcessData;
@@ -133,15 +135,17 @@ public class AssocTranslator {
 			throw new ApiException("No PROCESS-DATA data for Assoc Translator transmitted.");
 		}
 		
-		IProcessData processData;
+		IOperation operation;
 		if (pdu.getProcessDataInvocation().getStandardInvocationHeader().getInvokeId().longValue() == 0) {
-			processData = new ProcessData();
+			IProcessData processData = new ProcessData();
 			processData.decodeProcessDataInvocation(pdu.getProcessDataInvocation());
+			operation = processData;
 		} else {
-			processData = new ConfirmedProcessData();
+			IConfirmedProcessData processData = new ConfirmedProcessData();
 			processData.decodeProcessDataInvocation(pdu.getProcessDataInvocation());
+			operation = processData;
 		}
-		return processData;
+		return operation;
 		
 	}
 	
@@ -196,13 +200,32 @@ public class AssocTranslator {
 		if (pdu.getExecuteDirectiveInvocation() == null)
 			throw new ApiException("No execute directive data for Assoc Translator transmitted.");
 
-		// TODO Auto-generated method stub
-		return null;
+		IExecuteDirective executeDirective = new ExecuteDirective();
+		executeDirective.decodeExecuteDirectiveInvocation(pdu.getExecuteDirectiveInvocation());
+		
+		return executeDirective;
 	}
 	
-	public static IOperation decodeExecuteDirectiveReturn(IOperation returnOp, CstsFrameworkPdu pdu) {
-		// TODO Auto-generated method stub
-		return null;
+	public static IOperation decodeExecuteDirectiveAcknowledgement(IOperation returnOp, CstsFrameworkPdu pdu) throws ApiException {
+		if (pdu.getExecuteDirectiveAcknowledge() == null) {
+			throw new ApiException("No EXECUTE-DIRECTIVE data for Assoc Translator transmitted.");
+		}
+
+		IExecuteDirective executeDirective = (IExecuteDirective) returnOp;
+		executeDirective.decodeExecuteDirectiveAcknowledge(pdu.getExecuteDirectiveAcknowledge());
+
+		return executeDirective;
+	}
+	
+	public static IOperation decodeExecuteDirectiveReturn(IOperation returnOp, CstsFrameworkPdu pdu) throws ApiException {
+		if (pdu.getExecuteDirectiveReturn() == null) {
+			throw new ApiException("No EXECUTE-DIRECTIVE data for Assoc Translator transmitted.");
+		}
+
+		IExecuteDirective executeDirective = (IExecuteDirective) returnOp;
+		executeDirective.decodeExecuteDirectiveReturn(pdu.getExecuteDirectiveReturn());
+
+		return executeDirective;
 	}
 
 }

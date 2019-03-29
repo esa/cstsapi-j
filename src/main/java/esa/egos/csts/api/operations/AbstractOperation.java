@@ -21,8 +21,8 @@ import esa.egos.csts.api.util.impl.Credentials;
  */
 public abstract class AbstractOperation implements IOperation {
 
-	protected final Logger LOG = Logger.getLogger(getClass().getName());
-	
+	protected static final Logger LOG = Logger.getLogger(AbstractOperation.class.getName());
+
 	/**
 	 * The credentials of the invoker of the operation. If null, credentials are not
 	 * used.
@@ -49,6 +49,11 @@ public abstract class AbstractOperation implements IOperation {
 		return false;
 	}
 
+	@Override
+	public boolean isAcknowledged() {
+		return false;
+	}
+	
 	@Override
 	public int getInvokeIdentifier() {
 		return this.invokeIdentifier;
@@ -180,4 +185,12 @@ public abstract class AbstractOperation implements IOperation {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "AbstractOperation [LOG=" + LOG + ", invokerCredentials=" + invokerCredentials
+				+ ", serviceInstanceIdentifier=" + serviceInstanceIdentifier + ", invokeIdentifier=" + invokeIdentifier
+				+ ", procedureInstanceIdentifier=" + procedureInstanceIdentifier + "]";
+	}
+
 }

@@ -1,5 +1,7 @@
 package esa.egos.csts.api.extensions;
 
+import java.util.Arrays;
+
 import org.openmuc.jasn1.ber.types.BerEmbeddedPdv.Identification;
 import org.openmuc.jasn1.ber.types.BerObjectIdentifier;
 import org.openmuc.jasn1.ber.types.BerOctetString;
@@ -79,6 +81,11 @@ public class EmbeddedData {
 		ObjectIdentifier oid = ObjectIdentifier.of(embedded.getIdentification().getSyntax().value);
 		byte[] data = embedded.getDataValue().value;
 		return new EmbeddedData(oid, data);
+	}
+
+	@Override
+	public String toString() {
+		return "EmbeddedData [oid=" + oid + ", data=" + Arrays.toString(data) + "]";
 	}
 
 }

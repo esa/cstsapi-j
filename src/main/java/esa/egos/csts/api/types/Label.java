@@ -4,7 +4,7 @@ import ccsds.csts.common.types.Label.FunctionalResourceOrProcedureType;
 import ccsds.csts.common.types.PublishedIdentifier;
 import esa.egos.csts.api.enumerations.ParameterType;
 import esa.egos.csts.api.enumerations.TypeIdentifier;
-import esa.egos.csts.api.functionalresources.impl.FunctionalResourceType;
+import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.parameters.impl.ParameterValue;
 import esa.egos.csts.api.procedures.impl.ProcedureType;

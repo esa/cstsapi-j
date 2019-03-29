@@ -20,6 +20,9 @@ import esa.egos.csts.api.serviceinstance.impl.ServiceInstanceIdentifier;
 import esa.egos.csts.api.serviceinstance.impl.ServiceType;
 import esa.egos.csts.api.util.impl.CSTSUtils;
 
+/**
+ * This class represents a BIND operation.
+ */
 public class Bind extends AbstractConfirmedOperation implements IBind {
 
 	private static final OperationType TYPE = OperationType.BIND;
@@ -28,22 +31,23 @@ public class Bind extends AbstractConfirmedOperation implements IBind {
 	 * The identifier for initiating applications
 	 */
 	private String initiatorIdentifier;
-	
+
 	/**
 	 * The responder port identifier
 	 */
 	private String responderPortIdentifier;
-	
+
 	/**
 	 * The service type
 	 */
 	private ServiceType serviceType;
-	
+
 	/**
-	 * The version number which is passed from the Association Control to the operation
+	 * The version number which is passed from the Association Control to the
+	 * operation
 	 */
 	private int versionNumber;
-	
+
 	/**
 	 * The identifier for responding applications
 	 */
@@ -83,23 +87,23 @@ public class Bind extends AbstractConfirmedOperation implements IBind {
 	}
 
 	@Override
-	public String getResponderIdentifier() {
-		return this.responderIdentifier;
-	}
-
-	@Override
-	public String getResponderPortIdentifier() {
-		return this.responderPortIdentifier;
-	}
-
-	@Override
 	public void setInitiatorIdentifier(String id) {
 		this.initiatorIdentifier = id;
 	}
 
 	@Override
+	public String getResponderIdentifier() {
+		return this.responderIdentifier;
+	}
+
+	@Override
 	public void setResponderIdentifier(String id) {
 		this.responderIdentifier = id;
+	}
+
+	@Override
+	public String getResponderPortIdentifier() {
+		return this.responderPortIdentifier;
 	}
 
 	@Override
@@ -119,10 +123,15 @@ public class Bind extends AbstractConfirmedOperation implements IBind {
 	}
 
 	@Override
+	public Extension getInvocationExtension() {
+		return invocationExtension;
+	}
+	
+	@Override
 	public void setInvocationExtension(EmbeddedData embedded) {
 		invocationExtension = Extension.of(embedded);
 	}
-	
+
 	@Override
 	public int getVersionNumber() {
 		return versionNumber;
@@ -132,17 +141,16 @@ public class Bind extends AbstractConfirmedOperation implements IBind {
 	public void setVersionNumber(int versionNumber) {
 		this.versionNumber = versionNumber;
 	}
-	
+
 	@Override
 	public void verifyInvocationArguments() throws ApiException {
 		super.verifyInvocationArguments();
-		if (getResponderPortIdentifier() == null || getResponderIdentifier() == null
-				|| getServiceInstanceIdentifier() == null || getVersionNumber() == 0
+		if (getResponderPortIdentifier() == null || getServiceInstanceIdentifier() == null || getVersionNumber() == 0
 				|| getServiceType() == null) {
 			throw new ApiException("Invalid Bind invocation arguments");
 		}
 	}
-	
+
 	@Override
 	public void verifyReturnArguments() throws ApiException {
 		super.verifyReturnArguments();
@@ -151,13 +159,16 @@ public class Bind extends AbstractConfirmedOperation implements IBind {
 				throw new ApiException("Invalid Bind return arguments");
 			}
 		}
+		if (getResponderIdentifier() == null) {
+			throw new ApiException("Invalid Bind invocation arguments");
+		}
 	}
 
 	@Override
 	public String print(int i) {
-		return "Bind [responderId=" + responderIdentifier + ", responderPortId=" + responderPortIdentifier + ", initiatorId="
-				+ initiatorIdentifier + ", serviceType=" + serviceType + ", diagnostics=" + diagnostics
-				+ ", invocationExtension=" + invocationExtension + ", version=" + versionNumber + "]";
+		return "Bind [responderId=" + responderIdentifier + ", responderPortId=" + responderPortIdentifier
+				+ ", initiatorId=" + initiatorIdentifier + ", serviceType=" + serviceType + ", diagnostics="
+				+ diagnostics + ", invocationExtension=" + invocationExtension + ", version=" + versionNumber + "]";
 	}
 
 	@Override
@@ -209,7 +220,8 @@ public class Bind extends AbstractConfirmedOperation implements IBind {
 		versionNumber = bindInvocation.getVersionNumber().intValue();
 
 		try {
-			setServiceInstanceIdentifier(ServiceInstanceIdentifier.decode(bindInvocation.getServiceInstanceIdentifier()));
+			setServiceInstanceIdentifier(
+					ServiceInstanceIdentifier.decode(bindInvocation.getServiceInstanceIdentifier()));
 		} catch (ConfigException e) {
 			e.printStackTrace();
 		}
@@ -236,4 +248,13 @@ public class Bind extends AbstractConfirmedOperation implements IBind {
 		}
 		responderIdentifier = CSTSUtils.decodeString(bindReturn.getResponderIdentifier().value);
 	}
+
+	@Override
+	public String toString() {
+		return "Bind [initiatorIdentifier=" + initiatorIdentifier + ", responderPortIdentifier="
+				+ responderPortIdentifier + ", serviceType=" + serviceType + ", versionNumber=" + versionNumber
+				+ ", responderIdentifier=" + responderIdentifier + ", diagnostics=" + diagnostics
+				+ ", invocationExtension=" + invocationExtension + "]";
+	}
+
 }

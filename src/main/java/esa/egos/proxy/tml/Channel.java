@@ -940,4 +940,9 @@ public abstract class Channel implements IChannelInitiate, ITimeoutProcessor
 	public ProxyConfig getConfig() {
 		return this.config;
 	}
+
+    @Override
+	public void sendSLEPDUBlocking(byte[] data, boolean last) {
+    	this.channelState.delSLEPDUReq(this.tmlMsgFactory.createPDUMsg(data), last);
+	}
 }

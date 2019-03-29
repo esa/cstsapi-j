@@ -8,9 +8,9 @@ public enum Result {
 	 * ----------------------------------------------------------------------
 	 */
 	
-	UNEXPECTED_OPERATION_TYPE,
-	UNSUPPORTED_PROCEDURE_ROLE,
-	NO_EVENTS_SUPPORTED,
+	CSTS_UNEXPECTED_OPERATION_TYPE,
+	CSTS_UNSUPPORTED_PROCEDURE_ROLE,
+	CSTS_NOT_APPLICABLE,
 	
 	/*
 	 * ----------------------------------------------------------------------

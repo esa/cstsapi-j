@@ -8,22 +8,25 @@ import esa.egos.csts.api.extensions.Extension;
 import esa.egos.csts.api.operations.AbstractConfirmedOperation;
 import esa.egos.csts.api.operations.IStop;
 
+/**
+ * This class represents a STOP operation.
+ */
 public class Stop extends AbstractConfirmedOperation implements IStop {
 
 	private static final OperationType TYPE = OperationType.STOP;
-	
+
 	/**
 	 * The invocation extension
 	 */
 	private Extension invocationExtension;
-	
+
 	/**
 	 * The constructor of a STOP operation.
 	 */
 	public Stop() {
 		invocationExtension = Extension.notUsed();
 	}
-	
+
 	@Override
 	public OperationType getType() {
 		return TYPE;
@@ -43,7 +46,7 @@ public class Stop extends AbstractConfirmedOperation implements IStop {
 	public void setInvocationExtension(EmbeddedData embedded) {
 		invocationExtension = Extension.of(embedded);
 	}
-	
+
 	@Override
 	public String print(int i) {
 		return "Stop []";
@@ -56,12 +59,12 @@ public class Stop extends AbstractConfirmedOperation implements IStop {
 		stopInvocation.setStopInvocationExtension(invocationExtension.encode());
 		return stopInvocation;
 	}
-	
+
 	@Override
 	public StopReturn encodeStopReturn() {
 		return encodeStandardReturnHeader(StopReturn.class);
 	}
-	
+
 	@Override
 	public void decodeStopInvocation(StopInvocation stopInvocation) {
 		decodeStandardInvocationHeader(stopInvocation.getStandardInvocationHeader());
@@ -71,6 +74,11 @@ public class Stop extends AbstractConfirmedOperation implements IStop {
 	@Override
 	public void decodeStopReturn(StopReturn stopReturn) {
 		decodeStandardReturnHeader(stopReturn);
+	}
+
+	@Override
+	public String toString() {
+		return "Stop [invocationExtension=" + invocationExtension + "]";
 	}
 
 }

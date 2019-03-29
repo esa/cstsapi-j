@@ -11,25 +11,28 @@ import esa.egos.csts.api.operations.INotify;
 import esa.egos.csts.api.types.Name;
 import esa.egos.csts.api.types.Time;
 
+/**
+ * This class represents a NOTIFY operation.
+ */
 public class Notify extends AbstractOperation implements INotify {
 
 	private static final OperationType TYPE = OperationType.NOTIFY;
-	
+
 	/**
 	 * The invocation extension
 	 */
 	private Extension invocationExtension;
-	
+
 	/**
 	 * The time of an event
 	 */
 	private Time eventTime;
-	
+
 	/**
 	 * The name of an event
 	 */
 	private Name eventName;
-	
+
 	/**
 	 * The value of an event
 	 */
@@ -41,7 +44,7 @@ public class Notify extends AbstractOperation implements INotify {
 	public Notify() {
 		invocationExtension = Extension.notUsed();
 	}
-	
+
 	@Override
 	public OperationType getType() {
 		return TYPE;
@@ -86,7 +89,7 @@ public class Notify extends AbstractOperation implements INotify {
 	public void setInvocationExtension(EmbeddedData embedded) {
 		invocationExtension = Extension.of(embedded);
 	}
-	
+
 	@Override
 	public void verifyInvocationArguments() throws ApiException {
 		if (eventTime == null) {
@@ -123,6 +126,12 @@ public class Notify extends AbstractOperation implements INotify {
 		eventName = Name.decode(notifyInvocation.getEventName());
 		eventValue = EventValue.decode(notifyInvocation.getEventValue());
 		invocationExtension = Extension.decode(notifyInvocation.getNotifyInvocationExtension());
+	}
+
+	@Override
+	public String toString() {
+		return "Notify [invocationExtension=" + invocationExtension + ", eventTime=" + eventTime + ", eventName="
+				+ eventName + ", eventValue=" + eventValue + "]";
 	}
 
 }

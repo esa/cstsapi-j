@@ -19,14 +19,11 @@ public abstract class AbstractConfigurationParameter extends AbstractParameter i
 	/**
 	 * Instantiates a new Configuration Parameter.
 	 * 
-	 * @param identifier
-	 *            the Object Identifier
-	 * @param readable
-	 *            whether if this instance is readable
-	 * @param dynamicallyModifiable
-	 *            whether if this instance is dynamically modifiable
-	 * @param procedure
-	 *            the Procedure being configured
+	 * @param identifier            the Object Identifier
+	 * @param readable              whether if this instance is readable
+	 * @param dynamicallyModifiable whether if this instance is dynamically
+	 *                              modifiable
+	 * @param procedure             the Procedure being configured
 	 */
 	public AbstractConfigurationParameter(ObjectIdentifier identifier, boolean readable, boolean dynamicallyModifiable,
 			IProcedure procedure) {
@@ -47,6 +44,16 @@ public abstract class AbstractConfigurationParameter extends AbstractParameter i
 		return readable;
 	}
 
+	/**
+	 * Indicates whether the procedure being configured by this parameter is bound.
+	 * 
+	 * @return true if the procedure being configured by this parameter is bound,
+	 *         false otherwise
+	 */
+	protected boolean procedureIsBound() {
+		return procedure.getServiceInstance().isBound();
+	}
+
 	@Override
 	public boolean isDynamicallyModifiable() {
 		return dynamicallyModifiable;
@@ -58,7 +65,7 @@ public abstract class AbstractConfigurationParameter extends AbstractParameter i
 	}
 
 	@Override
-	public void setConfigured(boolean configured) {
+	public synchronized void setConfigured(boolean configured) {
 		this.configured = configured;
 	}
 

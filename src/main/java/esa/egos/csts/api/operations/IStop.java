@@ -5,18 +5,51 @@ import ccsds.csts.common.operations.pdus.StopReturn;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.extensions.Extension;
 
+/**
+ * This interface represents a STOP operation.
+ */
 public interface IStop extends IConfirmedOperation {
 
-	StopInvocation encodeStopInvocation();
+	/**
+	 * Returns the invocation extension.
+	 * 
+	 * @return the invocation extension
+	 */
+	Extension getInvocationExtension();
 
-	void decodeStopInvocation(StopInvocation stopInvocation);
-
-	StopReturn encodeStopReturn();
-	
-	void decodeStopReturn(StopReturn stopReturn);
-
+	/**
+	 * Sets the invocation extension.
+	 * 
+	 * @param embedded the embedded data to extend this operation
+	 */
 	void setInvocationExtension(EmbeddedData embedded);
 
-	Extension getInvocationExtension();
+	/**
+	 * Encodes this operation into a CCSDS StopInvocation.
+	 * 
+	 * @return this operation encoded into a CCSDS StopInvocation
+	 */
+	StopInvocation encodeStopInvocation();
+
+	/**
+	 * Decodes a specified CCSDS StopInvocation into this operation.
+	 * 
+	 * @param stopInvocation the specified CCSDS StopInvocation
+	 */
+	void decodeStopInvocation(StopInvocation stopInvocation);
+
+	/**
+	 * Encodes this operation into a CCSDS StopReturn.
+	 * 
+	 * @return this operation encoded into a CCSDS StopReturn
+	 */
+	StopReturn encodeStopReturn();
+
+	/**
+	 * Decodes a specified CCSDS StopReturn into this operation.
+	 * 
+	 * @param stopReturn the specified CCSDS StopReturn
+	 */
+	void decodeStopReturn(StopReturn stopReturn);
 
 }

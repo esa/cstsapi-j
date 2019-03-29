@@ -15,7 +15,7 @@ public class ProcedureInstanceIdentifier {
 
 	private final ProcedureType type;
 	private final ProcedureRole role;
-	private final int instanceNumber;
+	private final long instanceNumber;
 
 	/**
 	 * Instantiates a new Procedure Instance Identifier specified by its Procedure
@@ -57,7 +57,7 @@ public class ProcedureInstanceIdentifier {
 	 * 
 	 * @return the instance number
 	 */
-	public int getInstanceNumber() {
+	public long getInstanceNumber() {
 		return this.instanceNumber;
 	}
 
@@ -117,11 +117,12 @@ public class ProcedureInstanceIdentifier {
 		return procedureInstanceIdentifier;
 	}
 
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + instanceNumber;
+		result = prime * result + (int) (instanceNumber ^ (instanceNumber >>> 32));
 		result = prime * result + ((role == null) ? 0 : role.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;

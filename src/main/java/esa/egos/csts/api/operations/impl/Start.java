@@ -16,7 +16,7 @@ import esa.egos.csts.api.operations.AbstractConfirmedOperation;
 import esa.egos.csts.api.operations.IStart;
 
 /**
- * The START operation (confirmed)
+ * This class represents a START operation.
  */
 public class Start extends AbstractConfirmedOperation implements IStart {
 
@@ -97,7 +97,7 @@ public class Start extends AbstractConfirmedOperation implements IStart {
 	private EmbeddedData encodeStartDiagnosticExt() {
 		return EmbeddedData.of(OIDs.startDiagnosticExt, startDiagnostic.encode().code);
 	}
-	
+
 	@Override
 	public void decodeStartReturn(StartReturn startReturn) {
 		decodeStandardReturnHeader(startReturn);
@@ -109,17 +109,23 @@ public class Start extends AbstractConfirmedOperation implements IStart {
 			decodeDiagnosticExtension();
 		}
 	}
-	
+
 	private void decodeDiagnosticExtension() {
 		if (getDiagnostic().getDiagnosticExtension().getOid().equals(OIDs.startDiagnosticExt)) {
 			StartDiagnosticExt startDiagnosticExt = new StartDiagnosticExt();
-			try (ByteArrayInputStream is = new ByteArrayInputStream(getDiagnostic().getDiagnosticExtension().getData())) {
+			try (ByteArrayInputStream is = new ByteArrayInputStream(
+					getDiagnostic().getDiagnosticExtension().getData())) {
 				startDiagnosticExt.decode(is);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			startDiagnostic = StartDiagnostic.decode(startDiagnosticExt);
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "Start [startDiagnostic=" + startDiagnostic + ", invocationExtension=" + invocationExtension + "]";
 	}
 
 }

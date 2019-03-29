@@ -7,6 +7,9 @@ import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceIdentifier;
 import esa.egos.csts.api.util.ICredentials;
 
+/**
+ * The base interface of all operations.
+ */
 public interface IOperation {
 
 	/**
@@ -24,10 +27,16 @@ public interface IOperation {
 	boolean isConfirmed();
 
 	/**
+	 * Returns if a operation is acknowledged.
+	 * 
+	 * @return true if a operation is acknowledged, else otherwise
+	 */
+	boolean isAcknowledged();
+
+	/**
 	 * Verifies the invocation arguments.
 	 * 
-	 * @throws ApiException
-	 *             if the invocation arguments could not be verified
+	 * @throws ApiException if the invocation arguments could not be verified
 	 */
 	void verifyInvocationArguments() throws ApiException;
 
@@ -41,8 +50,7 @@ public interface IOperation {
 	/**
 	 * Sets the invoker credentials.
 	 * 
-	 * @param credentials
-	 *            the credentials to set
+	 * @param credentials the credentials to set
 	 */
 	void setInvokerCredentials(ICredentials credentials);
 
@@ -56,8 +64,7 @@ public interface IOperation {
 	/**
 	 * Sets the Procedure Instance Identifier
 	 * 
-	 * @param procedureInstanceIdentifier
-	 *            the Procedure Instance Identifier to set
+	 * @param procedureInstanceIdentifier the Procedure Instance Identifier to set
 	 */
 	void setProcedureInstanceIdentifier(ProcedureInstanceIdentifier procedureInstanceIdentifier);
 
@@ -71,10 +78,8 @@ public interface IOperation {
 	/**
 	 * Sets the Service Instance Identifier
 	 * 
-	 * @param siid
-	 *            the Service Instance Identifier
-	 * @throws ConfigException
-	 *             if the Service Instance Identifier is already set
+	 * @param siid the Service Instance Identifier
+	 * @throws ConfigException if the Service Instance Identifier is already set
 	 */
 	void setServiceInstanceIdentifier(IServiceInstanceIdentifier siid) throws ConfigException;
 
@@ -88,8 +93,7 @@ public interface IOperation {
 	/**
 	 * Sets the invocation identifier
 	 * 
-	 * @param invokeIdentifier
-	 *            invocation identifier
+	 * @param invokeIdentifier invocation identifier
 	 */
 	void setInvokeIdentifier(int invokeIdentifier);
 

@@ -80,6 +80,12 @@ public abstract class AbstractConfirmedOperation extends AbstractOperation imple
 		this.diagnostic = diagnostic;
 		this.operationResult = OperationResult.NEGATIVE;
 	}
+	
+	@Override
+	public void setDiagnostic(EmbeddedData diagnosticExtension) {
+		this.diagnostic = new Diagnostic(diagnosticExtension);
+		this.operationResult = OperationResult.NEGATIVE;
+	}
 
 	@Override
 	public ICredentials getPerformerCredentials() {
@@ -261,6 +267,12 @@ public abstract class AbstractConfirmedOperation extends AbstractOperation imple
 		if (getInvokeIdentifier() != other.getInvokeIdentifier())
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "AbstractConfirmedOperation [operationResult=" + operationResult + ", diagnostic=" + diagnostic
+				+ ", performerCredentials=" + performerCredentials + ", returnExtension=" + returnExtension + "]";
 	}
 
 }
