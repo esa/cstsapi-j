@@ -45,7 +45,7 @@ import esa.egos.csts.api.types.Time;
 public abstract class AbstractSequenceControlledDataProcessing extends AbstractDataProcessing
 		implements ISequenceControlledDataProcessingInternal {
 
-	private static final ProcedureType TYPE = new ProcedureType(OIDs.sequenceControlledDataProcessing);
+	private static final ProcedureType TYPE = ProcedureType.of(OIDs.sequenceControlledDataProcessing);
 	
 	private static final int VERSION = 1;
 

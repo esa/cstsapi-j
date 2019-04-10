@@ -123,8 +123,7 @@ public class EventValue {
 		if (value.getQualifiedValues() != null) {
 			if (value.getQualifiedValues().getQualifiedValues() != null) {
 				eventValue = new EventValue(EventValueType.QUALIFIED_VALUES);
-				for (ccsds.csts.common.types.QualifiedValues qualifiedValues : value.getQualifiedValues()
-						.getQualifiedValues()) {
+				for (ccsds.csts.common.types.QualifiedValues qualifiedValues : value.getQualifiedValues().getQualifiedValues()) {
 					eventValue.getQualifiedValues().add(QualifiedValues.decode(qualifiedValues));
 				}
 			}

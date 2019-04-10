@@ -35,6 +35,8 @@ public interface IServiceInstanceInternal extends IServiceInstance {
 	
 	void checkBindInvocation(IBind pbindop, ISrvProxyInitiate passociation) throws ApiException;
 
+	boolean isProvisionPeriodEnded();
+	
 	void setState(ServiceStatus status);
 	
 	void setSubState(ServiceSubStatus subStatus);

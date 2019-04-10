@@ -219,7 +219,7 @@ public abstract class AbstractProcedure implements IProcedureInternal {
 
 	@Override
 	public void setRole(ProcedureRole procedureRole, int instanceNumber) {
-		this.procedureInstanceIdentifier = new ProcedureInstanceIdentifier(getType(), procedureRole, instanceNumber);
+		this.procedureInstanceIdentifier = ProcedureInstanceIdentifier.of(getType(), procedureRole, instanceNumber);
 	}
 
 	@Override

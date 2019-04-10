@@ -25,6 +25,7 @@ import esa.egos.csts.api.events.EventValue;
 import esa.egos.csts.api.events.IEvent;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.exceptions.ConfigException;
+import esa.egos.csts.api.exceptions.EventNotFoundException;
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.main.CstsApi;
@@ -224,8 +225,8 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 	}
 
 	private void initializeEvents() {
-		FunctionalResourceType type = new FunctionalResourceType(serviceType.getOid());
-		FunctionalResourceName name = new FunctionalResourceName(type, serviceInstanceIdentifier.getServiceInstanceNumber());
+		FunctionalResourceType type = FunctionalResourceType.of(serviceType.getOid());
+		FunctionalResourceName name = FunctionalResourceName.of(type, serviceInstanceIdentifier.getServiceInstanceNumber());
 		IEvent statusEvent = new Event(OIDs.svcProductionStatusChangeVersion1, name);
 		serviceEvents.add(statusEvent);
 		IEvent configurationEvent = new Event(OIDs.svcProductionConfigurationChangeVersion1, name);
@@ -539,7 +540,6 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 	protected abstract IAssociationControlInternal initialiseAssociationControl() throws ApiException;
 
 	@Deprecated
-	@Override
 	public <T extends IOperation> T createOperation(Class<T> clazz) throws ApiException {
 		throw new ApiException("Deprecated");
 	}
@@ -640,7 +640,10 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 	@Override
 	public IEvent getEvent(ObjectIdentifier identifier) {
-		return serviceEvents.stream().filter(e -> e.getOid().equals(identifier)).findFirst().orElse(null);
+		return serviceEvents.stream()
+				.filter(e -> e.getOid().equals(identifier))
+				.findFirst()
+				.orElseThrow(EventNotFoundException::new);
 	}
 
 	@Override
@@ -892,7 +895,9 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 		pa.setPeerAbortDiagnostic(diagnostic);
 
 		forwardInitiatePxyOpInv(pa, false);
-		getAssociationControlProcedure().informAbort(diagnostic);
+		if (diagnostic != PeerAbortDiagnostics.OPERATIONAL_REQUIREMENT) {
+			((IAssociationControlInternal) getAssociationControlProcedure()).informAbort(diagnostic);
+		}
 	}
 
 	// /**
@@ -1282,16 +1287,16 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 		pa.setProcedureInstanceIdentifier(getAssociationControlProcedure().getProcedureInstanceIdentifier());
 		pa.setAbortOriginator(AbortOriginator.INTERNAL);
 		pa.setPeerAbortDiagnostic(PeerAbortDiagnostics.PROTOCOL_ERROR);
+		((IAssociationControlInternal) getAssociationControlProcedure()).informProtocolAbort();
 		getApplicationServiceInform().protocolAbort();
 		forwardInitiatePxyOpInv(pa, false);
-		getAssociationControlProcedure().informProtocolAbort();
 	}
 
 	@Override
 	public void processTimeout(Object timer, int invocationId) {
 		// check for end of provision period
 		if (LOG.isLoggable(Level.FINEST)) {
-			LOG.finest("method  in doProcessTimeout");
+			LOG.finest("method in doProcessTimeout");
 		}
 	}
 
@@ -1299,12 +1304,14 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 		return remoteReturns;
 	}
 
+	@Override
 	public void changeProductionState(ProductionState state) throws ApiException {
 		productionStatus.transitionTo(state);
 	}
 
+	@Override
 	public void changeProductionConfiguration() {
-		getEvent(OIDs.svcProductionStatusChangeVersion1).fire(EventValue.empty(), Time.now());
+		getEvent(OIDs.svcProductionConfigurationChangeVersion1).fire(EventValue.empty(), Time.now());
 	}
 
 	@Override

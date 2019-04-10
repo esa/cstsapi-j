@@ -1,0 +1,1 @@
+Start the Communication Service in the bin folder with: java -jar csts.api-1.0.0.jar <provider configuration file>

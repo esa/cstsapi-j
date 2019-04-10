@@ -23,7 +23,7 @@ import esa.egos.csts.api.states.service.ServiceStatus;
 
 public abstract class AbstractAssociationControl extends AbstractProcedure implements IAssociationControlInternal {
 
-	private static final ProcedureType TYPE = new ProcedureType(OIDs.associationControl);
+	private static final ProcedureType TYPE = ProcedureType.of(OIDs.associationControl);
 	
 	private static final int VERSION = 1;
 

@@ -17,18 +17,7 @@ public class ProcedureInstanceIdentifier {
 	private final ProcedureRole role;
 	private final long instanceNumber;
 
-	/**
-	 * Instantiates a new Procedure Instance Identifier specified by its Procedure
-	 * Type, its role and its instance number.
-	 * 
-	 * @param type
-	 *            the specified Procedure Type
-	 * @param role
-	 *            the role of the Procedure
-	 * @param instanceNumber
-	 *            the instance number of the Procedure
-	 */
-	public ProcedureInstanceIdentifier(ProcedureType type, ProcedureRole role, int instanceNumber) {
+	private ProcedureInstanceIdentifier(ProcedureType type, ProcedureRole role, int instanceNumber) {
 		this.instanceNumber = instanceNumber;
 		this.role = role;
 		this.type = type;
@@ -59,6 +48,18 @@ public class ProcedureInstanceIdentifier {
 	 */
 	public long getInstanceNumber() {
 		return this.instanceNumber;
+	}
+
+	/**
+	 * Creates and returns new Procedure Instance Identifier specified by its
+	 * Procedure Type, its role and its instance number.
+	 * 
+	 * @param type           the specified Procedure Type
+	 * @param role           the role of the Procedure
+	 * @param instanceNumber the instance number of the Procedure
+	 */
+	public static ProcedureInstanceIdentifier of(ProcedureType type, ProcedureRole role, int instanceNumber) {
+		return new ProcedureInstanceIdentifier(type, role, instanceNumber);
 	}
 
 	/**
@@ -93,8 +94,7 @@ public class ProcedureInstanceIdentifier {
 	/**
 	 * Decodes a specified CCSDS ProcedureInstanceId type.
 	 * 
-	 * @param procedureInstanceId
-	 *            the specified CCSDS ProcedureInstanceId type
+	 * @param procedureInstanceId the specified CCSDS ProcedureInstanceId type
 	 * @return a new Procedure Instance Identifier decoded from the specified CCSDS
 	 *         ProcedureInstanceId type
 	 */
@@ -103,20 +103,16 @@ public class ProcedureInstanceIdentifier {
 		ProcedureInstanceIdentifier procedureInstanceIdentifier = null;
 
 		if (procedureInstanceId.getProcedureRole().getAssociationControl() != null) {
-			procedureInstanceIdentifier = new ProcedureInstanceIdentifier(
-					ProcedureType.decode(procedureInstanceId.getProcedureType()), ProcedureRole.ASSOCIATION_CONTROL, 0);
+			procedureInstanceIdentifier = new ProcedureInstanceIdentifier(ProcedureType.decode(procedureInstanceId.getProcedureType()), ProcedureRole.ASSOCIATION_CONTROL, 0);
 		} else if (procedureInstanceId.getProcedureRole().getPrimeProcedure() != null) {
-			procedureInstanceIdentifier = new ProcedureInstanceIdentifier(
-					ProcedureType.decode(procedureInstanceId.getProcedureType()), ProcedureRole.PRIME, 0);
+			procedureInstanceIdentifier = new ProcedureInstanceIdentifier(ProcedureType.decode(procedureInstanceId.getProcedureType()), ProcedureRole.PRIME, 0);
 		} else if (procedureInstanceId.getProcedureRole().getSecondaryProcedure() != null) {
-			procedureInstanceIdentifier = new ProcedureInstanceIdentifier(
-					ProcedureType.decode(procedureInstanceId.getProcedureType()), ProcedureRole.SECONDARY,
+			procedureInstanceIdentifier = new ProcedureInstanceIdentifier(ProcedureType.decode(procedureInstanceId.getProcedureType()), ProcedureRole.SECONDARY,
 					procedureInstanceId.getProcedureRole().getSecondaryProcedure().intValue());
 		}
 
 		return procedureInstanceIdentifier;
 	}
-
 
 	@Override
 	public int hashCode() {
@@ -151,8 +147,7 @@ public class ProcedureInstanceIdentifier {
 
 	@Override
 	public String toString() {
-		return "ProcedureInstanceIdentifier [type=" + type + ", role=" + role + ", instanceNumber=" + instanceNumber
-				+ "]";
+		return "ProcedureInstanceIdentifier [type=" + type + ", role=" + role + ", instanceNumber=" + instanceNumber + "]";
 	}
 
 }

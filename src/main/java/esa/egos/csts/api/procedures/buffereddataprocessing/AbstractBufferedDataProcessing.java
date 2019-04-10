@@ -37,7 +37,7 @@ import esa.egos.csts.api.types.Time;
 
 public abstract class AbstractBufferedDataProcessing extends AbstractDataProcessing implements IBufferedDataProcessingInternal {
 
-	private static final ProcedureType TYPE = new ProcedureType(OIDs.bufferedDataProcessing);
+	private static final ProcedureType TYPE = ProcedureType.of(OIDs.bufferedDataProcessing);
 	
 	private static final int VERSION = 1;
 
@@ -89,6 +89,11 @@ public abstract class AbstractBufferedDataProcessing extends AbstractDataProcess
 	public DataTransferMode getDataTransferMode() {
 		long code = ((IntegerConfigurationParameter) getConfigurationParameter(OIDs.pBDPdataTransferMode)).getValue();
 		return DataTransferMode.getDataTransferModeByCode(code);
+	}
+	
+	@Override
+	public IntegerConfigurationParameter getDataTransferModeParameter() {
+		return (IntegerConfigurationParameter) getConfigurationParameter(OIDs.pBDPdataTransferMode);
 	}
 
 	@Override

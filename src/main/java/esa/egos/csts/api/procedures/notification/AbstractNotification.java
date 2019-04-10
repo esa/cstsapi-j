@@ -34,7 +34,7 @@ import esa.egos.csts.api.types.Name;
 
 public abstract class AbstractNotification extends AbstractStatefulProcedure implements INotificationInternal {
 
-	private static final ProcedureType TYPE = new ProcedureType(OIDs.notification);
+	private static final ProcedureType TYPE = ProcedureType.of(OIDs.notification);
 	
 	private static final int VERSION = 1;
 	

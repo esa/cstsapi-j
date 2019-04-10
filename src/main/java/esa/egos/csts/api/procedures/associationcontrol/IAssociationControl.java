@@ -9,8 +9,24 @@ import esa.egos.csts.api.procedures.IProcedure;
  */
 public interface IAssociationControl extends IProcedure {
 
+	/**
+	 * Creates a BIND operation and forwards it to the underlying communications
+	 * service, requesting a bind of the Service Instance.
+	 * 
+	 * This method is called by the user.
+	 * 
+	 * @return the result of the request
+	 */
 	CstsResult bind();
 
+	/**
+	 * Creates an UNBIND operation and forwards it to the underlying communications
+	 * service, requesting an unbind from the Service Instance.
+	 * 
+	 * This method is called by the user.
+	 * 
+	 * @return the result of the request
+	 */
 	CstsResult unbind();
 
 	/**
@@ -20,9 +36,5 @@ public interface IAssociationControl extends IProcedure {
 	 * @param diagnostics the specified PEER-ABORT Diagnostics
 	 */
 	CstsResult abort(PeerAbortDiagnostics diagnostics);
-
-	void informAbort(PeerAbortDiagnostics diagnostics);
-
-	void informProtocolAbort();
 
 }

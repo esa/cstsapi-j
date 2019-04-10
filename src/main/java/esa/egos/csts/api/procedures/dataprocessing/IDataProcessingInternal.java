@@ -3,7 +3,6 @@ package esa.egos.csts.api.procedures.dataprocessing;
 import java.util.Collection;
 
 import esa.egos.csts.api.operations.IProcessData;
-import esa.egos.csts.api.parameters.impl.IntegerConfigurationParameter;
 import esa.egos.csts.api.procedures.IStatefulProcedureInternal;
 
 public interface IDataProcessingInternal extends IDataProcessing, IStatefulProcedureInternal {
@@ -11,8 +10,6 @@ public interface IDataProcessingInternal extends IDataProcessing, IStatefulProce
 	boolean isDataUnitReady();
 
 	boolean isDataQueued();
-
-	IntegerConfigurationParameter getInputQueueSize();
 
 	void setProduceReport(boolean produceReport);
 

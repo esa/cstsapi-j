@@ -12,16 +12,7 @@ public class FunctionalResourceName {
 	private final FunctionalResourceType functionalResourceType;
 	private final int instanceNumber;
 
-	/**
-	 * Instantiates a new Functional Resource Name specified by its type and an
-	 * instance number.
-	 * 
-	 * @param functionalResourceType
-	 *            the specified Functional Resource Type
-	 * @param instanceNumber
-	 *            the specified instance number
-	 */
-	public FunctionalResourceName(FunctionalResourceType functionalResourceType, int instanceNumber) {
+	private FunctionalResourceName(FunctionalResourceType functionalResourceType, int instanceNumber) {
 		this.functionalResourceType = functionalResourceType;
 		this.instanceNumber = instanceNumber;
 	}
@@ -45,6 +36,17 @@ public class FunctionalResourceName {
 	}
 
 	/**
+	 * Creates and returns new Functional Resource Name specified by its type and an
+	 * instance number.
+	 * 
+	 * @param functionalResourceType the specified Functional Resource Type
+	 * @param instanceNumber         the specified instance number
+	 */
+	public static FunctionalResourceName of(FunctionalResourceType functionalResourceType, int instanceNumber) {
+		return new FunctionalResourceName(functionalResourceType, instanceNumber);
+	}
+
+	/**
 	 * Encodes this Functional Resource Name into a CCSDS FunctionalResourceName
 	 * type.
 	 * 
@@ -60,15 +62,13 @@ public class FunctionalResourceName {
 	/**
 	 * Decodes a specified CCSDS FunctionalResourceName type.
 	 * 
-	 * @param functionalResourceName
-	 *            the specified CCSDS FunctionalResourceName type
+	 * @param functionalResourceName the specified CCSDS FunctionalResourceName type
 	 * @return a new Functional Resource Name decoded from the specified CCSDS
 	 *         FunctionalResourceName type
 	 */
 	public static FunctionalResourceName decode(ccsds.csts.common.types.FunctionalResourceName functionalResourceName) {
 
-		FunctionalResourceName newFunctionalResourceName = new FunctionalResourceName(
-				FunctionalResourceType.decode(functionalResourceName.getFunctionalResourceType()),
+		FunctionalResourceName newFunctionalResourceName = new FunctionalResourceName(FunctionalResourceType.decode(functionalResourceName.getFunctionalResourceType()),
 				functionalResourceName.getFunctionalResourceInstanceNumber().intValue());
 
 		return newFunctionalResourceName;
@@ -104,8 +104,7 @@ public class FunctionalResourceName {
 
 	@Override
 	public String toString() {
-		return "FunctionalResourceName [functionalResourceType=" + functionalResourceType + ", instanceNumber="
-				+ instanceNumber + "]";
+		return "FunctionalResourceName [functionalResourceType=" + functionalResourceType + ", instanceNumber=" + instanceNumber + "]";
 	}
 
 }

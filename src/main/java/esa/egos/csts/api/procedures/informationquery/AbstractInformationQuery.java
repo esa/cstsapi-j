@@ -28,7 +28,7 @@ import esa.egos.csts.api.types.Name;
 
 public abstract class AbstractInformationQuery extends AbstractProcedure implements IInformationQuery {
 
-	private static final ProcedureType TYPE = new ProcedureType(OIDs.informationQuery);
+	private static final ProcedureType TYPE = ProcedureType.of(OIDs.informationQuery);
 	
 	private static final int VERSION = 1;
 

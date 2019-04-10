@@ -27,7 +27,7 @@ import esa.egos.csts.api.enumerations.TimeType;
  * 
  * This class is immutable.
  */
-public class Time {
+public class Time implements Comparable<Time> {
 
 	private static final LocalDate CCSDS_EPOCH_DATE = LocalDate.of(1958, 1, 1);
 	private static final LocalDateTime CCSDS_EPOCH_DATE_TIME = LocalDateTime.of(CCSDS_EPOCH_DATE, LocalTime.of(0, 0, 0));
@@ -75,8 +75,7 @@ public class Time {
 	 */
 	public static Time of(byte[] value) {
 		if (value.length != 8 && value.length != 10) {
-			throw new IllegalArgumentException(
-					"The length of the value array of a Time type must be of length 8 or 10.");
+			throw new IllegalArgumentException("The length of the value array of a Time type must be of length 8 or 10.");
 		}
 		return new Time(value);
 	}
@@ -201,7 +200,8 @@ public class Time {
 	 * Indicates whether this Time is after the specified {@link LocalDateTime}.
 	 * 
 	 * @param other the specified Time
-	 * @return true if the specified {@link LocalDateTime} is after this Time, false otherwise
+	 * @return true if the specified {@link LocalDateTime} is after this Time, false
+	 *         otherwise
 	 */
 	public boolean isAfter(LocalDateTime other) {
 		return toLocalDateTime().isAfter(other);
@@ -211,7 +211,8 @@ public class Time {
 	 * Indicates whether this Time is equal to the specified {@link LocalDateTime}.
 	 * 
 	 * @param other the specified Time
-	 * @return true if the specified {@link LocalDateTime} is equal to this Time, false otherwise
+	 * @return true if the specified {@link LocalDateTime} is equal to this Time,
+	 *         false otherwise
 	 */
 	public boolean isEqual(LocalDateTime other) {
 		return toLocalDateTime().isEqual(other);
@@ -221,7 +222,8 @@ public class Time {
 	 * Indicates whether this Time is before the specified {@link LocalDateTime}.
 	 * 
 	 * @param other the specified Time
-	 * @return true if the specified {@link LocalDateTime} is before this Time, false otherwise
+	 * @return true if the specified {@link LocalDateTime} is before this Time,
+	 *         false otherwise
 	 */
 	public boolean isBefore(LocalDateTime other) {
 		return toLocalDateTime().isBefore(other);
@@ -231,7 +233,8 @@ public class Time {
 	 * Indicates whether this Time is after the specified {@link Instant}.
 	 * 
 	 * @param other the specified Time
-	 * @return true if the specified {@link Instant} is after this Time, false otherwise
+	 * @return true if the specified {@link Instant} is after this Time, false
+	 *         otherwise
 	 */
 	public boolean isAfter(Instant other) {
 		return toInstant().isAfter(other);
@@ -241,7 +244,8 @@ public class Time {
 	 * Indicates whether this Time is equal to the specified {@link Instant}.
 	 * 
 	 * @param other the specified Time
-	 * @return true if the specified {@link Instant} is equal this Time, false otherwise
+	 * @return true if the specified {@link Instant} is equal this Time, false
+	 *         otherwise
 	 */
 	public boolean isEqual(Instant other) {
 		return toInstant().equals(other);
@@ -251,7 +255,8 @@ public class Time {
 	 * Indicates whether this Time is before the specified {@link Instant}.
 	 * 
 	 * @param other the specified Time
-	 * @return true if the specified {@link Instant} is before this Time, false otherwise
+	 * @return true if the specified {@link Instant} is before this Time, false
+	 *         otherwise
 	 */
 	public boolean isBefore(Instant other) {
 		return toInstant().isBefore(other);
@@ -381,8 +386,7 @@ public class Time {
 		// milliseconds of day
 		long millisOfDay = Integer.toUnsignedLong(buffer.getInt());
 		if (millisOfDay < 0 || millisOfDay > 86399999) {
-			throw new IllegalArgumentException(
-					"Invalid value for milliseconds of day (0 - 86399999): " + Long.toUnsignedString(millisOfDay));
+			throw new IllegalArgumentException("Invalid value for milliseconds of day (0 - 86399999): " + Long.toUnsignedString(millisOfDay));
 		}
 
 		// nanoseconds of days derived from milliseconds
@@ -438,8 +442,7 @@ public class Time {
 		}
 
 		if (picosOfMilli < 0 || picosOfMilli > 999999999) {
-			throw new IllegalArgumentException(
-					"Invalid value for picoseconds of millisecond (0 - 999999999): " + picosOfMilli);
+			throw new IllegalArgumentException("Invalid value for picoseconds of millisecond (0 - 999999999): " + picosOfMilli);
 		}
 
 		ByteBuffer buffer = ByteBuffer.allocate(10);
@@ -527,6 +530,11 @@ public class Time {
 
 		return LocalDateTime.of(localDate, LocalTime.ofNanoOfDay(nanosOfDay));
 
+	}
+
+	@Override
+	public int compareTo(Time o) {
+		return toLocalDateTime().compareTo(o.toLocalDateTime());
 	}
 
 }

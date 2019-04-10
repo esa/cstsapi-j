@@ -45,7 +45,7 @@ import esa.egos.csts.api.types.Time;
 public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProcedure
 		implements IBufferedDataDeliveryInternal {
 
-	private static final ProcedureType TYPE = new ProcedureType(OIDs.bufferedDataDelivery);
+	private static final ProcedureType TYPE = ProcedureType.of(OIDs.bufferedDataDelivery);
 	
 	private static final int VERSION = 1;
 

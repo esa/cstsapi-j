@@ -44,7 +44,7 @@ import esa.egos.csts.api.types.Time;
 
 public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDelivery implements ICyclicReportInternal {
 
-	private static final ProcedureType TYPE = new ProcedureType(OIDs.cyclicReport);
+	private static final ProcedureType TYPE = ProcedureType.of(OIDs.cyclicReport);
 	
 	private static final int VERSION = 1;
 

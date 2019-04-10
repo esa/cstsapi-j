@@ -93,7 +93,7 @@ public class CstsApi implements IApi, ILocator {
 	}
 
 	@Override
-	public void initialise(String configFile) throws ApiException {
+	public void initialize(String configFile) throws ApiException {
 
 		this.configFile = configFile;
 
@@ -304,7 +304,6 @@ public class CstsApi implements IApi, ILocator {
 		return serviceInstance;
 	}
 
-	@Override
 	public IServiceInstance createServiceInstance(String sii, /* ServiceType apId, */
 			IServiceInform servInf) {
 

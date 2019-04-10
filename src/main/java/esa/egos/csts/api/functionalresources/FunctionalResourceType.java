@@ -11,13 +11,7 @@ public class FunctionalResourceType {
 
 	private final ObjectIdentifier objectIdentifier;
 
-	/**
-	 * Instantiates a new Functional Resource Type by its given Object Identifier.
-	 * 
-	 * @param objectIdentifier
-	 *            the specified Object Identifier
-	 */
-	public FunctionalResourceType(ObjectIdentifier objectIdentifier) {
+	private FunctionalResourceType(ObjectIdentifier objectIdentifier) {
 		this.objectIdentifier = objectIdentifier;
 	}
 
@@ -28,6 +22,16 @@ public class FunctionalResourceType {
 	 */
 	public ObjectIdentifier getOid() {
 		return objectIdentifier;
+	}
+
+	/**
+	 * Creates and returns new Functional Resource Type by its given Object
+	 * Identifier.
+	 * 
+	 * @param objectIdentifier the specified Object Identifier
+	 */
+	public static FunctionalResourceType of(ObjectIdentifier objectIdentifier) {
+		return new FunctionalResourceType(objectIdentifier);
 	}
 
 	/**
@@ -43,8 +47,7 @@ public class FunctionalResourceType {
 	/**
 	 * Decodes a specified CCSDS FunctionalResourceType type.
 	 * 
-	 * @param functionalResourceType
-	 *            the specified CCSDS FunctionalResourceType type
+	 * @param functionalResourceType the specified CCSDS FunctionalResourceType type
 	 * @return a new Functional Resource Type decoded from the specified CCSDS
 	 *         FunctionalResourceType type
 	 */

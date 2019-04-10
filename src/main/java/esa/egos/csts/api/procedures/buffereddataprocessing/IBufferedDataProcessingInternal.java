@@ -2,18 +2,10 @@ package esa.egos.csts.api.procedures.buffereddataprocessing;
 
 import java.util.Collection;
 
-import esa.egos.csts.api.enumerations.DataTransferMode;
 import esa.egos.csts.api.operations.IProcessData;
-import esa.egos.csts.api.parameters.impl.IntegerConfigurationParameter;
 import esa.egos.csts.api.procedures.dataprocessing.IDataProcessingInternal;
 
 public interface IBufferedDataProcessingInternal extends IBufferedDataProcessing, IDataProcessingInternal {
-
-	IntegerConfigurationParameter getProcessingLatencyLimit();
-
-	IntegerConfigurationParameter getMaximumForwardBufferSize();
-
-	DataTransferMode getDataTransferMode();
 
 	boolean isSufficientSpaceAvailable();
 

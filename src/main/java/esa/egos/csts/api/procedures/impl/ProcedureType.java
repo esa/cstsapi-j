@@ -11,13 +11,7 @@ public class ProcedureType {
 
 	private final ObjectIdentifier objectIdentifier;
 
-	/**
-	 * Instantiates a new Procedure Type by its given Object Identifier.
-	 * 
-	 * @param objectIdentifier
-	 *            the specified Object Identifier
-	 */
-	public ProcedureType(ObjectIdentifier objectIdentifier) {
+	private ProcedureType(ObjectIdentifier objectIdentifier) {
 		this.objectIdentifier = objectIdentifier;
 	}
 
@@ -28,6 +22,15 @@ public class ProcedureType {
 	 */
 	public ObjectIdentifier getOid() {
 		return objectIdentifier;
+	}
+
+	/**
+	 * Creates and returns new Procedure Type by its given Object Identifier.
+	 * 
+	 * @param objectIdentifier the specified Object Identifier
+	 */
+	public static ProcedureType of(ObjectIdentifier objectIdentifier) {
+		return new ProcedureType(objectIdentifier);
 	}
 
 	/**
@@ -42,8 +45,7 @@ public class ProcedureType {
 	/**
 	 * Decodes a specified CCSDS ProcedureType type.
 	 * 
-	 * @param procedureType
-	 *            the specified CCSDS ProcedureType type
+	 * @param procedureType the specified CCSDS ProcedureType type
 	 * @return a new Procedure Type decoded from the specified CCSDS ProcedureType
 	 *         type
 	 */

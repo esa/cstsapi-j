@@ -24,8 +24,6 @@ public interface IApi extends ICstsApi {
 
 	IReporter getReporter();
 
-	String getApiName();
-
 	IProxyAdmin getProxy(String protId);
 
 	String getProtocolId(String responderPortIdentifier);

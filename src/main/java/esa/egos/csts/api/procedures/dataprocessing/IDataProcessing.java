@@ -1,6 +1,7 @@
 package esa.egos.csts.api.procedures.dataprocessing;
 
 import esa.egos.csts.api.operations.IProcessData;
+import esa.egos.csts.api.parameters.impl.IntegerConfigurationParameter;
 import esa.egos.csts.api.procedures.IStatefulProcedure;
 
 /**
@@ -8,6 +9,12 @@ import esa.egos.csts.api.procedures.IStatefulProcedure;
  */
 public interface IDataProcessing extends IStatefulProcedure {
 
+	/**
+	 * Returns the input queue size configuration parameter.
+	 * @return the input queue size configuration parameter
+	 */
+	IntegerConfigurationParameter getInputQueueSize();
+	
 	/**
 	 * Fetches a PROCESS-DATA operation from the queue and returns it.
 	 * 

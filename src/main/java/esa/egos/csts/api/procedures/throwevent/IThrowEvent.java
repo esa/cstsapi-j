@@ -34,16 +34,6 @@ public interface IThrowEvent extends IStatefulProcedure {
 
 	/**
 	 * Indicates that the action requested in the specified EXECUTE-DIRECTIVE
-	 * operation has been completed unsuccessfully and forwards it to the underlying
-	 * state machine.
-	 * 
-	 * @param executeDirective the EXECUTE-DIRECTIVE operation which has been
-	 *                         completed unsuccessfully
-	 */
-	void actionCompletedUnsuccesfully(IExecuteDirective executeDirective);
-
-	/**
-	 * Indicates that the action requested in the specified EXECUTE-DIRECTIVE
 	 * operation has been completed successfully and forwards it to the underlying
 	 * state machine.
 	 * 
@@ -53,13 +43,14 @@ public interface IThrowEvent extends IStatefulProcedure {
 	void actionCompletedSuccesfully(IExecuteDirective executeDirective);
 
 	/**
-	 * Indicates that the execution requested in that specified EXECUTE-DIRECTIVE
-	 * operation has been declined and forwards it to the underlying state machine.
+	 * Indicates that the action requested in the specified EXECUTE-DIRECTIVE
+	 * operation has been completed unsuccessfully and forwards it to the underlying
+	 * state machine.
 	 * 
 	 * @param executeDirective the EXECUTE-DIRECTIVE operation which has been
-	 *                         declined
+	 *                         completed unsuccessfully
 	 */
-	void declineDirective(IExecuteDirective executeDirective);
+	void actionCompletedUnsuccesfully(IExecuteDirective executeDirective);
 
 	/**
 	 * Indicates that the execution requested in that specified EXECUTE-DIRECTIVE
@@ -70,5 +61,14 @@ public interface IThrowEvent extends IStatefulProcedure {
 	 *                         acknowledged
 	 */
 	void acknowledgeDirective(IExecuteDirective executeDirective);
+
+	/**
+	 * Indicates that the execution requested in that specified EXECUTE-DIRECTIVE
+	 * operation has been declined and forwards it to the underlying state machine.
+	 * 
+	 * @param executeDirective the EXECUTE-DIRECTIVE operation which has been
+	 *                         declined
+	 */
+	void declineDirective(IExecuteDirective executeDirective);
 
 }

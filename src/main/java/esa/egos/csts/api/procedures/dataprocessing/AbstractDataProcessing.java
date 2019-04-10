@@ -47,7 +47,7 @@ import esa.egos.csts.api.types.Time;
 
 public abstract class AbstractDataProcessing extends AbstractStatefulProcedure implements IDataProcessingInternal {
 
-	private static final ProcedureType TYPE = new ProcedureType(OIDs.dataProcessing);
+	private static final ProcedureType TYPE = ProcedureType.of(OIDs.dataProcessing);
 	
 	private static final int VERSION = 1;
 

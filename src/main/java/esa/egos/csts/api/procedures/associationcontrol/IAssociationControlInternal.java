@@ -1,5 +1,6 @@
 package esa.egos.csts.api.procedures.associationcontrol;
 
+import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.procedures.IProcedureInternal;
 import esa.egos.csts.api.states.associationcontrol.AssociationControlState;
 
@@ -12,5 +13,9 @@ public interface IAssociationControlInternal extends IAssociationControl, IProce
 	void cleanup();
 
 	void terminateProcedures();
+	
+	void informAbort(PeerAbortDiagnostics diagnostics);
+
+	void informProtocolAbort();
 	
 }

@@ -16,7 +16,7 @@ import esa.egos.csts.api.enumerations.DurationType;
  * 
  * This class is immutable.
  */
-public class Duration {
+public class Duration implements Comparable<Duration> {
 
 	private final DurationType type;
 	private final java.time.Duration duration;
@@ -72,23 +72,24 @@ public class Duration {
 	/**
 	 * Decodes a specified CCSDS Duration type.
 	 * 
-	 * @param duration
-	 *            the specified CCSDS Duration type
+	 * @param duration the specified CCSDS Duration type
 	 * @return a new Duration decoded from the specified CCSDS Duration type
 	 */
 	public static Duration decode(ccsds.csts.common.types.Duration duration) {
 		Duration newDuration = null;
 		if (duration.getMicroseconds() != null) {
-			newDuration = new Duration(DurationType.MICROSECONDS,
-					java.time.Duration.of(duration.getMicroseconds().longValue(), ChronoUnit.MICROS));
+			newDuration = new Duration(DurationType.MICROSECONDS, java.time.Duration.of(duration.getMicroseconds().longValue(), ChronoUnit.MICROS));
 		} else if (duration.getMilliseconds() != null) {
-			newDuration = new Duration(DurationType.MILLISECONDS,
-					java.time.Duration.ofMillis(duration.getMilliseconds().longValue()));
+			newDuration = new Duration(DurationType.MILLISECONDS, java.time.Duration.ofMillis(duration.getMilliseconds().longValue()));
 		} else if (duration.getSeconds() != null) {
-			newDuration = new Duration(DurationType.SECONDS,
-					java.time.Duration.ofSeconds(duration.getSeconds().longValue()));
+			newDuration = new Duration(DurationType.SECONDS, java.time.Duration.ofSeconds(duration.getSeconds().longValue()));
 		}
 		return newDuration;
+	}
+
+	@Override
+	public int compareTo(Duration o) {
+		return duration.compareTo(o.duration);
 	}
 
 }

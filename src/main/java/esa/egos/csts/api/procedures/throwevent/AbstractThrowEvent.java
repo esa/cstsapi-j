@@ -26,7 +26,7 @@ import esa.egos.csts.api.states.throwevent.ThrowEventState;
 
 public abstract class AbstractThrowEvent extends AbstractStatefulProcedure implements IThrowEventInternal {
 
-	private static final ProcedureType TYPE = new ProcedureType(OIDs.throwEvent);
+	private static final ProcedureType TYPE = ProcedureType.of(OIDs.throwEvent);
 	
 	private static final int VERSION = 1;
 	
