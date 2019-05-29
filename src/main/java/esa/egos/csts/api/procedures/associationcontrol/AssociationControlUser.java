@@ -43,7 +43,7 @@ public class AssociationControlUser extends AbstractAssociationControl {
 	
 		if (operation.getType() == OperationType.BIND) {
 			if (assocCreated) {
-				return CstsResult.FAILURE;
+				return CstsResult.ALREADY_BOUND;
 			} else {
 				try {
 					createAssociation();
@@ -55,17 +55,19 @@ public class AssociationControlUser extends AbstractAssociationControl {
 			}
 		} else if (operation.getType() == OperationType.UNBIND) {
 			if (!assocCreated) {
-				return CstsResult.FAILURE;
+				return CstsResult.ALREADY_UNBOUND;
 			} else {
 				getServiceInstanceInternal().setState(ServiceStatus.UNBIND_PENDING);
 			}
 		} else if (operation.getType() == OperationType.PEER_ABORT) {
 			terminateProcedures();
+			CstsResult result = forwardInvocationToProxy(operation);
 			try {
 				releaseAssociation();
 			} catch (ApiException e) {
 				// TODO log
 			}
+			return result;
 		}
 		return forwardInvocationToProxy(operation);
 	}

@@ -154,45 +154,77 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 	}
 	
 	@Override
-	public CstsResult processData(long dataUnitId, byte[] data) {
+	public CstsResult processData(long dataUnitId, byte[] data, boolean produceReport) {
 		IConfirmedProcessData processData = createConfirmedProcessData();
 		earliestDataProcessingTime = ConditionalTime.unknown();
 		latestDataProcessingTime = ConditionalTime.unknown();
 		processData.setDataUnitId(dataUnitId);
 		processData.setData(data);
+		setProduceReport(produceReport);
 		processData.setInvocationExtension(encodeProcessDataInvocationExtension());
 		return forwardInvocationToProxy(processData);
 	}
 	
 	@Override
-	public CstsResult processData(long dataUnitId, byte[] data, ConditionalTime earliestDataProcessingTime, ConditionalTime latestDataProcessingTime) {
+	public CstsResult processData(long dataUnitId, byte[] data, Time earliestDataProcessingTime,
+			Time latestDataProcessingTime, boolean produceReport) {
+		IConfirmedProcessData processData = createConfirmedProcessData();
+		this.earliestDataProcessingTime = ConditionalTime.of(earliestDataProcessingTime);
+		this.latestDataProcessingTime = ConditionalTime.of(latestDataProcessingTime);
+		processData.setDataUnitId(dataUnitId);
+		processData.setData(data);
+		setProduceReport(produceReport);
+		processData.setInvocationExtension(encodeProcessDataInvocationExtension());
+		return forwardInvocationToProxy(processData);
+	}
+	
+	@Override
+	public CstsResult processData(long dataUnitId, byte[] data, ConditionalTime earliestDataProcessingTime,
+			ConditionalTime latestDataProcessingTime, boolean produceReport) {
 		IConfirmedProcessData processData = createConfirmedProcessData();
 		this.earliestDataProcessingTime = earliestDataProcessingTime;
 		this.latestDataProcessingTime = latestDataProcessingTime;
 		processData.setDataUnitId(dataUnitId);
 		processData.setData(data);
+		setProduceReport(produceReport);
 		processData.setInvocationExtension(encodeProcessDataInvocationExtension());
 		return forwardInvocationToProxy(processData);
 	}
 	
 	@Override
-	public CstsResult processData(long dataUnitId, EmbeddedData embeddedData) {
+	public CstsResult processData(long dataUnitId, EmbeddedData embeddedData, boolean produceReport) {
 		IConfirmedProcessData processData = createConfirmedProcessData();
 		earliestDataProcessingTime = ConditionalTime.unknown();
 		latestDataProcessingTime = ConditionalTime.unknown();
 		processData.setDataUnitId(dataUnitId);
 		processData.setEmbeddedData(embeddedData);
+		setProduceReport(produceReport);
 		processData.setInvocationExtension(encodeProcessDataInvocationExtension());
 		return forwardInvocationToProxy(processData);
 	}
 
 	@Override
-	public CstsResult processData(long dataUnitId, EmbeddedData embeddedData, ConditionalTime earliestDataProcessingTime, ConditionalTime latestDataProcessingTime) {
+	public CstsResult processData(long dataUnitId, EmbeddedData embeddedData, Time earliestDataProcessingTime,
+			Time latestDataProcessingTime, boolean produceReport) {
+		IConfirmedProcessData processData = createConfirmedProcessData();
+		this.earliestDataProcessingTime = ConditionalTime.of(earliestDataProcessingTime);
+		this.latestDataProcessingTime = ConditionalTime.of(latestDataProcessingTime);
+		processData.setDataUnitId(dataUnitId);
+		processData.setEmbeddedData(embeddedData);
+		setProduceReport(produceReport);
+		processData.setInvocationExtension(encodeProcessDataInvocationExtension());
+		return forwardInvocationToProxy(processData);
+	}
+	
+	@Override
+	public CstsResult processData(long dataUnitId, EmbeddedData embeddedData, ConditionalTime earliestDataProcessingTime,
+			ConditionalTime latestDataProcessingTime, boolean produceReport) {
 		IConfirmedProcessData processData = createConfirmedProcessData();
 		this.earliestDataProcessingTime = earliestDataProcessingTime;
 		this.latestDataProcessingTime = latestDataProcessingTime;
 		processData.setDataUnitId(dataUnitId);
 		processData.setEmbeddedData(embeddedData);
+		setProduceReport(produceReport);
 		processData.setInvocationExtension(encodeProcessDataInvocationExtension());
 		return forwardInvocationToProxy(processData);
 	}
@@ -362,15 +394,15 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 		return Extension.notUsed();
 	}
 
-	private EmbeddedData encodeProcessDataInvocationExtension() {
+	protected Extension encodeProcDataInvocationExtExtension() {
 		SequContrDataProcProcDataInvocExt invocationExtension = new SequContrDataProcProcDataInvocExt();
 		invocationExtension.setEarliestDataProcessingTime(earliestDataProcessingTime.encode());
 		invocationExtension.setLatestDataProcessingTime(latestDataProcessingTime.encode());
-		invocationExtension.setSequContrDataProcDataInvocExtExtension(encodeProcessDataInvocationExtExtension().encode());
-		return EmbeddedData.of(OIDs.scdpProcDataInvocExt, invocationExtension.code);
+		invocationExtension.setSequContrDataProcDataInvocExtExtension(encodeProcDataInvocationExtExtExtension().encode());
+		return Extension.of(EmbeddedData.of(OIDs.scdpProcDataInvocExt, invocationExtension.code));
 	}
 
-	protected Extension encodeProcessDataInvocationExtExtension() {
+	protected Extension encodeProcDataInvocationExtExtExtension() {
 		return Extension.notUsed();
 	}
 

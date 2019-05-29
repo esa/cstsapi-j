@@ -37,17 +37,17 @@ public class AssocTranslator {
 		return bind;
 	}
 
-	public static IOperation decodeBindReturn(IOperation bindReturnOp, CstsFrameworkPdu pdu) throws ApiException{
+	public static IOperation decodeBindReturn(IOperation bindReturnOp, CstsFrameworkPdu pdu) throws ApiException {
 
 		if (pdu.getBindReturn() == null)
 			throw new ApiException("No bind data for Assoc Translator transmitted.");
-		
+
 		IBind bind = (IBind) bindReturnOp;
 		bind.decodeBindReturn(pdu.getBindReturn());
-		
+
 		return bind;
 	}
-	
+
 	public static IOperation decodeUnbindInvocation(CstsFrameworkPdu pdu) throws ApiException {
 
 		if (pdu.getUnbindInvocation() == null)
@@ -58,19 +58,19 @@ public class AssocTranslator {
 
 		return unbind;
 	}
-	
+
 	public static IOperation decodeUnbindReturn(IOperation unbindReturnOp, CstsFrameworkPdu pdu) throws ApiException {
 		if (pdu.getUnbindReturn() == null)
 			throw new ApiException("No unbind data for Assoc Translator transmitted.");
-		
+
 		IUnbind unbind = (IUnbind) unbindReturnOp;
 		unbind.decodeUnbindReturn(pdu.getUnbindReturn());
-		
+
 		return unbind;
 	}
 
 	public static IOperation decodeStartInvocation(CstsFrameworkPdu pdu) throws ApiException {
-		
+
 		if (pdu.getStartInvocation() == null) {
 			throw new ApiException("No START data for Assoc Translator transmitted.");
 		}
@@ -94,7 +94,7 @@ public class AssocTranslator {
 	}
 
 	public static IOperation decodeStopInvocation(CstsFrameworkPdu pdu) throws ApiException {
-		
+
 		if (pdu.getStopInvocation() == null) {
 			throw new ApiException("No STOP data for Assoc Translator transmitted.");
 		}
@@ -104,9 +104,9 @@ public class AssocTranslator {
 
 		return stop;
 	}
-	
+
 	public static IOperation decodeStopReturn(IOperation returnOp, CstsFrameworkPdu pdu) throws ApiException {
-		
+
 		if (pdu.getStopReturn() == null) {
 			throw new ApiException("No STOP data for Assoc Translator transmitted.");
 		}
@@ -118,7 +118,7 @@ public class AssocTranslator {
 	}
 
 	public static IOperation decodeTransferDataInvocation(CstsFrameworkPdu pdu) throws ApiException {
-		
+
 		if (pdu.getTransferDataInvocation() == null) {
 			throw new ApiException("No TRANSFER-DATA data for Assoc Translator transmitted.");
 		}
@@ -130,11 +130,11 @@ public class AssocTranslator {
 	}
 
 	public static IOperation decodeProcessDataInvocation(CstsFrameworkPdu pdu) throws ApiException {
-		
+
 		if (pdu.getProcessDataInvocation() == null) {
 			throw new ApiException("No PROCESS-DATA data for Assoc Translator transmitted.");
 		}
-		
+
 		IOperation operation;
 		if (pdu.getProcessDataInvocation().getStandardInvocationHeader().getInvokeId().longValue() == 0) {
 			IProcessData processData = new ProcessData();
@@ -146,9 +146,9 @@ public class AssocTranslator {
 			operation = processData;
 		}
 		return operation;
-		
+
 	}
-	
+
 	public static IOperation decodeProcessDataReturn(IOperation returnOp, CstsFrameworkPdu pdu) throws ApiException {
 		if (pdu.getProcessDataReturn() == null) {
 			throw new ApiException("No PROCESS-DATA data for Assoc Translator transmitted.");
@@ -156,10 +156,10 @@ public class AssocTranslator {
 
 		IConfirmedProcessData confirmedProcessData = (IConfirmedProcessData) returnOp;
 		confirmedProcessData.decodeProcessDataReturn(pdu.getProcessDataReturn());
-		
+
 		return confirmedProcessData;
 	}
-	
+
 	public static IOperation decodeNotifyInvocation(CstsFrameworkPdu pdu) throws ApiException {
 		if (pdu.getNotifyInvocation() == null) {
 			throw new ApiException("No NOTIFY data for Assoc Translator transmitted.");
@@ -170,7 +170,7 @@ public class AssocTranslator {
 
 		return notify;
 	}
-	
+
 	public static IOperation decodeGetInvocation(CstsFrameworkPdu pdu) throws ApiException {
 
 		if (pdu.getGetInvocation() == null) {
@@ -184,7 +184,7 @@ public class AssocTranslator {
 	}
 
 	public static IOperation decodeGetReturn(IOperation returnOp, CstsFrameworkPdu pdu) throws ApiException {
-		
+
 		if (pdu.getGetReturn() == null) {
 			throw new ApiException("No GET data for Assoc Translator transmitted.");
 		}
@@ -194,7 +194,7 @@ public class AssocTranslator {
 
 		return get;
 	}
-	
+
 	public static IOperation decodeExecuteDirectiveInvocation(CstsFrameworkPdu pdu) throws ApiException {
 
 		if (pdu.getExecuteDirectiveInvocation() == null)
@@ -202,10 +202,10 @@ public class AssocTranslator {
 
 		IExecuteDirective executeDirective = new ExecuteDirective();
 		executeDirective.decodeExecuteDirectiveInvocation(pdu.getExecuteDirectiveInvocation());
-		
+
 		return executeDirective;
 	}
-	
+
 	public static IOperation decodeExecuteDirectiveAcknowledgement(IOperation returnOp, CstsFrameworkPdu pdu) throws ApiException {
 		if (pdu.getExecuteDirectiveAcknowledge() == null) {
 			throw new ApiException("No EXECUTE-DIRECTIVE data for Assoc Translator transmitted.");
@@ -216,7 +216,7 @@ public class AssocTranslator {
 
 		return executeDirective;
 	}
-	
+
 	public static IOperation decodeExecuteDirectiveReturn(IOperation returnOp, CstsFrameworkPdu pdu) throws ApiException {
 		if (pdu.getExecuteDirectiveReturn() == null) {
 			throw new ApiException("No EXECUTE-DIRECTIVE data for Assoc Translator transmitted.");

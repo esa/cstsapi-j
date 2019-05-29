@@ -42,19 +42,18 @@ import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.types.ConditionalTime;
 import esa.egos.csts.api.types.Time;
 
-public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProcedure
-		implements IBufferedDataDeliveryInternal {
+public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProcedure implements IBufferedDataDeliveryInternal {
 
 	private static final ProcedureType TYPE = ProcedureType.of(OIDs.bufferedDataDelivery);
-	
+
 	private static final int VERSION = 1;
 
 	private ScheduledExecutorService executor;
-	
+
 	// defined by User
 	private ConditionalTime startGenerationTime;
 	private ConditionalTime stopGenerationTime;
-	
+
 	// defined by Provider
 	private BufferedDataDeliveryStartDiagnostic startDiagnostic;
 
@@ -82,7 +81,7 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 	public int getVersion() {
 		return VERSION;
 	}
-	
+
 	@Override
 	protected void initOperationTypes() {
 		addSupportedOperationType(OperationType.START);
@@ -144,7 +143,16 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 		start.setInvocationExtension(encodeInvocationExtension());
 		return forwardInvocationToProxy(start);
 	}
-	
+
+	@Override
+	public synchronized CstsResult requestDataDelivery(Time startGenerationTime, Time stopGenerationTime) {
+		IStart start = createStart();
+		this.startGenerationTime = ConditionalTime.of(startGenerationTime);
+		this.stopGenerationTime = ConditionalTime.of(stopGenerationTime);
+		start.setInvocationExtension(encodeInvocationExtension());
+		return forwardInvocationToProxy(start);
+	}
+
 	@Override
 	public synchronized CstsResult requestDataDelivery(ConditionalTime startGenerationTime, ConditionalTime stopGenerationTime) {
 		IStart start = createStart();
@@ -153,13 +161,13 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 		start.setInvocationExtension(encodeInvocationExtension());
 		return forwardInvocationToProxy(start);
 	}
-	
+
 	@Override
 	public CstsResult endDataDelivery() {
 		IStop stop = createStop();
 		return forwardInvocationToProxy(stop);
 	}
-	
+
 	@Override
 	public boolean isDataEnded() {
 		return dataEnded;
@@ -295,6 +303,9 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 	}
 
 	private synchronized long getCurrentSequenceCounter() {
+//		if(isReturnBufferEmpty()) {
+//			sequenceCounter = 0;
+//		}
 		long tmp = sequenceCounter++;
 		if (sequenceCounter < 0) {
 			sequenceCounter = 0;
@@ -327,18 +338,18 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 			dataEnded = true;
 			IEvent event = getEvent(OIDs.pBDDendOfData);
 			event.fire(EventValue.empty(), Time.now());
-			
+
 			INotify notify = createNotify();
 			notify.setEventName(event.getName());
 			notify.setEventValue(event.getValue());
 			notify.setEventTime(event.getTime());
-			
+
 			getState().process(notify);
 		} else {
 			throw new ApiException("End of data already notified.");
 		}
 	}
-	
+
 	@Override
 	protected void processConfigurationChange(IConfigurationParameter parameter) {
 
@@ -516,7 +527,6 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 			notify.decodeNotifyInvocation(pdu.getNotifyInvocation());
 			operation = notify;
 		} else if (pdu.getReturnBuffer() != null) {
-			returnBuffer.getBuffer().clear();
 			for (TransferDataOrNotification data : pdu.getReturnBuffer().getTransferDataOrNotification()) {
 				if (data.getTransferDataInvocation() != null) {
 					ITransferData transferData = createTransferData();
@@ -529,6 +539,7 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 				}
 			}
 			operation = returnBuffer;
+			returnBuffer = createReturnBuffer();
 		}
 
 		return operation;
@@ -544,8 +555,7 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 			}
 			startGenerationTime = ConditionalTime.decode(invocationExtension.getStartGenerationTime());
 			stopGenerationTime = ConditionalTime.decode(invocationExtension.getStopGenerationTime());
-			decodeStartInvocationExtExtension(
-					Extension.decode(invocationExtension.getBuffDataDelStartInvocExtExtension()));
+			decodeStartInvocationExtExtension(Extension.decode(invocationExtension.getBuffDataDelStartInvocExtExtension()));
 		}
 	}
 
@@ -553,9 +563,8 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 	 * This method should be overridden to decode the extension of a derived
 	 * procedure.
 	 * 
-	 * @param extension
-	 *            the Extended object representing the extension of the derived
-	 *            procedure
+	 * @param extension the Extended object representing the extension of the
+	 *                  derived procedure
 	 */
 	protected void decodeStartInvocationExtExtension(Extension extension) {
 		// do nothing on default

@@ -75,7 +75,8 @@ public class Active extends State<IBufferedDataProcessingInternal> {
 			IStop stop = (IStop) operation;
 			stop.setPositiveResult();
 			procedure.setState(new Inactive(procedure));
-			return getProcedure().forwardInvocationToApplication(stop);
+			getProcedure().forwardInvocationToApplication(stop);
+			return getProcedure().forwardReturnToProxy(stop);
 		} else {
 			procedure.raiseProtocolError();
 			return CstsResult.PROTOCOL_ERROR;

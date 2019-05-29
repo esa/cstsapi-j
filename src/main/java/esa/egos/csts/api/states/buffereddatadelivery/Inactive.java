@@ -41,24 +41,32 @@ public class Inactive extends State<IBufferedDataDeliveryInternal> {
 			}
 			if (procedure.getServiceInstance().getProductionState() == ProductionState.HALTED) {
 				start.setStartDiagnostic(new StartDiagnostic(StartDiagnosticType.OUT_OF_SERVICE));
+				return getProcedure().forwardReturnToProxy(start);
 			}
 			if (procedure.getDeliveryMode() == DeliveryMode.COMPLETE) {
 				if (!procedure.getStartGenerationTime().isKnown() || !procedure.getStopGenerationTime().isKnown()) {
-					procedure.setStartDiagnostic(new BufferedDataDeliveryStartDiagnostic(
-							BufferedDataDeliveryStartDiagnosticType.MISSING_TIME_VALUE, "Missing time value"));
+					procedure.setStartDiagnostic(new BufferedDataDeliveryStartDiagnostic(BufferedDataDeliveryStartDiagnosticType.MISSING_TIME_VALUE, "Missing time value"));
 					start.setStartDiagnostic(new StartDiagnostic(procedure.encodeStartDiagnosticExt()));
-				}
-				if (procedure.getStartGenerationTime().getTime().isAfter(procedure.getStopGenerationTime().getTime())) {
-					procedure.setStartDiagnostic(new BufferedDataDeliveryStartDiagnostic(
-							BufferedDataDeliveryStartDiagnosticType.INCONSISTENT_TIME, "Inconsistent time"));
+					return getProcedure().forwardReturnToProxy(start);
+				} else if (procedure.getStartGenerationTime().getTime().isAfter(procedure.getStopGenerationTime().getTime())) {
+					procedure.setStartDiagnostic(new BufferedDataDeliveryStartDiagnostic(BufferedDataDeliveryStartDiagnosticType.INCONSISTENT_TIME, "Inconsistent time"));
 					start.setStartDiagnostic(new StartDiagnostic(procedure.encodeStartDiagnosticExt()));
+					return getProcedure().forwardReturnToProxy(start);
 				}
 			} else {
-				start.setPositiveResult();
-				procedure.initializeReturnBufferSize();
-				procedure.setDataEnded(false);
-				procedure.setState(new Active(getProcedure()));
+				if (procedure.getStartGenerationTime().isKnown() && procedure.getStopGenerationTime().isKnown()) {
+					if (procedure.getStartGenerationTime().getTime().isAfter(procedure.getStopGenerationTime().getTime())) {
+						procedure.setStartDiagnostic(new BufferedDataDeliveryStartDiagnostic(BufferedDataDeliveryStartDiagnosticType.INCONSISTENT_TIME, "Inconsistent time"));
+						start.setStartDiagnostic(new StartDiagnostic(procedure.encodeStartDiagnosticExt()));
+						return getProcedure().forwardReturnToProxy(start);
+					}
+				}
 			}
+			start.setPositiveResult();
+			procedure.initializeReturnBufferSize();
+			procedure.setDataEnded(false);
+			procedure.setState(new Active(getProcedure()));
+			getProcedure().forwardInvocationToApplication(start);
 			return getProcedure().forwardReturnToProxy(start);
 		} else {
 			getProcedure().raiseProtocolError();

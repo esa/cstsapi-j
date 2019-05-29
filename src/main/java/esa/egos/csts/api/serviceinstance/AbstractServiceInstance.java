@@ -376,12 +376,12 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 		ReturnPair rr = new ReturnPair(confOp, et);
 
 		try {
-			this.remoteReturns.add(rr);
+			if (confOp != null) this.remoteReturns.add(rr);
 			getProxyInitiate().initiateOpInvoke(operation, reportTransmission, this.pxySeqCount);
 		} catch (ApiException e) {
 			LOG.fine("Forward initiate proxy operation invoke failed.");
 			rc = Result.E_FAIL;
-			this.remoteReturns.remove(rr);
+			if (confOp != null) this.remoteReturns.remove(rr);
 		}
 
 		// SLE_S_QUEUED means suspended

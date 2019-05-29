@@ -4,11 +4,13 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 import org.openmuc.jasn1.ber.BerByteArrayOutputStream;
 
@@ -20,6 +22,7 @@ import esa.egos.csts.api.enumerations.EventValueType;
 import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.events.EventValue;
 import esa.egos.csts.api.events.IEvent;
+import esa.egos.csts.api.exceptions.ConfigException;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.operations.IForwardBuffer;
@@ -85,6 +88,18 @@ public abstract class AbstractBufferedDataProcessing extends AbstractDataProcess
 		super.terminate();
 	}
 
+	protected IForwardBuffer createForwardBuffer() {
+		IForwardBuffer forwardBuffer = new ForwardBuffer();
+		forwardBuffer.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
+		try {
+			forwardBuffer.setServiceInstanceIdentifier(getServiceInstance().getServiceInstanceIdentifier());
+		} catch (ConfigException e) {
+			LOGGER.log(Level.CONFIG, "Could not create RETURN BUFFER operation.", e);
+			return null;
+		}
+		return forwardBuffer;
+	}
+	
 	@Override
 	public DataTransferMode getDataTransferMode() {
 		long code = ((IntegerConfigurationParameter) getConfigurationParameter(OIDs.pBDPdataTransferMode)).getValue();
@@ -119,19 +134,59 @@ public abstract class AbstractBufferedDataProcessing extends AbstractDataProcess
 	}
 	
 	@Override
-	public CstsResult processData(long dataUnitId, byte[] data) {
+	public CstsResult processData(long dataUnitId, byte[] data, boolean produceReport) {
 		IProcessData processData = createProcessData();
 		processData.setDataUnitId(dataUnitId);
 		processData.setData(data);
+		setProduceReport(produceReport);
+		processData.setInvocationExtension(encodeProcessDataInvocationExtension());
 		return forwardInvocationToProxy(processData);
 	}
 	
 	@Override
-	public CstsResult processData(long dataUnitId, EmbeddedData embeddedData) {
+	public CstsResult processData(long dataUnitId, EmbeddedData embeddedData, boolean produceReport) {
 		IProcessData processData = createProcessData();
 		processData.setDataUnitId(dataUnitId);
 		processData.setEmbeddedData(embeddedData);
+		setProduceReport(produceReport);
+		processData.setInvocationExtension(encodeProcessDataInvocationExtension());
 		return forwardInvocationToProxy(processData);
+	}
+	
+	@Override
+	public CstsResult processBuffer(List<Long> dataUnitIds, List<byte[]> data, List<Boolean> produceReports) {
+		if (dataUnitIds.size() != data.size()) {
+			return CstsResult.FAILURE;
+		}
+		IForwardBuffer forwardBuffer = createForwardBuffer();
+		int i = 0;
+		for (Long l : dataUnitIds) {
+			IProcessData processData = createProcessData();
+			processData.setDataUnitId(l);
+			processData.setData(data.get(i));
+			setProduceReport(produceReports.get(i));
+			processData.setInvocationExtension(encodeProcessDataInvocationExtension());
+			forwardBuffer.getBuffer().add(processData);
+		}
+		return forwardInvocationToProxy(forwardBuffer);
+	}
+	
+	@Override
+	public CstsResult processEmbeddedBuffer(List<Long> dataUnitIds, List<EmbeddedData> embeddedData, List<Boolean> produceReports) {
+		if (dataUnitIds.size() != embeddedData.size()) {
+			return CstsResult.FAILURE;
+		}
+		IForwardBuffer forwardBuffer = createForwardBuffer();
+		int i = 0;
+		for (Long l : dataUnitIds) {
+			IProcessData processData = createProcessData();
+			processData.setDataUnitId(l);
+			processData.setEmbeddedData(embeddedData.get(i));
+			setProduceReport(produceReports.get(i));
+			processData.setInvocationExtension(encodeProcessDataInvocationExtension());
+			forwardBuffer.getBuffer().add(processData);
+		}
+		return forwardInvocationToProxy(forwardBuffer);
 	}
 	
 	@Override
@@ -144,31 +199,37 @@ public abstract class AbstractBufferedDataProcessing extends AbstractDataProcess
 		suspend.release();
 	}
 	
+	private void cancelLatencyTimer(IProcessData processData) {
+		if (getDataTransferMode() == DataTransferMode.TIMELY && getProcessingLatencyLimit().getValue() != 0) {
+			latencyTimers.remove(processData).cancel(true);
+		}
+	}
+	
 	@Override
-	public IProcessData fetch() {
+	protected IProcessData fetch() {
 		IProcessData processData = super.fetch();
-		latencyTimers.remove(processData).cancel(true);
+		cancelLatencyTimer(processData);
 		return processData;
 	}
 
 	@Override
-	public IProcessData fetchBlocking() throws InterruptedException {
+	protected IProcessData fetchBlocking() throws InterruptedException {
 		IProcessData processData = super.fetchBlocking();
-		latencyTimers.remove(processData).cancel(true);
+		cancelLatencyTimer(processData);
 		return processData;
 	}
 
 	@Override
 	public IProcessData fetchAndProcess() {
 		IProcessData processData = super.fetchAndProcess();
-		latencyTimers.remove(processData).cancel(true);
+		cancelLatencyTimer(processData);
 		return processData;
 	}
 
 	@Override
 	public IProcessData fetchAndProcessBlocking() throws InterruptedException {
 		IProcessData processData = super.fetchAndProcessBlocking();
-		latencyTimers.remove(processData).cancel(true);
+		cancelLatencyTimer(processData);
 		return processData;
 	}
 
@@ -224,7 +285,7 @@ public abstract class AbstractBufferedDataProcessing extends AbstractDataProcess
 	
 	@Override
 	public synchronized void completeProcessing(IProcessData processData) {
-		latencyTimers.remove(processData).cancel(true);
+		cancelLatencyTimer(processData);
 		super.completeProcessing(processData);
 		if (readingSuspended) {
 			if (isSufficientSpaceAvailable()) {

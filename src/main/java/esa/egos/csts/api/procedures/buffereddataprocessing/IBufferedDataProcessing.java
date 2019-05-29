@@ -1,5 +1,7 @@
 package esa.egos.csts.api.procedures.buffereddataprocessing;
 
+import java.util.List;
+
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.enumerations.DataTransferMode;
 import esa.egos.csts.api.extensions.EmbeddedData;
@@ -69,7 +71,7 @@ public interface IBufferedDataProcessing extends IDataProcessing {
 	 * @param data       the data
 	 * @return the result of the request
 	 */
-	CstsResult processData(long dataUnitId, byte[] data);
+	CstsResult processData(long dataUnitId, byte[] data, boolean produceReport);
 
 	/**
 	 * Creates a PROCESS-DATA operation forwards it to the underlying communications
@@ -81,6 +83,10 @@ public interface IBufferedDataProcessing extends IDataProcessing {
 	 * @param embeddedData the embedded data
 	 * @return the result of the request
 	 */
-	CstsResult processData(long dataUnitId, EmbeddedData embeddedData);
+	CstsResult processData(long dataUnitId, EmbeddedData embeddedData, boolean produceReport);
+
+	CstsResult processEmbeddedBuffer(List<Long> dataUnitIds, List<EmbeddedData> embeddedData, List<Boolean> produceReports);
+
+	CstsResult processBuffer(List<Long> dataUnitIds, List<byte[]> data, List<Boolean> produceReports);
 
 }

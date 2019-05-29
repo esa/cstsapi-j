@@ -7,6 +7,7 @@ import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.parameters.impl.IntegerConfigurationParameter;
 import esa.egos.csts.api.procedures.IStatefulProcedure;
 import esa.egos.csts.api.types.ConditionalTime;
+import esa.egos.csts.api.types.Time;
 
 /**
  * This interface represents the Buffered Data Delivery Procedure.
@@ -71,6 +72,19 @@ public interface IBufferedDataDelivery extends IStatefulProcedure {
 	 * @param stopGenerationTime  the stop generation time
 	 * @return the result of the request
 	 */
+	CstsResult requestDataDelivery(Time startGenerationTime, Time stopGenerationTime);
+	
+	/**
+	 * Creates a START operation, extends it and forwards it to the underlying
+	 * communications service, requesting the start of the data delivery.
+	 * 
+	 * This method is called by the user.
+	 * 
+	 * @param startGenerationTime the start generation time
+	 * @param stopGenerationTime  the stop generation time
+	 * @return the result of the request
+	 */
+	@Deprecated
 	CstsResult requestDataDelivery(ConditionalTime startGenerationTime, ConditionalTime stopGenerationTime);
 
 	/**

@@ -212,6 +212,7 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 		processing = true;
 		lastProcessedDataUnitId = processData.getDataUnitId();
 		lastProcessedDataUnitTime = Time.now();
+		lastProcessedDataUnitStatus = ProcessingStatus.PROCESSING_STARTED;
 		return processData;
 	}
 
@@ -221,6 +222,7 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 		processing = true;
 		lastProcessedDataUnitId = processData.getDataUnitId();
 		lastProcessedDataUnitTime = Time.now();
+		lastProcessedDataUnitStatus = ProcessingStatus.PROCESSING_STARTED;
 		return processData;
 	}
 
@@ -230,6 +232,7 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 	
 	@Override
 	public synchronized void completeProcessing(IProcessData processData) {
+		lastProcessedDataUnitStatus = ProcessingStatus.SUCCESSFULLY_PROCESSED;
 		lastSuccessfullyProcessDataUnitId = processData.getDataUnitId();
 		lastSuccessfullyProcessDataUnitTime = Time.now();
 		IEvent event = getEvent(OIDs.pDPdataProcessingCompleted);
@@ -271,7 +274,6 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 			notify.setEventName(event.getName());
 			notify.setEventValue(event.getValue());
 			notify.setEventTime(event.getTime());
-			notify.setInvocationExtension(encodeNotifyInvocationExtension(true));
 
 			// ProductionState code in TypeAndValue format
 			long code = event.getValue()
@@ -283,19 +285,24 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 
 			switch (state) {
 			case CONFIGURED:
+				notify.setInvocationExtension(encodeNotifyInvocationExtension(true));
 				getState().process(notify);
 				break;
 			case HALTED:
+				notify.setInvocationExtension(encodeNotifyInvocationExtension(true));
 				getState().process(notify);
 				break;
 			case INTERRUPTED:
 				if (isProcessing() || isDataQueued()) {
+					lastProcessedDataUnitStatus = ProcessingStatus.PROCESSING_INTERRUPTED;
+					notify.setInvocationExtension(encodeNotifyInvocationExtension(true));
 					getState().process(notify);
 					interruptNotified = true;
 				}
 				break;
 			case OPERATIONAL:
 				if (isInterruptNotified()) {
+					notify.setInvocationExtension(encodeNotifyInvocationExtension(true));
 					getState().process(notify);
 					interruptNotified = false;
 				}
@@ -320,7 +327,7 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 		return doInitiateOperationInvoke(operation);
 	}
 
-	private EmbeddedData encodeProcessDataInvocationExtension() {
+	protected EmbeddedData encodeProcessDataInvocationExtension() {
 
 		DataProcProcDataInvocExt invocationExtension = new DataProcProcDataInvocExt();
 		ProcessCompletionReport processCompletionReport = new ProcessCompletionReport();
@@ -383,6 +390,7 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 				dataProcessingStatus.setDataProcessingStatusExtension(encodeDataProcessingStatusExtension().encode());
 				break;
 			}
+			dataUnitLastProcessed.setDataProcessingStatus(dataProcessingStatus);
 			dataUnitIdLastProcessed.setDataUnitLastProcessed(dataUnitLastProcessed);
 
 			if (lastSuccessfullyProcessDataUnitId < 0) {
@@ -408,6 +416,14 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 		invocationExtension.setProductionStatus(productionStatus);
 		invocationExtension.setDataProcNotifyInvocExtExtension(encodeNotifyInvocationExtExtension().encode());
 
+		// encode with a resizable output stream and an initial capacity of 128 bytes
+		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
+			invocationExtension.encode(os);
+			invocationExtension.code = os.getArray();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		return EmbeddedData.of(OIDs.dpNotifyInvocExt, invocationExtension.code);
 	}
 

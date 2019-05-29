@@ -40,7 +40,8 @@ public class Inactive extends State<IBufferedDataProcessingInternal> {
 			start.setPositiveResult();
 			getProcedure().setState(new Active(getProcedure()));
 		}
-		return getProcedure().forwardInvocationToApplication(start);
+		getProcedure().forwardInvocationToApplication(start);
+		return getProcedure().forwardReturnToProxy(start);
 	}
 	
 	@Override

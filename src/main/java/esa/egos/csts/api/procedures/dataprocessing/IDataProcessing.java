@@ -18,7 +18,7 @@ public interface IDataProcessing extends IStatefulProcedure {
 	/**
 	 * Fetches a PROCESS-DATA operation from the queue and returns it.
 	 * 
-	 *  * This method is called by the provider.
+	 * This method is called by the provider.
 	 * 
 	 * @return the fetches PROCESS-DATA operation
 	 */
@@ -28,7 +28,7 @@ public interface IDataProcessing extends IStatefulProcedure {
 	 * Tries to fetch a PROCESS-DATA operation from the queue, blocks until one is
 	 * available and returns it.
 	 * 
-	 *  This method is called by the user.
+	 * This method is called by the user.
 	 * 
 	 * @return the fetches PROCESS-DATA operation
 	 */
@@ -38,7 +38,7 @@ public interface IDataProcessing extends IStatefulProcedure {
 	 * Indicates that the PROCESS-DATA operation has been processed. If a report was
 	 * requested, it is generated and passed to the underlying state machine.
 	 * 
-	 *  This method is called by the user.
+	 * This method is called by the user.
 	 * 
 	 * @param processData the PROCESS-DATA operation which has been processed
 	 */

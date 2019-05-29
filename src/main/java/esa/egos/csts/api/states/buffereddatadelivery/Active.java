@@ -135,6 +135,7 @@ public class Active extends State<IBufferedDataDeliveryInternal> {
 			}
 			procedure.setDataEnded(false);
 			procedure.setState(new Inactive(getProcedure()));
+			procedure.forwardInvocationToApplication(stop);
 			return procedure.forwardReturnToProxy(stop);
 		} else {
 			getProcedure().raiseProtocolError();
