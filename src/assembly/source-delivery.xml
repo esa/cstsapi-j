@@ -4,18 +4,16 @@
 	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
 	<id>src</id>
 	<formats>
-		<format>tar.gz</format>
+		<format>zip</format>
 	</formats>
 	<fileSets>
 		<fileSet>
 			<directory>${project.basedir}</directory>
 			<outputDirectory>/</outputDirectory>
 			<includes>
-				<include>.git/</include>
 				<include>doc/</include>
 				<include>licenses/</include>
 				<include>src/</include>
-				<include>.gitignore</include>
 				<include>pom.xml</include>
 				<include>README.txt</include>
 			</includes>
