@@ -9,6 +9,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import ccsds.csts.association.control.types.PeerAbortDiagnostic;
 import ccsds.csts.common.types.InvokeId;
 import ccsds.csts.pdus.CstsFrameworkPdu;
+import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.enumerations.OperationResult;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.exceptions.ApiResultException;
@@ -18,6 +19,7 @@ import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IPeerAbort;
 import esa.egos.csts.api.operations.IUnbind;
+import esa.egos.csts.api.operations.impl.PeerAbort;
 import esa.egos.csts.api.procedures.IProcedureInternal;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceInternal;
@@ -255,7 +257,6 @@ public class PDUTranslator implements ITranslator {
 		return op;
 	}
 
-	// TODO Milena check if this is suitable
 	private IOperation peekReturnOp(InvokeId invokeId) throws ApiException {
 		IConfirmedOperation op = null;
 
@@ -285,8 +286,11 @@ public class PDUTranslator implements ITranslator {
 		if (this.serviceInstance == null)
 			throw new ApiResultException("serviceInstance in the translator has not been initialised.");
 
-		// TODO implement
-		return null;
+		PeerAbort op = new PeerAbort();
+		op.setAbortOriginator(abortOriginator);
+		op.setPeerAbortDiagnostic(PeerAbortDiagnostics.getPeerAbortDiagnosticByCode(diagnostic));
+		
+		return op;
 	}
 
 	@Override

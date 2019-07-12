@@ -140,7 +140,7 @@ public class TCPCommMng
                 tmlMsg = this.channel.getTmlMsgFactory().decodeFrom(this.channel.getConnectedSock().getInputStream(),
                                                                     error);
             }
-            catch (IOException e)
+            catch (IOException | NullPointerException e)
             {
                 ReceivingThread st = this.receivingThr;
                 if (!this.channel.isAboutToClose() && st != null && st.isRunning)

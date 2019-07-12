@@ -65,7 +65,7 @@ public class AssociationControlUser extends AbstractAssociationControl {
 			try {
 				releaseAssociation();
 			} catch (ApiException e) {
-				// TODO log
+				return CstsResult.FAILURE;
 			}
 			return result;
 		}
@@ -80,7 +80,7 @@ public class AssociationControlUser extends AbstractAssociationControl {
 			try {
 				releaseAssociation();
 			} catch (ApiException e) {
-				// TODO log
+				return CstsResult.FAILURE;
 			}
 			terminate();
 		}

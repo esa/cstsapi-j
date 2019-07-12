@@ -58,7 +58,7 @@ public interface ISequenceControlledDataProcessing extends IDataProcessing {
 	 * @return the result of the request
 	 */
 	CstsResult processData(long dataUnitId, byte[] data, Time earliestDataProcessingTime, Time latestDataProcessingTime, boolean produceReport);
-	
+
 	/**
 	 * Creates a PROCESS-DATA operation forwards it to the underlying communications
 	 * service, requesting the processing of the data.
@@ -99,7 +99,7 @@ public interface ISequenceControlledDataProcessing extends IDataProcessing {
 	 * @return the result of the request
 	 */
 	CstsResult processData(long dataUnitId, EmbeddedData embeddedData, Time earliestDataProcessingTime, Time latestDataProcessingTime, boolean produceReport);
-	
+
 	/**
 	 * Creates a PROCESS-DATA operation forwards it to the underlying communications
 	 * service, requesting the processing of the data.
@@ -114,5 +114,13 @@ public interface ISequenceControlledDataProcessing extends IDataProcessing {
 	 */
 	@Deprecated
 	CstsResult processData(long dataUnitId, EmbeddedData embeddedData, ConditionalTime earliestDataProcessingTime, ConditionalTime latestDataProcessingTime, boolean produceReport);
+
+	/**
+	 * Creates an EXECUTE-DIRECTIVE operation and forwards it to the underlying
+	 * communication service, requesting a reset of data processing.
+	 * 
+	 * @return the result of the request
+	 */
+	CstsResult requestReset();
 
 }

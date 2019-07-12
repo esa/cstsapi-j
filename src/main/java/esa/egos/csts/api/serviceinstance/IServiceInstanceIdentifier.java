@@ -45,6 +45,7 @@ public interface IServiceInstanceIdentifier {
 	 *             versions.
 	 * @return true if the initial format is used, false otherwise
 	 */
+	@Deprecated
 	boolean getInitialFormatUsed();
 
 	/**

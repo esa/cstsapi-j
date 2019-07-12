@@ -1,5 +1,8 @@
 package esa.egos.csts.api.diagnostics;
 
+import java.io.IOException;
+
+import org.openmuc.jasn1.ber.BerByteArrayOutputStream;
 import org.openmuc.jasn1.ber.types.BerNull;
 
 import ccsds.csts.sequence.controlled.data.processing.pdus.SequContrDataProcProcDataDiagnosticExt;
@@ -74,37 +77,44 @@ public class SeqControlledDataProcDiagnostics {
 	 *         this Diagnostic
 	 */
 	public SequContrDataProcProcDataDiagnosticExt encode() {
-		SequContrDataProcProcDataDiagnosticExt newDiagnostics = new SequContrDataProcProcDataDiagnosticExt();
+		SequContrDataProcProcDataDiagnosticExt diagnostics = new SequContrDataProcProcDataDiagnosticExt();
 		switch (type) {
 		case DATA_ERROR:
-			newDiagnostics.setDataError(new BerNull());
+			diagnostics.setDataError(new BerNull());
 			break;
 		case INCONSISTENT_TIME_RANGE:
-			newDiagnostics.setInconsistentTimeRange(new BerNull());
+			diagnostics.setInconsistentTimeRange(new BerNull());
 			break;
 		case INVALID_TIME:
-			newDiagnostics.setInvalidTime(new BerNull());
+			diagnostics.setInvalidTime(new BerNull());
 			break;
 		case LATE_DATA:
-			newDiagnostics.setLateData(new BerNull());
+			diagnostics.setLateData(new BerNull());
 			break;
 		case OUT_OF_SEQUENCE:
-			newDiagnostics.setOutOfSequence(new BerNull());
+			diagnostics.setOutOfSequence(new BerNull());
 			break;
 		case SERVICE_INSTANCE_LOCKED:
-			newDiagnostics.setServiceInstanceLocked(new BerNull());
+			diagnostics.setServiceInstanceLocked(new BerNull());
 			break;
 		case UNABLE_TO_PROCESS:
-			newDiagnostics.setUnableToProcess(new BerNull());
+			diagnostics.setUnableToProcess(new BerNull());
 			break;
 		case UNABLE_TO_STORE:
-			newDiagnostics.setUnableToStore(new BerNull());
+			diagnostics.setUnableToStore(new BerNull());
 			break;
 		case EXTENDED:
-			newDiagnostics.setSequContrDataProcProcDataDiagnosticExtExtension(diagnosticExtension.encode());
+			diagnostics.setSequContrDataProcProcDataDiagnosticExtExtension(diagnosticExtension.encode());
 			break;
 		}
-		return newDiagnostics;
+		// encode with a resizable output stream and an initial capacity of 128 bytes
+		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
+			diagnostics.encode(os);
+			diagnostics.code = os.getArray();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return diagnostics;
 	}
 
 	/**

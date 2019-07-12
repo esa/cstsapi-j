@@ -713,6 +713,10 @@ public abstract class AbstractProcedure implements IProcedureInternal {
 
 	@Override
 	public CstsResult forwardReturnToProxy(IConfirmedOperation confirmedOperation) {
+		if (confirmedOperation.isAcknowledged()) {
+			IAcknowledgedOperation acknowledgedOperation = (IAcknowledgedOperation) confirmedOperation;
+			acknowledgedOperation.setAcknowledgement(false);
+		}
 		if (getInternal().forwardInitiatePxyOpRtn(confirmedOperation, true) != Result.S_OK) {
 			LOGGER.warning("The underlying proxy returned with an error code.");
 			return CstsResult.COMMUNICATIONS_FAILURE;

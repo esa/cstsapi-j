@@ -34,8 +34,9 @@ public class ActiveLocked extends State<ISequenceControlledDataProcessingInterna
 		} else if (operation.getType() == OperationType.STOP) {
 			IStop stop = (IStop) operation;
 			stop.setPositiveResult();
+			procedure.forwardInvocationToApplication(stop);
 			procedure.setState(new Inactive(procedure));
-			return procedure.forwardInvocationToApplication(stop);
+			return procedure.forwardReturnToProxy(stop);
 		} else if (operation.getType() == OperationType.EXECUTE_DIRECTIVE) {
 			IExecuteDirective executeDirective = (IExecuteDirective) operation;
 			if (executeDirective.getDirectiveIdentifier().equals(OIDs.pSCDPresetDirective)) {

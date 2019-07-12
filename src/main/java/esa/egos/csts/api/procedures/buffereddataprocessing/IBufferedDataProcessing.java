@@ -33,14 +33,14 @@ public interface IBufferedDataProcessing extends IDataProcessing {
 	 * @return the data transfer mode configuration parameter
 	 */
 	IntegerConfigurationParameter getDataTransferModeParameter();
-	
+
 	/**
 	 * Returns the data transfer mode configuration parameter.
 	 * 
 	 * @return the data transfer mode configuration parameter
 	 */
 	DataTransferMode getDataTransferMode();
-	
+
 	/**
 	 * Creates a START operation and forwards it to the underlying communications
 	 * service, requesting the start of the data processing.
@@ -62,31 +62,63 @@ public interface IBufferedDataProcessing extends IDataProcessing {
 	CstsResult endDataProcessing();
 
 	/**
-	 * Creates a PROCESS-DATA operation forwards it to the underlying communications
-	 * service, requesting the processing of the data.
+	 * Creates a PROCESS-DATA operation and forwards it to the underlying
+	 * communications service, requesting the processing of the data.
 	 * 
 	 * This method is called by the user.
 	 * 
-	 * @param dataUnitId the data unit ID
-	 * @param data       the data
+	 * @param dataUnitId    the data unit ID
+	 * @param data          the data
+	 * @param produceReport the indicator if a report should be produced
 	 * @return the result of the request
 	 */
 	CstsResult processData(long dataUnitId, byte[] data, boolean produceReport);
 
 	/**
-	 * Creates a PROCESS-DATA operation forwards it to the underlying communications
-	 * service, requesting the processing of the data.
+	 * Creates a PROCESS-DATA operation and forwards it to the underlying
+	 * communications service, requesting the processing of the data.
 	 * 
 	 * This method is called by the user.
 	 * 
-	 * @param dataUnitId   the data unit ID
-	 * @param embeddedData the embedded data
+	 * @param dataUnitId    the data unit ID
+	 * @param embeddedData  the embedded data
+	 * @param produceReport the indicator if a report should be produced
 	 * @return the result of the request
 	 */
 	CstsResult processData(long dataUnitId, EmbeddedData embeddedData, boolean produceReport);
 
-	CstsResult processEmbeddedBuffer(List<Long> dataUnitIds, List<EmbeddedData> embeddedData, List<Boolean> produceReports);
-
+	/**
+	 * Creates a FORWARD-BUFFER operation and forwards it to the underlying
+	 * communications service, requesting the processing of the data.
+	 * 
+	 * This method returns with a failure if the passed lists do not have the same
+	 * size.
+	 * 
+	 * This method is called by the user.
+	 * 
+	 * @param dataUnitIds    the data unit ID per PROCESS-DATA operation
+	 * @param data           the data per PROCESS-DATA operation
+	 * @param produceReports the indicator if a report should be produced per
+	 *                       PROCESS-DATA operation
+	 * @return the result of the request
+	 */
 	CstsResult processBuffer(List<Long> dataUnitIds, List<byte[]> data, List<Boolean> produceReports);
+
+	/**
+	 * Creates a FORWARD-BUFFER operation and forwards it to the underlying
+	 * communications service, requesting the processing of the data.
+	 * 
+	 * This method returns with a failure if the passed lists do not have the same
+	 * size.
+	 * 
+	 * This method is called by the user.
+	 * 
+	 * @param dataUnitIds    the data unit ID per PROCESS-DATA operation
+	 * @param embeddedData   the embedded data per PROCESS-DATA operation
+	 * @param produceReports the indicator if a report should be produced per
+	 *                       PROCESS-DATA operation
+	 * @return the result of the request
+	 */
+	CstsResult processEmbeddedBuffer(List<Long> dataUnitIds, List<EmbeddedData> embeddedData, List<Boolean> produceReports);
 
 }

@@ -38,7 +38,7 @@ public class TMLMessageFactory
             if (read < 0)
             {
                 error.setReference(EE_APIPX_TMLErrors.eeAPIPXtml_unexpectedClose);
-                throw new IOException("Received <0 bytes from socket");
+                throw new IOException("Connection has been unexpectedly closed: Received <0 bytes from socket");
             }
         }
         catch (IOException e)

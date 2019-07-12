@@ -1,5 +1,8 @@
 package esa.egos.csts.api.diagnostics;
 
+import java.io.IOException;
+
+import org.openmuc.jasn1.ber.BerByteArrayOutputStream;
 import org.openmuc.jasn1.ber.types.BerNull;
 
 import ccsds.csts.throw_.event.pdus.TeExecDirNegReturnDiagnosticExt;
@@ -81,6 +84,15 @@ public class ThrowEventDiagnostic {
 			diagnostic.setTeExecDirNegReturnDiagnosticExtExtension(diagnosticExtension.encode());
 			break;
 		}
+		
+		// encode with a resizable output stream and an initial capacity of 128 bytes
+		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
+			diagnostic.encode(os);
+			diagnostic.code = os.getArray();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		return diagnostic;
 	}
 

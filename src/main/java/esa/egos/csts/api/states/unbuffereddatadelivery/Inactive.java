@@ -28,7 +28,7 @@ public class Inactive extends State<IUnbufferedDataDeliveryInternal> {
 				Diagnostic diagnostic = new Diagnostic(DiagnosticType.OTHER_REASON);
 				diagnostic.setText("Invocation argument verification failed.");
 				start.setDiagnostic(diagnostic);
-				return getProcedure().forwardInvocationToApplication(start);
+				return getProcedure().forwardReturnToProxy(start);
 			}
 			start.setPositiveResult();
 			getProcedure().setState(new Active(getProcedure()));

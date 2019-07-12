@@ -79,11 +79,12 @@ public abstract class AbstractBufferedDataProcessing extends AbstractDataProcess
 
 	@Override
 	public void terminate() {
-		forwardBuffer = new ForwardBuffer();
+		forwardBuffer = createForwardBuffer();
 		latencyTimers.values().forEach(t -> t.cancel(true));
 		latencyTimers = new HashMap<>();
 		executorService.shutdownNow();
 		executorService = Executors.newSingleThreadScheduledExecutor();
+		forwardBuffer.getBuffer().clear();
 		initializeState();
 		super.terminate();
 	}
@@ -155,7 +156,7 @@ public abstract class AbstractBufferedDataProcessing extends AbstractDataProcess
 	
 	@Override
 	public CstsResult processBuffer(List<Long> dataUnitIds, List<byte[]> data, List<Boolean> produceReports) {
-		if (dataUnitIds.size() != data.size()) {
+		if (dataUnitIds.size() != data.size() || dataUnitIds.size() != produceReports.size()) {
 			return CstsResult.FAILURE;
 		}
 		IForwardBuffer forwardBuffer = createForwardBuffer();
@@ -164,7 +165,7 @@ public abstract class AbstractBufferedDataProcessing extends AbstractDataProcess
 			IProcessData processData = createProcessData();
 			processData.setDataUnitId(l);
 			processData.setData(data.get(i));
-			setProduceReport(produceReports.get(i));
+			setProduceReport(produceReports.get(i++));
 			processData.setInvocationExtension(encodeProcessDataInvocationExtension());
 			forwardBuffer.getBuffer().add(processData);
 		}
@@ -173,7 +174,7 @@ public abstract class AbstractBufferedDataProcessing extends AbstractDataProcess
 	
 	@Override
 	public CstsResult processEmbeddedBuffer(List<Long> dataUnitIds, List<EmbeddedData> embeddedData, List<Boolean> produceReports) {
-		if (dataUnitIds.size() != embeddedData.size()) {
+		if (dataUnitIds.size() != embeddedData.size() || dataUnitIds.size() != embeddedData.size()) {
 			return CstsResult.FAILURE;
 		}
 		IForwardBuffer forwardBuffer = createForwardBuffer();
@@ -182,7 +183,7 @@ public abstract class AbstractBufferedDataProcessing extends AbstractDataProcess
 			IProcessData processData = createProcessData();
 			processData.setDataUnitId(l);
 			processData.setEmbeddedData(embeddedData.get(i));
-			setProduceReport(produceReports.get(i));
+			setProduceReport(produceReports.get(i++));
 			processData.setInvocationExtension(encodeProcessDataInvocationExtension());
 			forwardBuffer.getBuffer().add(processData);
 		}
@@ -285,7 +286,6 @@ public abstract class AbstractBufferedDataProcessing extends AbstractDataProcess
 	
 	@Override
 	public synchronized void completeProcessing(IProcessData processData) {
-		cancelLatencyTimer(processData);
 		super.completeProcessing(processData);
 		if (readingSuspended) {
 			if (isSufficientSpaceAvailable()) {
@@ -346,7 +346,7 @@ public abstract class AbstractBufferedDataProcessing extends AbstractDataProcess
 			}
 		} else if (operation.getType() == OperationType.FORWARD_BUFFER) {
 			ccsds.csts.buffered.data.processing.pdus.ForwardBuffer forwardBuffer = new ccsds.csts.buffered.data.processing.pdus.ForwardBuffer();
-			for (IProcessData processData : this.forwardBuffer.getBuffer()) {
+			for (IProcessData processData : ((IForwardBuffer) operation).getBuffer()) {
 				forwardBuffer.getProcessDataInvocation().add(processData.encodeProcessDataInvocation());
 			}
 			pdu.setForwardBuffer(forwardBuffer);
@@ -395,7 +395,9 @@ public abstract class AbstractBufferedDataProcessing extends AbstractDataProcess
 			notify.decodeNotifyInvocation(pdu.getNotifyInvocation());
 			operation = notify;
 		} else if (pdu.getForwardBuffer() != null) {
-			forwardBuffer.getBuffer().clear();
+			if (forwardBuffer == null) {
+				forwardBuffer = createForwardBuffer();
+			}
 			for (ProcessDataInvocation processDataInvocation : pdu.getForwardBuffer().getProcessDataInvocation()) {
 				IProcessData processData = createProcessData();
 				processData.decodeProcessDataInvocation(processDataInvocation);

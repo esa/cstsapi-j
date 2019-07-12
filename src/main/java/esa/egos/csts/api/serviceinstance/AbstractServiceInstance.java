@@ -976,7 +976,6 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 					}
 				}
 			}
-
 			doInformOpInvoke(operation);
 
 		} catch (ApiException e) {
@@ -1312,6 +1311,16 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 	@Override
 	public void changeProductionConfiguration() {
 		getEvent(OIDs.svcProductionConfigurationChangeVersion1).fire(EventValue.empty(), Time.now());
+	}
+	
+	@Override
+	public void changeProductionConfiguration(EventValue value) {
+		getEvent(OIDs.svcProductionConfigurationChangeVersion1).fire(value, Time.now());
+	}
+	
+	@Override
+	public void changeProductionConfiguration(EventValue value, Time time) {
+		getEvent(OIDs.svcProductionConfigurationChangeVersion1).fire(value, time);
 	}
 
 	@Override

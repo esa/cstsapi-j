@@ -110,6 +110,7 @@ public class EE_APIPX_ChannelPxy extends IEE_APIPX_LoggerAdapter implements ICha
             ISP1ProtocolAbortDiagnostics paDiag = mess.getPaOriginator();
             this.ieeChannelInform.rcvProtocolAbort(paDiag);
             this.ieeChannelInform = null;
+            this.eeAPIPXLink.disconnect();
         }
         else if (dataType == MessId.mid_SuspendReceive.getCode())
         {

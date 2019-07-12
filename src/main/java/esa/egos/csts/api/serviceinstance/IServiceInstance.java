@@ -3,6 +3,7 @@ package esa.egos.csts.api.serviceinstance;
 import java.util.List;
 import java.util.Optional;
 
+import esa.egos.csts.api.events.EventValue;
 import esa.egos.csts.api.events.IEvent;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.exceptions.EventNotFoundException;
@@ -16,6 +17,7 @@ import esa.egos.csts.api.productionstatus.ProductionState;
 import esa.egos.csts.api.productionstatus.ProductionStatus;
 import esa.egos.csts.api.states.service.ServiceState;
 import esa.egos.csts.api.states.service.ServiceStatus;
+import esa.egos.csts.api.types.Time;
 import esa.egos.proxy.ISrvProxyInform;
 import esa.egos.proxy.util.ITimeoutProcessor;
 
@@ -210,5 +212,9 @@ public interface IServiceInstance extends IServiceInitiate, ISrvProxyInform, ISe
 	 * @throws ApiException if the transition is illegal
 	 */
 	void changeProductionState(ProductionState state) throws ApiException;
+
+	void changeProductionConfiguration(EventValue value, Time time);
+
+	void changeProductionConfiguration(EventValue value);
 
 }

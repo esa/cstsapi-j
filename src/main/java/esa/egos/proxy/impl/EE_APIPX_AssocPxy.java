@@ -196,7 +196,7 @@ public class EE_APIPX_AssocPxy extends EE_APIPX_LinkAdapter implements IChannelI
         authOk.setReference(new Boolean(false));
         Reference<Boolean> isInvoke = new Reference<Boolean>();
         isInvoke.setReference(new Boolean(false));
-        BindDiagnostic diag = BindDiagnostic.INVALID;
+        BindDiagnostic diag = null;
         IOperation pOperation = null;
         int dataType = MessId.mid_SlePdu.getCode();
 
@@ -290,7 +290,7 @@ public class EE_APIPX_AssocPxy extends EE_APIPX_LinkAdapter implements IChannelI
             
             IBind pBind = (IBind) pOperation;
 
-            if (processBind(pBind, diag, authOk))
+            if (processBind(pBind, diag, authOk) == null)
             {
                 dataType = MessId.mid_BindPdu.getCode();
                 doSend = true;
@@ -577,7 +577,7 @@ public class EE_APIPX_AssocPxy extends EE_APIPX_LinkAdapter implements IChannelI
      * BIND PDU can be sent. E_FAIL The service instance is not registered, or
      * an error occurred.
      */
-    private boolean processBind(IBind bindop, BindDiagnostic diag, Reference<Boolean> authOk)
+    private BindDiagnostic processBind(IBind bindop, BindDiagnostic diag, Reference<Boolean> authOk)
     {
         EE_APIPX_Binder pBinder = null;
         EE_APIPX_Link pLink = null;
@@ -586,7 +586,7 @@ public class EE_APIPX_AssocPxy extends EE_APIPX_LinkAdapter implements IChannelI
 
         if (bindop == null)
         {
-            return false;
+            return BindDiagnostic.INVALID;
         }
 
         psii = bindop.getServiceInstanceIdentifier();
@@ -599,7 +599,7 @@ public class EE_APIPX_AssocPxy extends EE_APIPX_LinkAdapter implements IChannelI
             res = false;
 
             // perform control and authentication
-            checkBind(bindop, diag, authOk);
+             diag = checkBind(bindop, diag, authOk);
         }
         else if (pLink != null && pLink.getAssocPxy() != null)
         {
@@ -609,7 +609,7 @@ public class EE_APIPX_AssocPxy extends EE_APIPX_LinkAdapter implements IChannelI
             res = false;
 
             // perform control and authentication
-            checkBind(bindop, diag, authOk);
+            diag = checkBind(bindop, diag, authOk);
         }
         else
         {
@@ -676,7 +676,7 @@ public class EE_APIPX_AssocPxy extends EE_APIPX_LinkAdapter implements IChannelI
             }
         }
 
-        return res;
+        return diag;
     }
 
     /**
@@ -685,11 +685,12 @@ public class EE_APIPX_AssocPxy extends EE_APIPX_LinkAdapter implements IChannelI
      * registered. E_FAIL The service type or the version number is not
      * registered.
      */
-    private boolean checkBind(IBind bindop, BindDiagnostic diag, Reference<Boolean> auth_ok)
+    private BindDiagnostic checkBind(IBind bindop, BindDiagnostic diag, Reference<Boolean> auth_ok)
     {
         AuthenticationMode authmode = AuthenticationMode.NONE;
-        boolean res = true;
         boolean authOk = true;
+        
+        BindDiagnostic tempBind = diag;
 
         // check if the initiator identifier of the bind invoke is registered in
         // the peer application list
@@ -704,8 +705,7 @@ public class EE_APIPX_AssocPxy extends EE_APIPX_LinkAdapter implements IChannelI
         
         if (pPeerApplData == null)
         {
-            diag = BindDiagnostic.ACCESS_DENIED;
-            return false;
+        	return BindDiagnostic.ACCESS_DENIED;
         }
         else
         {
@@ -722,9 +722,9 @@ public class EE_APIPX_AssocPxy extends EE_APIPX_LinkAdapter implements IChannelI
             if (pOpCredentials == null)
             {
                 // no credentials in the op
-                diag = BindDiagnostic.ACCESS_DENIED;
+            	tempBind = BindDiagnostic.ACCESS_DENIED;
                 authOk = false;
-                res = false;
+
             }
             else if (pIsleSecAttr != null)
             {
@@ -746,27 +746,25 @@ public class EE_APIPX_AssocPxy extends EE_APIPX_LinkAdapter implements IChannelI
                 {
                     authOk = false;
                     diag = BindDiagnostic.ACCESS_DENIED;
-                    res = false;
                 }
             }
             else
             {
                 // cannot create security attributes
-                diag = BindDiagnostic.ACCESS_DENIED;
+            	tempBind = BindDiagnostic.ACCESS_DENIED;
                 authOk = false;
-                res = false;
             }
         }
 
-        if (!res)
+        if (tempBind != null)
         {
-            return res;
+            return tempBind;
         }
 
         // check if the service type is a supported service type in the database
         if (this.config.getRole() == ProxyRoleEnum.INITIATOR)
         {
-            return true;
+            return tempBind;
         }
 
         ConfigServiceType pSrvType = null;
@@ -782,8 +780,7 @@ public class EE_APIPX_AssocPxy extends EE_APIPX_LinkAdapter implements IChannelI
         
         if (pSrvType == null)
         {
-            diag = BindDiagnostic.SERVICE_TYPE_NOT_SUPPORTED;
-            return false;
+        	return BindDiagnostic.SERVICE_TYPE_NOT_SUPPORTED;
         }
 
         // check if the version number match one entry in the database
@@ -806,12 +803,11 @@ public class EE_APIPX_AssocPxy extends EE_APIPX_LinkAdapter implements IChannelI
 
         if (!found)
         {
-            diag = BindDiagnostic.VERSION_NOT_SUPPORTED;
-            return false;
+        	return BindDiagnostic.VERSION_NOT_SUPPORTED;
         }
 
         auth_ok.setReference(authOk);
-        return true;
+        return tempBind;
     }
 
     /**
@@ -915,7 +911,8 @@ public class EE_APIPX_AssocPxy extends EE_APIPX_LinkAdapter implements IChannelI
         signalResponseReceived();
 
         // close the writing thread
-        this.writingTh.terminate();
+        if(this.writingTh != null)
+        	this.writingTh.terminate();
     }
 
     /**

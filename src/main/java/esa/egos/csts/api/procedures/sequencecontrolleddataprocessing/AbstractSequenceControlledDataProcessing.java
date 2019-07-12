@@ -17,16 +17,20 @@ import ccsds.csts.sequence.controlled.data.processing.pdus.SequContrDataProcStar
 import ccsds.csts.sequence.controlled.data.processing.pdus.SequContrDataProcStatus;
 import ccsds.csts.sequence.controlled.data.processing.pdus.SequContrDataProcessingPdu;
 import esa.egos.csts.api.diagnostics.SeqControlledDataProcDiagnostics;
+import esa.egos.csts.api.directives.DirectiveQualifier;
+import esa.egos.csts.api.directives.DirectiveQualifierValuesType;
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.enumerations.DataProcessingStatus;
 import esa.egos.csts.api.enumerations.OperationResult;
 import esa.egos.csts.api.enumerations.OperationType;
+import esa.egos.csts.api.enumerations.ParameterType;
 import esa.egos.csts.api.enumerations.ProcessingStatus;
 import esa.egos.csts.api.events.EventValue;
 import esa.egos.csts.api.events.IEvent;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.extensions.Extension;
 import esa.egos.csts.api.oids.OIDs;
+import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IConfirmedProcessData;
 import esa.egos.csts.api.operations.IExecuteDirective;
@@ -35,6 +39,7 @@ import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IProcessData;
 import esa.egos.csts.api.operations.IStart;
 import esa.egos.csts.api.operations.IStop;
+import esa.egos.csts.api.parameters.impl.ParameterValue;
 import esa.egos.csts.api.procedures.dataprocessing.AbstractDataProcessing;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.productionstatus.ProductionState;
@@ -42,11 +47,10 @@ import esa.egos.csts.api.states.sequencecontrolleddataprocessing.ActiveLocked;
 import esa.egos.csts.api.types.ConditionalTime;
 import esa.egos.csts.api.types.Time;
 
-public abstract class AbstractSequenceControlledDataProcessing extends AbstractDataProcessing
-		implements ISequenceControlledDataProcessingInternal {
+public abstract class AbstractSequenceControlledDataProcessing extends AbstractDataProcessing implements ISequenceControlledDataProcessingInternal {
 
 	private static final ProcedureType TYPE = ProcedureType.of(OIDs.sequenceControlledDataProcessing);
-	
+
 	private static final int VERSION = 1;
 
 	private long firstDataUnitId;
@@ -71,8 +75,6 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 
 	public AbstractSequenceControlledDataProcessing() {
 		super();
-		earliestDataProcessingTime = ConditionalTime.unknown();
-		latestDataProcessingTime = ConditionalTime.unknown();
 		earliestDataProcessingTimeMap = new HashMap<>();
 		latestDataProcessingTimeMap = new HashMap<>();
 		dataUnitId = -1;
@@ -87,7 +89,7 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 	public ProcedureType getType() {
 		return TYPE;
 	}
-	
+
 	@Override
 	public int getVersion() {
 		return VERSION;
@@ -104,8 +106,15 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 
 	@Override
 	public void terminate() {
+		earliestDataProcessingTime = null;
+		latestDataProcessingTime = null;
 		earliestDataProcessingTimeMap.clear();
 		latestDataProcessingTimeMap.clear();
+		dataUnitId = -1;
+		waitingForProcessing = false;
+		waitForProcessing = new Semaphore(0);
+		waitingForOperational = false;
+		waitForOperational = new Semaphore(0);
 		super.terminate();
 	}
 
@@ -130,6 +139,16 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 	}
 
 	@Override
+	public HashMap<IConfirmedProcessData, ConditionalTime> getEarliestDataProcessingTimeMap() {
+		return earliestDataProcessingTimeMap;
+	}
+
+	@Override
+	public HashMap<IConfirmedProcessData, ConditionalTime> getLatestDataProcessingTimeMap() {
+		return latestDataProcessingTimeMap;
+	}
+
+	@Override
 	public SeqControlledDataProcDiagnostics getDiagnostics() {
 		return diagnostics;
 	}
@@ -138,7 +157,7 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 	public void setDiagnostics(SeqControlledDataProcDiagnostics diagnostics) {
 		this.diagnostics = diagnostics;
 	}
-	
+
 	@Override
 	public synchronized CstsResult requestDataProcessing(long firstDataUnitId) {
 		IStart start = createStart();
@@ -146,13 +165,13 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 		start.setInvocationExtension(encodeStartInvocationExtension());
 		return forwardInvocationToProxy(start);
 	}
-	
+
 	@Override
 	public CstsResult endDataProcessing() {
 		IStop stop = createStop();
 		return forwardInvocationToProxy(stop);
 	}
-	
+
 	@Override
 	public CstsResult processData(long dataUnitId, byte[] data, boolean produceReport) {
 		IConfirmedProcessData processData = createConfirmedProcessData();
@@ -164,7 +183,7 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 		processData.setInvocationExtension(encodeProcessDataInvocationExtension());
 		return forwardInvocationToProxy(processData);
 	}
-	
+
 	@Override
 	public CstsResult processData(long dataUnitId, byte[] data, Time earliestDataProcessingTime,
 			Time latestDataProcessingTime, boolean produceReport) {
@@ -177,7 +196,7 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 		processData.setInvocationExtension(encodeProcessDataInvocationExtension());
 		return forwardInvocationToProxy(processData);
 	}
-	
+
 	@Override
 	public CstsResult processData(long dataUnitId, byte[] data, ConditionalTime earliestDataProcessingTime,
 			ConditionalTime latestDataProcessingTime, boolean produceReport) {
@@ -190,7 +209,7 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 		processData.setInvocationExtension(encodeProcessDataInvocationExtension());
 		return forwardInvocationToProxy(processData);
 	}
-	
+
 	@Override
 	public CstsResult processData(long dataUnitId, EmbeddedData embeddedData, boolean produceReport) {
 		IConfirmedProcessData processData = createConfirmedProcessData();
@@ -204,8 +223,8 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 	}
 
 	@Override
-	public CstsResult processData(long dataUnitId, EmbeddedData embeddedData, Time earliestDataProcessingTime,
-			Time latestDataProcessingTime, boolean produceReport) {
+	public CstsResult processData(long dataUnitId, EmbeddedData embeddedData,
+			Time earliestDataProcessingTime, Time latestDataProcessingTime, boolean produceReport) {
 		IConfirmedProcessData processData = createConfirmedProcessData();
 		this.earliestDataProcessingTime = ConditionalTime.of(earliestDataProcessingTime);
 		this.latestDataProcessingTime = ConditionalTime.of(latestDataProcessingTime);
@@ -215,10 +234,10 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 		processData.setInvocationExtension(encodeProcessDataInvocationExtension());
 		return forwardInvocationToProxy(processData);
 	}
-	
+
 	@Override
-	public CstsResult processData(long dataUnitId, EmbeddedData embeddedData, ConditionalTime earliestDataProcessingTime,
-			ConditionalTime latestDataProcessingTime, boolean produceReport) {
+	public CstsResult processData(long dataUnitId, EmbeddedData embeddedData,
+			ConditionalTime earliestDataProcessingTime, ConditionalTime latestDataProcessingTime, boolean produceReport) {
 		IConfirmedProcessData processData = createConfirmedProcessData();
 		this.earliestDataProcessingTime = earliestDataProcessingTime;
 		this.latestDataProcessingTime = latestDataProcessingTime;
@@ -228,12 +247,27 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 		processData.setInvocationExtension(encodeProcessDataInvocationExtension());
 		return forwardInvocationToProxy(processData);
 	}
+
+	@Override
+	public CstsResult requestReset() {
+		ParameterValue nextDataUnitIdValue = new ParameterValue(ParameterType.UNSIGNED_INTEGER);
+		nextDataUnitIdValue.getIntegerParameterValues().add(getFirstDataUnitId());
 	
+		DirectiveQualifier directiveQualifier = new DirectiveQualifier(DirectiveQualifierValuesType.PARAMETERLESS_VALUES);
+		directiveQualifier.getValues().getValues().add(nextDataUnitIdValue);
+	
+		IExecuteDirective executeDirective = createExecuteDirective();
+		executeDirective.setDirectiveIdentifier(ObjectIdentifier.of(OIDs.pSCDPresetDirective));
+		executeDirective.setDirectiveQualifier(directiveQualifier);
+		return forwardInvocationToProxy(executeDirective);
+	}
+
 	@Override
 	public void reset() throws InterruptedException {
 		earliestDataProcessingTimeMap.clear();
 		latestDataProcessingTimeMap.clear();
 		clearQueue();
+		dataUnitId = -1;
 		if (isProcessing()) {
 			waitingForProcessing = true;
 			waitForProcessing.acquire();
@@ -266,7 +300,7 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 	@Override
 	public IProcessData fetchAndProcess() {
 		IConfirmedProcessData processData = (IConfirmedProcessData) fetch();
-		ConditionalTime latestTime = getLatestDataProcessingTime(processData); 
+		ConditionalTime latestTime = getLatestDataProcessingTime(processData);
 		if (latestTime.isKnown() && latestTime.getTime().isAfter(Time.now())) {
 			dataProcessingStatus = DataProcessingStatus.EXPIRED;
 			IEvent event = getEvent(OIDs.pSCDPexpired);
@@ -288,7 +322,7 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 	@Override
 	public IProcessData fetchAndProcessBlocking() throws InterruptedException {
 		IConfirmedProcessData processData = (IConfirmedProcessData) fetchBlocking();
-		ConditionalTime latestTime = getLatestDataProcessingTime(processData); 
+		ConditionalTime latestTime = getLatestDataProcessingTime(processData);
 		if (latestTime.isKnown() && latestTime.getTime().isAfter(Time.now())) {
 			IEvent event = getEvent(OIDs.pSCDPexpired);
 			event.fire(EventValue.empty(), Time.now());
@@ -336,7 +370,7 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 		notify.setInvocationExtension(encodeNotifyInvocationExtension(false));
 		getState().process(notify);
 	}
-	
+
 	@Override
 	protected void processIncomingEvent(IEvent event) {
 		if (event.getOid().equals(OIDs.svcProductionStatusChangeVersion1)) {
@@ -384,9 +418,19 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 	}
 
 	private EmbeddedData encodeStartInvocationExtension() {
+
 		SequContrDataProcStartInvocExt invocationExtension = new SequContrDataProcStartInvocExt();
 		invocationExtension.setFirstDataUnitId(new DataUnitId(firstDataUnitId));
 		invocationExtension.setSequContrDataProcStartInvocExtExtension(encodeStartInvocationExtExtension().encode());
+
+		// encode with a resizable output stream and an initial capacity of 128 bytes
+		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
+			invocationExtension.encode(os);
+			invocationExtension.code = os.getArray();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		return EmbeddedData.of(OIDs.scdpStartInvocExt, invocationExtension.code);
 	}
 
@@ -395,10 +439,20 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 	}
 
 	protected Extension encodeProcDataInvocationExtExtension() {
+
 		SequContrDataProcProcDataInvocExt invocationExtension = new SequContrDataProcProcDataInvocExt();
 		invocationExtension.setEarliestDataProcessingTime(earliestDataProcessingTime.encode());
 		invocationExtension.setLatestDataProcessingTime(latestDataProcessingTime.encode());
 		invocationExtension.setSequContrDataProcDataInvocExtExtension(encodeProcDataInvocationExtExtExtension().encode());
+
+		// encode with a resizable output stream and an initial capacity of 128 bytes
+		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
+			invocationExtension.encode(os);
+			invocationExtension.code = os.getArray();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		return Extension.of(EmbeddedData.of(OIDs.scdpProcDataInvocExt, invocationExtension.code));
 	}
 
@@ -408,10 +462,19 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 
 	@Override
 	public EmbeddedData encodeProcessDataPosReturnExtension() {
+
 		SequContrDataProcProcDataPosReturnExt returnExtension = new SequContrDataProcProcDataPosReturnExt();
 		returnExtension.setDataUnitId(new DataUnitId(dataUnitId));
-		returnExtension
-				.setSequContrDataProcProcDataPosReturnExtExtension(encodeProcessDataPosReturnExtExtension().encode());
+		returnExtension.setSequContrDataProcProcDataPosReturnExtExtension(encodeProcessDataPosReturnExtExtension().encode());
+
+		// encode with a resizable output stream and an initial capacity of 128 bytes
+		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
+			returnExtension.encode(os);
+			returnExtension.code = os.getArray();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		return EmbeddedData.of(OIDs.scdpProcDataPosReturnExt, returnExtension.code);
 	}
 
@@ -421,10 +484,19 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 
 	@Override
 	public EmbeddedData encodeProcessDataNegReturnExtension() {
+
 		SequContrDataProcProcDataNegReturnExt returnExtension = new SequContrDataProcProcDataNegReturnExt();
 		returnExtension.setDataUnitId(new DataUnitId(dataUnitId));
-		returnExtension
-				.setSequContrDataProcProcDataNegReturnExtExtension(encodeProcessDataNegReturnExtExtension().encode());
+		returnExtension.setSequContrDataProcProcDataNegReturnExtExtension(encodeProcessDataNegReturnExtExtension().encode());
+
+		// encode with a resizable output stream and an initial capacity of 128 bytes
+		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
+			returnExtension.encode(os);
+			returnExtension.code = os.getArray();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		return EmbeddedData.of(OIDs.scdpProcDataNegReturnExt, returnExtension.code);
 	}
 
@@ -520,8 +592,9 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 		} else if (operation.getType() == OperationType.CONFIRMED_PROCESS_DATA) {
 			IConfirmedProcessData processData = (IConfirmedProcessData) operation;
 			decodeProcessDataInvocationExtension(processData.getInvocationExtension());
-			earliestDataProcessingTimeMap.put(processData, earliestDataProcessingTime);
-			latestDataProcessingTimeMap.put(processData, latestDataProcessingTime);
+		} else if (operation.getType() == OperationType.NOTIFY) {
+			INotify notify = (INotify) operation;
+			decodeNotifyInvocationExtension(notify.getInvocationExtension());
 		}
 		return doInformOperationInvoke(operation);
 	}
@@ -538,7 +611,7 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 		}
 		return doInformOperationReturn(confOperation);
 	}
-
+	
 	private void decodeStartInvocationExtension(Extension extension) {
 		if (extension.isUsed() && extension.getEmbeddedData().getOid().equals(OIDs.scdpStartInvocExt)) {
 			SequContrDataProcStartInvocExt invocationExtension = new SequContrDataProcStartInvocExt();
@@ -548,8 +621,7 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 				e.printStackTrace();
 			}
 			firstDataUnitId = invocationExtension.getFirstDataUnitId().longValue();
-			decodeStartInvocationExtExtension(
-					Extension.decode(invocationExtension.getSequContrDataProcStartInvocExtExtension()));
+			decodeStartInvocationExtExtension(Extension.decode(invocationExtension.getSequContrDataProcStartInvocExtExtension()));
 		}
 	}
 
@@ -557,15 +629,14 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 	 * This method should be overridden to decode the extension of a derived
 	 * procedure.
 	 * 
-	 * @param extension
-	 *            the Extended object representing the extension of the derived
-	 *            procedure
+	 * @param extension the Extended object representing the extension of the
+	 *                  derived procedure
 	 */
 	protected void decodeStartInvocationExtExtension(Extension extension) {
 		// do nothing on default
 	}
 
-	private void decodeProcessDataInvocationExtension(Extension extension) {
+	protected void decodeProcessDataInvocationExtExtension(Extension extension) {
 		if (extension.isUsed() && extension.getEmbeddedData().getOid().equals(OIDs.scdpProcDataInvocExt)) {
 			SequContrDataProcProcDataInvocExt invocationExtension = new SequContrDataProcProcDataInvocExt();
 			try (ByteArrayInputStream is = new ByteArrayInputStream(extension.getEmbeddedData().getData())) {
@@ -575,8 +646,7 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 			}
 			earliestDataProcessingTime = ConditionalTime.decode(invocationExtension.getEarliestDataProcessingTime());
 			latestDataProcessingTime = ConditionalTime.decode(invocationExtension.getLatestDataProcessingTime());
-			decodeProcessDataInvocationExtExtension(
-					Extension.decode(invocationExtension.getSequContrDataProcDataInvocExtExtension()));
+			decodeProcessDataInvocationExtExtExtension(Extension.decode(invocationExtension.getSequContrDataProcDataInvocExtExtension()));
 		}
 	}
 
@@ -584,11 +654,10 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 	 * This method should be overridden to decode the extension of a derived
 	 * procedure.
 	 * 
-	 * @param extension
-	 *            the Extended object representing the extension of the derived
-	 *            procedure
+	 * @param extension the Extended object representing the extension of the
+	 *                  derived procedure
 	 */
-	protected void decodeProcessDataInvocationExtExtension(Extension extension) {
+	protected void decodeProcessDataInvocationExtExtExtension(Extension extension) {
 		// do nothing on default
 	}
 
@@ -601,8 +670,7 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 				e.printStackTrace();
 			}
 			dataUnitId = returnExtension.getDataUnitId().longValue();
-			decodeProcessDataPosReturnExtExtension(
-					Extension.decode(returnExtension.getSequContrDataProcProcDataPosReturnExtExtension()));
+			decodeProcessDataPosReturnExtExtension(Extension.decode(returnExtension.getSequContrDataProcProcDataPosReturnExtExtension()));
 		}
 	}
 
@@ -610,9 +678,8 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 	 * This method should be overridden to decode the extension of a derived
 	 * procedure.
 	 * 
-	 * @param extension
-	 *            the Extended object representing the extension of the derived
-	 *            procedure
+	 * @param extension the Extended object representing the extension of the
+	 *                  derived procedure
 	 */
 	protected void decodeProcessDataPosReturnExtExtension(Extension extension) {
 		// do nothing on default
@@ -639,8 +706,7 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 				e.printStackTrace();
 			}
 			dataUnitId = returnExtension.getDataUnitId().longValue();
-			decodeProcessDataNegReturnExtExtension(
-					Extension.decode(returnExtension.getSequContrDataProcProcDataNegReturnExtExtension()));
+			decodeProcessDataNegReturnExtExtension(Extension.decode(returnExtension.getSequContrDataProcProcDataNegReturnExtExtension()));
 		}
 	}
 
@@ -648,9 +714,8 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 	 * This method should be overridden to decode the extension of a derived
 	 * procedure.
 	 * 
-	 * @param extension
-	 *            the Extended object representing the extension of the derived
-	 *            procedure
+	 * @param extension the Extended object representing the extension of the
+	 *                  derived procedure
 	 */
 	protected void decodeProcessDataNegReturnExtExtension(Extension extension) {
 		// do nothing on default

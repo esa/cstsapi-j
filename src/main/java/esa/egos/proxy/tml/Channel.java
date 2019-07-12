@@ -703,13 +703,13 @@ public abstract class Channel implements IChannelInitiate, ITimeoutProcessor
         {
             if (isPeerAbort)
             {
-                logError("Urgent data not received " + PeerAbortDiagnostics.getPeerAbortDiagnosticByCode(diagnosticByte)
+                logError("Urgent data received " + PeerAbortDiagnostics.getPeerAbortDiagnosticByCode(diagnosticByte)
                         .toString());
                 chInform.rcvPeerAbort(diagnosticByte, (originator == EE_APIPX_ISP1ProtocolAbortOriginator.localTML));
             }
             else
             {
-                logError("Urgent data not received");
+                logError("Urgent data received");
                 ISP1ProtocolAbortDiagnostics diag = new ISP1ProtocolAbortDiagnostics(originator,
                                                                                                        diagnosticByte,
                                                                                                        errorCode);

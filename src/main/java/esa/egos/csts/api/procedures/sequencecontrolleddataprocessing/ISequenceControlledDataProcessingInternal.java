@@ -1,5 +1,7 @@
 package esa.egos.csts.api.procedures.sequencecontrolleddataprocessing;
 
+import java.util.HashMap;
+
 import esa.egos.csts.api.diagnostics.SeqControlledDataProcDiagnostics;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.operations.IConfirmedProcessData;
@@ -33,5 +35,9 @@ public interface ISequenceControlledDataProcessingInternal extends ISequenceCont
 	boolean verifyConsistentTimeRange();
 
 	void notifyLocked();
+
+	HashMap<IConfirmedProcessData, ConditionalTime> getLatestDataProcessingTimeMap();
+
+	HashMap<IConfirmedProcessData, ConditionalTime> getEarliestDataProcessingTimeMap();
 	
 }

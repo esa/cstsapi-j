@@ -4,8 +4,8 @@ import esa.egos.csts.api.diagnostics.Diagnostic;
 import esa.egos.csts.api.diagnostics.DiagnosticType;
 import esa.egos.csts.api.diagnostics.StartDiagnostic;
 import esa.egos.csts.api.diagnostics.StartDiagnosticType;
-import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.enumerations.CstsResult;
+import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IStart;
@@ -21,6 +21,9 @@ public class Inactive extends State<IBufferedDataProcessingInternal> {
 	
 	@Override
 	public synchronized CstsResult process(IOperation operation) {
+		if(operation.getType() == OperationType.NOTIFY) {
+			return CstsResult.IGNORED;
+		}
 		if (operation.getType() != OperationType.START) {
 			getProcedure().raiseProtocolError();
 			return CstsResult.PROTOCOL_ERROR;

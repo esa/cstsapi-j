@@ -31,44 +31,36 @@ public class ActiveProcessing extends State<ISequenceControlledDataProcessingInt
 
 			IConfirmedProcessData processData = (IConfirmedProcessData) operation;
 
-			// verify if data unit ID is set correctly
-			if (procedure.verifyDataUnitId(processData)) {
-				processData.setPositiveResult();
-				processData.setReturnExtension(procedure.encodeProcessDataPosReturnExtension());
-			} else {
+			if (!procedure.verifyDataUnitId(processData)) {
+				// verify if data unit ID is set correctly
 				procedure.setDiagnostics(new SeqControlledDataProcDiagnostics(SeqControlledDataProcDiagnosticsType.OUT_OF_SEQUENCE));
 				processData.setDiagnostic(procedure.encodeProcessDataDiagnosticExt());
 				processData.setReturnExtension(procedure.encodeProcessDataNegReturnExtension());
-				return procedure.forwardReturnToProxy(processData);
-			}
-
-			// verify if times are consistent
-			if (!procedure.verifyConsistentTimeRange()) {
+			} else if (!procedure.verifyConsistentTimeRange()) {
+				// verify if times are consistent
 				procedure.setDiagnostics(new SeqControlledDataProcDiagnostics(SeqControlledDataProcDiagnosticsType.INCONSISTENT_TIME_RANGE));
 				processData.setDiagnostic(procedure.encodeProcessDataDiagnosticExt());
-				processData.setNegativeResult();
 				processData.setReturnExtension(procedure.encodeProcessDataNegReturnExtension());
-				return procedure.forwardReturnToProxy(processData);
-			}
-
-			// verify if the queue is not full
-			if (procedure.isQueueFull()) {
+			} else if (procedure.isQueueFull()) {
+				// verify if the queue is not full
 				procedure.setDiagnostics(new SeqControlledDataProcDiagnostics(SeqControlledDataProcDiagnosticsType.UNABLE_TO_STORE));
 				processData.setDiagnostic(procedure.encodeProcessDataDiagnosticExt());
-				processData.setNegativeResult();
 				processData.setReturnExtension(procedure.encodeProcessDataNegReturnExtension());
-				return procedure.forwardReturnToProxy(processData);
+			} else {
+				processData.setPositiveResult();
+				processData.setReturnExtension(procedure.encodeProcessDataPosReturnExtension());
+				procedure.getEarliestDataProcessingTimeMap().put(processData, procedure.getEarliestDataProcessingTime());
+				procedure.getLatestDataProcessingTimeMap().put(processData, procedure.getLatestDataProcessingTime());
+				procedure.queueProcessData(processData);
 			}
-
-			// queue data since all invocation checks have passed
-			procedure.queueProcessData(processData);
 			return procedure.forwardReturnToProxy(processData);
 		} else if (operation.getType() == OperationType.STOP) {
 
 			IStop stop = (IStop) operation;
 			stop.setPositiveResult();
 			procedure.setState(new Inactive(procedure));
-			return procedure.forwardInvocationToApplication(stop);
+			procedure.forwardInvocationToApplication(stop);
+			return procedure.forwardReturnToProxy(stop);
 
 		} else if (operation.getType() == OperationType.EXECUTE_DIRECTIVE) {
 			IExecuteDirective executeDirective = (IExecuteDirective) operation;
@@ -77,6 +69,7 @@ public class ActiveProcessing extends State<ISequenceControlledDataProcessingInt
 				procedure.forwardAcknowledgementToProxy(executeDirective);
 				try {
 					procedure.reset();
+					procedure.setFirstDataUnitId(executeDirective.getDirectiveQualifier().getValues().getValues().get(0).getIntegerParameterValues().get(0));
 				} catch (InterruptedException e) {
 					return CstsResult.FAILURE;
 				}

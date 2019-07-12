@@ -2,6 +2,7 @@ package esa.egos.csts.api.procedures.throwevent;
 
 import java.util.Queue;
 
+import esa.egos.csts.api.diagnostics.ThrowEventDiagnostic;
 import esa.egos.csts.api.directives.DirectiveQualifier;
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.oids.ObjectIdentifier;
@@ -21,6 +22,20 @@ public interface IThrowEvent extends IStatefulProcedure {
 	 * @return the queue of received EXECUTIVE-DIRECTIVE operations
 	 */
 	Queue<IExecuteDirective> getQueue();
+
+	/**
+	 * Return the Throw Event Diagnostics.
+	 * 
+	 * @return the Throw Event Diagnostics
+	 */
+	ThrowEventDiagnostic getThrowEventDiagnostic();
+
+	/**
+	 * Sets the Throw Event Diagnostic.
+	 * 
+	 * @param diagnostic the Throw Event Diagnostic to be set
+	 */
+	void setThrowEventDiagnostic(ThrowEventDiagnostic diagnostic);
 
 	/**
 	 * Creates a EXECUTE-DIRECTIVE operation and forwards it to the underlying

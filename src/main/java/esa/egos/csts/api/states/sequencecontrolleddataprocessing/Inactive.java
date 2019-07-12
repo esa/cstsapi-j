@@ -30,8 +30,9 @@ public class Inactive extends State<ISequenceControlledDataProcessingInternal> {
 		} else {
 			start.setPositiveResult();
 			getProcedure().setState(new ActiveProcessing(getProcedure()));
+			getProcedure().forwardInvocationToApplication(start);
 		}
-		return getProcedure().forwardInvocationToApplication(start);
+		return getProcedure().forwardReturnToProxy(start);
 	}
 
 	@Override

@@ -671,7 +671,7 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 		this.unboundStateIsDisconnected = true;
 
 		// send a peer abort operation to the client
-		if (this.srvProxyInform != null && (ao == AbortOriginator.PEER || ao == AbortOriginator.INTERNAL)) {
+		if (this.srvProxyInform != null && (ao == AbortOriginator.INTERNAL)) {
 			// send the peer abort operation
 			long seqc = this.sequenceCounter++;
 
@@ -812,19 +812,19 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 
 		if (isInvoke) {
 			if (pSecAttr == null) {
-				insertCredentialsInOp(poperation, null);
+				poperation = insertCredentialsInOp(poperation, null);
 				return;
 			}
 
 			if (this.authenticationMode == AuthenticationMode.NONE
 					|| (this.authenticationMode == AuthenticationMode.BIND_ONLY
 							&& !IBind.class.isAssignableFrom(poperation.getClass()))) {
-				insertCredentialsInOp(poperation, null);
+				poperation = insertCredentialsInOp(poperation, null);
 				return;
 			}
 
 			ICredentials pCredentials = pSecAttr.generateCredentials();
-			insertCredentialsInOp(poperation, pCredentials);
+			poperation= insertCredentialsInOp(poperation, pCredentials);
 		} else {
 			IConfirmedOperation pConfOp = (IConfirmedOperation) poperation;
 			if (pConfOp != null) {
@@ -1519,15 +1519,15 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 	/**
 	 * Inserts the credentials in the operation.
 	 */
-	private void insertCredentialsInOp(IOperation poperation, ICredentials pcredentials) {
+	private IOperation insertCredentialsInOp(IOperation poperation, ICredentials pcredentials) {
 		// TODO OT_transferBuffer same as processdata?
 		if (IProcessData.class.isAssignableFrom(poperation.getClass())) {
-			IOperation pCurrentOp = null;
+			//IOperation pCurrentOp = null;
 
 			// set the credentials for the transfer buffer op
 			poperation.setInvokerCredentials(pcredentials);
 
-			IProcessData pTransferBufferOperation = (IProcessData) poperation;
+			//IProcessData pTransferBufferOperation = (IProcessData) poperation;
 			/*
 			if (pTransferBufferOperation != null) {
 				// for all the operation of the transfer buffer
@@ -1541,6 +1541,8 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 		} else {
 			poperation.setInvokerCredentials(pcredentials);
 		}
+		
+		return poperation;
 	}
 
 	/**

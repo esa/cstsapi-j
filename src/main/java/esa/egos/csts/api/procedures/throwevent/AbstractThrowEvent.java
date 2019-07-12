@@ -59,10 +59,12 @@ public abstract class AbstractThrowEvent extends AbstractStatefulProcedure imple
 		queue.clear();
 	}
 	
+	@Override
 	public ThrowEventDiagnostic getThrowEventDiagnostic() {
 		return diagnostic;
 	}
 	
+	@Override
 	public void setThrowEventDiagnostic(ThrowEventDiagnostic diagnostic) {
 		this.diagnostic = diagnostic;
 	}
@@ -119,7 +121,7 @@ public abstract class AbstractThrowEvent extends AbstractStatefulProcedure imple
 	@Override
 	public void actionCompletedUnsuccesfully(IExecuteDirective executeDirective) {
 		executeDirective.setAcknowledgement(false);
-		executeDirective.setNegativeResult();
+		executeDirective.setDiagnostic(encodeExecuteDirectiveDiagnosticExt());
 		((ThrowEventState) getState()).process(executeDirective, false);
 	}
 	

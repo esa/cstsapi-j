@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>esa.egos</groupId>
 	<artifactId>csts.api</artifactId>
-	<version>1.0.0-i1</version>
+	<version>1.0.1</version>
 	<packaging>jar</packaging>
 
 	<name>CSTS API</name>

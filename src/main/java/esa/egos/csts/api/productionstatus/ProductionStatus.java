@@ -58,6 +58,7 @@ public class ProductionStatus extends Observable {
 	 */
 	public void transitionTo(ProductionState state) throws ApiException {
 
+
 		switch (this.state) {
 		case CONFIGURED:
 			if (state == ProductionState.INTERRUPTED) {

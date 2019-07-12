@@ -134,6 +134,7 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 		return productionStatusNotified;
 	}
 	
+	@Override
 	public Time getLastProcessedDataUnitTime() {
 		return lastProcessedDataUnitTime;
 	}
@@ -142,6 +143,7 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 		this.lastProcessedDataUnitTime = lastProcessedDataUnitTime;
 	}
 
+	@Override
 	public long getLastProcessedDataUnitId() {
 		return lastProcessedDataUnitId;
 	}
@@ -150,12 +152,31 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 		this.lastProcessedDataUnitId = lastProcessedDataUnitId;
 	}
 
+	@Override
 	public ProcessingStatus getLastProcessedDataUnitStatus() {
 		return lastProcessedDataUnitStatus;
 	}
 
 	public void setLastProcessedDataUnitStatus(ProcessingStatus lastProcessedDataUnitStatus) {
 		this.lastProcessedDataUnitStatus = lastProcessedDataUnitStatus;
+	}
+	
+	@Override
+	public long getLastSuccessfullyProcessDataUnitId() {
+		return lastSuccessfullyProcessDataUnitId;
+	}
+	
+	public void setLastSuccessfullyProcessDataUnitId(long lastSuccessfullyProcessDataUnitId) {
+		this.lastSuccessfullyProcessDataUnitId = lastSuccessfullyProcessDataUnitId;
+	}
+	
+	@Override
+	public Time getLastSuccessfullyProcessDataUnitTime() {
+		return lastSuccessfullyProcessDataUnitTime;
+	}
+	
+	public void setLastSuccessfullyProcessDataUnitTime(Time lastSuccessfullyProcessDataUnitTime) {
+		this.lastSuccessfullyProcessDataUnitTime = lastSuccessfullyProcessDataUnitTime;
 	}
 
 	@Override
@@ -175,12 +196,22 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 
 	@Override
 	public void queueProcessData(IProcessData processData) {
+		decodeProcessDataInvocationExtension(processData.getInvocationExtension());
+		if (produceReport) {
+			toBeReported.add(processData.getDataUnitId());
+		}
 		queue.add(processData);
 	}
 	
 	@Override
 	public void queueProcessData(Collection<IProcessData> queue) {
-		this.queue.addAll(queue);
+		for (IProcessData processData : queue) {
+			decodeProcessDataInvocationExtension(processData.getInvocationExtension());
+			if (produceReport) {
+				toBeReported.add(processData.getDataUnitId());
+			}
+			this.queue.add(processData);
+		}
 	}
 
 	@Override
@@ -363,6 +394,7 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 
 		if (lastProcessedDataUnitId < 0) {
 			dataUnitIdLastProcessed.setNoDataProcessed(new BerNull());
+			dataUnitIdLastOk.setNoSuccessfulProcessing(new BerNull());
 		} else {
 
 			DataUnitLastProcessed dataUnitLastProcessed = new DataUnitLastProcessed();
@@ -370,11 +402,9 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 			DataProcessingStatus dataProcessingStatus = new DataProcessingStatus();
 			DataProcessingStartTime dataProcessingStartTime = new DataProcessingStartTime();
 			if (lastProcessedDataUnitTime.getType() == TimeType.MILLISECONDS) {
-				dataProcessingStartTime
-						.setCcsdsFormatMilliseconds(new TimeCCSDSMilli(lastProcessedDataUnitTime.toArray()));
+				dataProcessingStartTime.setCcsdsFormatMilliseconds(new TimeCCSDSMilli(lastProcessedDataUnitTime.toArray()));
 			} else if (lastProcessedDataUnitTime.getType() == TimeType.PICOSECONDS) {
-				dataProcessingStartTime
-						.setCcsdsFormatPicoseconds(new TimeCCSDSPico(lastProcessedDataUnitTime.toArray()));
+				dataProcessingStartTime.setCcsdsFormatPicoseconds(new TimeCCSDSPico(lastProcessedDataUnitTime.toArray()));
 			}
 			switch (lastProcessedDataUnitStatus) {
 			case PROCESSING_INTERRUPTED:
@@ -491,7 +521,7 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 		return doInformOperationInvoke(operation);
 	}
 
-	private void decodeProcessDataInvocationExtension(Extension extension) {
+	protected void decodeProcessDataInvocationExtension(Extension extension) {
 		if (extension.isUsed() && extension.getEmbeddedData().getOid().equals(OIDs.dpProcDataInvocExt)) {
 			DataProcProcDataInvocExt invocationExtension = new DataProcProcDataInvocExt();
 			try (ByteArrayInputStream is = new ByteArrayInputStream(extension.getEmbeddedData().getData())) {
@@ -500,8 +530,7 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 				e.printStackTrace();
 			}
 			produceReport = invocationExtension.getProcessCompletionReport().getProduceReport() != null;
-			decodeProcessDataInvocationExtExtension(
-					Extension.decode(invocationExtension.getDataProcProcDataInvocExtExtension()));
+			decodeProcessDataInvocationExtExtension(Extension.decode(invocationExtension.getDataProcProcDataInvocExtExtension()));
 		}
 	}
 
@@ -509,7 +538,7 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 
 	}
 
-	private void decodeNotifyInvocationExtension(Extension extension) {
+	protected void decodeNotifyInvocationExtension(Extension extension) {
 		if (extension.isUsed() && extension.getEmbeddedData().getOid().equals(OIDs.dpNotifyInvocExt)) {
 
 			DataProcNotifyInvocExt invocationExtension = new DataProcNotifyInvocExt();
