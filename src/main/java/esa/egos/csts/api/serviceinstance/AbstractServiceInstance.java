@@ -378,8 +378,8 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 		try {
 			if (confOp != null) this.remoteReturns.add(rr);
 			// #hd# take into account failed return code
-			rc = getProxyInitiate().initiateOpInvoke(operation, reportTransmission, this.pxySeqCount);
-			if(rc != Result.S_OK && rc != Result.SLE_S_TRANSMITTED && rc != Result.SLE_S_QUEUED) {
+			Result res = getProxyInitiate().initiateOpInvoke(operation, reportTransmission, this.pxySeqCount);
+			if(res != Result.S_OK && res != Result.SLE_S_TRANSMITTED && res != Result.SLE_S_QUEUED) {
 				rc = Result.E_FAIL; 
 			}
 		} catch (ApiException e) {
