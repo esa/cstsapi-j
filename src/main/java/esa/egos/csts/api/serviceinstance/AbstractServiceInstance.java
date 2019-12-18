@@ -377,11 +377,19 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 		try {
 			if (confOp != null) this.remoteReturns.add(rr);
-			getProxyInitiate().initiateOpInvoke(operation, reportTransmission, this.pxySeqCount);
+			// #hd# take into account failed return code
+			rc = getProxyInitiate().initiateOpInvoke(operation, reportTransmission, this.pxySeqCount);
+			if(rc != Result.S_OK && rc != Result.SLE_S_TRANSMITTED && rc != Result.SLE_S_QUEUED) {
+				rc = Result.E_FAIL; 
+			}
 		} catch (ApiException e) {
-			LOG.fine("Forward initiate proxy operation invoke failed.");
 			rc = Result.E_FAIL;
-			if (confOp != null) this.remoteReturns.remove(rr);
+		}
+		
+		// #hd# unify error handling also for failure of getProxyInitiate().initiateOpInvoke
+		if(rc == Result.E_FAIL) {
+			LOG.fine("Forward initiate proxy operation invoke failed.");
+			if (confOp != null) this.remoteReturns.remove(rr);			
 		}
 
 		// SLE_S_QUEUED means suspended
