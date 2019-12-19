@@ -277,4 +277,36 @@ public class ListOfParametersDiagnostics {
 		return newDiagnostics;
 	}
 
+	@Override
+	public String toString() {
+		StringBuffer diag = new StringBuffer();
+		
+		if(undefinedDefault != null) {
+			diag.append(undefinedDefault);
+		}
+		if(unknownListName != null) {
+			diag.append(unknownListName);
+		}
+		if(unknownFunctionalResourceType != null) {
+			diag.append(unknownFunctionalResourceType);
+		}
+		if(unknownFunctionalResourceName != null) {
+			diag.append(unknownFunctionalResourceName);
+		}
+		if(unknownProcedureType != null) {
+			diag.append(unknownProcedureType);
+		}
+		if(unknownProcedureInstanceIdentifier != null) {
+			diag.append(unknownProcedureInstanceIdentifier);
+		}
+		if(unknownParameterLabels != null) {
+			diag.append(unknownParameterLabels);
+		}
+		if(unknownParameterNames != null) {
+			diag.append(unknownParameterNames);
+		}
+
+		
+		return diag.toString();
+	}
 }

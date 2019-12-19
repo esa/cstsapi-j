@@ -704,8 +704,9 @@ public abstract class AbstractProcedure implements IProcedureInternal {
 
 	@Override
 	public CstsResult forwardInvocationToProxy(IOperation operation) {
-		if (getInternal().forwardInitiatePxyOpInv(operation, true) != Result.S_OK) {
-			LOGGER.warning("The underlying proxy returned with an error code.");
+		Result res = getInternal().forwardInitiatePxyOpInv(operation, true);
+		if (res != Result.S_OK) {
+			LOGGER.warning("The underlying proxy returned with an error code: " + res);
 			return CstsResult.COMMUNICATIONS_FAILURE;
 		}
 		return CstsResult.SUCCESS;

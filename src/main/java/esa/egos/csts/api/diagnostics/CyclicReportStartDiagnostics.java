@@ -179,4 +179,23 @@ public class CyclicReportStartDiagnostics {
 		return newDiagnostic;
 	}
 
+	@Override
+	public String toString() {
+		StringBuffer diag = new StringBuffer();
+		if(type != null) {
+			diag.append("Diagnonstic Type: " + type);
+		}
+		if(listOfParametersDiagnostics != null) {
+			diag.append(" list of parameter diag: " + listOfParametersDiagnostics);
+		}
+		
+		if(message != null) {
+			diag.append(" " + message);
+		}
+		if(diagnosticExtension != null) {
+			diag.append("Diagnonstic extension: " + diagnosticExtension);
+		}
+		
+		return diag.toString();
+	}
 }

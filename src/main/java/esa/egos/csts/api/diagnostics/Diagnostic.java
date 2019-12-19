@@ -186,4 +186,18 @@ public class Diagnostic {
 		return newDiagnostic;
 	}
 
+	@Override
+	public String toString() {
+		StringBuffer diag = new StringBuffer("Diag type: " + getType());
+		if(getText() != null) {
+			diag.append(getText());
+		}
+		
+		if(getAppellation() != null) {
+			diag.append(" appellation: " + getAppellation());
+		}
+		
+		return diag.toString();
+		
+	}
 }
