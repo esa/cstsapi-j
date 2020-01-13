@@ -23,7 +23,7 @@ public class Slecsexe {
 
 	private static final Logger LOG = Logger.getLogger(Slecsexe.class.getName());
 
-	private static Result comServer(String configFilePath, AppRole role) throws ApiException {
+	public static Result comServer(String configFilePath, AppRole role, boolean wait) throws ApiException {
 		Result res = Result.S_FALSE;
 
 		ProxyConfig proxyConfig = null;
@@ -51,25 +51,27 @@ public class Slecsexe {
 			return Result.E_FAIL;
 		}
 
-		// Register to the ShutdownHook for SIGTERM
-		Runtime rST = Runtime.getRuntime();
-		rST.addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				if (verbose) {
-					System.out.println("ESA SLE Communication Server : SIGTERM received");
-					System.out.println("Shutdown of the ESA SLE Communication Server Process");
+		if(wait == true) {		
+			// Register to the ShutdownHook for SIGTERM
+			Runtime rST = Runtime.getRuntime();
+			rST.addShutdownHook(new Thread() {
+				@Override
+				public void run() {
+					if (verbose) {
+						System.out.println("ESA SLE Communication Server : SIGTERM received");
+						System.out.println("Shutdown of the ESA SLE Communication Server Process");
+					}
+	
+					MasterLink.shutdown();
 				}
-
-				MasterLink.shutdown();
+			});
+	
+			// infinite wait
+			try {
+				new Semaphore(0).acquire();
+			} catch (InterruptedException e) {
+				LOG.log(Level.FINE, "InterruptedException ", e);
 			}
-		});
-
-		// infinite wait
-		try {
-			new Semaphore(0).acquire();
-		} catch (InterruptedException e) {
-			LOG.log(Level.FINE, "InterruptedException ", e);
 		}
 
 		return res;
@@ -104,7 +106,7 @@ public class Slecsexe {
 		}
 
 		try {
-			comServer(configFilePath, role);
+			comServer(configFilePath, role, true);
 		} catch (ApiException e) {
 			e.printStackTrace();
 		}
