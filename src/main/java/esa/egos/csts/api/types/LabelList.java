@@ -3,10 +3,10 @@ package esa.egos.csts.api.types;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openmuc.jasn1.ber.types.BerBoolean;
-import org.openmuc.jasn1.ber.types.string.BerVisibleString;
+import com.beanit.jasn1.ber.types.BerBoolean;
+import com.beanit.jasn1.ber.types.string.BerVisibleString;
 
-import ccsds.csts.fw.procedure.parameters.events.directives.LabelList.Labels;
+import b1.ccsds.csts.fw.procedure.parameters.events.directives.LabelList.Labels;
 import esa.egos.csts.api.enumerations.ParameterQualifier;
 import esa.egos.csts.api.enumerations.ParameterType;
 import esa.egos.csts.api.parameters.impl.ParameterValue;
@@ -100,9 +100,9 @@ public class LabelList {
 	 * 
 	 * @return the CCSDS Label List type representing this object
 	 */
-	public ccsds.csts.fw.procedure.parameters.events.directives.LabelList encode() {
+	public b1.ccsds.csts.fw.procedure.parameters.events.directives.LabelList encode() {
 
-		ccsds.csts.fw.procedure.parameters.events.directives.LabelList labelList = new ccsds.csts.fw.procedure.parameters.events.directives.LabelList();
+		b1.ccsds.csts.fw.procedure.parameters.events.directives.LabelList labelList = new b1.ccsds.csts.fw.procedure.parameters.events.directives.LabelList();
 
 		labelList.setName(new BerVisibleString(CSTSUtils.encodeString(name)));
 		labelList.setDefaultList(new BerBoolean(defaultList));
@@ -121,9 +121,9 @@ public class LabelList {
 	 *            the specified CCSDS Label List type
 	 * @return a new Label List decoded from the specified CCSDS Label List type
 	 */
-	public static LabelList decode(ccsds.csts.fw.procedure.parameters.events.directives.LabelList labelList) {
+	public static LabelList decode(b1.ccsds.csts.fw.procedure.parameters.events.directives.LabelList labelList) {
 		LabelList newLabelList = new LabelList(CSTSUtils.decodeString(labelList.getName().value), labelList.getDefaultList().value);
-		for (ccsds.csts.common.types.Label label : labelList.getLabels().getLabel()) {
+		for (b1.ccsds.csts.common.types.Label label : labelList.getLabels().getLabel()) {
 			newLabelList.getLabels().add(Label.decode(label));
 		}
 		return newLabelList;

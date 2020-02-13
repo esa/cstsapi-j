@@ -9,12 +9,12 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
-import org.openmuc.jasn1.ber.BerByteArrayOutputStream;
+import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 
-import ccsds.csts.buffered.data.delivery.pdus.BuffDataDelStartDiagnosticExt;
-import ccsds.csts.buffered.data.delivery.pdus.BuffDataDelStartInvocExt;
-import ccsds.csts.buffered.data.delivery.pdus.BufferedDataDeliveryPdu;
-import ccsds.csts.buffered.data.delivery.pdus.TransferDataOrNotification;
+import b1.ccsds.csts.buffered.data.delivery.pdus.BuffDataDelStartDiagnosticExt;
+import b1.ccsds.csts.buffered.data.delivery.pdus.BuffDataDelStartInvocExt;
+import b1.ccsds.csts.buffered.data.delivery.pdus.BufferedDataDeliveryPdu;
+import b1.ccsds.csts.buffered.data.delivery.pdus.TransferDataOrNotification;
 import esa.egos.csts.api.diagnostics.BufferedDataDeliveryStartDiagnostic;
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.enumerations.DeliveryMode;
@@ -415,7 +415,7 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 				pdu.setStopReturn(stop.encodeStopReturn());
 			}
 		} else if (operation.getType() == OperationType.RETURN_BUFFER) {
-			ccsds.csts.buffered.data.delivery.pdus.ReturnBuffer returnBuffer = new ccsds.csts.buffered.data.delivery.pdus.ReturnBuffer();
+			b1.ccsds.csts.buffered.data.delivery.pdus.ReturnBuffer returnBuffer = new b1.ccsds.csts.buffered.data.delivery.pdus.ReturnBuffer();
 			for (IOperation op : this.returnBuffer.getBuffer()) {
 				TransferDataOrNotification transferDataOrNotification = new TransferDataOrNotification();
 				if (op.getType() == OperationType.TRANSFER_DATA) {
@@ -430,7 +430,7 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 			pdu.setReturnBuffer(returnBuffer);
 		}
 
-		try (BerByteArrayOutputStream berBAOStream = new BerByteArrayOutputStream(10, true)) {
+		try (ReverseByteArrayOutputStream berBAOStream = new ReverseByteArrayOutputStream(10, true)) {
 			pdu.encode(berBAOStream);
 			encodedOperation = berBAOStream.getArray();
 		}
@@ -446,7 +446,7 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 		invocationExtension.setBuffDataDelStartInvocExtExtension(encodeStartInvocationExtExtension().encode());
 
 		// encode with a resizable output stream and an initial capacity of 128 bytes
-		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
+		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
 			invocationExtension.encode(os);
 			invocationExtension.code = os.getArray();
 		} catch (IOException e) {

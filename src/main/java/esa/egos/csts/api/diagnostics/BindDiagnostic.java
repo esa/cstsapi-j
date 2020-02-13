@@ -1,7 +1,7 @@
 package esa.egos.csts.api.diagnostics;
 
-import ccsds.csts.association.control.types.AssocBindDiagnosticExt;
-import ccsds.csts.common.types.AdditionalText;
+import b1.ccsds.csts.association.control.types.AssocBindDiagnosticExt;
+import b1.ccsds.csts.common.types.AdditionalText;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.util.impl.CSTSUtils;

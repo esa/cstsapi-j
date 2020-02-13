@@ -2,11 +2,13 @@ package esa.egos.csts.api.extensions;
 
 import java.util.Arrays;
 
-import org.openmuc.jasn1.ber.types.BerEmbeddedPdv.Identification;
-import org.openmuc.jasn1.ber.types.BerObjectIdentifier;
-import org.openmuc.jasn1.ber.types.BerOctetString;
+import com.beanit.jasn1.ber.types.BerEmbeddedPdv.Identification;
 
-import ccsds.csts.common.types.Embedded;
+import b1.ccsds.csts.common.types.Embedded;
+
+import com.beanit.jasn1.ber.types.BerObjectIdentifier;
+import com.beanit.jasn1.ber.types.BerOctetString;
+
 import esa.egos.csts.api.oids.ObjectIdentifier;
 
 /**

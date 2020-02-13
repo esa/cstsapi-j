@@ -1,7 +1,7 @@
 package esa.egos.csts.api.serviceinstance.impl;
 
-import ccsds.csts.common.types.IntUnsigned;
-import ccsds.csts.common.types.PublishedIdentifier;
+import b1.ccsds.csts.common.types.IntUnsigned;
+import b1.ccsds.csts.common.types.PublishedIdentifier;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceIdentifier;
 
@@ -55,8 +55,8 @@ public class ServiceInstanceIdentifier implements IServiceInstanceIdentifier {
 	}
 
 	@Override
-	public ccsds.csts.service.instance.id.ServiceInstanceIdentifier encode() {
-		ccsds.csts.service.instance.id.ServiceInstanceIdentifier id = new ccsds.csts.service.instance.id.ServiceInstanceIdentifier();
+	public b1.ccsds.csts.service.instance.id.ServiceInstanceIdentifier encode() {
+		b1.ccsds.csts.service.instance.id.ServiceInstanceIdentifier id = new b1.ccsds.csts.service.instance.id.ServiceInstanceIdentifier();
 		id.setFacilityId(new PublishedIdentifier(getFacilityIdentifier().toArray()));
 		id.setServiceType(new PublishedIdentifier(getCstsTypeIdentifier().toArray()));
 		id.setSpacecraftId(new PublishedIdentifier(getSpacecraftIdentifier().toArray()));
@@ -65,7 +65,7 @@ public class ServiceInstanceIdentifier implements IServiceInstanceIdentifier {
 	}
 
 	public static IServiceInstanceIdentifier decode(
-			ccsds.csts.service.instance.id.ServiceInstanceIdentifier serviceInstanceIdentifier) {
+			b1.ccsds.csts.service.instance.id.ServiceInstanceIdentifier serviceInstanceIdentifier) {
 
 		IServiceInstanceIdentifier siid = null;
 

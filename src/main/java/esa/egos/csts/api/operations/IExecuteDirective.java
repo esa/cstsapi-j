@@ -1,8 +1,8 @@
 package esa.egos.csts.api.operations;
 
-import ccsds.csts.common.operations.pdus.ExecuteDirectiveAcknowledge;
-import ccsds.csts.common.operations.pdus.ExecuteDirectiveInvocation;
-import ccsds.csts.common.operations.pdus.ExecuteDirectiveReturn;
+import b1.ccsds.csts.common.operations.pdus.ExecuteDirectiveAcknowledge;
+import b1.ccsds.csts.common.operations.pdus.ExecuteDirectiveInvocation;
+import b1.ccsds.csts.common.operations.pdus.ExecuteDirectiveReturn;
 import esa.egos.csts.api.diagnostics.ExecDirAcknowledgementDiagnostic;
 import esa.egos.csts.api.diagnostics.ExecDirReturnDiagnostic;
 import esa.egos.csts.api.directives.DirectiveQualifier;

@@ -12,10 +12,10 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
-import org.openmuc.jasn1.ber.BerByteArrayOutputStream;
+import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 
-import ccsds.csts.buffered.data.processing.pdus.BufferedDataProcessingPdu;
-import ccsds.csts.common.operations.pdus.ProcessDataInvocation;
+import b1.ccsds.csts.buffered.data.processing.pdus.BufferedDataProcessingPdu;
+import b1.ccsds.csts.common.operations.pdus.ProcessDataInvocation;
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.enumerations.DataTransferMode;
 import esa.egos.csts.api.enumerations.EventValueType;
@@ -345,14 +345,14 @@ public abstract class AbstractBufferedDataProcessing extends AbstractDataProcess
 				pdu.setNotifyInvocation(notify.encodeNotifyInvocation());
 			}
 		} else if (operation.getType() == OperationType.FORWARD_BUFFER) {
-			ccsds.csts.buffered.data.processing.pdus.ForwardBuffer forwardBuffer = new ccsds.csts.buffered.data.processing.pdus.ForwardBuffer();
+			b1.ccsds.csts.buffered.data.processing.pdus.ForwardBuffer forwardBuffer = new b1.ccsds.csts.buffered.data.processing.pdus.ForwardBuffer();
 			for (IProcessData processData : ((IForwardBuffer) operation).getBuffer()) {
 				forwardBuffer.getProcessDataInvocation().add(processData.encodeProcessDataInvocation());
 			}
 			pdu.setForwardBuffer(forwardBuffer);
 		}
 
-		try (BerByteArrayOutputStream berBAOStream = new BerByteArrayOutputStream(10, true)) {
+		try (ReverseByteArrayOutputStream berBAOStream = new ReverseByteArrayOutputStream(10, true)) {
 			pdu.encode(berBAOStream);
 			encodedOperation = berBAOStream.getArray();
 		}

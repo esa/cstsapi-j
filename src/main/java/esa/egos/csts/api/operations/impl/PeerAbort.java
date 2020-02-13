@@ -1,6 +1,6 @@
 package esa.egos.csts.api.operations.impl;
 
-import ccsds.csts.association.control.types.PeerAbortInvocation;
+import b1.ccsds.csts.association.control.types.PeerAbortInvocation;
 import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.operations.AbstractOperation;

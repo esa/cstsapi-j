@@ -2,10 +2,10 @@ package esa.egos.csts.api.diagnostics;
 
 import java.io.IOException;
 
-import org.openmuc.jasn1.ber.BerByteArrayOutputStream;
+import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 
-import ccsds.csts.buffered.data.delivery.pdus.BuffDataDelStartDiagnosticExt;
-import ccsds.csts.common.types.AdditionalText;
+import b1.ccsds.csts.buffered.data.delivery.pdus.BuffDataDelStartDiagnosticExt;
+import b1.ccsds.csts.common.types.AdditionalText;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.util.impl.CSTSUtils;
 
@@ -133,7 +133,7 @@ public class BufferedDataDeliveryStartDiagnostic {
 		}
 
 		// encode with a resizable output stream and an initial capacity of 128 bytes
-		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
+		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
 			buffDataDelStartDiagnosticExt.encode(os);
 			buffDataDelStartDiagnosticExt.code = os.getArray();
 		} catch (IOException e) {

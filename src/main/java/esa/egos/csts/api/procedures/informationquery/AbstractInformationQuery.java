@@ -4,9 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 
-import org.openmuc.jasn1.ber.BerByteArrayOutputStream;
+import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 
-import ccsds.csts.information.query.pdus.InformationQueryPdu;
+import b1.ccsds.csts.information.query.pdus.InformationQueryPdu;
 import esa.egos.csts.api.diagnostics.ListOfParametersDiagnostics;
 import esa.egos.csts.api.diagnostics.ListOfParametersDiagnosticsType;
 import esa.egos.csts.api.enumerations.CstsResult;
@@ -256,7 +256,7 @@ public abstract class AbstractInformationQuery extends AbstractProcedure impleme
 			}
 		}
 
-		try (BerByteArrayOutputStream berBAOStream = new BerByteArrayOutputStream(10, true)) {
+		try (ReverseByteArrayOutputStream berBAOStream = new ReverseByteArrayOutputStream(10, true)) {
 			pdu.encode(berBAOStream);
 			encodedOperation = berBAOStream.getArray();
 		}

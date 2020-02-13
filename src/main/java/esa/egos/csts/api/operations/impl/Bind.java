@@ -1,11 +1,11 @@
 package esa.egos.csts.api.operations.impl;
 
-import ccsds.csts.association.control.types.BindInvocation;
-import ccsds.csts.association.control.types.BindReturn;
-import ccsds.csts.association.control.types.VersionNumber;
-import ccsds.csts.common.types.AuthorityIdentifier;
-import ccsds.csts.common.types.PortId;
-import ccsds.csts.common.types.StandardReturnHeader;
+import b1.ccsds.csts.association.control.types.BindInvocation;
+import b1.ccsds.csts.association.control.types.BindReturn;
+import b1.ccsds.csts.association.control.types.VersionNumber;
+import b1.ccsds.csts.common.types.AuthorityIdentifier;
+import b1.ccsds.csts.common.types.PortId;
+import b1.ccsds.csts.common.types.StandardReturnHeader;
 import esa.egos.csts.api.diagnostics.BindDiagnostic;
 import esa.egos.csts.api.diagnostics.Diagnostic;
 import esa.egos.csts.api.enumerations.OperationResult;

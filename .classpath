@@ -33,6 +33,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="src/main/resources/jasn1-1.8.0.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/jasn-1.11.2/jasn1-1.11.2.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

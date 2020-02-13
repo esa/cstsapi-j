@@ -1,6 +1,6 @@
 package esa.egos.csts.api.operations;
 
-import ccsds.csts.common.operations.pdus.TransferDataInvocation;
+import b1.ccsds.csts.common.operations.pdus.TransferDataInvocation;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.extensions.Extension;
 import esa.egos.csts.api.types.Time;

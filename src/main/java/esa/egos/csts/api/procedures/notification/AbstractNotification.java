@@ -6,11 +6,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.openmuc.jasn1.ber.BerByteArrayOutputStream;
+import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 
-import ccsds.csts.notification.pdus.NotificationPdu;
-import ccsds.csts.notification.pdus.NotificationStartDiagnosticExt;
-import ccsds.csts.notification.pdus.NotificationStartInvocExt;
+import b1.ccsds.csts.notification.pdus.NotificationPdu;
+import b1.ccsds.csts.notification.pdus.NotificationStartDiagnosticExt;
+import b1.ccsds.csts.notification.pdus.NotificationStartInvocExt;
 import esa.egos.csts.api.diagnostics.ListOfParametersDiagnostics;
 import esa.egos.csts.api.diagnostics.ListOfParametersDiagnosticsType;
 import esa.egos.csts.api.enumerations.CstsResult;
@@ -327,7 +327,7 @@ public abstract class AbstractNotification extends AbstractStatefulProcedure imp
 			}
 		}
 
-		try (BerByteArrayOutputStream berBAOStream = new BerByteArrayOutputStream(10, true)) {
+		try (ReverseByteArrayOutputStream berBAOStream = new ReverseByteArrayOutputStream(10, true)) {
 			pdu.encode(berBAOStream);
 			encodedOperation = berBAOStream.getArray();
 		}
@@ -342,7 +342,7 @@ public abstract class AbstractNotification extends AbstractStatefulProcedure imp
 		invocationExtension.setNotificationStartInvocExtExtension(encodeStartInvocationExtExtension().encode());
 
 		// encode with a resizable output stream and an initial capacity of 128 bytes
-		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
+		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
 			invocationExtension.encode(os);
 			invocationExtension.code = os.getArray();
 		} catch (IOException e) {
@@ -372,7 +372,7 @@ public abstract class AbstractNotification extends AbstractStatefulProcedure imp
 		}
 
 		// encode with a resizable output stream and an initial capacity of 128 bytes
-		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
+		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
 			diagnosticExtension.encode(os);
 			diagnosticExtension.code = os.getArray();
 		} catch (IOException e) {

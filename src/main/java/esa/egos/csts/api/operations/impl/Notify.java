@@ -1,6 +1,6 @@
 package esa.egos.csts.api.operations.impl;
 
-import ccsds.csts.common.operations.pdus.NotifyInvocation;
+import b1.ccsds.csts.common.operations.pdus.NotifyInvocation;
 import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.events.EventValue;
 import esa.egos.csts.api.exceptions.ApiException;

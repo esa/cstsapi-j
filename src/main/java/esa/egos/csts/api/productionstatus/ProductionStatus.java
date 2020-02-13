@@ -2,7 +2,7 @@ package esa.egos.csts.api.productionstatus;
 
 import java.util.Observable;
 
-import org.openmuc.jasn1.ber.types.BerInteger;
+import com.beanit.jasn1.ber.types.BerInteger;
 
 import esa.egos.csts.api.enumerations.ParameterQualifier;
 import esa.egos.csts.api.enumerations.ParameterType;
@@ -107,8 +107,8 @@ public class ProductionStatus extends Observable {
 	 * 
 	 * @return the CCSDS ProductionStatus representing this object
 	 */
-	public ccsds.csts.common.types.ProductionStatus encode() {
-		ccsds.csts.common.types.ProductionStatus productionStatus = new ccsds.csts.common.types.ProductionStatus();
+	public b1.ccsds.csts.common.types.ProductionStatus encode() {
+		b1.ccsds.csts.common.types.ProductionStatus productionStatus = new b1.ccsds.csts.common.types.ProductionStatus();
 		productionStatus.getBerInteger().add(new BerInteger(state.getCode()));
 		return productionStatus;
 	}
@@ -120,7 +120,7 @@ public class ProductionStatus extends Observable {
 	 * @return a new Production Status decoded from the specified CCSDS
 	 *         ProductionStatus
 	 */
-	public static ProductionStatus decode(ccsds.csts.common.types.ProductionStatus productionStatus) {
+	public static ProductionStatus decode(b1.ccsds.csts.common.types.ProductionStatus productionStatus) {
 		ProductionState state = ProductionState.getProductionStateByCode(productionStatus.getBerInteger().get(0).longValue());
 		ProductionStatus status = new ProductionStatus(state);
 		return status;

@@ -7,22 +7,22 @@ import java.util.HashSet;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.openmuc.jasn1.ber.BerByteArrayOutputStream;
-import org.openmuc.jasn1.ber.types.BerNull;
+import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
+import com.beanit.jasn1.ber.types.BerNull;
 
-import ccsds.csts.common.types.DataUnitId;
-import ccsds.csts.common.types.TimeCCSDSMilli;
-import ccsds.csts.common.types.TimeCCSDSPico;
-import ccsds.csts.data.processing.pdus.DataProcNotifyInvocExt;
-import ccsds.csts.data.processing.pdus.DataProcNotifyInvocExt.DataUnitIdLastOk;
-import ccsds.csts.data.processing.pdus.DataProcNotifyInvocExt.DataUnitIdLastProcessed;
-import ccsds.csts.data.processing.pdus.DataProcNotifyInvocExt.DataUnitIdLastProcessed.DataUnitLastProcessed;
-import ccsds.csts.data.processing.pdus.DataProcNotifyInvocExt.DataUnitIdLastProcessed.DataUnitLastProcessed.DataProcessingStatus;
-import ccsds.csts.data.processing.pdus.DataProcNotifyInvocExt.ProductionStatus;
-import ccsds.csts.data.processing.pdus.DataProcProcDataInvocExt;
-import ccsds.csts.data.processing.pdus.DataProcProcDataInvocExt.ProcessCompletionReport;
-import ccsds.csts.data.processing.pdus.DataProcessingPdu;
-import ccsds.csts.data.processing.pdus.DataProcessingStartTime;
+import b1.ccsds.csts.common.types.DataUnitId;
+import b1.ccsds.csts.common.types.TimeCCSDSMilli;
+import b1.ccsds.csts.common.types.TimeCCSDSPico;
+import b1.ccsds.csts.data.processing.pdus.DataProcNotifyInvocExt;
+import b1.ccsds.csts.data.processing.pdus.DataProcProcDataInvocExt;
+import b1.ccsds.csts.data.processing.pdus.DataProcessingPdu;
+import b1.ccsds.csts.data.processing.pdus.DataProcessingStartTime;
+import b1.ccsds.csts.data.processing.pdus.DataProcNotifyInvocExt.DataUnitIdLastOk;
+import b1.ccsds.csts.data.processing.pdus.DataProcNotifyInvocExt.DataUnitIdLastProcessed;
+import b1.ccsds.csts.data.processing.pdus.DataProcNotifyInvocExt.ProductionStatus;
+import b1.ccsds.csts.data.processing.pdus.DataProcNotifyInvocExt.DataUnitIdLastProcessed.DataUnitLastProcessed;
+import b1.ccsds.csts.data.processing.pdus.DataProcNotifyInvocExt.DataUnitIdLastProcessed.DataUnitLastProcessed.DataProcessingStatus;
+import b1.ccsds.csts.data.processing.pdus.DataProcProcDataInvocExt.ProcessCompletionReport;
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.enumerations.EventValueType;
 import esa.egos.csts.api.enumerations.OperationType;
@@ -371,7 +371,7 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 		invocationExtension.setDataProcProcDataInvocExtExtension(encodeProcDataInvocationExtExtension().encode());
 
 		// encode with a resizable output stream and an initial capacity of 128 bytes
-		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
+		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
 			invocationExtension.encode(os);
 			invocationExtension.code = os.getArray();
 		} catch (IOException e) {
@@ -426,8 +426,8 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 			if (lastSuccessfullyProcessDataUnitId < 0) {
 				dataUnitIdLastOk.setNoSuccessfulProcessing(new BerNull());
 			} else {
-				ccsds.csts.data.processing.pdus.DataProcNotifyInvocExt.DataUnitIdLastOk.DataUnitId dataUnitId =
-						new ccsds.csts.data.processing.pdus.DataProcNotifyInvocExt.DataUnitIdLastOk.DataUnitId();
+				b1.ccsds.csts.data.processing.pdus.DataProcNotifyInvocExt.DataUnitIdLastOk.DataUnitId dataUnitId =
+						new b1.ccsds.csts.data.processing.pdus.DataProcNotifyInvocExt.DataUnitIdLastOk.DataUnitId();
 				dataUnitId.setDataUnitId(new DataUnitId(lastSuccessfullyProcessDataUnitId));
 				dataUnitId.setDataProcessingStopTime(lastSuccessfullyProcessDataUnitTime.encode());
 				dataUnitIdLastOk.setDataUnitId(dataUnitId);
@@ -447,7 +447,7 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 		invocationExtension.setDataProcNotifyInvocExtExtension(encodeNotifyInvocationExtExtension().encode());
 
 		// encode with a resizable output stream and an initial capacity of 128 bytes
-		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
+		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
 			invocationExtension.encode(os);
 			invocationExtension.code = os.getArray();
 		} catch (IOException e) {
@@ -498,7 +498,7 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 			}
 		}
 
-		try (BerByteArrayOutputStream berBAOStream = new BerByteArrayOutputStream(10, true)) {
+		try (ReverseByteArrayOutputStream berBAOStream = new ReverseByteArrayOutputStream(10, true)) {
 			pdu.encode(berBAOStream);
 			encodedOperation = berBAOStream.getArray();
 		}
@@ -592,7 +592,7 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 				lastSuccessfullyProcessDataUnitTime = null;
 			} else if (dataUnitIdLastOk.getNoSuccessfulProcessing() != null) {
 				lastSuccessfullyProcessDataUnitId = dataUnitIdLastOk.getDataUnitId().getDataUnitId().longValue();
-				ccsds.csts.common.types.Time stopTime = dataUnitIdLastOk.getDataUnitId().getDataProcessingStopTime();
+				b1.ccsds.csts.common.types.Time stopTime = dataUnitIdLastOk.getDataUnitId().getDataProcessingStopTime();
 				if (stopTime.getCcsdsFormatMilliseconds() != null) {
 					lastSuccessfullyProcessDataUnitTime = Time.of(stopTime.getCcsdsFormatMilliseconds().value);
 				} else if (stopTime.getCcsdsFormatPicoseconds() != null) {

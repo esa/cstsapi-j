@@ -40,8 +40,8 @@ public class FunctionalResourceType {
 	 * 
 	 * @return the CCSDS FunctionalResourceType type representing this object
 	 */
-	public ccsds.csts.common.types.FunctionalResourceType encode() {
-		return new ccsds.csts.common.types.FunctionalResourceType(objectIdentifier.toArray());
+	public b1.ccsds.csts.common.types.FunctionalResourceType encode() {
+		return new b1.ccsds.csts.common.types.FunctionalResourceType(objectIdentifier.toArray());
 	}
 
 	/**
@@ -51,7 +51,7 @@ public class FunctionalResourceType {
 	 * @return a new Functional Resource Type decoded from the specified CCSDS
 	 *         FunctionalResourceType type
 	 */
-	public static FunctionalResourceType decode(ccsds.csts.common.types.FunctionalResourceType functionalResourceType) {
+	public static FunctionalResourceType decode(b1.ccsds.csts.common.types.FunctionalResourceType functionalResourceType) {
 		return new FunctionalResourceType(ObjectIdentifier.of(functionalResourceType.value));
 	}
 

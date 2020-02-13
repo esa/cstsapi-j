@@ -3,7 +3,7 @@ package esa.egos.csts.api.types;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import org.openmuc.jasn1.ber.types.BerNull;
+import com.beanit.jasn1.ber.types.BerNull;
 
 /**
  * This class represents the CCSDS ConditionalTime type.
@@ -65,8 +65,8 @@ public class ConditionalTime {
 	 * 
 	 * @return the CCSDS Conditional Time type representing this object
 	 */
-	public ccsds.csts.common.types.ConditionalTime encode() {
-		ccsds.csts.common.types.ConditionalTime time = new ccsds.csts.common.types.ConditionalTime();
+	public b1.ccsds.csts.common.types.ConditionalTime encode() {
+		b1.ccsds.csts.common.types.ConditionalTime time = new b1.ccsds.csts.common.types.ConditionalTime();
 		if (this.time.isPresent()) {
 			time.setKnown(this.time.get().encode());
 		} else {
@@ -83,7 +83,7 @@ public class ConditionalTime {
 	 * @return a new Conditional Time decoded from the specified CCSDS Conditional
 	 *         Time type
 	 */
-	public static ConditionalTime decode(ccsds.csts.common.types.ConditionalTime conditionalTime) {
+	public static ConditionalTime decode(b1.ccsds.csts.common.types.ConditionalTime conditionalTime) {
 		ConditionalTime newConditionalTime = null;
 		if (conditionalTime.getKnown() != null) {
 			newConditionalTime = new ConditionalTime(Time.decode(conditionalTime.getKnown()));

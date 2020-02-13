@@ -1,6 +1,6 @@
 package esa.egos.csts.api.functionalresources;
 
-import ccsds.csts.common.types.FunctionalResourceInstanceNumber;
+import b1.ccsds.csts.common.types.FunctionalResourceInstanceNumber;
 
 /**
  * This class represents a Functional Resource Name.
@@ -52,8 +52,8 @@ public class FunctionalResourceName {
 	 * 
 	 * @return the CCSDS FunctionalResourceName type representing this object
 	 */
-	public ccsds.csts.common.types.FunctionalResourceName encode() {
-		ccsds.csts.common.types.FunctionalResourceName resourceName = new ccsds.csts.common.types.FunctionalResourceName();
+	public b1.ccsds.csts.common.types.FunctionalResourceName encode() {
+		b1.ccsds.csts.common.types.FunctionalResourceName resourceName = new b1.ccsds.csts.common.types.FunctionalResourceName();
 		resourceName.setFunctionalResourceType(functionalResourceType.encode());
 		resourceName.setFunctionalResourceInstanceNumber(new FunctionalResourceInstanceNumber(instanceNumber));
 		return resourceName;
@@ -66,7 +66,7 @@ public class FunctionalResourceName {
 	 * @return a new Functional Resource Name decoded from the specified CCSDS
 	 *         FunctionalResourceName type
 	 */
-	public static FunctionalResourceName decode(ccsds.csts.common.types.FunctionalResourceName functionalResourceName) {
+	public static FunctionalResourceName decode(b1.ccsds.csts.common.types.FunctionalResourceName functionalResourceName) {
 
 		FunctionalResourceName newFunctionalResourceName = new FunctionalResourceName(FunctionalResourceType.decode(functionalResourceName.getFunctionalResourceType()),
 				functionalResourceName.getFunctionalResourceInstanceNumber().intValue());

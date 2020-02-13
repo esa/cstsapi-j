@@ -3,9 +3,9 @@ package esa.egos.csts.api.extensions;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import org.openmuc.jasn1.ber.types.BerNull;
+import com.beanit.jasn1.ber.types.BerNull;
 
-import ccsds.csts.common.types.Extended;
+import b1.ccsds.csts.common.types.Extended;
 
 /**
  * This class represents the CCSDS Extended type.

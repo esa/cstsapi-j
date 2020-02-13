@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.openmuc.jasn1.ber.types.BerNull;
-import org.openmuc.jasn1.ber.types.string.BerVisibleString;
+import com.beanit.jasn1.ber.types.BerNull;
+import com.beanit.jasn1.ber.types.string.BerVisibleString;
 
-import ccsds.csts.common.types.ListOfParametersEvents;
-import ccsds.csts.common.types.ListOfParametersEvents.ParamEventLabels;
-import ccsds.csts.common.types.ListOfParametersEvents.ParamEventNames;
+import b1.ccsds.csts.common.types.ListOfParametersEvents;
+import b1.ccsds.csts.common.types.ListOfParametersEvents.ParamEventLabels;
+import b1.ccsds.csts.common.types.ListOfParametersEvents.ParamEventNames;
 import esa.egos.csts.api.enumerations.ListOfParamatersType;
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;

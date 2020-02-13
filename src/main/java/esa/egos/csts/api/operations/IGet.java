@@ -2,8 +2,8 @@ package esa.egos.csts.api.operations;
 
 import java.util.List;
 
-import ccsds.csts.common.operations.pdus.GetInvocation;
-import ccsds.csts.common.operations.pdus.GetReturn;
+import b1.ccsds.csts.common.operations.pdus.GetInvocation;
+import b1.ccsds.csts.common.operations.pdus.GetReturn;
 import esa.egos.csts.api.diagnostics.ListOfParametersDiagnostics;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.extensions.Extension;

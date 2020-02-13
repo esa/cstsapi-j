@@ -3,9 +3,9 @@ package esa.egos.csts.api.operations.impl;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import ccsds.csts.common.operations.pdus.StartDiagnosticExt;
-import ccsds.csts.common.operations.pdus.StartInvocation;
-import ccsds.csts.common.operations.pdus.StartReturn;
+import b1.ccsds.csts.common.operations.pdus.StartDiagnosticExt;
+import b1.ccsds.csts.common.operations.pdus.StartInvocation;
+import b1.ccsds.csts.common.operations.pdus.StartReturn;
 import esa.egos.csts.api.diagnostics.Diagnostic;
 import esa.egos.csts.api.diagnostics.StartDiagnostic;
 import esa.egos.csts.api.enumerations.OperationType;

@@ -2,7 +2,7 @@ package esa.egos.proxy.del;
 
 import java.io.IOException;
 
-import ccsds.csts.association.control.types.PeerAbortDiagnostic;
+import b1.ccsds.csts.association.control.types.PeerAbortDiagnostic;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceInternal;

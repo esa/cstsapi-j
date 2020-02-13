@@ -1,6 +1,6 @@
 package esa.egos.proxy.del;
 
-import ccsds.csts.pdus.CstsFrameworkPdu;
+import b1.ccsds.csts.pdus.CstsFrameworkPdu;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.operations.IBind;
 import esa.egos.csts.api.operations.IConfirmedProcessData;

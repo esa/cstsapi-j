@@ -5,17 +5,17 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.concurrent.Semaphore;
 
-import org.openmuc.jasn1.ber.BerByteArrayOutputStream;
-import org.openmuc.jasn1.ber.types.BerNull;
+import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
+import com.beanit.jasn1.ber.types.BerNull;
 
-import ccsds.csts.common.types.DataUnitId;
-import ccsds.csts.sequence.controlled.data.processing.pdus.SequContrDataProcProcDataDiagnosticExt;
-import ccsds.csts.sequence.controlled.data.processing.pdus.SequContrDataProcProcDataInvocExt;
-import ccsds.csts.sequence.controlled.data.processing.pdus.SequContrDataProcProcDataNegReturnExt;
-import ccsds.csts.sequence.controlled.data.processing.pdus.SequContrDataProcProcDataPosReturnExt;
-import ccsds.csts.sequence.controlled.data.processing.pdus.SequContrDataProcStartInvocExt;
-import ccsds.csts.sequence.controlled.data.processing.pdus.SequContrDataProcStatus;
-import ccsds.csts.sequence.controlled.data.processing.pdus.SequContrDataProcessingPdu;
+import b1.ccsds.csts.common.types.DataUnitId;
+import b1.ccsds.csts.sequence.controlled.data.processing.pdus.SequContrDataProcProcDataDiagnosticExt;
+import b1.ccsds.csts.sequence.controlled.data.processing.pdus.SequContrDataProcProcDataInvocExt;
+import b1.ccsds.csts.sequence.controlled.data.processing.pdus.SequContrDataProcProcDataNegReturnExt;
+import b1.ccsds.csts.sequence.controlled.data.processing.pdus.SequContrDataProcProcDataPosReturnExt;
+import b1.ccsds.csts.sequence.controlled.data.processing.pdus.SequContrDataProcStartInvocExt;
+import b1.ccsds.csts.sequence.controlled.data.processing.pdus.SequContrDataProcStatus;
+import b1.ccsds.csts.sequence.controlled.data.processing.pdus.SequContrDataProcessingPdu;
 import esa.egos.csts.api.diagnostics.SeqControlledDataProcDiagnostics;
 import esa.egos.csts.api.directives.DirectiveQualifier;
 import esa.egos.csts.api.directives.DirectiveQualifierValuesType;
@@ -424,7 +424,7 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 		invocationExtension.setSequContrDataProcStartInvocExtExtension(encodeStartInvocationExtExtension().encode());
 
 		// encode with a resizable output stream and an initial capacity of 128 bytes
-		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
+		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
 			invocationExtension.encode(os);
 			invocationExtension.code = os.getArray();
 		} catch (IOException e) {
@@ -446,7 +446,7 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 		invocationExtension.setSequContrDataProcDataInvocExtExtension(encodeProcDataInvocationExtExtExtension().encode());
 
 		// encode with a resizable output stream and an initial capacity of 128 bytes
-		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
+		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
 			invocationExtension.encode(os);
 			invocationExtension.code = os.getArray();
 		} catch (IOException e) {
@@ -468,7 +468,7 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 		returnExtension.setSequContrDataProcProcDataPosReturnExtExtension(encodeProcessDataPosReturnExtExtension().encode());
 
 		// encode with a resizable output stream and an initial capacity of 128 bytes
-		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
+		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
 			returnExtension.encode(os);
 			returnExtension.code = os.getArray();
 		} catch (IOException e) {
@@ -490,7 +490,7 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 		returnExtension.setSequContrDataProcProcDataNegReturnExtExtension(encodeProcessDataNegReturnExtExtension().encode());
 
 		// encode with a resizable output stream and an initial capacity of 128 bytes
-		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
+		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
 			returnExtension.encode(os);
 			returnExtension.code = os.getArray();
 		} catch (IOException e) {
@@ -576,7 +576,7 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 			}
 		}
 
-		try (BerByteArrayOutputStream berBAOStream = new BerByteArrayOutputStream(10, true)) {
+		try (ReverseByteArrayOutputStream berBAOStream = new ReverseByteArrayOutputStream(10, true)) {
 			pdu.encode(berBAOStream);
 			encodedOperation = berBAOStream.getArray();
 		}

@@ -2,10 +2,10 @@ package esa.egos.csts.api.operations;
 
 import java.util.logging.Logger;
 
-import org.openmuc.jasn1.ber.types.BerNull;
+import com.beanit.jasn1.ber.types.BerNull;
 
-import ccsds.csts.common.types.InvokeId;
-import ccsds.csts.common.types.StandardInvocationHeader;
+import b1.ccsds.csts.common.types.InvokeId;
+import b1.ccsds.csts.common.types.StandardInvocationHeader;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.exceptions.ConfigException;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
@@ -109,8 +109,8 @@ public abstract class AbstractOperation implements IOperation {
 	 * 
 	 * @return empty Credentials
 	 */
-	protected ccsds.csts.common.types.Credentials getEmptyCredentials() {
-		ccsds.csts.common.types.Credentials cred = new ccsds.csts.common.types.Credentials();
+	protected b1.ccsds.csts.common.types.Credentials getEmptyCredentials() {
+		b1.ccsds.csts.common.types.Credentials cred = new b1.ccsds.csts.common.types.Credentials();
 		cred.setUnused(new BerNull());
 		return cred;
 	}

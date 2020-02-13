@@ -9,13 +9,13 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.openmuc.jasn1.ber.BerByteArrayOutputStream;
+import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 
-import ccsds.csts.common.types.IntPos;
-import ccsds.csts.cyclic.report.pdus.CyclicReportStartDiagnosticExt;
-import ccsds.csts.cyclic.report.pdus.CyclicReportStartInvocExt;
-import ccsds.csts.cyclic.report.pdus.CyclicReportTransferDataInvocDataRef;
-import ccsds.csts.cyclic.report.pdus.CyclicReportTransferDataInvocDataRef.QualifiedParameters;
+import b1.ccsds.csts.common.types.IntPos;
+import b1.ccsds.csts.cyclic.report.pdus.CyclicReportStartDiagnosticExt;
+import b1.ccsds.csts.cyclic.report.pdus.CyclicReportStartInvocExt;
+import b1.ccsds.csts.cyclic.report.pdus.CyclicReportTransferDataInvocDataRef;
+import b1.ccsds.csts.cyclic.report.pdus.CyclicReportTransferDataInvocDataRef.QualifiedParameters;
 import esa.egos.csts.api.diagnostics.CyclicReportStartDiagnostics;
 import esa.egos.csts.api.diagnostics.CyclicReportStartDiagnosticsType;
 import esa.egos.csts.api.diagnostics.ListOfParametersDiagnostics;
@@ -430,7 +430,7 @@ public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliver
 		invocationExtension.setCyclicReportStartInvocExtExtension(encodeStartInvocationExtExtension().encode());
 
 		// encode with a resizable output stream and an initial capacity of 128 bytes
-		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
+		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
 			invocationExtension.encode(os);
 			invocationExtension.code = os.getArray();
 		} catch (IOException e) {
@@ -467,7 +467,7 @@ public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliver
 		dataRefinement.setCyclicReportTransferDataInvocDataRefExtension(encodeInvocDataRefExtension().encode());
 
 		// encode with a resizable output stream and an initial capacity of 128 bytes
-		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
+		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
 			dataRefinement.encode(os);
 			dataRefinement.code = os.getArray();
 		} catch (IOException e) {
@@ -539,7 +539,7 @@ public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliver
 				e.printStackTrace();
 			}
 			qualifiedParameters.clear();
-			for (ccsds.csts.common.types.QualifiedParameter param : dataRefinement.getQualifiedParameters().getQualifiedParameter()) {
+			for (b1.ccsds.csts.common.types.QualifiedParameter param : dataRefinement.getQualifiedParameters().getQualifiedParameter()) {
 				qualifiedParameters.add(QualifiedParameter.decode(param));
 			}
 			decodeInvocDataRefExtension(Extension.decode(dataRefinement.getCyclicReportTransferDataInvocDataRefExtension()));

@@ -1,9 +1,9 @@
 package esa.egos.csts.api.procedures.impl;
 
-import org.openmuc.jasn1.ber.types.BerNull;
+import com.beanit.jasn1.ber.types.BerNull;
 
-import ccsds.csts.common.types.IntPos;
-import ccsds.csts.common.types.ProcedureInstanceId;
+import b1.ccsds.csts.common.types.IntPos;
+import b1.ccsds.csts.common.types.ProcedureInstanceId;
 import esa.egos.csts.api.enumerations.ProcedureRole;
 
 /**
@@ -72,9 +72,9 @@ public class ProcedureInstanceIdentifier {
 
 		ProcedureInstanceId pid = new ProcedureInstanceId();
 
-		pid.setProcedureType(new ccsds.csts.common.types.ProcedureType(type.getOid().toArray()));
+		pid.setProcedureType(new b1.ccsds.csts.common.types.ProcedureType(type.getOid().toArray()));
 
-		ccsds.csts.common.types.ProcedureInstanceId.ProcedureRole encodeRole = new ccsds.csts.common.types.ProcedureInstanceId.ProcedureRole();
+		b1.ccsds.csts.common.types.ProcedureInstanceId.ProcedureRole encodeRole = new b1.ccsds.csts.common.types.ProcedureInstanceId.ProcedureRole();
 		switch (role) {
 		case PRIME:
 			encodeRole.setPrimeProcedure(new BerNull());

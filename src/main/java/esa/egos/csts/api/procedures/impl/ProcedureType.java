@@ -38,8 +38,8 @@ public class ProcedureType {
 	 * 
 	 * @return the CCSDS ProcedureType type representing this object
 	 */
-	public ccsds.csts.common.types.ProcedureType encode() {
-		return new ccsds.csts.common.types.ProcedureType(objectIdentifier.toArray());
+	public b1.ccsds.csts.common.types.ProcedureType encode() {
+		return new b1.ccsds.csts.common.types.ProcedureType(objectIdentifier.toArray());
 	}
 
 	/**
@@ -49,7 +49,7 @@ public class ProcedureType {
 	 * @return a new Procedure Type decoded from the specified CCSDS ProcedureType
 	 *         type
 	 */
-	public static ProcedureType decode(ccsds.csts.common.types.ProcedureType procedureType) {
+	public static ProcedureType decode(b1.ccsds.csts.common.types.ProcedureType procedureType) {
 		return new ProcedureType(ObjectIdentifier.of(procedureType.value));
 	}
 

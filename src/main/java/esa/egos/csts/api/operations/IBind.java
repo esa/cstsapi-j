@@ -1,7 +1,7 @@
 package esa.egos.csts.api.operations;
 
-import ccsds.csts.association.control.types.BindInvocation;
-import ccsds.csts.association.control.types.BindReturn;
+import b1.ccsds.csts.association.control.types.BindInvocation;
+import b1.ccsds.csts.association.control.types.BindReturn;
 import esa.egos.csts.api.diagnostics.BindDiagnostic;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.extensions.Extension;

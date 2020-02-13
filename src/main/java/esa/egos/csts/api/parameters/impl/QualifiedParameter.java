@@ -3,7 +3,7 @@ package esa.egos.csts.api.parameters.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import ccsds.csts.common.types.SequenceOfQualifiedValues;
+import b1.ccsds.csts.common.types.SequenceOfQualifiedValues;
 import esa.egos.csts.api.types.Name;
 
 /**
@@ -48,8 +48,8 @@ public class QualifiedParameter {
 	 * 
 	 * @return the CCSDS QualifiedParameter type representing this object
 	 */
-	public ccsds.csts.common.types.QualifiedParameter encode() {
-		ccsds.csts.common.types.QualifiedParameter qualifiedParameter = new ccsds.csts.common.types.QualifiedParameter();
+	public b1.ccsds.csts.common.types.QualifiedParameter encode() {
+		b1.ccsds.csts.common.types.QualifiedParameter qualifiedParameter = new b1.ccsds.csts.common.types.QualifiedParameter();
 		qualifiedParameter.setParameterName(name.encode());
 		SequenceOfQualifiedValues qualifiedValues = new SequenceOfQualifiedValues();
 		for (QualifiedValues value : this.qualifiedValues) {
@@ -67,12 +67,12 @@ public class QualifiedParameter {
 	 * @return a new Qualified Parameter decoded from the specified CCSDS
 	 *         QualifiedParameter type
 	 */
-	public static QualifiedParameter decode(ccsds.csts.common.types.QualifiedParameter qualifiedParameter) {
+	public static QualifiedParameter decode(b1.ccsds.csts.common.types.QualifiedParameter qualifiedParameter) {
 		QualifiedParameter newQualifiedParameter = new QualifiedParameter(
 				Name.decode(qualifiedParameter.getParameterName()));
 		if (qualifiedParameter.getQualifiedValues() != null) {
 			if (qualifiedParameter.getQualifiedValues().getQualifiedValues() != null) {
-				for (ccsds.csts.common.types.QualifiedValues value : qualifiedParameter.getQualifiedValues()
+				for (b1.ccsds.csts.common.types.QualifiedValues value : qualifiedParameter.getQualifiedValues()
 						.getQualifiedValues()) {
 					newQualifiedParameter.getQualifiedValues().add(QualifiedValues.decode(value));
 				}

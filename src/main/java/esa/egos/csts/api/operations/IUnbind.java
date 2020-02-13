@@ -1,7 +1,7 @@
 package esa.egos.csts.api.operations;
 
-import ccsds.csts.association.control.types.UnbindInvocation;
-import ccsds.csts.association.control.types.UnbindReturn;
+import b1.ccsds.csts.association.control.types.UnbindInvocation;
+import b1.ccsds.csts.association.control.types.UnbindReturn;
 
 /**
  * This interface represents a UNBIND operation.

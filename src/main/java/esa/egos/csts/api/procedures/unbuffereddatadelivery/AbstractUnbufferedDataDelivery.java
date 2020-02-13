@@ -3,9 +3,9 @@ package esa.egos.csts.api.procedures.unbuffereddatadelivery;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import org.openmuc.jasn1.ber.BerByteArrayOutputStream;
+import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 
-import ccsds.csts.unbuffered.data.delivery.pdus.UnbufferedDataDeliveryPdu;
+import b1.ccsds.csts.unbuffered.data.delivery.pdus.UnbufferedDataDeliveryPdu;
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.extensions.EmbeddedData;
@@ -114,7 +114,7 @@ public abstract class AbstractUnbufferedDataDelivery extends AbstractStatefulPro
 			}
 		}
 
-		try (BerByteArrayOutputStream berBAOStream = new BerByteArrayOutputStream(10, true)) {
+		try (ReverseByteArrayOutputStream berBAOStream = new ReverseByteArrayOutputStream(10, true)) {
 			pdu.encode(berBAOStream);
 			encodedOperation = berBAOStream.getArray();
 		}

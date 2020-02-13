@@ -3,11 +3,11 @@ package esa.egos.csts.api.parameters.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openmuc.jasn1.ber.types.BerNull;
+import com.beanit.jasn1.ber.types.BerNull;
 
-import ccsds.csts.common.types.TypeAndValue;
-import ccsds.csts.common.types.TypeAndValueComplexQualified;
-import ccsds.csts.common.types.TypeAndValueComplexQualified.ComplexSequence;
+import b1.ccsds.csts.common.types.TypeAndValue;
+import b1.ccsds.csts.common.types.TypeAndValueComplexQualified;
+import b1.ccsds.csts.common.types.TypeAndValueComplexQualified.ComplexSequence;
 import esa.egos.csts.api.enumerations.ParameterQualifier;
 
 /**
@@ -52,9 +52,9 @@ public class QualifiedValues {
 	 * 
 	 * @return the CCSDS QualifiedValues type representing this object
 	 */
-	public ccsds.csts.common.types.QualifiedValues encode() {
+	public b1.ccsds.csts.common.types.QualifiedValues encode() {
 
-		ccsds.csts.common.types.QualifiedValues qualifiedValues = new ccsds.csts.common.types.QualifiedValues();
+		b1.ccsds.csts.common.types.QualifiedValues qualifiedValues = new b1.ccsds.csts.common.types.QualifiedValues();
 
 		switch (qualifier) {
 		case ERROR:
@@ -95,7 +95,7 @@ public class QualifiedValues {
 	 * @return new Qualified Values decoded from the specified CCSDS QualifiedValues
 	 *         type
 	 */
-	public static QualifiedValues decode(ccsds.csts.common.types.QualifiedValues qualifiedValues) {
+	public static QualifiedValues decode(b1.ccsds.csts.common.types.QualifiedValues qualifiedValues) {
 		QualifiedValues newQualifiedValues = null;
 		if (qualifiedValues.getError() != null) {
 			newQualifiedValues = new QualifiedValues(ParameterQualifier.ERROR);

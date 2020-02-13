@@ -6,9 +6,9 @@ import java.io.InputStream;
 import java.util.TreeMap;
 import java.util.concurrent.locks.ReentrantLock;
 
-import ccsds.csts.association.control.types.PeerAbortDiagnostic;
-import ccsds.csts.common.types.InvokeId;
-import ccsds.csts.pdus.CstsFrameworkPdu;
+import b1.ccsds.csts.association.control.types.PeerAbortDiagnostic;
+import b1.ccsds.csts.common.types.InvokeId;
+import b1.ccsds.csts.pdus.CstsFrameworkPdu;
 import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.enumerations.OperationResult;
 import esa.egos.csts.api.exceptions.ApiException;

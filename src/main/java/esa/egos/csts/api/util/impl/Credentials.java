@@ -2,8 +2,8 @@ package esa.egos.csts.api.util.impl;
 
 import java.util.Arrays;
 
-import org.openmuc.jasn1.ber.types.BerNull;
-import org.openmuc.jasn1.ber.types.BerOctetString;
+import com.beanit.jasn1.ber.types.BerNull;
+import com.beanit.jasn1.ber.types.BerOctetString;
 
 import esa.egos.csts.api.util.ICredentials;
 import esa.egos.proxy.GenStrUtil;
@@ -131,9 +131,9 @@ public class Credentials implements ICredentials{
 	}
 
 	@Override
-	public ccsds.csts.common.types.Credentials encode() {
+	public b1.ccsds.csts.common.types.Credentials encode() {
 		
-		ccsds.csts.common.types.Credentials cred = new ccsds.csts.common.types.Credentials();
+		b1.ccsds.csts.common.types.Credentials cred = new b1.ccsds.csts.common.types.Credentials();
 		
 		if (getRandomNumber() != 0){
 		    BerOctetString string = new BerOctetString();
@@ -151,7 +151,7 @@ public class Credentials implements ICredentials{
 	 * @param ccsds.csts.common.types.Credentials performerCredentials
 	 * @return
 	 */
-	public static ICredentials decode(ccsds.csts.common.types.Credentials performerCredentials) {
+	public static ICredentials decode(b1.ccsds.csts.common.types.Credentials performerCredentials) {
 		Credentials cred = new Credentials();
 		
 		if(performerCredentials.getUsed() != null)

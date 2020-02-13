@@ -2,10 +2,10 @@ package esa.egos.csts.api.diagnostics;
 
 import java.io.IOException;
 
-import org.openmuc.jasn1.ber.BerByteArrayOutputStream;
+import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 
-import ccsds.csts.common.types.AdditionalText;
-import ccsds.csts.cyclic.report.pdus.CyclicReportStartDiagnosticExt;
+import b1.ccsds.csts.common.types.AdditionalText;
+import b1.ccsds.csts.cyclic.report.pdus.CyclicReportStartDiagnosticExt;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.util.impl.CSTSUtils;
 
@@ -146,7 +146,7 @@ public class CyclicReportStartDiagnostics {
 		}
 
 		// encode with a resizable output stream and an initial capacity of 128 bytes
-		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
+		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
 			cyclicReportStartDiagnosticExt.encode(os);
 			cyclicReportStartDiagnosticExt.code = os.getArray();
 		} catch (IOException e) {

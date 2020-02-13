@@ -2,7 +2,7 @@ package esa.egos.csts.api.types;
 
 import java.time.temporal.ChronoUnit;
 
-import ccsds.csts.common.types.IntUnsigned;
+import b1.ccsds.csts.common.types.IntUnsigned;
 import esa.egos.csts.api.enumerations.DurationType;
 
 /**
@@ -53,8 +53,8 @@ public class Duration implements Comparable<Duration> {
 	 * 
 	 * @return the CCSDS Duration type representing this object
 	 */
-	public ccsds.csts.common.types.Duration encode() {
-		ccsds.csts.common.types.Duration duration = new ccsds.csts.common.types.Duration();
+	public b1.ccsds.csts.common.types.Duration encode() {
+		b1.ccsds.csts.common.types.Duration duration = new b1.ccsds.csts.common.types.Duration();
 		switch (type) {
 		case MICROSECONDS:
 			duration.setMicroseconds(new IntUnsigned(this.duration.toNanos() / 1000));
@@ -75,7 +75,7 @@ public class Duration implements Comparable<Duration> {
 	 * @param duration the specified CCSDS Duration type
 	 * @return a new Duration decoded from the specified CCSDS Duration type
 	 */
-	public static Duration decode(ccsds.csts.common.types.Duration duration) {
+	public static Duration decode(b1.ccsds.csts.common.types.Duration duration) {
 		Duration newDuration = null;
 		if (duration.getMicroseconds() != null) {
 			newDuration = new Duration(DurationType.MICROSECONDS, java.time.Duration.of(duration.getMicroseconds().longValue(), ChronoUnit.MICROS));

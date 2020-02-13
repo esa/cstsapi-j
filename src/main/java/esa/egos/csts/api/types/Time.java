@@ -11,8 +11,8 @@ import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
-import ccsds.csts.common.types.TimeCCSDSMilli;
-import ccsds.csts.common.types.TimeCCSDSPico;
+import b1.ccsds.csts.common.types.TimeCCSDSMilli;
+import b1.ccsds.csts.common.types.TimeCCSDSPico;
 import esa.egos.csts.api.enumerations.TimeType;
 
 /**
@@ -267,8 +267,8 @@ public class Time implements Comparable<Time> {
 	 * 
 	 * @return the CCSDS Time type representing this Time object
 	 */
-	public ccsds.csts.common.types.Time encode() {
-		ccsds.csts.common.types.Time time = new ccsds.csts.common.types.Time();
+	public b1.ccsds.csts.common.types.Time encode() {
+		b1.ccsds.csts.common.types.Time time = new b1.ccsds.csts.common.types.Time();
 		if (value.length == 8) {
 			time.setCcsdsFormatMilliseconds(new TimeCCSDSMilli(value));
 		} else if (value.length == 10) {
@@ -283,7 +283,7 @@ public class Time implements Comparable<Time> {
 	 * @param time the specified CCSDS Time type
 	 * @return a new Time object decoded from the specified CCSDS Duration type
 	 */
-	public static Time decode(ccsds.csts.common.types.Time time) {
+	public static Time decode(b1.ccsds.csts.common.types.Time time) {
 		Time newTime = null;
 		if (time.getCcsdsFormatMilliseconds() != null) {
 			newTime = new Time(time.getCcsdsFormatMilliseconds().value);

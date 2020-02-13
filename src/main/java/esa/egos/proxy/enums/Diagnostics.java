@@ -1,6 +1,6 @@
 package esa.egos.proxy.enums;
 
-import ccsds.csts.common.types.Diagnostic;
+import b1.ccsds.csts.common.types.Diagnostic;
 
 public enum Diagnostics {
 

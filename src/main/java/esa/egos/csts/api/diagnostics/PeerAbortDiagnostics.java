@@ -2,7 +2,7 @@ package esa.egos.csts.api.diagnostics;
 
 import java.util.Arrays;
 
-import ccsds.csts.association.control.types.PeerAbortDiagnostic;
+import b1.ccsds.csts.association.control.types.PeerAbortDiagnostic;
 import esa.egos.csts.api.exceptions.CodeNotFoundException;
 
 /**

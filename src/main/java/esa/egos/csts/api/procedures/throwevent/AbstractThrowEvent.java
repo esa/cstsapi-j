@@ -5,10 +5,10 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import org.openmuc.jasn1.ber.BerByteArrayOutputStream;
+import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 
-import ccsds.csts.throw_.event.pdus.TeExecDirNegReturnDiagnosticExt;
-import ccsds.csts.throw_.event.pdus.ThrowEventPdu;
+import b1.ccsds.csts.throw_.event.pdus.TeExecDirNegReturnDiagnosticExt;
+import b1.ccsds.csts.throw_.event.pdus.ThrowEventPdu;
 import esa.egos.csts.api.diagnostics.ThrowEventDiagnostic;
 import esa.egos.csts.api.directives.DirectiveQualifier;
 import esa.egos.csts.api.enumerations.CstsResult;
@@ -171,7 +171,7 @@ public abstract class AbstractThrowEvent extends AbstractStatefulProcedure imple
 			}
 		}
 		
-		try (BerByteArrayOutputStream berBAOStream = new BerByteArrayOutputStream(10, true)) {
+		try (ReverseByteArrayOutputStream berBAOStream = new ReverseByteArrayOutputStream(10, true)) {
 			pdu.encode(berBAOStream);
 			encodedOperation = berBAOStream.getArray();
 		}

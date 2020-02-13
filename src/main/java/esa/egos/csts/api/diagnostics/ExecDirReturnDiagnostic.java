@@ -3,10 +3,10 @@ package esa.egos.csts.api.diagnostics;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openmuc.jasn1.ber.types.BerNull;
+import com.beanit.jasn1.ber.types.BerNull;
 
-import ccsds.csts.common.operations.pdus.ActionNotCompletedDiag;
-import ccsds.csts.common.operations.pdus.ExecDirNegReturnDiagnosticExt;
+import b1.ccsds.csts.common.operations.pdus.ActionNotCompletedDiag;
+import b1.ccsds.csts.common.operations.pdus.ExecDirNegReturnDiagnosticExt;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.types.Name;
 
@@ -120,7 +120,7 @@ public class ExecDirReturnDiagnostic {
 		if (diagnostic.getActionNotCompleted() != null) {
 			execDirReturnDiagnostic = new ExecDirReturnDiagnostic(ExecDirReturnDiagnosticType.ACTION_NOT_COMPLETED);
 			if (diagnostic.getActionNotCompleted().getParameterNames() != null) {
-				for (ccsds.csts.common.types.Name name : diagnostic.getActionNotCompleted().getParameterNames().getName()) {
+				for (b1.ccsds.csts.common.types.Name name : diagnostic.getActionNotCompleted().getParameterNames().getName()) {
 					execDirReturnDiagnostic.names.add(Name.decode(name));
 				}
 			}

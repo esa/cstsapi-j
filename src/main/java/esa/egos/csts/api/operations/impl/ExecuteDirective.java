@@ -3,12 +3,12 @@ package esa.egos.csts.api.operations.impl;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import ccsds.csts.common.operations.pdus.ExecDirNegAckDiagnosticExt;
-import ccsds.csts.common.operations.pdus.ExecDirNegReturnDiagnosticExt;
-import ccsds.csts.common.operations.pdus.ExecuteDirectiveAcknowledge;
-import ccsds.csts.common.operations.pdus.ExecuteDirectiveInvocation;
-import ccsds.csts.common.operations.pdus.ExecuteDirectiveReturn;
-import ccsds.csts.common.types.PublishedIdentifier;
+import b1.ccsds.csts.common.operations.pdus.ExecDirNegAckDiagnosticExt;
+import b1.ccsds.csts.common.operations.pdus.ExecDirNegReturnDiagnosticExt;
+import b1.ccsds.csts.common.operations.pdus.ExecuteDirectiveAcknowledge;
+import b1.ccsds.csts.common.operations.pdus.ExecuteDirectiveInvocation;
+import b1.ccsds.csts.common.operations.pdus.ExecuteDirectiveReturn;
+import b1.ccsds.csts.common.types.PublishedIdentifier;
 import esa.egos.csts.api.diagnostics.Diagnostic;
 import esa.egos.csts.api.diagnostics.ExecDirAcknowledgementDiagnostic;
 import esa.egos.csts.api.diagnostics.ExecDirReturnDiagnostic;

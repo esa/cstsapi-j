@@ -3,11 +3,11 @@ package esa.egos.csts.api.diagnostics;
 import java.util.ArrayList;
 import java.util.List;
 
-import ccsds.csts.common.types.AdditionalText;
-import ccsds.csts.common.types.Appellation;
-import ccsds.csts.common.types.Diagnostic.ConflictingValues;
-import ccsds.csts.common.types.Diagnostic.ConflictingValues.Appellations;
-import ccsds.csts.common.types.Diagnostic.InvalidParameterValue;
+import b1.ccsds.csts.common.types.AdditionalText;
+import b1.ccsds.csts.common.types.Appellation;
+import b1.ccsds.csts.common.types.Diagnostic.ConflictingValues;
+import b1.ccsds.csts.common.types.Diagnostic.InvalidParameterValue;
+import b1.ccsds.csts.common.types.Diagnostic.ConflictingValues.Appellations;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.util.impl.CSTSUtils;
 
@@ -117,9 +117,9 @@ public class Diagnostic {
 	 * 
 	 * @return the CCSDS Diagnostic type representing this Diagnostic
 	 */
-	public ccsds.csts.common.types.Diagnostic encode() {
+	public b1.ccsds.csts.common.types.Diagnostic encode() {
 
-		ccsds.csts.common.types.Diagnostic diagnostic = new ccsds.csts.common.types.Diagnostic();
+		b1.ccsds.csts.common.types.Diagnostic diagnostic = new b1.ccsds.csts.common.types.Diagnostic();
 
 		switch (type) {
 		case CONFLICTING_VALUES:
@@ -159,7 +159,7 @@ public class Diagnostic {
 	 *            the specified CCSDS Diagnostic type
 	 * @return a new Diagnostic decoded from the specified CCSDS Diagnostic type
 	 */
-	public static Diagnostic decode(ccsds.csts.common.types.Diagnostic diagnostic) {
+	public static Diagnostic decode(b1.ccsds.csts.common.types.Diagnostic diagnostic) {
 
 		Diagnostic newDiagnostic = null;
 

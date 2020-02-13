@@ -3,13 +3,13 @@ package esa.egos.csts.api.directives;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openmuc.jasn1.ber.types.BerNull;
+import com.beanit.jasn1.ber.types.BerNull;
 
-import ccsds.csts.common.operations.pdus.SequenceOfParameterIdsAndValues;
-import ccsds.csts.common.operations.pdus.SequenceOfParameterIdsAndValues.SEQUENCE;
-import ccsds.csts.common.types.TypeAndValue;
-import ccsds.csts.common.types.TypeAndValueComplexQualified;
-import ccsds.csts.common.types.TypeAndValueComplexQualified.ComplexSequence;
+import b1.ccsds.csts.common.operations.pdus.SequenceOfParameterIdsAndValues;
+import b1.ccsds.csts.common.operations.pdus.SequenceOfParameterIdsAndValues.SEQUENCE;
+import b1.ccsds.csts.common.types.TypeAndValue;
+import b1.ccsds.csts.common.types.TypeAndValueComplexQualified;
+import b1.ccsds.csts.common.types.TypeAndValueComplexQualified.ComplexSequence;
 import esa.egos.csts.api.parameters.impl.ParameterValue;
 
 public class DirectiveQualifierValues {
@@ -49,9 +49,9 @@ public class DirectiveQualifierValues {
 		return idValuesPairs;
 	}
 	
-	public ccsds.csts.common.operations.pdus.DirectiveQualifierValues encode() {
-		ccsds.csts.common.operations.pdus.DirectiveQualifierValues directiveQualifierValues =
-				new ccsds.csts.common.operations.pdus.DirectiveQualifierValues();
+	public b1.ccsds.csts.common.operations.pdus.DirectiveQualifierValues encode() {
+		b1.ccsds.csts.common.operations.pdus.DirectiveQualifierValues directiveQualifierValues =
+				new b1.ccsds.csts.common.operations.pdus.DirectiveQualifierValues();
 		TypeAndValueComplexQualified typeAndValueComplexQualified;
 		switch (type) {
 		case NO_QUALIFIER_VALUES:
@@ -82,7 +82,7 @@ public class DirectiveQualifierValues {
 		return directiveQualifierValues;
 	}
 	
-	public static DirectiveQualifierValues decode(ccsds.csts.common.operations.pdus.DirectiveQualifierValues values) {
+	public static DirectiveQualifierValues decode(b1.ccsds.csts.common.operations.pdus.DirectiveQualifierValues values) {
 		DirectiveQualifierValues directiveQualifierValues = null;
 		if (values.getNoQualifierValues() != null) {
 			directiveQualifierValues = new DirectiveQualifierValues(DirectiveQualifierValuesType.NO_QUALIFIER_VALUES);

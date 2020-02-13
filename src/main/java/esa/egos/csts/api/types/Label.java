@@ -1,7 +1,7 @@
 package esa.egos.csts.api.types;
 
-import ccsds.csts.common.types.Label.FunctionalResourceOrProcedureType;
-import ccsds.csts.common.types.PublishedIdentifier;
+import b1.ccsds.csts.common.types.PublishedIdentifier;
+import b1.ccsds.csts.common.types.Label.FunctionalResourceOrProcedureType;
 import esa.egos.csts.api.enumerations.ParameterType;
 import esa.egos.csts.api.enumerations.TypeIdentifier;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
@@ -123,8 +123,8 @@ public class Label {
 	 * 
 	 * @return the CCSDS Label type representing this object
 	 */
-	public ccsds.csts.common.types.Label encode() {
-		ccsds.csts.common.types.Label label = new ccsds.csts.common.types.Label();
+	public b1.ccsds.csts.common.types.Label encode() {
+		b1.ccsds.csts.common.types.Label label = new b1.ccsds.csts.common.types.Label();
 		label.setParamOrEventId(new PublishedIdentifier(identifier.toArray()));
 		FunctionalResourceOrProcedureType type = new FunctionalResourceOrProcedureType();
 		switch (typeIdentifier) {
@@ -146,7 +146,7 @@ public class Label {
 	 *            the specified CCSDS Label type
 	 * @return a new Label decoded from the specified CCSDS Label type
 	 */
-	public static Label decode(ccsds.csts.common.types.Label label) {
+	public static Label decode(b1.ccsds.csts.common.types.Label label) {
 		Label newLabel = null;
 		if (label != null) {
 			ObjectIdentifier OID = ObjectIdentifier.of(label.getParamOrEventId().value);

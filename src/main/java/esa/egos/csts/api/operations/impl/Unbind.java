@@ -1,7 +1,7 @@
 package esa.egos.csts.api.operations.impl;
 
-import ccsds.csts.association.control.types.UnbindInvocation;
-import ccsds.csts.association.control.types.UnbindReturn;
+import b1.ccsds.csts.association.control.types.UnbindInvocation;
+import b1.ccsds.csts.association.control.types.UnbindReturn;
 import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.extensions.Extension;
 import esa.egos.csts.api.operations.AbstractConfirmedOperation;

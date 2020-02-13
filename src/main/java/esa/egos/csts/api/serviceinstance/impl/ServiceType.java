@@ -41,11 +41,11 @@ public class ServiceType {
 		return "ServiceType [oid=" + oid + ", supportedVersions=" + supportedVersions + "]";
 	}
 	
-	public ccsds.csts.association.control.types.ServiceType encode() {
-		return new ccsds.csts.association.control.types.ServiceType(oid.toArray());
+	public b1.ccsds.csts.association.control.types.ServiceType encode() {
+		return new b1.ccsds.csts.association.control.types.ServiceType(oid.toArray());
 	}
 	
-	public static ServiceType decode(ccsds.csts.association.control.types.ServiceType serviceType) {
+	public static ServiceType decode(b1.ccsds.csts.association.control.types.ServiceType serviceType) {
 		return new ServiceType(ObjectIdentifier.of(serviceType.value));
 	}
 	

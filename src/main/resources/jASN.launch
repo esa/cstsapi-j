@@ -2,6 +2,6 @@
 <launchConfiguration type="org.eclipse.ui.externaltools.ProgramLaunchConfigurationType">
 <stringAttribute key="bad_container_name" value="/CSTSAPI/src/main/resources/asn1"/>
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="${workspace_loc:/CSTSAPI/src/main/resources/jasn-1.11.2/jasn1-compiler}"/>
-<stringAttribute key="org.eclipse.ui.externaltools.ATTR_TOOL_ARGUMENTS" value="-o test/java -p b1 -f test/resources/asn1/922.1-B-1.asn main/java/esa/egos/proxy/del/921x1r2[Draft_20160901]_ASN.1.ori.asn main/java/esa/egos/proxy/del/ISP1-CREDENTIALS.asn"/>
+<stringAttribute key="org.eclipse.ui.externaltools.ATTR_TOOL_ARGUMENTS" value="-o main/java -p b1 -f main/resources/asn1/922.1-B-1.asn main/java/esa/egos/proxy/del/921x1r2[Draft_20160901]_ASN.1.ori.asn main/java/esa/egos/proxy/del/ISP1-CREDENTIALS.asn"/>
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_WORKING_DIRECTORY" value="${workspace_loc:/CSTSAPI/src}"/>
 </launchConfiguration>

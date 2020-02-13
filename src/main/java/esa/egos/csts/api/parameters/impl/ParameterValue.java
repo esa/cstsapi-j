@@ -3,23 +3,23 @@ package esa.egos.csts.api.parameters.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openmuc.jasn1.ber.types.BerBoolean;
-import org.openmuc.jasn1.ber.types.BerInteger;
-import org.openmuc.jasn1.ber.types.BerObjectIdentifier;
-import org.openmuc.jasn1.ber.types.BerOctetString;
-import org.openmuc.jasn1.ber.types.BerReal;
-import org.openmuc.jasn1.ber.types.string.BerVisibleString;
+import com.beanit.jasn1.ber.types.BerBoolean;
+import com.beanit.jasn1.ber.types.BerInteger;
+import com.beanit.jasn1.ber.types.BerObjectIdentifier;
+import com.beanit.jasn1.ber.types.BerOctetString;
+import com.beanit.jasn1.ber.types.BerReal;
+import com.beanit.jasn1.ber.types.string.BerVisibleString;
 
-import ccsds.csts.common.types.IntPos;
-import ccsds.csts.common.types.IntUnsigned;
-import ccsds.csts.common.types.PublishedIdentifier;
-import ccsds.csts.common.types.TypeAndValue;
-import ccsds.csts.common.types.TypeAndValue.CharacterString;
-import ccsds.csts.common.types.TypeAndValue.Enumerated;
-import ccsds.csts.common.types.TypeAndValue.Float;
-import ccsds.csts.common.types.TypeAndValue.Integer;
-import ccsds.csts.common.types.TypeAndValue.IntegerPositive;
-import ccsds.csts.common.types.TypeAndValue.OctetString;
+import b1.ccsds.csts.common.types.IntPos;
+import b1.ccsds.csts.common.types.IntUnsigned;
+import b1.ccsds.csts.common.types.PublishedIdentifier;
+import b1.ccsds.csts.common.types.TypeAndValue;
+import b1.ccsds.csts.common.types.TypeAndValue.CharacterString;
+import b1.ccsds.csts.common.types.TypeAndValue.Enumerated;
+import b1.ccsds.csts.common.types.TypeAndValue.Float;
+import b1.ccsds.csts.common.types.TypeAndValue.Integer;
+import b1.ccsds.csts.common.types.TypeAndValue.IntegerPositive;
+import b1.ccsds.csts.common.types.TypeAndValue.OctetString;
 import esa.egos.csts.api.enumerations.ParameterType;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.oids.ObjectIdentifier;
@@ -196,7 +196,7 @@ public class ParameterValue {
 		TypeAndValue typeAndValue = new TypeAndValue();
 		switch (type) {
 		case BOOLEAN:
-			ccsds.csts.common.types.TypeAndValue.Boolean bool = new ccsds.csts.common.types.TypeAndValue.Boolean();
+			b1.ccsds.csts.common.types.TypeAndValue.Boolean bool = new b1.ccsds.csts.common.types.TypeAndValue.Boolean();
 			for (Boolean b : boolParameterValues) {
 				bool.getBerBoolean().add(new BerBoolean(b));
 			}
@@ -210,7 +210,7 @@ public class ParameterValue {
 			typeAndValue.setCharacterString(characterString);
 			break;
 		case DURATION:
-			ccsds.csts.common.types.TypeAndValue.Duration duration = new ccsds.csts.common.types.TypeAndValue.Duration();
+			b1.ccsds.csts.common.types.TypeAndValue.Duration duration = new b1.ccsds.csts.common.types.TypeAndValue.Duration();
 			for (Duration d : durationParameterValues) {
 				duration.getDuration().add(d.encode());
 			}
@@ -234,7 +234,7 @@ public class ParameterValue {
 			typeAndValue.setInteger(integer);
 			break;
 		case OBJECT_IDENTIFIER:
-			ccsds.csts.common.types.TypeAndValue.ObjectIdentifier objectIdentifier = new ccsds.csts.common.types.TypeAndValue.ObjectIdentifier();
+			b1.ccsds.csts.common.types.TypeAndValue.ObjectIdentifier objectIdentifier = new b1.ccsds.csts.common.types.TypeAndValue.ObjectIdentifier();
 			for (ObjectIdentifier OID : OIDparameterValues) {
 				objectIdentifier.getBerObjectIdentifier().add(new BerObjectIdentifier(OID.toArray()));
 			}
@@ -255,7 +255,7 @@ public class ParameterValue {
 			typeAndValue.setIntegerPositive(integerPositive);
 			break;
 		case PUBLISHED_IDENTIFIER:
-			ccsds.csts.common.types.TypeAndValue.PublishedIdentifier publishedIdentifier = new ccsds.csts.common.types.TypeAndValue.PublishedIdentifier();
+			b1.ccsds.csts.common.types.TypeAndValue.PublishedIdentifier publishedIdentifier = new b1.ccsds.csts.common.types.TypeAndValue.PublishedIdentifier();
 			for (ObjectIdentifier OID : OIDparameterValues) {
 				publishedIdentifier.getPublishedIdentifier().add(new PublishedIdentifier(OID.toArray()));
 			}
@@ -269,14 +269,14 @@ public class ParameterValue {
 			typeAndValue.setFloat(real);
 			break;
 		case TIME:
-			ccsds.csts.common.types.TypeAndValue.Time time = new ccsds.csts.common.types.TypeAndValue.Time();
+			b1.ccsds.csts.common.types.TypeAndValue.Time time = new b1.ccsds.csts.common.types.TypeAndValue.Time();
 			for (Time t : timeParameterValues) {
 				time.getTime().add(t.encode());
 			}
 			typeAndValue.setTime(time);
 			break;
 		case UNSIGNED_INTEGER:
-			ccsds.csts.common.types.TypeAndValue.IntUnsigned intUnsigned = new ccsds.csts.common.types.TypeAndValue.IntUnsigned();
+			b1.ccsds.csts.common.types.TypeAndValue.IntUnsigned intUnsigned = new b1.ccsds.csts.common.types.TypeAndValue.IntUnsigned();
 			for (Long l : integerParameterValues) {
 				intUnsigned.getIntUnsigned().add(new IntUnsigned(l));
 			}
@@ -311,7 +311,7 @@ public class ParameterValue {
 			}
 		} else if (typeAndValue.getDuration() != null) {
 			parameterValue = new ParameterValue(ParameterType.DURATION);
-			for (ccsds.csts.common.types.Duration d : typeAndValue.getDuration().getDuration()) {
+			for (b1.ccsds.csts.common.types.Duration d : typeAndValue.getDuration().getDuration()) {
 				parameterValue.getDurationParameterValues().add(Duration.decode(d));
 			}
 		} else if (typeAndValue.getEnumerated() != null) {
@@ -353,7 +353,7 @@ public class ParameterValue {
 			}
 		} else if (typeAndValue.getTime() != null) {
 			parameterValue = new ParameterValue(ParameterType.TIME);
-			for (ccsds.csts.common.types.Time t : typeAndValue.getTime().getTime()) {
+			for (b1.ccsds.csts.common.types.Time t : typeAndValue.getTime().getTime()) {
 				parameterValue.getTimeParameterValues().add(Time.decode(t));
 			}
 		} else if (typeAndValue.getIntUnsigned() != null) {

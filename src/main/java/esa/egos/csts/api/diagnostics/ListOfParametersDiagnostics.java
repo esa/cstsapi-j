@@ -3,12 +3,12 @@ package esa.egos.csts.api.diagnostics;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openmuc.jasn1.ber.types.string.BerVisibleString;
+import com.beanit.jasn1.ber.types.string.BerVisibleString;
 
-import ccsds.csts.common.types.AdditionalText;
-import ccsds.csts.common.types.ListOfParamEventsDiagnostics;
-import ccsds.csts.common.types.ListOfParamEventsDiagnostics.UnknownParamEventIdentifier;
-import ccsds.csts.common.types.ListOfParamEventsDiagnostics.UnknownParamEventIdentifier.CHOICE;
+import b1.ccsds.csts.common.types.AdditionalText;
+import b1.ccsds.csts.common.types.ListOfParamEventsDiagnostics;
+import b1.ccsds.csts.common.types.ListOfParamEventsDiagnostics.UnknownParamEventIdentifier;
+import b1.ccsds.csts.common.types.ListOfParamEventsDiagnostics.UnknownParamEventIdentifier.CHOICE;
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;

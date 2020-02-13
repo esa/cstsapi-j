@@ -1,9 +1,9 @@
 package esa.egos.csts.api.operations;
 
-import ccsds.csts.common.types.InvokeId;
-import ccsds.csts.common.types.StandardReturnHeader;
-import ccsds.csts.common.types.StandardReturnHeader.Result;
-import ccsds.csts.common.types.StandardReturnHeader.Result.Negative;
+import b1.ccsds.csts.common.types.InvokeId;
+import b1.ccsds.csts.common.types.StandardReturnHeader;
+import b1.ccsds.csts.common.types.StandardReturnHeader.Result;
+import b1.ccsds.csts.common.types.StandardReturnHeader.Result.Negative;
 import esa.egos.csts.api.diagnostics.Diagnostic;
 import esa.egos.csts.api.enumerations.OperationResult;
 import esa.egos.csts.api.exceptions.ApiException;

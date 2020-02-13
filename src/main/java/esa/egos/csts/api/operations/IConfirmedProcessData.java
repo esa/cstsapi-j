@@ -1,6 +1,6 @@
 package esa.egos.csts.api.operations;
 
-import ccsds.csts.common.operations.pdus.ProcessDataReturn;
+import b1.ccsds.csts.common.operations.pdus.ProcessDataReturn;
 
 /**
  * This interface represents a PROCESS-DATA (unconfirmed) operation.

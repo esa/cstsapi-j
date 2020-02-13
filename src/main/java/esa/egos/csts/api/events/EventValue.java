@@ -3,9 +3,9 @@ package esa.egos.csts.api.events;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openmuc.jasn1.ber.types.BerNull;
+import com.beanit.jasn1.ber.types.BerNull;
 
-import ccsds.csts.common.types.SequenceOfQualifiedValues;
+import b1.ccsds.csts.common.types.SequenceOfQualifiedValues;
 import esa.egos.csts.api.enumerations.EventValueType;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.parameters.impl.QualifiedValues;
@@ -85,8 +85,8 @@ public class EventValue {
 	 * 
 	 * @return the CCSDS EventValue type representing this object
 	 */
-	public ccsds.csts.common.types.EventValue encode() {
-		ccsds.csts.common.types.EventValue eventValue = new ccsds.csts.common.types.EventValue();
+	public b1.ccsds.csts.common.types.EventValue encode() {
+		b1.ccsds.csts.common.types.EventValue eventValue = new b1.ccsds.csts.common.types.EventValue();
 		switch (type) {
 		case QUALIFIED_VALUES:
 			SequenceOfQualifiedValues qualifiedValues = new SequenceOfQualifiedValues();
@@ -112,7 +112,7 @@ public class EventValue {
 	 *            the specified CCSDS EventValue type
 	 * @return a new EventValue decoded from the specified CCSDS EventValue type
 	 */
-	public static EventValue decode(ccsds.csts.common.types.EventValue value) {
+	public static EventValue decode(b1.ccsds.csts.common.types.EventValue value) {
 
 		EventValue eventValue = null;
 
@@ -123,7 +123,7 @@ public class EventValue {
 		if (value.getQualifiedValues() != null) {
 			if (value.getQualifiedValues().getQualifiedValues() != null) {
 				eventValue = new EventValue(EventValueType.QUALIFIED_VALUES);
-				for (ccsds.csts.common.types.QualifiedValues qualifiedValues : value.getQualifiedValues().getQualifiedValues()) {
+				for (b1.ccsds.csts.common.types.QualifiedValues qualifiedValues : value.getQualifiedValues().getQualifiedValues()) {
 					eventValue.getQualifiedValues().add(QualifiedValues.decode(qualifiedValues));
 				}
 			}

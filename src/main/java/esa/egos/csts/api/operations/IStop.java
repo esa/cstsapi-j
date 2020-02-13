@@ -1,7 +1,7 @@
 package esa.egos.csts.api.operations;
 
-import ccsds.csts.common.operations.pdus.StopInvocation;
-import ccsds.csts.common.operations.pdus.StopReturn;
+import b1.ccsds.csts.common.operations.pdus.StopInvocation;
+import b1.ccsds.csts.common.operations.pdus.StopReturn;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.extensions.Extension;
 

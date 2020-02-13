@@ -2,11 +2,11 @@ package esa.egos.csts.api.operations.impl;
 
 import java.util.Arrays;
 
-import org.openmuc.jasn1.ber.types.BerOctetString;
+import com.beanit.jasn1.ber.types.BerOctetString;
 
-import ccsds.csts.common.operations.pdus.ProcessDataInvocation;
-import ccsds.csts.common.types.AbstractChoice;
-import ccsds.csts.common.types.DataUnitId;
+import b1.ccsds.csts.common.operations.pdus.ProcessDataInvocation;
+import b1.ccsds.csts.common.types.AbstractChoice;
+import b1.ccsds.csts.common.types.DataUnitId;
 import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.extensions.EmbeddedData;

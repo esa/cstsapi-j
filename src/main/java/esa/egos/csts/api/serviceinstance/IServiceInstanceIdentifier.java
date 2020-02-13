@@ -35,7 +35,7 @@ public interface IServiceInstanceIdentifier {
 	 */
 	int getServiceInstanceNumber();
 
-	ccsds.csts.service.instance.id.ServiceInstanceIdentifier encode();
+	b1.ccsds.csts.service.instance.id.ServiceInstanceIdentifier encode();
 
 	/**
 	 * Checks whether the initial format is used.

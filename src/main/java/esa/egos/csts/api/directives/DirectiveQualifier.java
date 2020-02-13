@@ -1,8 +1,8 @@
 package esa.egos.csts.api.directives;
 
-import ccsds.csts.common.operations.pdus.ExecuteDirectiveInvocation.DirectiveQualifier.FunctResourceDirQualifier;
-import ccsds.csts.common.operations.pdus.ExecuteDirectiveInvocation.DirectiveQualifier.ServiceProcDirQualifier;
-import ccsds.csts.common.types.FunctionalResourceInstanceNumber;
+import b1.ccsds.csts.common.operations.pdus.ExecuteDirectiveInvocation.DirectiveQualifier.FunctResourceDirQualifier;
+import b1.ccsds.csts.common.operations.pdus.ExecuteDirectiveInvocation.DirectiveQualifier.ServiceProcDirQualifier;
+import b1.ccsds.csts.common.types.FunctionalResourceInstanceNumber;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 
@@ -81,9 +81,9 @@ public class DirectiveQualifier {
 		this.extension = extension;
 	}
 	
-	public ccsds.csts.common.operations.pdus.ExecuteDirectiveInvocation.DirectiveQualifier encode() {
-		ccsds.csts.common.operations.pdus.ExecuteDirectiveInvocation.DirectiveQualifier directiveQualifier =
-				new ccsds.csts.common.operations.pdus.ExecuteDirectiveInvocation.DirectiveQualifier();
+	public b1.ccsds.csts.common.operations.pdus.ExecuteDirectiveInvocation.DirectiveQualifier encode() {
+		b1.ccsds.csts.common.operations.pdus.ExecuteDirectiveInvocation.DirectiveQualifier directiveQualifier =
+				new b1.ccsds.csts.common.operations.pdus.ExecuteDirectiveInvocation.DirectiveQualifier();
 		switch (type) {
 		case LOCAL_PROCEDURE_DIRECTIVE_QUALIFIER:
 			directiveQualifier.setLocalProcDirQualifier(values.encode());
@@ -107,7 +107,7 @@ public class DirectiveQualifier {
 		return directiveQualifier;
 	}
 
-	public static DirectiveQualifier decode(ccsds.csts.common.operations.pdus.ExecuteDirectiveInvocation.DirectiveQualifier qualifier) {
+	public static DirectiveQualifier decode(b1.ccsds.csts.common.operations.pdus.ExecuteDirectiveInvocation.DirectiveQualifier qualifier) {
 		DirectiveQualifier directiveQualifier = null;
 		if (qualifier.getLocalProcDirQualifier() != null) {
 			if (qualifier.getLocalProcDirQualifier().getNoQualifierValues() != null) {

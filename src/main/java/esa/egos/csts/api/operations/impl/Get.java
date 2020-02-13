@@ -5,13 +5,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openmuc.jasn1.ber.BerByteArrayOutputStream;
+import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 
-import ccsds.csts.common.operations.pdus.GetDiagnosticExt;
-import ccsds.csts.common.operations.pdus.GetInvocation;
-import ccsds.csts.common.operations.pdus.GetPosReturnExt;
-import ccsds.csts.common.operations.pdus.GetReturn;
-import ccsds.csts.common.operations.pdus.QualifiedParametersSequence;
+import b1.ccsds.csts.common.operations.pdus.GetDiagnosticExt;
+import b1.ccsds.csts.common.operations.pdus.GetInvocation;
+import b1.ccsds.csts.common.operations.pdus.GetPosReturnExt;
+import b1.ccsds.csts.common.operations.pdus.GetReturn;
+import b1.ccsds.csts.common.operations.pdus.QualifiedParametersSequence;
 import esa.egos.csts.api.diagnostics.Diagnostic;
 import esa.egos.csts.api.diagnostics.ListOfParametersDiagnostics;
 import esa.egos.csts.api.enumerations.OperationType;
@@ -224,7 +224,7 @@ public class Get extends AbstractConfirmedOperation implements IGet {
 		// not used per definition
 		getPosReturnExt.setGetPosReturnExtExtension(encodeGetPosReturnExtExtension().encode());
 		// encode with a resizable output stream and an initial capacity of 128 bytes
-		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
+		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
 			getPosReturnExt.encode(os);
 			getPosReturnExt.code = os.getArray();
 		} catch (IOException e) {
@@ -248,7 +248,7 @@ public class Get extends AbstractConfirmedOperation implements IGet {
 		GetDiagnosticExt getDiagnosticExt = new GetDiagnosticExt();
 		getDiagnosticExt.setCommon(listOfParametersDiagnostics.encode());
 		// encode with a resizable output stream and an initial capacity of 128 bytes
-		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
+		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
 			getDiagnosticExt.encode(os);
 			getDiagnosticExt.code = os.getArray();
 		} catch (IOException e) {
@@ -279,7 +279,7 @@ public class Get extends AbstractConfirmedOperation implements IGet {
 	}
 
 	private void decodeGetPosReturnExt(GetPosReturnExt getPosReturnExt) {
-		for (ccsds.csts.common.types.QualifiedParameter param : getPosReturnExt.getQualifiedParameters()
+		for (b1.ccsds.csts.common.types.QualifiedParameter param : getPosReturnExt.getQualifiedParameters()
 				.getQualifiedParameter()) {
 			qualifiedParameters.add(QualifiedParameter.decode(param));
 		}

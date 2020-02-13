@@ -3,9 +3,9 @@ package esa.egos.csts.api.procedures.associationcontrol;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import org.openmuc.jasn1.ber.BerByteArrayOutputStream;
+import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 
-import ccsds.csts.association.control.types.AssociationPdu;
+import b1.ccsds.csts.association.control.types.AssociationPdu;
 import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.enumerations.OperationType;
@@ -159,7 +159,7 @@ public abstract class AbstractAssociationControl extends AbstractProcedure imple
 			pdu.setPeerAbortInvocation(peerAbort.encodePeerAbortInvocation());
 		}
 
-		try (BerByteArrayOutputStream berBAOStream = new BerByteArrayOutputStream(10, true)) {
+		try (ReverseByteArrayOutputStream berBAOStream = new ReverseByteArrayOutputStream(10, true)) {
 			pdu.encode(berBAOStream);
 			encodedOperation = berBAOStream.getArray();
 		}

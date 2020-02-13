@@ -3,11 +3,11 @@ package esa.egos.csts.api.directives;
 import java.util.ArrayList;
 import java.util.List;
 
-import ccsds.csts.common.operations.pdus.SequenceOfParameterIdsAndValues.SEQUENCE;
-import ccsds.csts.common.types.PublishedIdentifier;
-import ccsds.csts.common.types.TypeAndValue;
-import ccsds.csts.common.types.TypeAndValueComplexQualified;
-import ccsds.csts.common.types.TypeAndValueComplexQualified.ComplexSequence;
+import b1.ccsds.csts.common.operations.pdus.SequenceOfParameterIdsAndValues.SEQUENCE;
+import b1.ccsds.csts.common.types.PublishedIdentifier;
+import b1.ccsds.csts.common.types.TypeAndValue;
+import b1.ccsds.csts.common.types.TypeAndValueComplexQualified;
+import b1.ccsds.csts.common.types.TypeAndValueComplexQualified.ComplexSequence;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.parameters.impl.ParameterValue;
 

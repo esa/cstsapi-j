@@ -1,7 +1,7 @@
 package esa.egos.csts.api.types;
 
-import ccsds.csts.common.types.FRorProcedureName;
-import ccsds.csts.common.types.PublishedIdentifier;
+import b1.ccsds.csts.common.types.FRorProcedureName;
+import b1.ccsds.csts.common.types.PublishedIdentifier;
 import esa.egos.csts.api.enumerations.ResourceIdentifier;
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.oids.ObjectIdentifier;
@@ -105,8 +105,8 @@ public class Name {
 	 * 
 	 * @return the CCSDS Name type representing this object
 	 */
-	public ccsds.csts.common.types.Name encode() {
-		ccsds.csts.common.types.Name name = new ccsds.csts.common.types.Name();
+	public b1.ccsds.csts.common.types.Name encode() {
+		b1.ccsds.csts.common.types.Name name = new b1.ccsds.csts.common.types.Name();
 		name.setParamOrEventOrDirectiveId(new PublishedIdentifier(identifier.toArray()));
 		FRorProcedureName funcResOrProc = new FRorProcedureName();
 		switch (resourceIdentifier) {
@@ -128,7 +128,7 @@ public class Name {
 	 *            the specified CCSDS Name type
 	 * @return a new Name decoded from the specified CCSDS Name type
 	 */
-	public static Name decode(ccsds.csts.common.types.Name name) {
+	public static Name decode(b1.ccsds.csts.common.types.Name name) {
 		Name newName = null;
 		if (name != null) {
 			ObjectIdentifier OID = ObjectIdentifier.of(name.getParamOrEventOrDirectiveId().value);

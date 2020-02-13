@@ -2,10 +2,10 @@ package esa.egos.csts.api.diagnostics;
 
 import java.io.IOException;
 
-import org.openmuc.jasn1.ber.BerByteArrayOutputStream;
-import org.openmuc.jasn1.ber.types.BerNull;
+import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
+import com.beanit.jasn1.ber.types.BerNull;
 
-import ccsds.csts.sequence.controlled.data.processing.pdus.SequContrDataProcProcDataDiagnosticExt;
+import b1.ccsds.csts.sequence.controlled.data.processing.pdus.SequContrDataProcProcDataDiagnosticExt;
 import esa.egos.csts.api.extensions.EmbeddedData;
 
 /**
@@ -108,7 +108,7 @@ public class SeqControlledDataProcDiagnostics {
 			break;
 		}
 		// encode with a resizable output stream and an initial capacity of 128 bytes
-		try (BerByteArrayOutputStream os = new BerByteArrayOutputStream(128, true)) {
+		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
 			diagnostics.encode(os);
 			diagnostics.code = os.getArray();
 		} catch (IOException e) {
