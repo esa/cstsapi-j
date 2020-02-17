@@ -8,17 +8,17 @@ import org.junit.Test;
 
 import esa.egos.csts.api.enumerations.AppRole;
 import esa.egos.csts.api.enumerations.CstsResult;
-import esa.egos.csts.api.enumerations.Result;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.main.CstsApi;
 import esa.egos.csts.api.main.ICstsApi;
-import esa.egos.csts.api.main.Slecsexe;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
+import esa.egos.csts.test.mdslite.impl.simulator.TestBootstrap;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 
 /**
  * Test the CSTS API at the example of the monitored data service 
@@ -27,6 +27,12 @@ public class TestMds {
 
 	private ICstsApi providerApi;
 	private ICstsApi userApi;
+
+    @BeforeClass
+    public static void setUpClass() throws ApiException
+    {
+        TestBootstrap.initCs();
+    }
 
 	/**
 	 * Initializes the provider API and the use API and starts the communication server
@@ -45,12 +51,6 @@ public class TestMds {
 		
 		System.out.println("provider config: "  + providerConfigName);
 		System.out.println("user config: "  + userConfigName);
-		
-		Result res = Slecsexe.comServer(providerConfigName,  AppRole.PROVIDER, false);
-		if(res != Result.S_OK) {
-			System.err.println("Failed to initialise the communication server: " + res);
-		}
-
 		
 		providerApi = new CstsApi("Test Service Provider API", AppRole.PROVIDER);
 		providerApi.initialize(providerConfigName);
