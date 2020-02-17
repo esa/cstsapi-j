@@ -149,14 +149,17 @@ public abstract class AbstractInformationQuery extends AbstractProcedure impleme
 		ListOfParametersDiagnostics diag = new ListOfParametersDiagnostics(
 				ListOfParametersDiagnosticsType.UNKNOWN_PARAMETER_IDENTIFIER);
 
+		int prevParamCount = 0;
 		for (Name name : names) {
 			getParameters().stream()
 			.filter(p -> p.getName().equals(name))
 			.forEach(p -> get.getQualifiedParameters().add(p.toQualifiedParameter()));
 			
-			if (!get.getQualifiedParameters().isEmpty()) {
+			int paramCount = get.getQualifiedParameters().size();
+			if ( paramCount == prevParamCount) {
 				diag.getUnknownParameterNames().add(name);
 			}
+			prevParamCount = paramCount;
 		}
 		
 		if (diag.getUnknownParameterNames().isEmpty()) {
