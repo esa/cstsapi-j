@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.ui.externaltools.ProgramLaunchConfigurationType">
+<stringAttribute key="bad_container_name" value="/CSTSAPI/src/te/resources"/>
+<stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="${workspace_loc:/CSTSAPI/src/main/resources/jasn-1.11.2/jasn1-compiler}"/>
+<stringAttribute key="org.eclipse.ui.externaltools.ATTR_TOOL_ARGUMENTS" value="-o test/java -p frm -f test/resources/asn1-frm/functional_resources_css.asn"/>
+<stringAttribute key="org.eclipse.ui.externaltools.ATTR_WORKING_DIRECTORY" value="${workspace_loc:/CSTSAPI/src}"/>
+</launchConfiguration>

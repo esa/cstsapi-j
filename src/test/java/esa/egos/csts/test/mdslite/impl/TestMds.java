@@ -92,6 +92,7 @@ public class TestMds {
 						"CSTS_PT1");
 				
 				ListOfParameters paramList = ListOfParameters.of("test-list-1");
+				
 				List<ListOfParameters> paramLists = new ArrayList<ListOfParameters>();
 				paramLists.add(paramList);
 				
@@ -101,7 +102,14 @@ public class TestMds {
 				System.out.println("BIND...");
 				verifyResult(userSi.bind(), "BIND");
 
-				userSi.startCyclicReport(100, 0);
+				boolean onChange = true;
+				userSi.startCyclicReport(1000, onChange, 0);
+				
+				Thread.sleep(2000); // give some time to report on data
+				providerSi.setAntAzimut(815, 0);
+				Thread.sleep(2000); // give some time to report on data
+				
+				userSi.stopCyclicReport(0);
 				
 				System.out.println("UNBIND...");
 				verifyResult(userSi.unbind(), "UNBIND");

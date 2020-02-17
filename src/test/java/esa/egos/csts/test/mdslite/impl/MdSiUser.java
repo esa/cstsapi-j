@@ -17,7 +17,7 @@ import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IStart;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
-import esa.egos.csts.api.procedures.cyclicreport.ICyclicReport;
+import esa.egos.csts.test.mdslite.procedures.IOnChangeCyclicReport;
 import esa.egos.proxy.enums.AssocState;
 
 
@@ -126,27 +126,20 @@ public class MdSiUser extends MdSi {
 	 * @param listOfParameters
 	 * @return The result of the start
 	 */
-	public CstsResult startCyclicReport(long deliveryCycle, int instanceNumber) {
+	public CstsResult startCyclicReport(long deliveryCycle, boolean onChange, int instanceNumber) {
 		CstsResult res = CstsResult.FAILURE;
 		
 		retLock.lock();
 		try {
 			System.out.println("Start the Cyclic Report procedure");
 			
-			// TODO: check if the argument listOfParameters is really a good idea to find the cr procedure to start?
-			ICyclicReport cyclicReport = null;
-			for(ICyclicReport cr : this.cyclicReportProcedures.keySet()) {
-				if(cr.getProcedureInstanceIdentifier().getInstanceNumber() == instanceNumber) {
-					this.cyclicReportProcedures.put(cr, ProcedureState.START_PENDING);
-					cyclicReport = cr;
-					break;
-				}
-			}
+			IOnChangeCyclicReport cyclicReport = getCyclicReportProcedure(instanceNumber);
+			setCyclicReportProcedureState(cyclicReport, ProcedureState.START_PENDING);
 			
 			if(cyclicReport != null) {				
-				res = cyclicReport.requestCyclicReport(deliveryCycle, cyclicReport.getListOfParameters());
+				res = cyclicReport.requestCyclicReport(deliveryCycle, onChange, cyclicReport.getListOfParameters());
 				
-				while(this.cyclicReportProcedures.get(cyclicReport) == ProcedureState.START_PENDING) {
+				while(getCyclicReportProcedureState(cyclicReport) == ProcedureState.START_PENDING) {
 					try {						
 						boolean signalled = retCond.await(RET_TIMEOUT, TimeUnit.SECONDS);
 						if(signalled == false) {
@@ -158,7 +151,7 @@ public class MdSiUser extends MdSi {
 					}
 				}	
 				
-				if(this.cyclicReportProcedures.get(cyclicReport) == ProcedureState.ACTIVE) {
+				if(getCyclicReportProcedureState(cyclicReport) == ProcedureState.ACTIVE) {
 					res = CstsResult.SUCCESS;
 				} else {
 					res = CstsResult.FAILURE;
@@ -170,6 +163,47 @@ public class MdSiUser extends MdSi {
 		}
 		return res;
 	}
+	
+	/**
+	 * Stops the cyclic report procedure of the given instance number
+	 * @param instanceNumber
+	 * @return The result of stopping
+	 */
+	public CstsResult stopCyclicReport(int instanceNumber) {
+		CstsResult res = CstsResult.FAILURE;
+		
+		retLock.lock();
+		try {
+			IOnChangeCyclicReport cyclicReport = getCyclicReportProcedure(instanceNumber);
+			if(cyclicReport != null) { 
+				setCyclicReportProcedureState(cyclicReport, ProcedureState.STOP_PENDING);
+				res = cyclicReport.endCyclicReport();
+
+				while(getCyclicReportProcedureState(cyclicReport) == ProcedureState.STOP_PENDING) {
+					try {						
+						boolean signalled = retCond.await(RET_TIMEOUT, TimeUnit.SECONDS);
+						if(signalled == false) {
+							res = CstsResult.FAILURE;
+							break;
+						}
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}	
+				
+				if(getCyclicReportProcedureState(cyclicReport) == ProcedureState.INACTIVE) {
+					res = CstsResult.SUCCESS;
+				} else {
+					res = CstsResult.FAILURE;
+				}
+			}
+		
+		} finally {
+			retLock.unlock();
+		}
+		return res;		
+	}
+	
 	
 	@Override
 	public void informOpInvocation(IOperation operation) {
@@ -208,22 +242,46 @@ public class MdSiUser extends MdSi {
 		} else if(operation.getType() == OperationType.START) {	
 				this.retLock.lock();
 				// check if this is for the cyclic report procedure
-				for(ICyclicReport cr : this.cyclicReportProcedures.keySet()) {
-					if(operation.getProcedureInstanceIdentifier().equals(cr.getProcedureInstanceIdentifier())) {
-						if(operation.getResult() == OperationResult.POSITIVE) {
-							this.cyclicReportProcedures.put(cr, ProcedureState.ACTIVE);
-							System.out.println("Positive Start return: " + operation);
-						} else {
-							this.cyclicReportProcedures.put(cr, ProcedureState.INACTIVE);
-							CyclicReportStartDiagnostics diag = cr.getStartDiagnostic();
-							System.out.println("Negative Start return: " + ((IStart)operation).getDiagnostic());
-							System.out.println("Negative Start return proc diag: " + diag);
-						}
+				IOnChangeCyclicReport cr = getCyclicReportProcedure(operation.getProcedureInstanceIdentifier());
+
+				if(cr != null) {
+					if(operation.getResult() == OperationResult.POSITIVE) {
+						setCyclicReportProcedureState(cr, ProcedureState.ACTIVE);
+						System.out.println("Positive Start return: " + operation);
+					} else {
+						setCyclicReportProcedureState(cr, ProcedureState.INACTIVE);
+						CyclicReportStartDiagnostics diag = cr.getStartDiagnostic();
+						System.out.println("Negative Start return: " + ((IStart)operation).getDiagnostic());
+						System.out.println("Negative Start return proc diag: " + diag);
 					}
+				} else {
+					System.err.println("Start return for unknown rocedure: " + operation.getProcedureInstanceIdentifier());
 				}
+
 				this.retCond.signal();
 				this.retLock.unlock();
-		}		
+		} else if(operation.getType() == OperationType.STOP) {
+			this.retLock.lock();
+			// check if this is for the cyclic report procedure
+			IOnChangeCyclicReport cr = getCyclicReportProcedure(operation.getProcedureInstanceIdentifier());
+
+			if(cr != null) {
+				if(operation.getResult() == OperationResult.POSITIVE) {
+					setCyclicReportProcedureState(cr, ProcedureState.INACTIVE);
+					System.out.println("Positive Stop return: " + operation);
+				} else {
+					setCyclicReportProcedureState(cr, ProcedureState.ACTIVE);
+					CyclicReportStartDiagnostics diag = cr.getStartDiagnostic();
+					System.out.println("Negative Stop return: " + ((IStart)operation).getDiagnostic());
+					System.out.println("Negative Stop return proc diag: " + diag);
+				}
+			} else {
+				System.err.println("Start return for unknown rocedure: " + operation.getProcedureInstanceIdentifier());
+			}		
+			
+			this.retCond.signal();
+			this.retLock.unlock();
+		}
 	}
 
 	@Override

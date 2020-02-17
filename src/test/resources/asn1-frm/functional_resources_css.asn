@@ -1,0 +1,4444 @@
+CSTS-FUNCTIONAL-RESOURCE-TYPES
+{ iso(1) identified-organization(3) standards-producing-organization(112)
+	ccsds(4) css(4) crossSuppportResources(2)
+}
+
+DEFINITIONS
+IMPLICIT TAGS
+::= BEGIN
+
+EXPORTS
+	 	 AntResourceStat
+,	 	 antResourceStatType
+,	 	 AntId
+,	 	 antIdType
+,	 	 AntActualAzimuth
+,	 	 antActualAzimuthType
+,	 	 AntActualElevation
+,	 	 antActualElevationType
+,	 	 AntCommandedAzimuth
+,	 	 antCommandedAzimuthType
+,	 	 AntCommandedElevation
+,	 	 antCommandedElevationType
+,	 	 AntContrAzimuth
+,	 	 antContrAzimuthType
+,	 	 AntContrElevation
+,	 	 antContrElevationType
+,	 	 AntContrAzimuthRate
+,	 	 antContrAzimuthRateType
+,	 	 AntContrElevationRate
+,	 	 antContrElevationRateType
+,	 	 AntAzimuthErrror
+,	 	 antAzimuthErrorType
+,	 	 AntElevationError
+,	 	 antElevationErrorType
+,	 	 AntPointingMode
+,	 	 antPointingModeType
+,	 	 AntTrackingRxNominalFreq
+,	 	 antTrackingRxNominalFreqType
+,	 	 AntTrackingSignalPolarization
+,	 	 antTrackingSignalPolarizationType
+,	 	 AntTrackingRxPredictMode
+,	 	 antTrackingRxPredictModeType
+,	 	 AntTrackingRxFreqUncertainty
+,	 	 antTrackingRxFreqUncertaintyType
+,	 	 AntTrackingRxMode
+,	 	 antTrackingRxModeType
+,	 	 AntTrackingRxLoopBwdth
+,	 	 antTrackingRxLoopBwdthType
+,	 	 AntTrackingRxOrderOfLoop
+,	 	 antTrackingRxOrderOfLoopType
+,	 	 AntTrackingRxInpLevel
+,	 	 antTrackingRxInpLevelType
+,	 	 AntTrackingRxLockStat
+,	 	 antTrackingRxLockStatType
+,	 	 AntWindIntegrationTime
+,	 	 antWindIntegrationTimeType
+,	 	 AntMeanWindSpeed
+,	 	 antMeanWindSpeedType
+,	 	 AntPeakWindSpeed
+,	 	 antPeakWindSpeedType
+,	 	 AntWindDirection
+,	 	 antWindDirectionType
+,	 	 AntAccumulatedPrecipitation
+,	 	 antAccumulatedPrecipitationType
+,	 	 AntPrecipitationRate
+,	 	 antPrecipitationRateType
+,	 	 AntRelativeHumidity
+,	 	 antRelativeHumidityType
+,	 	 AntAtmoshericPressure
+,	 	 antAtmosphericPressureType
+,	 	 AntAmbientTemperature
+,	 	 antAmbientTemperatureType
+,	 	 AntEventResourceStatValue
+,	 	 antEventResourceStatValueType
+,	 	 AntEventTrackingRxLockStat
+,	 	 antEventTrackingRxLockStatType
+,	 	 AntWindSpeedCriticality
+,	 	 antWindSpeedCriticalityType
+,	 	 AntContrParamIdsAndValues
+,	 	 antContrParamIdsAndValuesType
+,	 	 Fwd401CarrierXmitResourceStat
+,	 	 fwd401CarrierXmitResourceStatType
+,	 	 Fwd401CarrierXmitPhysChnlName
+,	 	 fwd401CarrierXmitPhysChnlNameType
+,	 	 Fwd401CarrierXmitStat
+,	 	 fwd401CarrierXmitStatType
+,	 	 Fwd401CarrierXmitEirp
+,	 	 fwd401CarrierXmitEirpType
+,	 	 Fwd401CarrierXmitPolarization
+,	 	 fwd401CarrierXmitPolarizationType
+,	 	 Fwd401CarrierXmitActualCarrierFreq
+,	 	 fwd401CarrierXmitActualCarrierFreqType
+,	 	 Fwd401CarrierXmitContrNominalCarrierFreq
+,	 	 fwd401CarrierXmitContrNominalCarrierFreqType
+,	 	 Fwd401CarrierXmitReferenceFreqLock
+,	 	 fwd401CarrierXmitReferenceFreqLockType
+,	 	 Fwd401CarrierXmitMod
+,	 	 fwd401CarrierXmitModType
+,	 	 Fwd401CarrierXmitSymbolStreamModType
+,	 	 fwd401CarrierXmitSymbolStreamModTypeType
+,	 	 Fwd401CarrierXmitTcPriority
+,	 	 fwd401CarrierXmitTcPriorityType
+,	 	 Fwd401CarrierXmitRngModIndex
+,	 	 fwd401CarrierXmitRngModIndexType
+,	 	 Fwd401CarrierXmitSweepProcStat
+,	 	 fwd401CarrierXmitSweepProcStatType
+,	 	 Fwd401CarrierXmitSweepProfile
+,	 	 fwd401CarrierXmitSweepProfileType
+,	 	 Fwd401CarrierXmitSubcarrierFreq
+,	 	 fwd401CarrierXmitSubcarrierFreqType
+,	 	 Fwd401CarrierXmitSubcarrierMod
+,	 	 fwd401CarrierXmitSubcarrierModType
+,	 	 Fwd401CarrierXmitSymbolRate
+,	 	 fwd401CarrierXmitSymbolRateType
+,	 	 Fwd401CarrierXmitEventResourceStatValue
+,	 	 fwd401CarrierXmitEventResourceStatValueType
+,	 	 Fwd401CarrierXmitContrParamIdsAndValues
+,	 	 fwd401CarrierXmitContrParamIdsAndValuesType
+,	 	 FwdLinkRngResourceStat
+,	 	 fwdLinkRngResourceStatType
+,	 	 FwdLinkRngMod
+,	 	 fwdLinkRngModType
+,	 	 FwdLinkRngType
+,	 	 fwdLinkRngTypeType
+,	 	 FwdLinkRngCodeComponent
+,	 	 fwdLinkRngCodeComponentType
+,	 	 FwdLinkRngEventResourceStatValue
+,	 	 fwdLinkRngEventResourceStatValueType
+,	 	 FwdLinkRngContrParamIdsAndValues
+,	 	 fwdLinkRngContrParamIdsAndValuesType
+,	 	 Rtn401CarrierRcptResourceStat
+,	 	 rtn401CarrierRcptResourceStatType
+,	 	 Rtn401CarrierRcptPhysChnlName
+,	 	 rtn401CarrierRcptPhysChnlNameType
+,	 	 Rtn401CarrierRcptModulationType
+,	 	 rtn401CarrierRcptModulationTypeType
+,	 	 Rtn401CarrierRcptPolarization
+,	 	 rtn401CarrierRcptPolarizationType
+,	 	 Rtn401CarrierRcptSignalLevel
+,	 	 rtn401CarrierRcptSignalLevelType
+,	 	 Rtn401CarrierRcptSystemNoiseTemperature
+,	 	 rtn401CarrierRcptSystemNoiseTemperatureType
+,	 	 Rtn401CarrierRcptPolarizationAngle
+,	 	 rtn401CarrierRcptPolarizationAngleType
+,	 	 Rtn401CarrierRcptLockStat
+,	 	 rtn401CarrierRcptLockStatType
+,	 	 Rtn401CarrierRcptPredictedToneLoopSnr
+,	 	 rtn401CarrierRcptPredictedToneLoopSnrType
+,	 	 Rtn401CarrierRcptObservedToneLoopSnr
+,	 	 rtn401CarrierRcptObservedToneLoopSnrType
+,	 	 Rtn401CarrierRcptNominalFreq
+,	 	 rtn401CarrierRcptNominalFreqType
+,	 	 Rtn401CarrierRcptFreqUncertainty
+,	 	 rtn401CarrierRcptFreqUncertaintyType
+,	 	 Rtn401CarrierRcptPredictMode
+,	 	 rtn401CarrierRcptPredictModeType
+,	 	 Rtn401CarrierRcptTrackingLoopBwdth
+,	 	 rtn401CarrierRcptTrackingLoopBwdthType
+,	 	 Rtn401CarrierRcptOrderOfLoop
+,	 	 rtn401CarrierRcptOrderOfLoopType
+,	 	 Rtn401CarrierRcptCarrierLockStat
+,	 	 rtn401CarrierRcptCarrierLockStatType
+,	 	 Rtn401CarrierRcptLoopMeanPhaseError
+,	 	 rtn401CarrierRcptLoopMeanPhaseErrorType
+,	 	 Rtn401CarrierRcptLoopPeakPhaseError
+,	 	 rtn401CarrierRcptLoopPeakPhaseErrorType
+,	 	 Rtn401CarrierRcptLoopSnr
+,	 	 rtn401CarrierRcptLoopSnrType
+,	 	 Rtn401CarrierRcptActualFreq
+,	 	 rtn401CarrierRcptActualFreqType
+,	 	 Rtn401CarrierRcptFreqOffset
+,	 	 rtn401CarrierRcptFreqOffsetType
+,	 	 Rtn401CarrierRcptBestLockFreq
+,	 	 rtn401CarrierRcptBestLockFreqType
+,	 	 Rtn401CarrierRcptDopplerStdDeviation
+,	 	 rtn401CarrierRcptDopplerStdDeviationType
+,	 	 Rtn401CarrierRcptNominalSubcarrierFreq
+,	 	 rtn401CarrierRcptNominallSubcarrierFreqType
+,	 	 Rtn401CarrierRcptSubcarrierDemodLoopBwdth
+,	 	 rtn401CarrierRcptSubcarrierDemodLoopBwdthType
+,	 	 Rtn401CarrierRcptSubcarrierLevelEstimate
+,	 	 rtn401CarrierRcptSubcarrierLevelEstimateType
+,	 	 Rtn401CarrierRcptActualSubcarrierFreq
+,	 	 rtn401CarrierRcptActualSubcarrierFreqType
+,	 	 Rtn401CarrierRcptSymbolSynchronizerLoopBwdth
+,	 	 rtn401CarrierRcptSymbolSynchronizerLoopBwdthType
+,	 	 Rtn401CarrierRcptActualSymbolRate
+,	 	 rtn401CarrierRcptActualSymbolRateType
+,	 	 Rtn401CarrierRcptObservedEsOverNoAndSoftSymbolDistribution
+,	 	 rtn401CarrierRcptObservedEsOverNoAndSoftSymbolDistributionType
+,	 	 Rtn401CarrierRcptExpectedEsOverNo
+,	 	 rtn401CarrierRcptExpectedEsOverNoType
+,	 	 Rtn401CarrierRcptRngPowerOverNoResidual
+,	 	 rtn401CarrierRcptRngPowerOverNoResidualType
+,	 	 Rtn401CarrierRcptEventResourceStatValue
+,	 	 rtn401CarrierRcptEventResourceStatValueType
+,	 	 Rtn401CarrierRcptEventLockStat
+,	 	 rtn401CarrierRcptEventLockStatType
+,	 	 Rtn401SpaceLinkCarrierRcptContrParamIdsAndValues
+,	 	 rtn401SpaceLinkCarrierRcptContrParamIdsAndValuesType
+,	 	 RtnRngAndDopplerExtractionResourceStat
+,	 	 rtnRngAndDopplerExtractionResourceStatType
+,	 	 RtnRngAndDopplerExtractionToneOrPnChipLoop
+,	 	 rtnRngAndDopplerExtractionToneOrPnChipLoopType
+,	 	 RtnRngAndDopplerExtractionToneIntegrationTime
+,	 	 rtnRngAndDopplerExtractionToneIntegrationTimeType
+,	 	 RtnRngAndDopplerExtractionToneSettlingTime
+,	 	 rtnRngAndDopplerExtractionToneSettlingTimeType
+,	 	 RtnRngAndDopplerExtractionToneOrPnChipLevel
+,	 	 rtnRngAndDopplerExtractionToneOrPnChipLevelType
+,	 	 RtnRngAndDopplerExtractionLoopLockStat
+,	 	 rtnRngAndDopplerExtractionLoopLockStatType
+,	 	 RtnRngAndDopplerExtractionExpectedRngModIndex
+,	 	 rtnRngAndDopplerExtractionExpectedRngModIndexType
+,	 	 RtnRngAndDopplerExtractionPresteering
+,	 	 rtnRngAndDopplerExtractionPresteeringType
+,	 	 RtnRngAndDopplerExtractionCodeNumberPnCodeOffset
+,	 	 rtnRngAndDopplerExtractionCodeNumberPnCodeOffsetType
+,	 	 RtnRngAndDopplerExtractionAmbiguityResolved
+,	 	 rtnRngAndDopplerExtractionAmbiguityResolvedType
+,	 	 RtnRngAndDopplerExtractionExpectedSpacecraftPnAcqDuration
+,	 	 rtnRngAndDopplerExtractionExpectedSpacecraftPnAcqDurationType
+,	 	 RtnRngAndDopplerExtractionPnCodeIntegrationTime
+,	 	 rtnRngAndDopplerExtractionPnCodeIntegrationTimeType
+,	 	 RtnRngAndDopplerExtractionSpacecraftTransponderMode
+,	 	 rtnRngAndDopplerExtractionSpacecraftTransponderModeType
+,	 	 RtnRngAndDopplerExtractionRngMeasurementSamplingRate
+,	 	 rtnRngAndDopplerExtractionRngMeasurementSamplingRateType
+,	 	 RtnRngAndDopplerExtractionDopplerMeasurementSamplingRate
+,	 	 rtnRngAndDopplerExtractionDopplerMeasurementSamplingRateType
+,	 	 RtnRngAndDopplerExtractionResourceStatValue
+,	 	 rtnRngAndDopplerExtractionResourceStatValueType
+,	 	 RtnRngAndDopplerExtractionPnCodeAcqFailureEventValue
+,	 	 rtnRngAndDopplerExtractionPnCodeAcqFailureEventValueType
+,	 	 RtnRngAndDopplerExtractionContrParamIdsAndValues
+,	 	 rtnRngAndDopplerExtractionContrParamIdsAndValuesType
+,	 	 FwdTcPlopSyncResourceStat
+,	 	 fwdTcPlopSyncResourceStatType
+,	 	 FwdTcPlopSyncMaxCltuLength
+,	 	 fwdTcPlopSyncMaxCltuLengthType
+,	 	 FwdTcPlopSyncMaxNumberOfFramesPerCltu
+,	 	 fwdTcPlopSyncMaxNumberOfFramesPerCltuType
+,	 	 FwdTcPlopSyncEncodeType
+,	 	 fwdTcPlopSyncEncodeTypeType
+,	 	 FwdTcPlopSyncMaxCltuRepetitions
+,	 	 fwdTcPlopSyncMaxCltuRepetitionsType
+,	 	 FwdTcPlopSyncPlop
+,	 	 fwdTcPlopSyncPlopType
+,	 	 FwdTcPlopSyncAcqSeqLength
+,	 	 fwdTcPlopSyncAcqSeqLengthType
+,	 	 FwdTcPlopSyncMinDelayTime
+,	 	 fwdTcPlopSyncMinDelayTimeType
+,	 	 FwdTcPlopSyncFwdLinkStat
+,	 	 fwdTcPlopSyncFwdLinkStatType
+,	 	 FwdTcPlopSyncClcwEvaluation
+,	 	 fwdTcPlopSyncClcwEvaluationType
+,	 	 FwdTcPlopSyncEventResourceStatValue
+,	 	 fwdTcPlopSyncEventResourceStatValueType
+,	 	 FwdTcPlopSyncEventFwdLinkStatValue
+,	 	 fwdTcPlopSyncEventFwdLinkStatValueType
+,	 	 FwdTcPlopSyncDataUnitIdAndSourceValue
+,	 	 fwdTcPlopSyncDataUnitIdAndSourceValueType
+,	 	 FwdTcPlopSyncContrParamIdsAndValues
+,	 	 fwdTcPlopSyncContrParamIdsAndValuesType
+,	 	 FwdTcPlopSyncServiceInstanceId
+,	 	 fwdTcPlopSyncServiceInstanceIdType
+,	 	 FwdAosSyncResourceStat
+,	 	 fwdFlfSyncResourceStatType
+,	 	 FwdAosSyncPhysicalChnlName
+,	 	 fwdAosSyncPhysicalChnlNameType
+,	 	 FwdAosSyncCaduLength
+,	 	 fwdAosSyncCaduLengthType
+,	 	 FwdAosFrameRandomization
+,	 	 fwdAosFrameRandomizationType
+,	 	 FwdAosSyncFrameEncoding
+,	 	 fwdAosSyncFrameEncodingType
+,	 	 FwdAosSyncFrameConvolCodeRate
+,	 	 fwdAosSyncFrameConvolCodeRateType
+,	 	 FwdAosSyncFrameRsErrorCorrectionCapability
+,	 	 fwdAosSyncFrameRsErrorCorrectionCapabilityType
+,	 	 FwdAosSyncFrameRsInterleavingDepth
+,	 	 fwdAosSyncFrameRsInterleavingDepthType
+,	 	 FwdAosSyncFrameTurboCodeRate
+,	 	 fwdAosSyncFrameTurboCodeRateType
+,	 	 FwdAosSyncFrameLdpcCodeRate
+,	 	 fwdAosSyncFrameLdpcCodeRateType
+,	 	 FwdAosSyncResourceStatValue
+,	 	 fwdAosSyncResourceStatValueType
+,	 	 FwdAosSyncParamIdsAndValues
+,	 	 fwdAosSyncParamIdsAndValuesType
+,	 	 RtnTmSyncResourceStat
+,	 	 rtnTmSyncResourceStatType
+,	 	 RtnTmSyncAsmConfig
+,	 	 rtnTmSyncAsmConfigType
+,	 	 RtnTmSyncAsmCorrelationError
+,	 	 rtnTmSyncAsmCorrelationErrorType
+,	 	 RtnTmSyncFrameSyncLockStat
+,	 	 rtnTmSyncFrameSyncLockStatType
+,	 	 RtnTmSyncSymbolInversion
+,	 	 rtnTmSyncSymbolInversionType
+,	 	 RtnTmSyncFrameErrorRate
+,	 	 rtnTmSyncFrameErrorRateType
+,	 	 RtnTmSyncNumberOfRsErrorsCorrected
+,	 	 rtnTmSyncNumberOfRsErrorsCorrectedType
+,	 	 RtnTmSyncErtAnnotationLockedToReference
+,	 	 rtnTmSyncErtAnnotationLockedToReferenceType
+,	 	 RtnTmSyncCaduLength
+,	 	 rtnTmSyncCaduLengthType
+,	 	 RtnTmSyncDerandomization
+,	 	 rtnTmSyncDerandomizationType
+,	 	 RtnTmSyncDecode
+,	 	 rtnTmSyncDecodeType
+,	 	 RtnTmSyncFecfPresent
+,	 	 rtnTmSyncFecfPresentType
+,	 	 RtnTmSyncEventResourceStatValue
+,	 	 rtnTmSyncEventResourceStatValueType
+,	 	 RtnTmSyncFrameSyncLockStatValue
+,	 	 RtnTmSyncContrParamIdsAndValues
+,	 	 rtnTmSyncContrParamIdsAndValuesType
+,	 	 FwdTcMcMuxResourceStat
+,	 	 fwdTcMcMuxResourceStatType
+,	 	 FwdTcMcMuxMaxNumberOfFramesPerCltu
+,	 	 fwdTcMcMuxMaxNumberOfFramesPerCltuType
+,	 	 FwdTcMcMuxMaxFrameLength
+,	 	 fwdTcMcMuxMaxFrameLengthType
+,	 	 FwdTcMcMuxContr
+,	 	 fwdTcMcMuxContrType
+,	 	 FwdTcMcMuxPresenceOfFec
+,	 	 fwdTcMcMuxPresenceOfFecType
+,	 	 FwdTcMcMuxEventResourceStatValue
+,	 	 fwdTcMcMuxEventResourceStatValueType
+,	 	 FwdTcMcMuxContrParamIdsAndValues
+,	 	 fwdTcMcMuxContrParamIdsAndValuesType
+,	 	 FwdTcMcMuxDiscardDataUnitsQualifier
+,	 	 fwdTcMcMuxDiscardDataUnitsQualifierType
+,	 	 FwdTcVcMuxResourceStat
+,	 	 fwdTcVcMuxResourceStatType
+,	 	 FwdTcVcMaxFrameLength
+,	 	 fwdTcVcMaxFrameLengthType
+,	 	 FwdTcVcMuxAdFrameRepetitions
+,	 	 fwdTcVcMuxAdFrameRepetitionsType
+,	 	 FwdTcVcMuxMc
+,	 	 fwdTcVcMuxMcType
+,	 	 FwdTcVcMuxContr
+,	 	 fwdTcVcMuxContrType
+,	 	 FwdTcVcMuxResourceStatValue
+,	 	 fwdTcVcMuxResourceStatValueType
+,	 	 FwdTcVcMuxContrParamIdsAndValues
+,	 	 fwdTcVcMuxContrParamIdsAndValuesType
+,	 	 FwdTcVcMuxDiscardDataUnitsQualifier
+,	 	 fwdTcVcMuxDiscardDataUnitsQualifierType
+,	 	 RtnTmMcDemuxResourceStat
+,	 	 rtnTmMcDemuxResourceStatType
+,	 	 RtnTmMcDemuxMcId
+,	 	 rtnTmMcDemuxMcIdType
+,	 	 RtnTmMcDemuxClcwExtraction
+,	 	 rtnTmMcDemuxClcwExtractionType
+,	 	 RtnTmMcDemuxEventResourceStatValue
+,	 	 rtnTmMcDemuxEventResourceStatValueType
+,	 	 RtnMcDemuxContrParamIdsAndValues
+,	 	 rtnTmMcDemuxContrParamIdsAndValuesType
+,	 	 RtnTmVcDemuxResourceStat
+,	 	 rtnTmVcDemuxResourceStatType
+,	 	 RtnTmVcDemuxVcId
+,	 	 rtnTmVcDemuxVcIdType
+,	 	 RtnTmVcDemuxClcwExtraction
+,	 	 rtnTmVcDemuxClcwExtractionType
+,	 	 RtnTmVcDemuxGvcid
+,	 	 rtnTmVcDemuxGvcidType
+,	 	 RtnTmVcDemuxContrParamIdsAndValues
+,	 	 rtnTmVcDemuxContrParamIdsAndValuesType
+,	 	 RfspApidSet
+,	 	 rfspApidSetType
+,	 	 ServicePackageId
+,	 	 servicePackageIdType
+,	 	 FwdTcMcMuxValidScids
+,	 	 fwdTcMcMuxValidScidsType
+,	 	 FwdTcVcMuxValidTcVcIds
+,	 	 fwdTcVcMuxValidTcVcIdsType
+,	 	 FwdCltuProductionStat
+,	 	 fwdCltuProductionStatType
+,	 	 FwdCltuServiceInstanceIdentifier
+,	 	 fwdCltuServiceInstanceIdentifierType
+,	 	 FwdCltuDeliveryMode
+,	 	 fwdCltuDeliveryModeType
+,	 	 FwdCltuReturnTimeoutPeriod
+,	 	 fwdCltuReturnTimeoutPeriodType
+,	 	 FwdCltuNotificationMode
+,	 	 fwdCltuNotificationModeType
+,	 	 FwdCltuProtocolAbortMode
+,	 	 fwdCltuProtocolAbortModeType
+,	 	 FwdCltuSiState
+,	 	 fwdCltuSiStateType
+,	 	 FwdCltuReportingCycle
+,	 	 fwdCltuReportingCycleType
+,	 	 FwdCltuExpectedCltuIdentification
+,	 	 fwdCltuExpectedCltuIdentificationType
+,	 	 FwdCltuExpectedEventInvocationId
+,	 	 fwdCltuExpectedEventInvocationIdType
+,	 	 FwdCltuNumberOfCltusReceived
+,	 	 fwdCltuNumberOfCltusReceivedType
+,	 	 FwdCltuNumberOfCltusProcessed
+,	 	 fwdCltuNumberOfCltusProcessedType
+,	 	 FwdCltuNumberOfCltusRadiated
+,	 	 fwdCltuNumberOfCltusRadiatedType
+,	 	 FwdCltuEventProductionStatValue
+,	 	 FwdCltuContrParamIdsAndValues
+,	 	 fwdCltuContrParamIdsAndValuesType
+,	 	 RafProductionStatus
+,	 	 rafProductionStatusType
+,	 	 RafServiceInstanceIdentifier
+,	 	 rafServiceInstanceIdentifierType
+,	 	 RafDeliveryMode
+,	 	 rafDeliveryModeType
+,	 	 RafReturnTimeoutPeriod
+,	 	 rafReturnTimeoutPeriodType
+,	 	 RafLatencyLimit
+,	 	 rafLatencyLimitType
+,	 	 RafTransferBufferSize
+,	 	 rafTransferBufferSizeType
+,	 	 RafPermittedFrameQuality
+,	 	 rafPermittedFrameQualityType
+,	 	 RafRequestedFrameQuality
+,	 	 rafRequestedFrameQualityType
+,	 	 RafSiState
+,	 	 rafSiStateType
+,	 	 RafReportingCycle
+,	 	 rafReportingCycleType
+,	 	 RafNumberOfErrorFreeFramesDelivered
+,	 	 rafNumberOfErrorFreeFramesDeliveredType
+,	 	 RafNumberOfFramesDelivered
+,	 	 rafNumberOfFramesDeliveredType
+,	 	 RafEventProductionStatusValue
+,	 	 rafEventProductionStatusValueType
+,	 	 RafControlledParameterIdsAndValues
+,	 	 rafControlledParameterIdsAndValuesType
+,	 	 RcfProductionStatus
+,	 	 rcfProductionStatusType
+,	 	 RcfServiceInstanceIdentifier
+,	 	 rcfServiceInstanceIdentifierType
+,	 	 RcfDeliveryMode
+,	 	 rcfDeliveryModeType
+,	 	 RcfReturnTimeoutPeriod
+,	 	 rcfReturnTimeoutPeriodType
+,	 	 RcfLatencyLimit
+,	 	 rcfLatencyLimitType
+,	 	 RcfTransferBufferSize
+,	 	 rcfTransferBufferSizeType
+,	 	 RcfPermittedGlobalVcidSet
+,	 	 rcfPermittedGlobalVcidSetType
+,	 	 RcfRequestedGlobalVcid
+,	 	 rcfRequestedGlobalVcidType
+,	 	 RcfSiState
+,	 	 rcfSiStateType
+,	 	 RcfReportingCycle
+,	 	 rcfReportingCycleType
+,	 	 RcfNumberOfFramesDelivered
+,	 	 rcfNumberOfFramesDeliveredType
+,	 	 RocfProductionStatus
+,	 	 rocfProductionStatusType
+,	 	 RocfServiceInstanceIdentifier
+,	 	 rocfServiceInstanceIdentifierType
+,	 	 RocfDeliveryMode
+,	 	 rocfDeliveryModeType
+,	 	 RocfReturnTimeoutPeriod
+,	 	 rocfReturnTimeoutPeriodType
+,	 	 RocfLatencyLimit
+,	 	 rocfLatencyLimitType
+,	 	 RocfTransferBufferSize
+,	 	 rocfTransferBufferSizeType
+,	 	 RocfPermittedGlobalVcidSet
+,	 	 rocfPermittedGlobalVcidSetType
+,	 	 RocfRequestedGlobalVcid
+,	 	 rocfRequestedGlobalVcidType
+,	 	 RocfPermittedControlWordTypeSet
+,	 	 rocfPermittedControlWordTypeSetType
+,	 	 RocfRequestedControlWordType
+,	 	 rocfRequestedControlWordTypeType
+,	 	 RocfPermittedTcVcidSet
+,	 	 rocfPermittedTcVcidSetType
+,	 	 RocfRequestedTcVcid
+,	 	 rocfRequestedTcVcidType
+,	 	 RocfPermittedUpdateMode
+,	 	 rocfPermittedUpdateModeType
+,	 	 RocfRequestedUpdateMode
+,	 	 rocfRequestedUpdateModeType
+,	 	 RocfSiState
+,	 	 rocfSiStateType
+,	 	 RocfReportingCycle
+,	 	 rocfReportingCycleType
+,	 	 RocfNumberOfOcfsDelivered
+,	 	 rocfNumberOfOcfsDeliveredType
+;
+
+ResourceStat        	 ::= ENUMERATED
+{
+	 configured          	 	 (0)
+,	 operational         	 	 (1)
+,	 interrupted         	 	 (2)
+,	 halted              	 	 (3)
+}
+
+SleRtnDeliveryMode  	 ::= ENUMERATED
+{
+	 onlineTimely        	 	 (0)
+,	 onlineComplete      	 	 (1)
+,	 offline             	 	 (2)
+}
+
+SleServiceInstanceId	 ::= OCTET STRING (SIZE( 30 .. 256)) 
+PcmFormat           	 ::= ENUMERATED
+{
+	 nrzL                	 	 (0)
+,	 nrzM                	 	 (1)
+,	 biPhaseL            	 	 (2)
+}
+
+LockStat            	 ::= SEQUENCE
+{
+	 carrierLock         	 ENUMERATED
+	 {
+	 	 locked              	 	 (0)
+	 ,	 notLocked           	 	 (1)
+	 }
+
+,	 subcarrierLock      	 ENUMERATED
+	 {
+	 	 locked              	 	 (0)
+	 ,	 notLocked           	 	 (1)
+	 ,	 notApplicable       	 	 (2)
+	 }
+
+,	 symbolStreamLock    	 ENUMERATED
+	 {
+	 	 locked              	 	 (0)
+	 ,	 null                	 	 (1)
+	 }
+
+}
+
+SleSiState          	 ::= ENUMERATED
+{
+	 unbound             	 	 (0)
+,	 ready               	 	 (1)
+,	 active              	 	 (2)
+}
+
+-- The engineering unit of this parameter is second.
+SleReturnTimeout    	 ::= INTEGER  (1 .. 600)
+ProductionStat      	 ::= ENUMERATED
+{
+	 configured          	 	 (0)
+,	 operational         	 	 (1)
+,	 interrupted         	 	 (2)
+,	 halted              	 	 (3)
+}
+
+SleRtnProductionStat	 ::= ENUMERATED
+{
+	 running             	 	 (0)
+,	 interrupted         	 	 (1)
+,	 halted              	 	 (2)
+}
+
+DirectiveQualifier  	 ::= SEQUENCE
+{
+	 functResourceInstanceNumber	 INTEGER 
+,	 directiveQualifierValues	 SEQUENCE  OF	 SEQUENCE
+	 	 {
+	 	 	 paramId             	 OBJECT IDENTIFIER
+,	 	 	 parameterValue      	 SEQUENCE
+	 	 	 {
+	 	 	 	 paramTypeOid        	 OBJECT IDENTIFIER
+,	 	 	 	 paramValue          	 OCTET STRING
+	 	 	 }
+
+	 	 }
+
+}
+
+FwdLinkStat         	 ::= ENUMERATED
+{
+	 fwdLinkStatNotAvailable	 	 (0)
+,	 noBitLock           	 	 (1)
+,	 noRfAvailable       	 	 (2)
+,	 nominal             	 	 (3)
+}
+
+Randomization       	 ::= ENUMERATED
+{
+	 off                 	 	 (0)
+,	 on                  	 	 (1)
+}
+
+ServiceInstanceId   	 ::= CHOICE
+{
+	 sleServiceInstanceId	 [0]	 	 OCTET STRING (SIZE( 1 .. 64)) 
+,	 cstsServiceInstanceId	 [1]	 	 SEQUENCE
+	 {
+	 	 spacecraftId        	 OBJECT IDENTIFIER
+,	 	 facilityId          	 OBJECT IDENTIFIER
+,	 	 serviceType         	 OBJECT IDENTIFIER
+,	 	 serviceInstanceNumber	 INTEGER  (0 .. 4294967295)
+	 }
+
+}
+
+SleReportingCycle   	 ::= CHOICE
+{
+	 reportingOff        	 [0]	 	 NULL
+,	 -- The engineeringUnit of this parameter is second
+	 reportingOn         	 [1]	 	 INTEGER  (2 .. 600)
+}
+
+
+
+-- This enumerated parameter reports the overall status of the antenna and can take
+--  on four values: 
+-- - 'configured': the antenna system has been configured, but is
+--  not yet tracking because it is still moving to the initial pointing or the spacecraft
+--  is not yet or no longer in view; 
+--  - 'operational': the antenna is tracking in
+--  the reported pointing mode (cf. antennaPointingMode); 
+--  - 'interrupted': a failure
+--  has been detected that prevents the antenna from tracking nominally; 
+--  - 'halted':
+--  the antenna has been taken out of service, e.g. due to wind speed requiring the
+--  antenna to be put into stow position.
+antResourceStatType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 1 1 1 }
+
+AntResourceStat     	 ::= ResourceStat
+
+
+-- This parameter identifies the antenna that is involved in providing a given support.
+--  The antenna may either be identified by its name where typically this name is defined
+--  by the operating agency so that no guarantee can be given that the identifier is
+--  globally unique. Alternatively the antenna may be officially registered in SANA
+--  in which case it has a globally unique Object Identifier. Knowledge of which antenna
+--  is being used is needed for a number of aspects, e.g. to assess the observed signal
+--  levels with respect to the antenna performance or to perform time correlation that
+--  requires knowledge of the exact location of the given antenna.
+-- Note: In case the
+--  antennas used for uplink and downlink are not identical, the Functional Resource
+--  (FR) instance number shall be used to differentiate them. As concerns antenna arraying,
+--  it is assumed that each array is associated with a name constituting a single functional
+--  resource.
+antIdType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 2 1 1 }
+
+AntId               	 ::= CHOICE
+{
+	 antennaName         	 [0]	 	 VisibleString (SIZE( 3 .. 16)) 
+,	 antennaOid          	 [1]	 	 OBJECT IDENTIFIER
+}
+
+
+
+-- This parameter reports the current antenna azimuth pointing in 1/1000 degrees, where
+--  0 degrees corresponds to pointing north and 90 degrees corresponds to pointing east.
+--  Depending on the way the antenna is built, values above 360 degrees may be reported
+--  in cases where the antenna enables such azimuth range as to mitigate the cable unwrap
+--  issue. For antennas with a mount different from elevation over azimuth (e.g. x/y
+--  mount), the antenna pointing shall be converted to the azimuth/elevation presentation.
+--  This also applies to antennas having a tilt mode as to overcome the zenith track
+--  singularity.
+-- Note: Time-tagged antenna pointing is regarded a radiometric product
+--  and therefore not part of monitoring. 
+antActualAzimuthType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 3 1 1 }
+
+-- The engineering unit of this parameter is 1/1000 degree.
+AntActualAzimuth    	 ::= INTEGER  (0 .. 540000)
+
+
+-- This parameter reports the current antenna elevation pointing in 1/1000 degrees,
+--  where 0 degrees corresponds to pointing to the horizon and 90 degrees corresponds
+--  to zenith pointing. Depending on the way the antenna is built, values above 90 degrees
+--  may be reported in cases where the antenna enables such elevation range as to mitigate
+--  the azimuth singularity at zenith. For antennas with a mount different from elevation
+--  over azimuth (e.g. x/y mount), the antenna pointing shall be converted to the azimuth/elevation
+--  presentation. This also applies to antennas having a tilt mode as to overcome the
+--  zenith track singularity.
+antActualElevationType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 4 1 1 }
+
+-- The engineering unit of this parameter is 1/1000 degree.
+AntActualElevation  	 ::= INTEGER  (0 .. 180000)
+
+
+-- This parameter reports the azimuth pointing in 1/1000 degrees commanded to the servo
+--  system while the antPointingMode is either 'programTrack' or 'autoTrack', where
+--  0 degrees corresponds to pointing north and 90 degrees corresponds to pointing east.
+--  Depending on the way the antenna is built, values above 360 degrees may be reported
+--  in cases where the antenna enables such azimuth range as to mitigate the cable unwrap
+--  issue. For antennas with a mount different from elevation over azimuth (e.g. x/y
+--  mount), the antenna pointing shall be converted to the azimuth/elevation presentation.
+--  This also applies to antennas having a tilt mode as to overcome the zenith track
+--  singularity.
+antCommandedAzimuthType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 5 1 1 }
+
+-- The engineering unit of this parameter is 1/1000 degree.
+AntCommandedAzimuth 	 ::= INTEGER  (0 .. 540000)
+
+
+-- This parameter reports the antenna elevation pointing in 1/1000 degrees commanded
+--  to the servo system while the antPointingMode is either 'programTrack' or 'autoTrack',
+--  where 0 degrees corresponds to pointing to the horizon and 90 degrees corresponds
+--  to zenith pointing. Depending on the way the antenna is built, values above 90 degrees
+--  may be reported in cases where the antenna enables such elevation range as to mitigate
+--  the azimuth singularity at zenith. For antennas with a mount different from elevation
+--  over azimuth (e.g. x/y mount), the antenna pointing shall be converted to the azimuth/elevation
+--  presentation. This also applies to antennas having a tilt mode as to overcome the
+--  zenith track singularity.
+antCommandedElevationType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 6 1 1 }
+
+-- The engineering unit of the parameter is 1/1000 degree.
+AntCommandedElevation	 ::= INTEGER  (0 .. 180000)
+
+
+-- This parameter configures and reports the azimuth in 1/1000 degrees the antenna shall
+--  point to when the pointing-mode is set to 'point',  where 0 degrees corresponds
+--  to pointing north and 90 degrees corresponds to pointing east. Depending on the
+--  way the antenna is built, values above 360 degrees may be supported in cases where
+--  the antenna enables such azimuth range as to mitigate the cable unwrap issue. For
+--  antennas with a mount different from elevation over azimuth (e.g. x/y mount), the
+--  antenna pointing shall be converted to the azimuth/elevation presentation. This
+--  also applies to antennas having a tilt mode as to overcome the zenith track singularity.
+antContrAzimuthType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 7 1 1 }
+
+-- The engineering unit of this parameter is 1/1000 degree.
+AntContrAzimuth     	 ::= INTEGER  (0 .. 540000)
+
+
+-- This parameter configures and reports the elevation in 1/1000 degrees the antenna
+--  shall point to when the pointing-mode is set to 'point',  where 0 degrees corresponds
+--  to pointing to the local horizon and 90 degrees corresponds to zenith pointing.
+--  Depending on the way the antenna is built, values above 90 degrees may be reported
+--  in cases where the antenna enables such elevation range as to mitigate the azimuth
+--  singularity at zenith. For antennas with a mount different from elevation over azimuth
+--  (e.g. x/y mount), the antenna pointing shall be converted to the azimuth/elevation
+--  presentation. This also applies to antennas having a tilt mode as to overcome the
+--  zenith track singularity. 
+antContrElevationType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 8 1 1 }
+
+-- The engineering unit of this parameter is 1/1000 degree.
+AntContrElevation   	 ::= INTEGER  (0 .. 180000)
+
+
+-- The parameter configures and reports the azimuth angular rate in 1/1000 degrees per
+--  second at which the antenna shall move when  antPointingMode is set to 'slew'. 
+antContrAzimuthRateType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 9 1 1 }
+
+-- The engineering unit of this parameter is 1/1000 degree per second.
+AntContrAzimuthRate 	 ::= INTEGER  (-5000 .. 5000)
+
+
+-- The parameter configures and reports the elevation angular rate in 1/1000 degrees
+--  per second at which the antenna shall move when the antPointingMode is set to 'slew'.
+--  
+antContrElevationRateType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 10 1 1 }
+
+-- The engineering unit of this parameter is 1/000 degree per second.
+AntContrElevationRate	 ::= INTEGER  (-5000 .. 5000)
+
+
+-- This parameter reports the difference in 1/1000 degrees between the actual and the
+--  azimuth calculated for antPointingMode = 'programTrack'. Consequently this parameter
+--  will only be valid if antPointingMode = 'auto-track'. Antennas not having or not
+--  being operated in any closed-loop tracking mode cannot provide this parameter and
+--  in this case the parameter shall be flagged as unavailable. 
+-- Note: Time-tagged
+--  antenna pointing is regarded a radiometric product and therfore not part of monitoring.
+--   
+antAzimuthErrorType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 11 1 1 }
+
+-- The engineering unit of this parameter is 1/1000 degree.
+AntAzimuthErrror    	 ::= INTEGER  (-540000 .. 540000)
+
+
+-- This parameter reports the difference in 1/1000 degrees between the actual and the
+--  elevation  calculated for antPointingMode = 'programTrack'. Consequently this parameter
+--  will only be valid if antPointingMode = 'auto-track'. Antennas not having or not
+--  being operated in any closed-loop tracking mode cannot provide this parameter and
+--  in this case the parameter shall be flagged as unavailable.
+antElevationErrorType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 12 1 1 }
+
+-- The engineering unit of this parameter is 1/1000 degree per second.
+AntElevationError   	 ::= INTEGER  (-180000 .. 180000)
+
+
+-- This enumerated parameter configures and reports the pointing mode of the antenna
+--  servo system. The values this parameter can take on are:
+-- - 'stow': the antenna
+--  is in or is moving to its stow position;
+-- - 'halt': the antenna has been stopped
+--  in its current position;
+-- - 'point': the antenna is moving or has moved to the specified
+--  azimuth and elevation;
+-- - 'slew': the antenna is moving at commanded angular rates;
+-- -
+--  'program-track': the antenna is pointed in accordance with spacecraft trajectory
+--  predicts;
+-- - 'auto-track': the antenna is pointing in closed-loop mode.
+-- Antenna
+--  implementations will typically support only a subset of the above listed pointing
+--  modes.
+antPointingModeType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 13 1 1 }
+
+AntPointingMode     	 ::= ENUMERATED
+{
+	 stow                	 	 (0)
+,	 halt                	 	 (1)
+,	 point               	 	 (2)
+,	 slew                	 	 (3)
+,	 programTrack        	 	 (4)
+,	 autoTrack           	 	 (5)
+}
+
+
+
+-- This parameter configures and reports the nominal return carrier frequency disregarding
+--  any Doppler shift.
+-- 
+antTrackingRxNominalFreqType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 14 1 1 }
+
+-- The engineering unit of this parameter is Hertz.
+AntTrackingRxNominalFreq	 ::= INTEGER  (2200000000 .. 32300000000)
+
+
+-- This enumerated parameter configures and reports the polarization of the channel
+--  that shall be used for tracking purposes. If automatic selection is chosen, the
+--  parameter specifies how much larger in 1/10 dB the power observed for the unselected
+--  polarization must be before a switch-over to the polarization with the stronger
+--  signal is performed. 
+antTrackingSignalPolarizationType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 15 1 1 }
+
+AntTrackingSignalPolarization	 ::= CHOICE
+{
+	 lhc                 	 [0]	 	 NULL
+,	 rhc                 	 [1]	 	 NULL
+,	 -- The engineering unit of this element is 1/10 dB.
+	 autoHysteresis      	 [2]	 	 INTEGER  (0 .. 100)
+}
+
+
+
+-- This enumerated parameter configures and reports for which condition the Doppler
+--  predicts have been calculated. It can take on three values:
+-- - 1-way: this mode
+--  will be used when the spacecraft is not locked to a forward link signal or while
+--  the spacecraft transponder is commanded to non-coherent mode or when the spacecraft
+--  receiver is in 'coherency enabled' mode and the forward link carrier frequency is
+--  ramped such that the Doppler on the forward link is compensated, i.e., the spacecraft
+--  always 'sees' the nominal forward link frequency; in this case it does not matter
+--  if the forward link is radiated by the same station as the one that is receiving
+--  the return link or a different station; 
+-- - 2-way: this mode is applied when the
+--  spacecraft receiver is commanded to 'coherency enabled' mode and the station that
+--  is receiving the return link also radiates the forward link, the latter at a constant
+--  frequency;
+-- - 3-way: this mode is applied when the spacecraft receiver is in 'coherency
+--  enabled' mode and a station different from the one receiving the return link is
+--  radiating the forward link signal at a known constant frequency.
+-- 
+-- 
+antTrackingRxPredictModeType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 16 1 1 }
+
+AntTrackingRxPredictMode	 ::= ENUMERATED
+{
+	 oneWay              	 	 (0)
+,	 twoWay              	 	 (1)
+,	 threeWay            	 	 (2)
+}
+
+
+
+-- This parameter configures and reports the band in Hz centered around the ntRcptNominalFreq,
+--  possibly corrected for the expected Doppler offset, in which the receiver shall
+--  search for the carrier signal. This parameter is also valid in case of a suppressed
+--  carrier modulation scheme.
+antTrackingRxFreqUncertaintyType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 17 1 1 }
+
+-- The engineering unit of this parameter is Hertz.
+AntTrackingRxFreqUncertainty	 ::= INTEGER  (0 .. 1500000)
+
+
+-- This parameter can only be set by local EM, not by the x-support user.
+-- This enumerated
+--  parameter reports the configuration of the tracking receiver and as such is only
+--  supported by antennas that are configured to operate in antPointingMode = 'auto-track'
+--  mode and use a tracking receiver in closed-loop pointing mode. The values the parameter
+--  may have are:
+-- - 'carrier tracking loop': the tracking receiver tracks the remnant
+--  carrier by means of a carrier tracking PLL;
+-- - 'cross-correlation mode': the tracking
+--  receiver tracks the return link signal by means of checking for the spectral symmetry
+--  (e.g. in case of suppressed carrier modulation schemes).
+-- If a tracking receiver
+--  is not available or not used, this parameter shall be flagged as undefined.
+antTrackingRxModeType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 18 1 1 }
+
+AntTrackingRxMode   	 ::= ENUMERATED
+{
+	 carrierTrackingMode 	 	 (0)
+,	 crossCorrelationMode	 	 (1)
+}
+
+
+
+-- This parameter reports the tracking receiver's dual-sided tracking loop bandwidth
+--  in tenth Hz. Depending on the mode the tracking receiver operates in, this is either
+--  the bandwidth of the PLL tracking the remnant carrier or the frequency range observed
+--  for checking spectral symmetry.
+-- If a tracking receiver is not available or not
+--  used, this parameter shall be flagged as undefined.
+-- In some implementations one
+--  receiver may be used both for antenna tracking and reception of telemetry and ranging.
+--  If so, the parameters of that receiver will be represented in both the Antenna FR
+--  type and the Rtn401SpaceLinkCarrierRcpt FR type.
+antTrackingRxLoopBwdthType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 19 1 1 }
+
+-- The engineering unit of this parameter is 1/10 Hertz.
+AntTrackingRxLoopBwdth	 ::= INTEGER  (1 .. 1000000)
+
+
+-- This enumerated parameter configures and reports the order of the carrier tracking
+--  loop. It can take on the following values:
+-- - 'first order': such loop is hardly
+--  ever used because it has a static phase error even in case of a constant return
+--  link carrier frequency;
+-- - 'second order': this is the most commonly used loop as
+--  it has no static phase error for a constant return link carrier frequency;
+-- - 'third
+--  order': such configuration may have to be used in case of high Doppler rates, as
+--  such loop has no static phase error even when the return link carrier frequency
+--  is sweeping, but initial acquisition is more difficult with such loop. 
+antTrackingRxOrderOfLoopType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 20 1 1 }
+
+AntTrackingRxOrderOfLoop	 ::= ENUMERATED
+{
+	 firstOrder          	 	 (0)
+,	 secondOrder         	 	 (1)
+,	 thirdOrder          	 	 (2)
+}
+
+
+
+-- This parameter reports the return link signal level in tenth of dBm as observed by
+--  the tracking receiver, i.e., the signal level derived from the tracking receiver
+--  AGC reading. As to have comparable, i.e., station level plan independent values,
+--  the level reading should be calibrated to the LNA input. Due to the levels to be
+--  expected, the numbers will always be negative.
+-- If a tracking receiver is not available
+--  or not used, this parameter shall be flagged as undefined.
+-- In some implementations
+--  one receiver may be used both for antenna tracking and reception of telemetry and
+--  ranging. If so, the parameters of that receiver will be represented in both the
+--  Antenna FR type and the Rtn401SpaceLinkCarrierRcpt FR type.
+antTrackingRxInpLevelType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 21 1 1 }
+
+-- The engineering unit of this 1/10 dBm
+AntTrackingRxInpLevel	 ::= INTEGER  (-2000 .. -30)
+
+
+-- This enumerated parameter reports the lock status of the tracking receiver and as
+--  such is only supported by antennas that are configured to operate in antPointingMode
+--  = 'auto-track' mode and use a tracking receiver for closed-loop pointing. The values
+--  the parameter may have are:
+-- - 'locked': the tracking receiver has locked on the
+--  return link signal and consequently is driving the antenna pointing;
+-- - 'not locked':
+--  the tracking receiver is not locked on the return link signal and therefore cannot
+--  drive the antenna pointing. 
+-- As a consequence, the antPointingMode will have changed
+--  to 'program-track' and won't return to 'auto-track' until tracking receiver lock
+--  is (re-)acquired. If a tracking receiver is not available or not used, this parameter
+--  shall be flagged as undefined.
+-- In some implementations one receiver may be used
+--  both for antenna tracking and reception of telemetry and ranging. If so, the parameters
+--  of that receiver will be represented in both the Antenna FR type and the Rtn401SpaceLinkCarrierRcpt
+--  FR type.
+antTrackingRxLockStatType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 22 1 1 }
+
+AntTrackingRxLockStat	 ::= ENUMERATED
+{
+	 locked              	 	 (0)
+,	 notLocked           	 	 (1)
+}
+
+
+
+-- This parameter configures and reports the length in minutes of the period during
+--  which the wind speed and peak wind speed are observed for the calculation of the
+--  antMeanWindSpeed and antPeakWindSpeed parameters.
+antWindIntegrationTimeType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 23 1 1 }
+
+-- The engineering unit of this parameter is minutes.
+AntWindIntegrationTime	 ::= INTEGER  (1 .. 60)
+
+
+-- This parameter reports the wind speed as observed close to the antenna. This parameter
+--  is measured in tenth m/s and averaged over the most recent period where the length
+--  of the period is specified by the antWindIntegrationTime parameter.
+antMeanWindSpeedType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 24 1 1 }
+
+-- The engineering unit of this parameter is 1/10 meter per second.
+AntMeanWindSpeed    	 ::= INTEGER  (0 .. 1000)
+
+
+-- This parameter reports the highest wind speed observed close to the antenna during
+--  the most recent period  period where the length of the period is specified by the
+--  antWindIntegrationTime parameter. This parameter is measured in tenth m/s.
+antPeakWindSpeedType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 25 1 1 }
+
+-- The engineering unit of this parameter is 1/10 meter per second.
+AntPeakWindSpeed    	 ::= INTEGER  (0 .. 1000)
+
+
+-- This parameter reports the current wind direction in degrees, where 0 degrees corresponds
+--  to north and 90 degrees to east.
+antWindDirectionType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 26 1 1 }
+
+-- The engineering unit of this parameter is degree.
+AntWindDirection    	 ::= INTEGER  (0 .. 359)
+
+
+-- This parameter reports the amount of precipitation in mm that accumulated since 0:00
+--  UTC of the current day.
+antAccumulatedPrecipitationType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 27 1 1 }
+
+-- The engineering unit of this parameter is millimeter.
+AntAccumulatedPrecipitation	 ::= INTEGER  (0 .. 100)
+
+
+-- This parameter reports the precipitation rate in mm/h as observed during the most
+--  recent hour.
+antPrecipitationRateType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 28 1 1 }
+
+-- The engineering unit of this parameter is millimeter per hour.
+AntPrecipitationRate	 ::= INTEGER  (0 .. 100)
+
+
+-- This parameter reports the relative humidity in % as observed by an outdoor meteorological
+--  sensor at the station. This parameter shall be flagged as invalid if the value from
+--  the meteo unit is invalid and it shall be flagged as unavailable if this parameter
+--  is not available at this time.
+-- Note: Time-tagged meteo data (relative humidity,
+--  atmospheric pressure, temperature) is regarded a radiometric product and therefore
+--  not part of the monitoring data.
+antRelativeHumidityType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 29 1 1 }
+
+-- The engineering unit of this parameter is percent.
+AntRelativeHumidity 	 ::= INTEGER  (0 .. 100)
+
+
+-- This parameter reports the atmospheric pressure in hPa as observed by an outdoor
+--  meteorological sensor at the station. This parameter shall be flagged as invalid
+--  if the value from the meteo unit is invalid and it shall be flagged as unavailable
+--  if this parameter is not available at this time.
+antAtmosphericPressureType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 30 1 1 }
+
+-- The engineering unit of this parameter is 100 Pascal (hPa).
+AntAtmoshericPressure	 ::= INTEGER  (800 .. 1100)
+
+
+-- This parameter reports the temperature in �C as observed by an outdoor meteorological
+--  sensor at the station. This parameter shall be flagged as invalid if the value from
+--  the meteo unit is invalid and it shall be flagged as unavailable if this parameter
+--  is not available at this instant in time.
+antAmbientTemperatureType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 1 31 1 1 }
+
+-- The engineering unit of this parameter is degree Celsius.
+AntAmbientTemperature	 ::= INTEGER  (-100 .. 100)
+
+
+-- The event value reports the antResourceStatValue that applies since the notified
+--  antResourceStatChange event occurred.
+antEventResourceStatValueType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 2 1 1 1 }
+
+AntEventResourceStatValue	 ::= AntResourceStat
+
+
+-- The event value reports the antTrackingRxLockStat that applies since the notified
+--  antTrackingRxLockStatChange event occurred.
+antEventTrackingRxLockStatType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 2 2 1 1 }
+
+AntEventTrackingRxLockStat	 ::= AntTrackingRxLockStat
+
+
+-- The event value reports if the wind condition are critical in the sense that stowing
+--  of the antenna might become necessary ('warning') or that the wind speed necessitates
+--  the immediate stowing of the antenna ('stowing').
+antWindSpeedCriticalityType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 2 3 1 1 }
+
+AntWindSpeedCriticality	 ::= ENUMERATED
+{
+	 warning             	 	 (0)
+,	 stowing             	 	 (1)
+}
+
+
+
+-- The directive qualifier specifies the FR instance the directive shall act on and
+--  contains a set of parameter identifier and parameter value pairs. To be valid, the
+--  parameter identifier must reference a controllable parameter of the antenna FR and
+--  the parameter value must be of the same type as the parameter value that shall be
+--  set.
+antContrParamIdsAndValuesType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 1000 3 1 1 1 }
+
+AntContrParamIdsAndValues	 ::= DirectiveQualifier
+
+
+-- This enumerated parameter reports the Fwd401SpaceLinkCarrierXmit FR resource status
+--  and can take on four values:
+-- - 'configured': the forward link equipment has been
+--  configured, but the carrier has not been brought up or has been stopped;
+-- - 'operational':
+--  the forward link is active, i.e., the carrier is up;
+-- - 'interrupted': a failure
+--  has been detected, e.g. carrier still on outside the transmission mask, that resulted
+--  in the carrier being shut down;
+-- - 'halted': the forward link has been taken out
+--  of service, e.g. due to failed HPA cooling.
+fwd401CarrierXmitResourceStatType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 2000 1 1 1 1 }
+
+Fwd401CarrierXmitResourceStat	 ::= ResourceStat
+
+
+-- This parameter configures and reports the name assigned to the forward physical channel.
+--  This name is a Visible String which has a length of 1 to 32 characters.
+fwd401CarrierXmitPhysChnlNameType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 2000 1 2 1 1 }
+
+Fwd401CarrierXmitPhysChnlName	 ::= VisibleString (SIZE( 1 .. 32)) 
+
+
+-- This enumerated parameter configures and reports the current state of the carrier
+--  radiation and can take on three values:
+-- - 'radiating into space': the carrier is
+--  presently up and the signal is radiated via the antenna;
+-- - 'radiating into test
+--  load': the carrier is presently up and the signal is radiated into the water load;
+-- -
+--  'non-radiating': the carrier is presently down, i.e., no signal is being radiated.
+fwd401CarrierXmitStatType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 2000 1 3 1 1 }
+
+Fwd401CarrierXmitStat	 ::= ENUMERATED
+{
+	 radiatingIntoSpace  	 	 (0)
+,	 radiatingIntoTestLoad	 	 (1)
+,	 nonRadiating        	 	 (2)
+}
+
+
+
+-- This parameter configures and reports the current forward link signal level expressed
+--  as Equivalent Isotropically Radiated Power (EIRP) in dBW.
+fwd401CarrierXmitEirpType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 2000 1 4 1 1 }
+
+-- The engineering unit of this parameter is dBW.
+Fwd401CarrierXmitEirp	 ::= INTEGER  (0 .. 150)
+
+
+-- This enumerated parameter configures and reports the configured forward link polarization
+--  and can take on two values:
+-- - 'lcp': the carrier is radiated with left hand circular
+--  polarization;
+-- - 'rcp': the carrier is radiated in right hand circular polarization.
+-- Note:
+--  Polarization is defined from the point of view of the source, i.e., in the direction
+--  of the wave propagation.
+fwd401CarrierXmitPolarizationType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 2000 1 5 1 1 }
+
+Fwd401CarrierXmitPolarization	 ::= ENUMERATED
+{
+	 lhc                 	 	 (0)
+,	 rhc                 	 	 (1)
+}
+
+
+
+-- This parameter reports the current forward link frequency in Hz. In general, the
+--  frequency will be constant, except during the forward link sweep and for Category
+--  B missions in case the forward link is being ramped as to compensate for the Doppler
+--  shift and rate on the forward link.
+fwd401CarrierXmitActualCarrierFreqType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 2000 1 6 1 1 }
+
+-- The engineering unit of this parameter is Hertz.
+Fwd401CarrierXmitActualCarrierFreq	 ::= INTEGER  (2015000000 .. 40500000000)
+
+
+-- This parameter configures and reports the controlled nominal forward link frequency
+--  in Hz and if the forward link frequency shall be ramped to compensate the 1-way
+--  Doppler offset.
+fwd401CarrierXmitContrNominalCarrierFreqType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 2000 1 7 1 1 }
+
+-- The engineering unit of this parameter is Hertz.
+Fwd401CarrierXmitContrNominalCarrierFreq	 ::= SEQUENCE
+{
+	 -- The engineering unit of this element is Hertz.
+	 nominalFwdLinkFreq  	 INTEGER  (2025000000 .. 40500000000)
+,	 fwdLinkRamping      	 ENUMERATED
+	 {
+	 	 rampingOff          	 	 (0)
+	 ,	 rampingOn           	 	 (1)
+	 }
+
+}
+
+
+
+-- This enumerated parameter reports if the frequency generation of the FR is locked
+--  to a reference frequency or free running. It can take on the values
+-- - 'lockedToRefFreq;
+-- -
+--  'noRefFreqAvailable'.
+fwd401CarrierXmitReferenceFreqLockType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 2000 1 8 1 1 }
+
+Fwd401CarrierXmitReferenceFreqLock	 ::= ENUMERATED
+{
+	 lockedToRefFreq     	 	 (0)
+,	 noRefFreqAvailable  	 	 (1)
+}
+
+
+
+-- This enumerated parameter configures and reports the current state of the carrier
+--  modulation and can take on two values:
+-- - 'on': the carrier is presently being modulated;
+-- -
+--  'off': the carrier is presently not being modulated.
+-- Note: This parameter reports
+--  the modulation being off also when this is not explicitly commanded, e.g. when it
+--  is forced off automatically because the forward link sweep is active (fwd401CarrierXmitSweepProcedure
+--  = 'active').
+fwd401CarrierXmitModType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 2000 1 9 1 1 }
+
+Fwd401CarrierXmitMod	 ::= ENUMERATED
+{
+	 on                  	 	 (0)
+,	 off                 	 	 (1)
+}
+
+
+
+-- This parameter configures and reports whether the symbol stream directly bpsk modulates
+--  the forward carrier such that the carrier is suppressed or directly bi-phase-L modulates
+--  the carrier such that there is a remnant carrier or modulates a subcarrier that
+--  in turn modulates the forward carrier. It can take on the following values:
+-- - 'bpsk':
+--  the carrier is bpsk modulated by the input data symbol stream; 
+-- - 'direct': the
+--  carrier is directly bi-phase-L modulated by the input data symbol stream;
+-- - 'subcarrier':
+--  the carrier modulating signal is the subcarrier which in turn is PSK modulated by
+--  the to be radiated symbol stream.
+-- For all three modulation options the parameter
+--  specifies if the Doppler shift of the symbol stream shall be compensated and if
+--  so, if a fixed offset (in 1/10000 Hz) shall be applied or if the symbol rate shall
+--  be continuously updated (ramped) such that the spacecraft does not "see" any Doppler
+--  shift of the symbol rate. Given that CCSDS 401.0 prescribes that subcarrier and
+--  symbol rate have to be coherent, the subcarrier if applicable is Doppler shift compensated
+--  as the symbol rate.
+-- As applicable, the nominal symbol rate (in 1/10000 Hz) and
+--  nominal subcarrier frequency (in 1/10000 Hz) and the associated modulation index
+--  (in 1/100 rad) are specified.
+fwd401CarrierXmitSymbolStreamModTypeType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 2000 1 10 1 1 }
+
+Fwd401CarrierXmitSymbolStreamModType	 ::= SEQUENCE
+{
+	 symbolRateDopplerCompensation	 CHOICE
+	 {
+	 	 noCompensation      	 [0]	 	 NULL
+,	 	 -- The engineering unit of this parameter is 1/1000 Hertz.
+	 	 staticOffset        	 [1]	 	 INTEGER  (-30000000 .. 30000000)
+,	 	 -- Given that CCSDS requires coherency of subcarrier and symbol clock, ramping of the symbol rate implies that also the subcarrier frequency is ramped, in case a subcarrier is used.
+	 	 ramping             	 [2]	 	 NULL
+	 }
+
+,	 modType             	 CHOICE
+	 {
+	 	 bpsk                	 [0]	 	 SEQUENCE
+	 	 {
+	 	 	 bpskSymbolRate      	 CHOICE
+	 	 	 {
+	 	 	 	 -- The engineering unit of this parameter is 1/100000 Hertz.
+	 	 	 	 ccsdsBpskSymcolRate 	 [0]	 	 INTEGER  (100000000 | 200000000 | 400000000 | 800000000 | 1600000000 | 3200000000 | 6400000000 | 12800000000 | 25600000000 | 51200000000 | 102400000000 | 204800000000)
+,	 	 	 	 -- The engineering unit of this parameter is 1/100000 Hertz.
+	 	 	 	 nonCcsdsBpskSymbolRate	 [1]	 	 INTEGER  (100000000 .. 204800000000)
+	 	 	 }
+
+,	 	 	 tcBpskPcmFormat     	 PcmFormat (biPhaseL)
+	 	 }
+
+,	 	 direct              	 [1]	 	 SEQUENCE
+	 	 {
+	 	 	 -- The engineering unit of this parameter is 1/100 radian
+	 	 	 symbolStreamDirectModulationIndex	 INTEGER  (20 .. 140)
+,	 	 	 directModSymbolRate 	 CHOICE
+	 	 	 {
+	 	 	 	 -- The engineering unit of this parameter is 1/100000 Hertz.
+	 	 	 	 ccsdsDirectModSymbolRate	 [0]	 	 INTEGER  (400000000 | 800000000 | 1600000000 | 3200000000 | 6400000000 | 12800000000 | 25600000000)
+,	 	 	 	 -- The engineering unit of this parameter is 1/100000 Hertz.
+	 	 	 	 nonCcsdsDirectModSymbolRate	 [1]	 	 INTEGER  (400000000 .. 25600000000)
+	 	 	 }
+
+,	 	 	 tcDirectPcmFormat   	 PcmFormat (biPhaseL)
+	 	 }
+
+,	 	 subcarrier          	 [2]	 	 SEQUENCE
+	 	 {
+	 	 	 subcarrierNominalFrequency	 CHOICE
+	 	 	 {
+	 	 	 	 ccsdsNominalSubcarrierFrequencyAndSymbolRate	 [0]	 	 CHOICE
+	 	 	 	 {
+	 	 	 	 	 subcarrier8Khz      	 [0]	 	 SEQUENCE
+	 	 	 	 	 {
+	 	 	 	 	 	 -- The engineering unit of this parameter is 1/100000 Hertz.
+	 	 	 	 	 	 subcarrierNominalFrequency	 INTEGER  (800000000)
+,	 	 	 	 	 	 -- The engineering unit of this parameter is 1/100000 Hertz.
+	 	 	 	 	 	 nominalSymbolRate   	 INTEGER  (781250 | 1562500 | 3125000 | 6250000 | 12500000 | 25000000 | 50000000 | 100000000 | 200000000)
+	 	 	 	 	 }
+
+,	 	 	 	 	 subcarrier16Khz     	 [1]	 	 SEQUENCE
+	 	 	 	 	 {
+	 	 	 	 	 	 -- The engineering unit of this parameter is 1/100000 Hertz.
+	 	 	 	 	 	 subcarrierNominalFrequency	 INTEGER  (1600000000)
+,	 	 	 	 	 	 -- The engineering unit of this parameter is 1/100000 Hertz
+	 	 	 	 	 	 nominalSymbolRate   	 INTEGER  (781250 | 1562500 | 3125000 | 6250000 | 12500000 | 25000000 | 50000000 | 100000000 | 200000000 | 400000000)
+	 	 	 	 	 }
+
+	 	 	 	 }
+
+,	 	 	 	 nonCcsdsSubcarrierFrequencyAndSymbolRate	 [1]	 	 SEQUENCE
+	 	 	 	 {
+	 	 	 	 	 -- The engineering unit of this parameter is 1/100000 Hertz.
+	 	 	 	 	 nominalSubcarrierFrequency	 INTEGER  (800000000 .. 1600000000)
+,	 	 	 	 	 -- The engineering unit of this parameter is 1/100000 Hertz.
+	 	 	 	 	 nominalSymbolRate   	 INTEGER  (781250 .. 400000000)
+	 	 	 	 }
+
+	 	 	 }
+
+,	 	 	 -- The engineering unit of this parameter is 1/100 radian.
+	 	 	 subcarrierModIndex  	 INTEGER  (20 .. 140)
+,	 	 	 tcSubcarrierPcmFormat	 PcmFormat (nrzL | nrzM)
+	 	 }
+
+	 }
+
+}
+
+
+
+-- This enumerated parameter configures and reports if the ranging signal shall be suppressed
+--  in the presence of a to be radiated telecommand signal. It can take on the values
+-- 'yes'
+-- 'no'
+fwd401CarrierXmitTcPriorityType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 2000 1 11 1 1 }
+
+Fwd401CarrierXmitTcPriority	 ::= ENUMERATED
+{
+	 yes                 	 	 (0)
+,	 no                  	 	 (1)
+}
+
+
+
+-- This parameter configures and reports the configured peak modulation index for the
+--  ranging signal in 1/100 radians. If the fwd401CarrierXmitSymbolStreamModType is
+--  'bpsk', concurrent uplink of telecommands and ranging is not possible.
+fwd401CarrierXmitRngModIndexType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 2000 1 12 1 1 }
+
+-- The engineering unit of this parameter is 1/100 radian.
+Fwd401CarrierXmitRngModIndex	 ::= SEQUENCE
+{
+	 -- The engineering unit of this element is 1/100 radian.
+	 duringAmbiguityResolution	 INTEGER  (0 .. 140)
+,	 -- The engineering unit of this element is 1/100 radian
+	 afterAmbiguityResolution	 INTEGER  (0 .. 140)
+}
+
+
+
+-- This enumerated parameter configures and reports the current state of the carrier
+--  sweep and can take on two values:
+-- - 'active': the carrier is presently being swept;
+-- -
+--  'not active': the carrier is presently not being swept, i.e., the nominal frequency
+--  possibly compensated for Doppler is being radiated. 
+-- Modulation shall be forced
+--  off, whenever the sweep is active. In case the forward link frequency is being ramped
+--  as to compensate for Doppler shift and rate on the forward link (Category B missions
+--  only), this is not regarded to be a sweep.
+-- The sweep procedure is strated by setting
+--  the fwd401CarrierXmitSweepProcStat parameter to 'active' by means of the fwd401CarrierXmitSetContrParams
+--  directive. Once the sweep procedure as specified by the  parameter fwd401CarrierXmitSweepProfile
+--  is completed, the fwd401CarrierXmitSweepProcStat parameter is set automatically
+--  to 'notActive'. and modulation by TC and ranging is re-enabled. 
+-- If necessary,
+--  the sweep procedure while executing can be stopped by setting the fwd401CarrierXmitSweepProcStat
+--  parameter to 'notActive' using the fwd401CarrierXmitSetContrParams directive. In
+--  that case the forward link carrier frequency jumps back to the frequency set by
+--  the fwd401CarrierXmitContrNominalCarrierFreq parameter, compensated for 1-way Doppler
+--  if so configured.
+fwd401CarrierXmitSweepProcStatType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 2000 1 13 1 1 }
+
+Fwd401CarrierXmitSweepProcStat	 ::= ENUMERATED
+{
+	 active              	 	 (0)
+,	 notActive           	 	 (1)
+}
+
+
+
+-- This complex parameter configures and reports the start frequency in Hz of the first
+--  leg of the sweep and for each leg it then specifies the stop frequency in Hz, the
+--  sweep rate in Hz/s and the duration of the dwell period in seconds (i.e., the time
+--  during which the carrier frequency is not changed) before the next leg is started.
+--  The assumption is that there are no frequency discontinuities, i.e., the start frequency
+--  of a sweep leg is always equal to the stop frequency of the previous leg.
+-- 
+-- If
+--  parameter fwd401CarrierXmitContrNominalCarrierFreq is configured such that by means
+--  of ramping of the forward link frequency the 1-way Doppler is compensated, then
+--  the specified sweep profile frequencies will be modified automatically in accordance
+--  with the Doppler offeset given at the given time.
+fwd401CarrierXmitSweepProfileType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 2000 1 14 1 1 }
+
+Fwd401CarrierXmitSweepProfile	 ::= SEQUENCE
+{
+	 -- The engineering unit of this parameter is Hertz.
+	 startfreq           	 INTEGER  (2025000000 .. 40500000000)
+,	 sweepLegs           	 SEQUENCE  (SIZE( 1 .. 3))  OF	 SEQUENCE
+	 	 {
+	 	 	 -- The engineering unit of this parameter is second
+	 	 	 dwellTime           	 INTEGER  (0 .. 20)
+,	 	 	 -- The engineering unit of this parameter is hertz per second.
+	 	 	 sweepRate           	 INTEGER  (1 .. 32000)
+,	 	 	 -- The engineering unit of this parameter is Hertz.
+	 	 	 endFreq             	 INTEGER  (2025000000 .. 40500000000)
+	 	 }
+
+}
+
+
+
+-- This parameter reports the actual subcarrier frequency in 1/1000 Hz.  The fine resolution
+--  is specified here as to enable reporting of the fine tuning of the subcarrier frequency
+--  in cases where Doppler shift compensation is applied. In case that no subcarrier
+--  is used (fwd401CarrierXmitSymbolStreamModType ? 'subcarrier'), this parameter shall
+--  report '0'.  
+-- Note: The specified range is intended to also cover the case of non-CCSDS
+--  missions. 
+fwd401CarrierXmitSubcarrierFreqType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 2000 1 15 1 1 }
+
+-- The engineering unit of this parameter is 1/10000 Hertz
+Fwd401CarrierXmitSubcarrierFreq	 ::= INTEGER  (0 .. 320000000)
+
+
+-- This enumerated parameter configures and reports if the subcarrier is currently being
+--  modulated and can take on two values:
+-- - 'on': the subcarrier is currently being
+--  modulated;
+-- - 'off': the subcarrier is currently not being modulated.
+-- In case no
+--  subcarrier is used (fwd401CarrierXmitSymbolStreamModType ? subcarrier'), this parameter
+--  shall be flagged as undefined.
+fwd401CarrierXmitSubcarrierModType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 2000 1 16 1 1 }
+
+Fwd401CarrierXmitSubcarrierMod	 ::= ENUMERATED
+{
+	 on                  	 	 (0)
+,	 off                 	 	 (1)
+}
+
+
+
+-- This parameter reports the actual forward link symbol rate in 1/10000 Hz, 
+fwd401CarrierXmitSymbolRateType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 2000 1 17 1 1 }
+
+-- The engineering unit of this parameter is 1/10000 Hertz.
+Fwd401CarrierXmitSymbolRate	 ::= INTEGER  (78125 .. 205100000000)
+
+
+-- The event value reports the fwd401CarrierXmitResourceStat value that applies since
+--  the notified fwd401CarrierXmitStatChange event occurred.
+fwd401CarrierXmitEventResourceStatValueType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 2000 2 1 1 1 }
+
+Fwd401CarrierXmitEventResourceStatValue	 ::= Fwd401CarrierXmitResourceStat
+
+
+-- The directive qualifier specifies the FR instance the directive shall act on and
+--  contains a set of parameter identifier and parameter value pairs. To be valid, the
+--  parameter identifier must reference a controllable parameter of the Fwd401SpaceLinkCarrierXmit
+--  FR and the parameter value must be of the same type as the parameter value that
+--  shall be set.
+-- 
+fwd401CarrierXmitContrParamIdsAndValuesType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 2000 3 1 1 1 }
+
+Fwd401CarrierXmitContrParamIdsAndValues	 ::= DirectiveQualifier
+
+
+-- This enumerated parameter reports the FwdLinkRng FR resource status and can take
+--  on four values:
+-- - 'configured';
+-- - 'operational';
+-- - 'interrupted';
+-- - 'halted'.
+fwdLinkRngResourceStatType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 2001 1 1 1 1 }
+
+FwdLinkRngResourceStat	 ::= ResourceStat
+
+
+-- This enumerated parameter configures and reports if the ranging system is active
+--  and can take on two values:
+-- - 'on': the ranging system is presently active, i.e.,
+--  the ranging system is generating the ranging signal and modulating it on the forward
+--  link carrier;
+-- - 'off': the ranging system is presently not active as far as the
+--  forward link is concerned, i.e., no ranging signal is modulated on the forward link
+--  carrier.
+fwdLinkRngModType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 2001 1 2 1 1 }
+
+FwdLinkRngMod       	 ::= ENUMERATED
+{
+	 on                  	 	 (0)
+,	 off                 	 	 (1)
+}
+
+
+
+-- This enumerated parameter configures and reports reports the type of ranging that
+--  is being used. It can take on the following values:
+-- - 'toneCode': the system performs
+--  range measurements in accordance with ECSS-E-50-02A or similar;
+-- - 'pseudoNoise':
+--  the system performs range measurements in accordance with CCSDS 414.1-B-2.
+-- In addition
+--  it permits to choose the Doppler compensation applied to the forward link ranging
+--  signal. It may be
+-- - 'noCompensation';
+-- - '1-way': the spacecraft "sees" the nominal
+--  ranging signal;
+-- - '2-way': the ESLT "sees" the nominal ranging signal.
+fwdLinkRngTypeType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 2001 1 3 1 1 }
+
+FwdLinkRngType      	 ::= SEQUENCE
+{
+	 dopplerCompensation 	 ENUMERATED
+	 {
+	 	 noCompensation      	 	 (0)
+	 ,	 oneWay              	 	 (1)
+	 ,	 twoWay              	 	 (2)
+	 }
+
+,	 rngType             	 CHOICE
+	 {
+	 	 toneCode            	 [0]	 	 SEQUENCE
+	 	 {
+	 	 	 -- The engineering unit of this parameter is Hertz.
+	 	 	 toneFreq            	 INTEGER  (100000 .. 1500000)
+,	 	 	 rngCodeLength          	 INTEGER  (1 .. 24)
+,	 	 	 toneWaveForm        	 ENUMERATED
+	 	 	 {
+	 	 	 	 sine                	 	 (0)
+	 	 	 ,	 square              	 	 (1)
+	 	 	 }
+
+,	 	 	 -- If dopplerCompensation is oneWay, the spacecraft will "see" the nominal tone frequency. If dopplerCompensation is twoWay, the ESLT will "see" the nominal tone frequency.
+	 	 	 dopplerCompensation 	 ENUMERATED
+	 	 	 {
+	 	 	 	 none                	 	 (0)
+	 	 	 ,	 oneWay              	 	 (1)
+	 	 	 ,	 twoWay              	 	 (2)
+	 	 	 }
+
+,	 	 	 -- The engineering unit of this element is seconds.
+	 	 	 codeComponentXmitDuration	 INTEGER  (1 .. 1000000)
+	 	 }
+
+,	 	 pseudoNoise         	 [1]	 	 SEQUENCE
+	 	 {
+	 	 	 chipRate            	 CHOICE
+	 	 	 {
+	 	 	 	 iis2                	 [0]	 	 SEQUENCE
+	 	 	 	 {
+	 	 	 	 	 i                   	 INTEGER  (2)
+,	 	 	 	 	 k                   	 INTEGER  (8 .. 10)
+	 	 	 	 }
+
+,	 	 	 	 kis6                	 [1]	 	 SEQUENCE
+	 	 	 	 {
+	 	 	 	 	 i                   	 INTEGER  (1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 16 | 32 | 64)
+,	 	 	 	 	 k                   	 INTEGER  (6)
+	 	 	 	 }
+
+	 	 	 }
+
+,	 	 	 codeType            	 ENUMERATED
+	 	 	 {
+	 	 	 	 t2bSine             	 	 (0)
+	 	 	 ,	 t2bSquare           	 	 (1)
+	 	 	 ,	 t4bSine             	 	 (2)
+	 	 	 ,	 t4bSquare           	 	 (3)
+	 	 	 }
+
+	 	 }
+
+	 }
+
+}
+
+
+
+-- This parameter reports the code component currently being transmitted. If the FwdLinkRngType
+--  is 'pseudoNoise', or once the ambiguity has been resolved, this parameter is flagged
+--  as undefined.
+fwdLinkRngCodeComponentType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 2001 1 4 1 1 }
+
+FwdLinkRngCodeComponent	 ::= INTEGER  (1 .. 24)
+
+
+-- The event value reports the fwdLinkRngResourceStat value that applies since the notified
+--  fwdLinkRngStatChange event occurred.
+fwdLinkRngEventResourceStatValueType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 2001 2 1 1 1 }
+
+FwdLinkRngEventResourceStatValue	 ::= FwdLinkRngResourceStat
+
+
+-- The directive qualifier specifies the FR instance the directive shall act on and
+--  contains a set of parameter identifier and parameter value pairs. To be valid, the
+--  parameter identifier must reference a controllable parameter of the FwdLinkRng FR
+--  and the parameter value must be of the same type as the parameter value that shall
+--  be set.
+-- 
+fwdLinkRngContrParamIdsAndValuesType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 2001 3 1 1 1 }
+
+FwdLinkRngContrParamIdsAndValues	 ::= DirectiveQualifier
+
+
+-- This enumerated parameter reports on the return link carrier resource status and
+--  can take on four values:
+-- - 'configured': the return link equipment has been configured
+--  and the antenna moved to point, but due to geometry or spacecraft timeline, no carrier
+--  signal is expected to be seen at this time or the expected LOS time has passed where
+--  again LOS may be due to geometry or due to the spacecraft timeline;
+-- - 'operational':
+--  the return link is active, i.e., all receiving equipment is in nominal condition,
+--  the expected AOS time has passed and the expected LOS has not yet been reached;
+-- -
+--  'interrupted': a failure has been detected, e.g. a receiver malfunction, that prevents
+--  the reception of the carrier signal;
+-- - 'halted': the return link has been taken
+--  out of service, e.g. due to a power failure affecting the return link string.
+rtn401CarrierRcptResourceStatType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 1 1 1 }
+
+Rtn401CarrierRcptResourceStat	 ::= ResourceStat
+
+
+-- This parameter configures and reports the name assigned to the return physical channel.
+--  This name is a Visible String which has a length of 1 to 32 characters.
+rtn401CarrierRcptPhysChnlNameType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 2 1 1 }
+
+Rtn401CarrierRcptPhysChnlName	 ::= VisibleString (SIZE( 1 .. 32)) 
+
+
+-- This parameter configures and reports the carrier modulation type and the associated
+--  parameters. The following options are selectable:
+-- - 'subcarrier': the symbol stream
+--  BPSK modulates a subcarrier which in turn phase modulates the carrier;
+-- - 'direct':
+--  the symbol stream directly bi-phase-L modulates the carrier with a modulation index
+--  resulting in a remnant carrier.
+-- - 'bpsk': the symbol stream bpsk modulates the
+--  carrier which means that the carrier is suppressed.
+-- - 'gmsk':
+-- - 'qpsk':
+-- 
+-- The
+--  Symbol rate is specified in 1/1000 Hz.
+rtn401CarrierRcptModulationTypeType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 3 1 1 }
+
+Rtn401CarrierRcptModulationType	 ::= CHOICE
+{
+	 subcarrier          	 [0]	 	 SEQUENCE
+	 {
+	 	 symbolRate          	 CHOICE
+	 	 {
+	 	 	 -- The engineering unit of this element is 1/1000 symbols per second.
+	 	 	 absoluteSymbolRate  	 [0]	 	 INTEGER  (1000 .. 32000000)
+,	 	 	 subcarrierFrequencySymbolRateRatio	 [1]	 	 INTEGER  (2 .. 1024)
+	 	 }
+
+,	 	 subcarrierWaveform  	 ENUMERATED
+	 	 {
+	 	 	 sine                	 	 (0)
+	 	 ,	 square              	 	 (1)
+	 	 }
+
+,	 	 -- The engineering unit of this element is 1/100 radian.
+	 	 modulationIndexTelemetry	 INTEGER  (1 .. 150)
+,	 	 pcmFormat           	 PcmFormat (nrzL)
+	 }
+
+,	 direct              	 [1]	 	 SEQUENCE
+	 {
+	 	 -- The engineering unit of this parameter is 1/1000 symbols per second.
+	 	 symbolRate          	 INTEGER  (8000000 .. 256000000)
+,	 	 -- The engineering unit of this parameter is 1/100 radian.
+	 	 modulationIndexTelemetry	 INTEGER  (1 .. 150)
+,	 	 pcmFormat           	 PcmFormat (biPhaseL)
+	 }
+
+,	 bpsk                	 [2]	 	 SEQUENCE
+	 {
+	 	 -- The engineering unit of this parameter is 1/1000 symbols per second.
+	 	 symbolRate          	 INTEGER  (64000000 .. 20000000000)
+,	 	 pcmFormat           	 PcmFormat (biPhaseL)
+,	 	 -- Enable or disable the square-root raised cosine matched filter depending on the filtering applied on the spacecraft side.
+	 	 matchedFilter       	 ENUMERATED
+	 	 {
+	 	 	 matchedFilterOn     	 	 (0)
+	 	 ,	 matchedFilterOff    	 	 (1)
+	 	 }
+
+	 }
+
+,	 -- This element specifies the symbol rate in 1/1000 per second.
+	 qpsk                	 [3]	 	 SEQUENCE
+	 {
+	 	 -- This element specifies the symbol rate in 1/1000 symbols per second
+	 	 symbolRate          	 INTEGER  (1000 .. 20000000000)
+,	 	 -- Enable or disable the square-root raised cosine matched filter depending on the filtering applied on the spacecraft side.
+	 	 matchedFilter       	 ENUMERATED
+	 	 {
+	 	 	 matchedFilterOn     	 	 (0)
+	 	 ,	 matchedFilterOff    	 	 (1)
+	 	 }
+
+	 }
+
+,	 -- This element specifies the symbol rate in 1/1000 symbol per second.
+	 oqpsk               	 [4]	 	 SEQUENCE
+	 {
+	 	 -- This element specifies the symbol rate in 1/1000 symbols per second
+	 	 symbolRate          	 INTEGER  (1000 .. 20000000000)
+,	 	 -- Enable or disable the square-root raised cosine matched filter depending on the filtering applied on the spacecraft side.
+	 	 matchedFilter       	 ENUMERATED
+	 	 {
+	 	 	 matchedFilterOn     	 	 (0)
+	 	 ,	 matchedFilterOff    	 	 (1)
+	 	 }
+
+	 }
+
+,	 gmsk                	 [5]	 	 SEQUENCE
+	 {
+	 	 -- This element specifies the symbol rate in 1/1000 symbol per second.
+	 	 symbolRate          	 INTEGER  (1000 .. 20000000000)
+,	 	 -- The scaling factor of this parameter is 1/100
+	 	 bandwidthSymbolPeriodProduct	 INTEGER  (0 .. 1000)
+,	 	 concurrentGmskAndPnRng	 ENUMERATED
+	 	 {
+	 	 	 no                  	 	 (0)
+	 	 ,	 yes                 	 	 (1)
+	 	 }
+
+	 }
+
+}
+
+
+
+-- This parameter configures and reports the channel (polarization) that shall be used
+--  as input for reception and demodulation. It can take on the following values:
+-- -
+--  'lhc';
+-- - 'rhc';
+-- - 'auto';
+-- - 'combining'.
+-- If 'auto' is chosen, the parameter
+--  specifies how much larger in 1/10 dB the power observed for the unselected polarization
+--  must be before a switch-over to the polarization with the stronger signal is performed.
+-- 'combining'
+--  means that diversity combining of the lhc and rhc channels is performed. This is
+--  only permissible for modulation schemes with remnant carrier. This element of the
+--  choice specifies the bandwidth in Hertz within which the the two signals shall be
+--  combined
+rtn401CarrierRcptPolarizationType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 4 1 1 }
+
+Rtn401CarrierRcptPolarization	 ::= CHOICE
+{
+	 lhc                 	 [0]	 	 NULL
+,	 rhc                 	 [1]	 	 NULL
+,	 -- The engineering unit of this element is 1/10 dB.
+	 autoHysteresis      	 [2]	 	 INTEGER  (0 .. 100)
+,	 -- The enginnering unit of this element is Hertz.
+	 combiningBwdth      	 [3]	 	 INTEGER  (10 .. 100000)
+}
+
+
+
+-- This parameter reports the level of the received signal in dBm as observed at the
+--  LNA input. When the Automatic Gain Control (AGC) is in coherent mode and the modulation
+--  scheme uses a remnant carrier, then the reported level refers to the carrier power.
+--  In all other cases, the reported level refers to the total signal power. 
+rtn401CarrierRcptSignalLevelType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 5 1 1 }
+
+-- The engineering unit of this parameter is dBm
+Rtn401CarrierRcptSignalLevel	 ::= INTEGER  (-250 .. -30)
+
+
+-- This parameter reports the system noise temperature in K derived from the noise density
+--  observed at the receiver input. As such, it takes into account all contributions
+--  to the noise temperature such as antenna microwave components, atmospheric noise
+--  and cosmic microwave background noise. The noise temperature varies with weather
+--  conditions and antenna elevation due to variation of the path length through the
+--  atmosphere and ground noise received by the antenna side lobes.
+rtn401CarrierRcptSystemNoiseTemperatureType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 6 1 1 }
+
+-- The engineering unit of this parameter is Kelvin.
+Rtn401CarrierRcptSystemNoiseTemperature	 ::= INTEGER  (1 .. 1000)
+
+
+-- This parameter reports (after acquisition of signal) on the power ratio of the signal
+--  received with left hand circular (LHC) polarization and the signal received with
+--  the orthogonal, i.e., right hand circular (RHC) polarization. If the angle reported
+--  is 0 degrees, then the full power is received via the LHC channel. At 45 degrees,
+--  the power in the LHC and RHC channels is equal, as if the input signal were linearly
+--  polarized. At 90 degrees, the full power is received with RHC polarization.
+-- Only
+--  stations supporting concurrent reception of LHC and RHC polarization provide this
+--  information. When this is not possible or the station is configured to use a single
+--  channel only, this parameter shall be flagged as unavailable. 
+rtn401CarrierRcptPolarizationAngleType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 7 1 1 }
+
+-- The engineering unit of this parameter is degree.
+Rtn401CarrierRcptPolarizationAngle	 ::= INTEGER  (0 .. 90)
+
+
+-- This parameter reports the lock status for the carrier, if applicable for the subcarrier,
+--  and for the symbol stream.
+rtn401CarrierRcptLockStatType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 8 1 1 }
+
+Rtn401CarrierRcptLockStat	 ::= LockStat
+
+
+-- This parameter configures and reports the expected tone signal power to noise power
+--  in the tone tracking loop bandwidth in 1/10 dB.
+rtn401CarrierRcptPredictedToneLoopSnrType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 9 1 1 }
+
+-- The engineering unit of this parameter is 1/10 dB.
+Rtn401CarrierRcptPredictedToneLoopSnr	 ::= INTEGER  (0 .. 400)
+
+
+-- This parameter reports the observed tone signal power to noise power in the tone
+--  tracking loop bandwidth in 1/10 dB.
+rtn401CarrierRcptObservedToneLoopSnrType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 10 1 1 }
+
+-- The engineering unit of this parameter is 1/10 dB.
+Rtn401CarrierRcptObservedToneLoopSnr	 ::= INTEGER  (0 .. 400)
+
+
+-- This parameter configures and reports the nominal return carrier frequency disregarding
+--  any Doppler shift.
+-- 
+rtn401CarrierRcptNominalFreqType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 11 1 1 }
+
+-- The engineering unit of this parameter is Hertz.
+Rtn401CarrierRcptNominalFreq	 ::= INTEGER  (2200000000 .. 32300000000)
+
+
+-- This parameter configures and reports the band in Hz centered around the rtn401CarrierRcptNominalFrequ,
+--  possibly corrected for the expected Doppler offset, in which the receiver shall
+--  search for the carrier signal. This parameter is also valid in case of a suppressed
+--  carrier modulation scheme.
+-- 
+rtn401CarrierRcptFreqUncertaintyType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 12 1 1 }
+
+-- The engineering unit of this parameter is Hertz.
+Rtn401CarrierRcptFreqUncertainty	 ::= INTEGER  (0 .. 1500000)
+
+
+-- This enumerated parameter configures and reports for which condition the Doppler
+--  predicts have been calculated. It can take on four values:
+-- - none: no information
+--  regarding the expected Doppler shift is available and therefore the nominal frequencies
+--  are used;
+-- - 1-way: this mode will be used when the spacecraft is not locked to
+--  a forward link signal or while the spacecraft transponder is commanded to non-coherent
+--  mode or when the spacecraft receiver is in 'coherency enabled' mode and the forward
+--  link carrier frequency is ramped such that the Doppler on the forward link is compensated,
+--  i.e., the spacecraft always 'sees' the nominal forward link frequency; in this case
+--  it does not matter if the forward link is radiated by the same station as the one
+--  that is receiving the return link or a different station; 
+-- - 2-way: this mode is
+--  applied when the spacecraft receiver is commanded to 'coherency enabled' mode and
+--  the station that is receiving the return link also radiates the forward link, the
+--  latter at a constant frequency;
+-- - 3-way: this mode is applied when the spacecraft
+--  receiver is in 'coherency enabled' mode and a station different from the one receiving
+--  the return link is radiating the forward link signal at a known constant frequency.
+rtn401CarrierRcptPredictModeType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 13 1 1 }
+
+Rtn401CarrierRcptPredictMode	 ::= ENUMERATED
+{
+	 none                	 	 (1)
+,	 oneWay              	 	 (2)
+,	 twoWay              	 	 (3)
+,	 threeWay            	 	 (4)
+}
+
+
+
+-- This parameter configures and reports the dual-sided tracking loop bandwidth in tenth
+--  Hz of the receiver and the duration in seconds within which the bandwidth reduction
+--  to the newly commanded loop bandwidth shall reached. This gradual change of the
+--  loop bandwidth is intended to avoid loss of lock. The duration for the gradual bandwidth
+--  change can be set to 'auto' or set to a specific duration. If the duration is set
+--  to 0, the newly commanded bandwidth is applied immediately. 
+rtn401CarrierRcptTrackingLoopBwdthType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 14 1 1 }
+
+-- The engineering unit of this parameter is Hertz.
+Rtn401CarrierRcptTrackingLoopBwdth	 ::= SEQUENCE
+{
+	 -- The engineering unit of this element is Hertz.
+	 trackingLoopBwdth   	 INTEGER  (1 .. 30000)
+,	 -- The engineering unit of this element is second.
+	 loopBwdthChangeDuration	 CHOICE
+	 {
+	 	 -- The duration of the bandwidth reduction is chosen automatically
+	 	 auto                	 [0]	 	 NULL
+,	 	 -- The engineering unit of this element is second. If it is set to 0, the newly commanded bandwidth is applied immediately.
+	 	 bwdthChangeDuration 	 [1]	 	 INTEGER  (0 .. 100)
+	 }
+
+}
+
+
+
+-- This enumerated parameter configures and reports the order of the carrier tracking
+--  loop. It can take on the following values:
+-- - 'first order': such loop is hardly
+--  ever used because it has a static phase error even in case of a constant return
+--  link carrier frequency;
+-- - 'second order': this is the most commonly used loop as
+--  it has no static phase error for a constant return link carrier frequency;
+-- - 'third
+--  order': such configuration may have to be used in case of high Doppler rates, as
+--  such loop has no static phase error even when the return link carrier frequency
+--  is sweeping, but initial acquisition is more difficult with such loop. 
+rtn401CarrierRcptOrderOfLoopType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 15 1 1 }
+
+Rtn401CarrierRcptOrderOfLoop	 ::= ENUMERATED
+{
+	 firstOrder          	 	 (0)
+,	 secondOrder         	 	 (1)
+,	 thirdOrder          	 	 (2)
+}
+
+
+
+-- 9This parameter reports the lock status of the the return in terms of carrier lock,
+--  subcarrier lock (if applicable) and symbol lock.
+rtn401CarrierRcptCarrierLockStatType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 16 1 1 }
+
+Rtn401CarrierRcptCarrierLockStat	 ::= LockStat
+
+
+-- This parameter reports the mean value of the phase error in 1/100 radians in the
+--  carrier tracking loop by accumulating the loop errors Ei over a period of n samples
+--  and then dividing by n. The mean M should be zero unless the loop is subject to
+--  a static phase error.
+-- A given implementation shall specify the number of samples
+--  used to calculate this paramter. This shall be recorded in the Service Agreement.
+rtn401CarrierRcptLoopMeanPhaseErrorType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 17 1 1 }
+
+-- The engineering unit of this parameter is 1/100 radian.
+Rtn401CarrierRcptLoopMeanPhaseError	 ::= INTEGER  (-629 .. 629)
+
+
+-- This parameter reports the peak absolute value of the phase error |Ei - M| in 1/100
+--  radians in the carrier tracking loop observed in the most recent n samples.
+-- A given
+--  implementation shall specify the number of samples used to calculate this parameter.
+--  This shall be recorded in the Service Agreement.
+rtn401CarrierRcptLoopPeakPhaseErrorType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 18 1 1 }
+
+-- The engineering unit of this parameter is 1/100 radian.
+Rtn401CarrierRcptLoopPeakPhaseError	 ::= INTEGER  (0 .. 629)
+
+
+-- This parameter reports the signal-to-noise ratio in the carrier tracking loop. It
+--  is derived from the carrier-loop-phase-error-std-deviation (std) as follows: SNR
+--  in 1/100 dB is given by 1000 log (2/(2PI std)^2) where log is to the base of 10.
+--  The carrier loop phase error standard deviation (or rms value) in rad over n samples,
+--  i.e. the sum of (Ei - M)^2 for i = 1 .. n is calculated, then divided by n and then
+--  the square root taken.
+-- A given implementation shall specify the number of samples
+--  used to calculate this parameter. This shall be recorded in the Service Agreement.
+rtn401CarrierRcptLoopSnrType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 19 1 1 }
+
+-- The engineering unit of this parameter is dB.
+Rtn401CarrierRcptLoopSnr	 ::= INTEGER  (-2800 .. 10000)
+
+
+-- This parameter reports the observed carrier return link frequency in Hz. This parameter
+--  therefore varies with the Doppler shift induced by the radial velocity of the spacecraft
+--  relative to the ground based antenna. In 1-way mode, the Doppler shift applies only
+--  once, but also the onboard oscillator drift affects the observed return link carrier
+--  frequency. In 2-way mode in combination with a constant forward link frequency,
+--  the Doppler shift approximately doubles with respect to the 1-way case, but the
+--  contribution of the onboard oscillator drift is eliminated.
+rtn401CarrierRcptActualFreqType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 20 1 1 }
+
+-- The engineering unit of the parameter is Hertz.
+Rtn401CarrierRcptActualFreq	 ::= INTEGER  (2199700000 .. 38500000000)
+
+
+-- This parameter reports the observed carrier return link offset in Hz with respect
+--  to the nominal return link carrier frequency. As such it reports on the onboard
+--  oscillator drift (in case of 1-way operation) plus the Doppler shift induced by
+--  the radial velocity between spacecraft and the ground-based antenna. In 2-way mode,
+--  the effect of the onboard oscillator drift is eliminated. In combination with a
+--  constant forward link frequency, the Doppler shift approximately doubles compared
+--  to the 1-way case.
+rtn401CarrierRcptFreqOffsetType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 21 1 1 }
+
+-- The engineering unit of this parameter is Hertz.
+Rtn401CarrierRcptFreqOffset	 ::= INTEGER  (-5000000 .. 5000000)
+
+
+-- This parameter reports the forward link frequency in Hz that corresponds to the non-coherent
+--  return link frequency divided by the transponder turnaround ratio in the Doppler
+--  free case. The spacecraft is expected to lock on the forward link, when it 'sees'
+--  this frequency. 
+rtn401CarrierRcptBestLockFreqType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 22 1 1 }
+
+-- The engineering unit of this parameter is Hertz.
+Rtn401CarrierRcptBestLockFreq	 ::= INTEGER  (2024956000 .. 40501863000)
+
+
+-- This parameter reports the Doppler offset standard deviation in Hz over n samples.
+--  Each sample Si is the difference between the actual return link frequency and the
+--  predicted return link frequency where the predict takes into account the expected
+--  Doppler shift. Based on these samples, the mean Doppler offset M is calculated by
+--  forming the sum of n samples Si and dividing it by n. Then the sum of (Si - M)^2
+--  for i = 1 .. n is calculated, then divided by n and then the square root taken.
+rtn401CarrierRcptDopplerStdDeviationType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 23 1 1 }
+
+-- The engineering unit of this parameter is Hertz.
+Rtn401CarrierRcptDopplerStdDeviation	 ::= INTEGER  (0 .. 5000000)
+
+
+-- This parameter configures and reports the nominal subcarrier frequency in 1/1000
+--  Hz. If the applicable modulation scheme does not use a subcarrier, this parameter
+--  shall be flagged as 'undefined'. Except if rtn401CarrierRcptPredictMode is set to
+--  'none', the expected subcarrier frequency is determined by applying the 1-way offset
+--  because it is assumed that the subcarrier is generated by the spacecraft.
+rtn401CarrierRcptNominallSubcarrierFreqType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 24 1 1 }
+
+-- Theengineering unit of this parameter is 1/1000 Hertz.
+Rtn401CarrierRcptNominalSubcarrierFreq	 ::= INTEGER  (2000000 .. 4000000000)
+
+
+-- This parameter configures and reports the subcarrier demodulator loop bandwidth expressed
+--  as symbol rate to subcarrier frequency ratio. If the applicable modulation scheme
+--  does not use a subcarrier, this parameter shall be flagged as undefined.
+rtn401CarrierRcptSubcarrierDemodLoopBwdthType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 25 1 1 }
+
+Rtn401CarrierRcptSubcarrierDemodLoopBwdth	 ::= REAL (1E-5 .. 1E-1)
+
+
+-- This parameter reports the subcarrier to carrier power ratio expressed in 1/100 dBc.
+--  If the applicable modulation scheme does not use a subcarrier, this parameter shall
+--  be flagged as 'undefined'.
+rtn401CarrierRcptSubcarrierLevelEstimateType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 26 1 1 }
+
+-- The engineering unit of this parameter is 1/100 dBc.
+Rtn401CarrierRcptSubcarrierLevelEstimate	 ::= INTEGER  (-20000 .. 0)
+
+
+-- This parameter reports the actually received subcarrier frequency in 1/1000 Hz, i.e.,
+--  this parameter reflects the Doppler shift of the subcarrier frequency. If the applicable
+--  modulation scheme does not use a subcarrier, this parameter shall be flagged as
+--  'undefined'.
+rtn401CarrierRcptActualSubcarrierFreqType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 27 1 1 }
+
+-- Theengineering unit of this parameter is 1/1000 Hertz.
+Rtn401CarrierRcptActualSubcarrierFreq	 ::= INTEGER  (2000000 .. 4000000000)
+
+
+-- This parameter configures and reports the symbol synchronizer loop bandwidth expressed
+--  as dual-sided symbol synchronizer loop bandwidth to symbol rate ratio. 
+rtn401CarrierRcptSymbolSynchronizerLoopBwdthType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 28 1 1 }
+
+Rtn401CarrierRcptSymbolSynchronizerLoopBwdth	 ::= REAL (1E-5 .. 1E-2)
+
+
+-- This parameter reports the actually received symbol stream rate in 1/1000 symbols/second,
+--  i.e., this parameter reflects the Doppler shift of the symbol rate.
+rtn401CarrierRcptActualSymbolRateType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 29 1 1 }
+
+-- The engineering unit of this parameter is 1/1000 symbols per second.
+Rtn401CarrierRcptActualSymbolRate	 ::= INTEGER  (4000 .. 160000000000)
+
+
+-- This parameter reports the estimated symbol energy over noise density ratio (Es/No)
+--  in 1/100 dB. The algorithms used to calculate this estimate tend to saturate at
+--  a certain Es/No level so that the reported estimate may be significantly too low.
+--  However, this saturation happens at levels that are so high that the telemetry is
+--  anyway virtually error free. It also reports the sistribution of the soft symbols
+--  in percent. The duration used for averaging the values reported by the rtn401CarrierRcptObservedEsOverNo
+--  parameter should be documented in the Service Agreement. 
+rtn401CarrierRcptObservedEsOverNoAndSoftSymbolDistributionType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 30 1 1 }
+
+Rtn401CarrierRcptObservedEsOverNoAndSoftSymbolDistribution	 ::= SEQUENCE
+{
+	 -- The engineering unit of this element is 1/100 dB
+	 esOverNo            	 INTEGER  (-1000 .. 60000)
+,	 -- This element is reported in percent
+	 softBitDistribution 	 INTEGER  (-50 .. 50)
+}
+
+
+
+-- This parameter configures and reports the expected symbol energy over noise density
+--  ratio (Es/No) in 1/100 dB. Depending on the equipment, the value may be used to
+--  optimize carrier acquisition and lock detection in particular for very low values
+--  (e.g. - 2 dB) as they may be encountered for turbo coding with coding rates > 1/2.
+--  
+rtn401CarrierRcptExpectedEsOverNoType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 31 1 1 }
+
+-- The engineering unit of this parameter is 1/100 dB.
+Rtn401CarrierRcptExpectedEsOverNo	 ::= INTEGER  (-1000 .. 60000)
+
+
+-- This parameter reports the difference between predicted and actual ranging signal
+--  power to noise density ratio expressed in 1/10 dB.
+rtn401CarrierRcptRngPowerOverNoResidualType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 1 32 1 1 }
+
+-- The engineering unit of this parameter is 1/10 dB.
+Rtn401CarrierRcptRngPowerOverNoResidual	 ::= INTEGER  (-1000 .. 1000)
+
+
+-- The event value reports the rtn401CarrierRcptResourceStat value that applies since
+--  the notified rtn401CarrierRcptResourceSatChange event has occurred.
+rtn401CarrierRcptEventResourceStatValueType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 2 1 1 1 }
+
+Rtn401CarrierRcptEventResourceStatValue	 ::= Rtn401CarrierRcptResourceStat
+
+
+-- The event value reports the lock status as given since the occurrence of the rtn401CarrierRcptLockStatChange
+--  event. It should be noted that loss of carrier lock implies loss of subcarrier lock
+--  if a subcarrier is used and loss of symbol lock. Only the loss of carrier lock is
+--  reported in this case. Loss of subcarrier lock, if a subcarrier is used, implies
+--  loss of symbol lock. 
+rtn401CarrierRcptEventLockStatType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 2 2 1 1 }
+
+Rtn401CarrierRcptEventLockStat	 ::= Rtn401CarrierRcptLockStat
+
+
+-- The directive qualifier specifies the FR instance the directive shall act on and
+--  contains a set of parameter identifier and parameter value pairs. To be valid, the
+--  parameter identifier must reference a controllable parameter of the Rtn401SpaceLinkCarrierRcpt
+--  FR and the parameter value must be of the same type as the parameter value that
+--  shall be set.
+-- 
+rtn401SpaceLinkCarrierRcptContrParamIdsAndValuesType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4000 3 1 1 1 }
+
+Rtn401SpaceLinkCarrierRcptContrParamIdsAndValues	 ::= DirectiveQualifier
+
+
+-- This enumerated parameter reports on the return range and Doppler extraction resource
+--  status and can take on four values:
+-- - 'configured';
+-- - 'operational';
+-- - 'interrupted';
+-- -
+--  'halted'.
+rtnRngAndDopplerExtractionResourceStatType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4001 1 1 1 1 }
+
+RtnRngAndDopplerExtractionResourceStat	 ::= ResourceStat
+
+
+-- This parameter reports, in 1/1000 Hz, the dual sided bandwidth of the tone or PN
+--  chip tracking loop. 
+rtnRngAndDopplerExtractionToneOrPnChipLoopType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4001 1 2 1 1 }
+
+RtnRngAndDopplerExtractionToneOrPnChipLoop	 ::= INTEGER  (1 .. 3000)
+
+
+-- This parameter configures and reports the duration of the period in milliseconds
+--  during which the tone tracking loop is operated in open-loop mode.
+rtnRngAndDopplerExtractionToneIntegrationTimeType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4001 1 3 1 1 }
+
+-- The engineering unit of this parameter is 1/1000 second.
+RtnRngAndDopplerExtractionToneIntegrationTime	 ::= INTEGER  (1 .. 10000)
+
+
+-- This parameter configures and reports the duration of the period in milliseconds
+--  after closure of the tone tracking loop until tone lock is reported and range measurements
+--  can start. This allows any residual loop transient to die away. 
+rtnRngAndDopplerExtractionToneSettlingTimeType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4001 1 4 1 1 }
+
+-- The engineering unit of this parameter is 1/1000 second.
+RtnRngAndDopplerExtractionToneSettlingTime	 ::= INTEGER  (1 .. 10000)
+
+
+-- This parameter reports the tone/ pn-chip to carrier power ratio expressed in 1/100
+--  dBc.
+rtnRngAndDopplerExtractionToneOrPnChipLevelType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4001 1 5 1 1 }
+
+RtnRngAndDopplerExtractionToneOrPnChipLevel	 ::= INTEGER  (-20000 .. 0)
+
+
+-- This enumerated value reports the tone respectively PN chip loop lock status. It
+--  can take on two values:
+-- - 'locked';
+-- - 'not locked'.
+rtnRngAndDopplerExtractionLoopLockStatType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4001 1 6 1 1 }
+
+RtnRngAndDopplerExtractionLoopLockStat	 ::= ENUMERATED
+{
+	 locked              	 	 (0)
+,	 notLocked           	 	 (1)
+}
+
+
+
+-- This parameter configures and reports in 1/100 radians the expected ranging modulation
+--  index on the return link.
+rtnRngAndDopplerExtractionExpectedRngModIndexType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4001 1 7 1 1 }
+
+-- The engineering unit of this parameter is 1/100 radian.
+RtnRngAndDopplerExtractionExpectedRngModIndex	 ::= INTEGER  (0 .. 140)
+
+
+-- This parameter configures and reports if the ranging signal acquisition shall be
+--  presteered in accordance with the expected Doppler shift.
+rtnRngAndDopplerExtractionPresteeringType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4001 1 8 1 1 }
+
+RtnRngAndDopplerExtractionPresteering	 ::= ENUMERATED
+{
+	 dopplerPresteeringOn	 	 (0)
+,	 dopplerPresteeringOff	 	 (1)
+}
+
+
+
+-- This parameter reports the code number up to which code number the replica has been
+--  correlated with the return link signal.
+rtnRngAndDopplerExtractionCodeNumberPnCodeOffsetType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4001 1 9 1 1 }
+
+RtnRngAndDopplerExtractionCodeNumberPnCodeOffset	 ::= INTEGER  (0 .. 24)
+
+
+-- This enumerated parameter reports in case of tone/code ranging if the ambiguity has
+--  been resolved and in case of PN ranging if lock on the PN sequence has been achieved.
+--  It can take on two values:
+-- - 'yes': the ranging system has reached the state where
+--  range measurements can be performed;
+-- - 'no': correlation of the forward link replica
+--  with the return link signal has not yet been achieved or has failed.
+rtnRngAndDopplerExtractionAmbiguityResolvedType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4001 1 10 1 1 }
+
+RtnRngAndDopplerExtractionAmbiguityResolved	 ::= ENUMERATED
+{
+	 yes                 	 	 (0)
+,	 no                  	 	 (1)
+}
+
+
+
+-- This parameter configures and reports the expected duration of the PN code acquisition
+--  by the spacecraft.
+rtnRngAndDopplerExtractionExpectedSpacecraftPnAcqDurationType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4001 1 11 1 1 }
+
+-- The engineering unit of this parameter is second.
+RtnRngAndDopplerExtractionExpectedSpacecraftPnAcqDuration	 ::= INTEGER  (1 .. 1000)
+
+
+-- This parameter configures and reports the integration time in seconds for the PN
+--  code correlator. This time has to be selected based on the known link budget and
+--  dynamics.
+rtnRngAndDopplerExtractionPnCodeIntegrationTimeType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4001 1 12 1 1 }
+
+-- The engineering unit of this parameter is second.
+RtnRngAndDopplerExtractionPnCodeIntegrationTime	 ::= INTEGER  (1 .. 3600)
+
+
+-- This enumerated parameter configures and reports for PN ranging the mode in which
+--  the spacecraft transponder operates. It can take on two values:
+-- - 'passThrough';
+-- -
+--  'regenerative'. 
+rtnRngAndDopplerExtractionSpacecraftTransponderModeType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4001 1 13 1 1 }
+
+RtnRngAndDopplerExtractionSpacecraftTransponderMode	 ::= ENUMERATED
+{
+	 passThrough         	 	 (0)
+,	 regenerative        	 	 (1)
+}
+
+
+
+-- This parameter configures and reports the ranging measurement sampling rate in 1/1000
+--  seconds.
+rtnRngAndDopplerExtractionRngMeasurementSamplingRateType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4001 1 14 1 1 }
+
+-- The engineering unit of this parameter is 1/1000 second
+RtnRngAndDopplerExtractionRngMeasurementSamplingRate	 ::= INTEGER  (1 .. 3600000)
+
+
+-- This parameter configures and reports the Doppler measurement sampling rate in 1/1000
+--  seconds.
+rtnRngAndDopplerExtractionDopplerMeasurementSamplingRateType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4001 1 15 1 1 }
+
+-- The engineering unit of this parameter is 1/1000 second
+RtnRngAndDopplerExtractionDopplerMeasurementSamplingRate	 ::= INTEGER  (1 .. 3600000)
+
+
+-- The event value reports the rtnRngAndDopplerExtractionResourceStat value that applies
+--  since the notified rtnRngAndDopplerExtractionResourceStatChange event has occurred.
+rtnRngAndDopplerExtractionResourceStatValueType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4001 2 1 1 1 }
+
+RtnRngAndDopplerExtractionResourceStatValue	 ::= ResourceStat
+
+
+-- This notification does not provide an event value.
+rtnRngAndDopplerExtractionPnCodeAcqFailureEventValueType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4001 2 2 1 1 }
+
+RtnRngAndDopplerExtractionPnCodeAcqFailureEventValue	 ::= NULL
+
+
+-- The directive qualifier specifies the FR instance the directive shall act on and
+--  contains a set of parameter identifier and parameter value pairs. To be valid, the
+--  parameter identifier must reference a controllable parameter of the RtnRngAndDopplerExtraction
+--  FR and the parameter value must be of the same type as the parameter value that
+--  shall be set.
+rtnRngAndDopplerExtractionContrParamIdsAndValuesType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 4001 3 1 1 1 }
+
+RtnRngAndDopplerExtractionContrParamIdsAndValues	 ::= DirectiveQualifier
+
+
+-- This enumerated parameter reports the fwdTcPlopSyncAndChnlEncoding FR resource status
+--  and can take on four values:
+-- - 'configured'; 
+-- - 'operational';
+-- - 'interrupted';
+-- -
+--  'halted'.
+fwdTcPlopSyncResourceStatType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 6000 1 1 1 1 }
+
+FwdTcPlopSyncResourceStat	 ::= ResourceStat
+
+
+-- This parameter configures and reports the maximum length in octets of a CLTU the
+--  FR will forward to the fwd401SpaceLinkCarrierXmit FR. If the given FR instance is
+--  not configured to accept CLTUs as incoming service data units, the value of this
+--  parameter shall be flagged as 'undefined'.
+fwdTcPlopSyncMaxCltuLengthType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 6000 1 2 1 1 }
+
+-- The engineering unit of this parameter is octet.
+FwdTcPlopSyncMaxCltuLength	 ::= INTEGER  (12 .. 4096)
+
+
+-- This parameter configures and reports on the maximum number of TC MC frames that
+--  may be converted into a single CLTU. The value of this parameter must be '1' if
+--   fwdTcPlopSyncMaxCltuRepetitions ? 1. If the given FR instance is not configured
+--  to accept TC MC frames as incoming service data unit, the value of this parameter
+--  shall be flagged as 'undefined'.
+fwdTcPlopSyncMaxNumberOfFramesPerCltuType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 6000 1 3 1 1 }
+
+FwdTcPlopSyncMaxNumberOfFramesPerCltu	 ::= INTEGER  (1 .. 15)
+
+
+-- This parameter configures and reports the encoding and randomization applied to the
+--  TC frames. 
+fwdTcPlopSyncEncodeTypeType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 6000 1 4 1 1 }
+
+FwdTcPlopSyncEncodeType	 ::= CHOICE
+{
+	 noEncoding          	 [0]	 	 Randomization (off)
+,	 bchEncoding         	 [1]	 	 Randomization
+,	 ldpcEncoding        	 [2]	 	 SEQUENCE
+	 {
+	 	 randomization       	 Randomization (on)
+,	 	 ldpcCoding          	 CHOICE
+	 	 {
+	 	 	 code1               	 [0]	 	 SEQUENCE
+	 	 	 {
+	 	 	 	 n                   	 INTEGER  (128)
+,	 	 	 	 k                   	 INTEGER  (64)
+,	 	 	 	 tailSequence        	 ENUMERATED
+	 	 	 	 {
+	 	 	 	 	 used                	 	 (0)
+	 	 	 	 ,	 notUsed             	 	 (1)
+	 	 	 	 }
+
+	 	 	 }
+
+,	 	 	 code2               	 [1]	 	 SEQUENCE
+	 	 	 {
+	 	 	 	 n                   	 INTEGER  (512)
+,	 	 	 	 k                   	 INTEGER  (256)
+	 	 	 }
+
+	 	 }
+
+	 }
+
+}
+
+
+
+-- This parameter configures and reports how many times a given CLTU may at most be
+--  repeated on the forward link. The value of this parameter must be '1' if fwdTcPlopSyncMaxNumberOfFramesPerCltu
+--  ? 1. If the given instance of the FR is not configured to accept MC TC frames as
+--  incoming service data unit, the value of this parameter shall be flagged as 'undefined'.
+-- Note:
+--  If fwdTcPlopSyncAndChnlEncodingMaxCltuRepetitions = 1, the repeated transmissions
+--  option is either disabled or not supported.
+fwdTcPlopSyncMaxCltuRepetitionsType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 6000 1 5 1 1 }
+
+FwdTcPlopSyncMaxCltuRepetitions	 ::= INTEGER  (1 .. 5)
+
+
+-- This enumerated parameter configures and reports the Physical Layer Operation Procedure
+--  that the fwdTcPlopSyncAndChannelEncoding FR applies (PLOP1 or PLOP2). If PLOP1 applies,
+--  the parameter also specifies the length of the idle sequence (in octets).
+-- 
+-- The
+--  exact behavior of the FR as determined by the selected PLOP in effect is further
+--  described in the F-CLTU specification CCSDS 912.1-B-3.
+-- 
+fwdTcPlopSyncPlopType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 6000 1 6 1 1 }
+
+FwdTcPlopSyncPlop   	 ::= CHOICE
+{
+	 -- The engineering unit of this element is cotet.
+	 plop1IdleSequenceLength	 [0]	 	 INTEGER  (0 .. 255)
+,	 plop2               	 [1]	 	 NULL
+}
+
+
+
+-- This parameter configures and reports the size, in octets, of the bit pattern to
+--  be radiated to enable the spacecraft telecommand system to achieve bit lock. The
+--  radiation of the acquisition sequence will be performed in accordance with the applicable
+--  Physical Layer Operations Procedure (PLOP) - cf. fwdTcPlopSyncPlop.
+fwdTcPlopSyncAcqSeqLengthType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 6000 1 7 1 1 }
+
+-- The engineering unit of this parameter is octet.
+FwdTcPlopSyncAcqSeqLength	 ::= INTEGER  (0 .. 255)
+
+
+-- This parameter configures and reports the minimum time, in microseconds, that the
+--  FR instance will ensure between the completion of the radiation of one CLTU and
+--  the beginning of the radiation of the following CLTU. The exact effect of the delay
+--  time depending on the PLOP is further described in the F-CLTU specification CCSDS
+--  912.1-B-3.
+-- 
+fwdTcPlopSyncMinDelayTimeType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 6000 1 8 1 1 }
+
+-- The engineering unit of this parameter is 1/1000000 second, i.e. microsecond.
+FwdTcPlopSyncMinDelayTime	 ::= INTEGER  (1 .. 1000000)
+
+
+-- This enumerated parameter reports the status of the forward link as it can be derived
+--  from the Communication Link Control Word (CLCW) in the associated telemetry stream.
+--  It can take on the following values:
+-- - 'forward link status not available': no
+--  CLCWs from the spacecraft have been received by the service provider;
+-- - 'no rf
+--  available': the service provider has received at least one CLCW; in the last CLCW
+--  received by the service provider, the bit that flags �No RF Available� was set to
+--  �1�;
+-- - 'no bit lock': the service provider has received at least one CLCW; in the
+--  last CLCW received by the service provider, the bit that flags �No RF Available�
+--  was set to �0�, and the bit that flags �No Bit Lock� was set to �1;
+-- - 'nominal':
+--  the provider has received at least one CLCW; in the last CLCW received by the provider,
+--  the bit that flags �No RF Available� was set to �0�, and the bit that flags �No
+--  Bit Lock� was set to �0�.
+fwdTcPlopSyncFwdLinkStatType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 6000 1 9 1 1 }
+
+FwdTcPlopSyncFwdLinkStat	 ::= FwdLinkStat
+
+
+-- This parameter configures and reports the Master or Virtual Channel that carries
+--  the CLCW to be used to determine the forward link RF and/or bit lock status, if
+--  applicable, and if and how the CLCW shall be evaluated for the Carrier Modulation
+--  Modes (CMM) transitions of the PLOP. The CLCW source is identified by the concatenation
+--  of the CCSDS assigned Spacecraft Identifier (SCID), the Transfer Frame Version Number
+--  (TFVN) and, if applicable, the Virtual Channel Identifier (VCID). The range of the
+--  Spacecraft Identifier and the Virtual Channel Identifier depend on the TFVN as follows:
+-- -
+--  TFVN = 0 (version 1) - SCID = (0 .. 1023), VCID = (0 .. 7);
+-- - TFVN = 1 (version
+--  2) - SCID = (0 .. 255), VCID = (0 .. 63).
+fwdTcPlopSyncClcwEvaluationType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 6000 1 10 1 1 }
+
+FwdTcPlopSyncClcwEvaluation	 ::= CHOICE
+{
+	 noEvaluation        	 [0]	 	 NULL
+,	 evaluation          	 [1]	 	 SEQUENCE
+	 {
+	 	 linkCondition       	 ENUMERATED
+	 	 {
+	 	 	 noEvaluation        	 	 (0)
+	 	 ,	 rfAvailableVerified 	 	 (1)
+	 	 ,	 bitLockVerified     	 	 (2)
+	 	 ,	 rfAvailableAndBitLockVerified	 	 (3)
+	 	 }
+
+,	 	 clcwSource          	 CHOICE
+	 	 {
+	 	 	 -- This choice is the CLCWs to be extracted from telemetry frames.
+	 	 	 tfvn0               	 [0]	 	 SEQUENCE
+	 	 	 {
+	 	 	 	 tfvn                	 INTEGER  (0)
+,	 	 	 	 scid                	 INTEGER  (0 .. 1023)
+,	 	 	 	 vcid                	 CHOICE
+	 	 	 	 {
+	 	 	 	 	 masterChannel       	 [0]	 	 NULL
+,	 	 	 	 	 virtualChannel      	 [1]	 	 INTEGER  (0 .. 7)
+	 	 	 	 }
+
+	 	 	 }
+
+,	 	 	 -- This choice is for CLCW extraction from AOS frames.
+	 	 	 tfvn1               	 [1]	 	 SEQUENCE
+	 	 	 {
+	 	 	 	 tfvn                	 INTEGER  (1)
+,	 	 	 	 scid                	 INTEGER  (0 .. 255)
+,	 	 	 	 vcid                	 CHOICE
+	 	 	 	 {
+	 	 	 	 	 masterChannel       	 [0]	 	 NULL
+,	 	 	 	 	 virtualChannel      	 [1]	 	 INTEGER  (0 .. 63)
+	 	 	 	 }
+
+	 	 	 }
+
+,	 	 	 -- This choice is for CLCW extraction from USLP frames.
+	 	 	 tfvn12              	 [2]	 	 SEQUENCE
+	 	 	 {
+	 	 	 	 tfvn                	 INTEGER  (12)
+,	 	 	 	 scid                	 INTEGER  (0 .. 65535)
+,	 	 	 	 vcid                	 CHOICE
+	 	 	 	 {
+	 	 	 	 	 masterChannel       	 [0]	 	 NULL
+,	 	 	 	 	 virtualChannel      	 [1]	 	 INTEGER  (0 .. 63)
+	 	 	 	 }
+
+	 	 	 }
+
+,CHOICE
+	 	 	 {
+	 	 	 	 -- This choice is the CLCWs to be extracted from telemetry frames.
+	 	 	 	 tfvn0               	 [0]	 	 SEQUENCE
+	 	 	 	 {
+	 	 	 	 	 tfvn                	 INTEGER  (0)
+,	 	 	 	 	 scid                	 INTEGER  (0 .. 1023)
+,	 	 	 	 	 vcid                	 CHOICE
+	 	 	 	 	 {
+	 	 	 	 	 	 masterChannel       	 [0]	 	 NULL
+,	 	 	 	 	 	 virtualChannel      	 [1]	 	 INTEGER  (0 .. 7)
+	 	 	 	 	 }
+
+	 	 	 	 }
+
+,	 	 	 	 -- This choice is for CLCW extraction from AOS frames.
+	 	 	 	 tfvn1               	 [1]	 	 SEQUENCE
+	 	 	 	 {
+	 	 	 	 	 tfvn                	 INTEGER  (1)
+,	 	 	 	 	 scid                	 INTEGER  (0 .. 255)
+,	 	 	 	 	 vcid                	 CHOICE
+	 	 	 	 	 {
+	 	 	 	 	 	 masterChannel       	 [0]	 	 NULL
+,	 	 	 	 	 	 virtualChannel      	 [1]	 	 INTEGER  (0 .. 63)
+	 	 	 	 	 }
+
+	 	 	 	 }
+
+,	 	 	 	 -- This choice is for CLCW extraction from USLP frames.
+	 	 	 	 tfvn12              	 [2]	 	 SEQUENCE
+	 	 	 	 {
+	 	 	 	 	 tfvn                	 INTEGER  (12)
+,	 	 	 	 	 scid                	 INTEGER  (0 .. 65535)
+,	 	 	 	 	 vcid                	 CHOICE
+	 	 	 	 	 {
+	 	 	 	 	 	 masterChannel       	 [0]	 	 NULL
+,	 	 	 	 	 	 virtualChannel      	 [1]	 	 INTEGER  (0 .. 63)
+	 	 	 	 	 }
+
+	 	 	 	 }
+
+	 	 	 }
+
+	 	 }
+
+	 }
+
+}
+
+
+
+-- The event value reports the fwdTcPlopSyncResourceStat value that applies since the
+--  notified fwdTcPlopSyncResourceStatChange event occurred.
+fwdTcPlopSyncEventResourceStatValueType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 6000 2 1 1 1 }
+
+FwdTcPlopSyncEventResourceStatValue	 ::= FwdTcPlopSyncResourceStat
+
+
+-- The event value reports the fwdTcPlopSyncFwdLinkStat value that applies since the
+--  notified fwdTcPlopSyncFwdLinkStatChange event occurred.
+fwdTcPlopSyncEventFwdLinkStatValueType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 6000 2 2 1 1 }
+
+FwdTcPlopSyncEventFwdLinkStatValue	 ::= FwdTcPlopSyncFwdLinkStat
+
+
+-- The event value identifies the data unit that completed processing by reporting the
+--  data-unit-id of the data unit and the id of the service instance that submitted
+--  the data unit for processing. Note that the data unit may either be a frame or a
+--  CLTU.
+fwdTcPlopSyncDataUnitIdAndSourceValueType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 6000 2 3 1 1 }
+
+FwdTcPlopSyncDataUnitIdAndSourceValue	 ::= SEQUENCE
+{
+	 dataUnitId          	 INTEGER  (0 .. 4294967295)
+,	 serviceInstanceIdentifier	 ServiceInstanceId
+}
+
+
+
+-- The directive qualifier specifies the FR instance the directive shall act on and
+--  contains a set of parameter identifier and parameter value pairs. To be valid, the
+--  parameter identifier must reference a controllable parameter of the fwdTcPlopSyncAndChnlEncode
+--  FR and the parameter value must be of the same type as the parameter value that
+--  shall be set.
+-- 
+fwdTcPlopSyncContrParamIdsAndValuesType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 6000 3 1 1 1 }
+
+FwdTcPlopSyncContrParamIdsAndValues	 ::= DirectiveQualifier
+
+
+-- The qualifier specifies the service-instance-id with which the data units to be discarded
+--  are associated.
+fwdTcPlopSyncServiceInstanceIdType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 6000 3 2 1 1 }
+
+FwdTcPlopSyncServiceInstanceId	 ::= SEQUENCE
+{
+	 functResourceInstanceNumber	 INTEGER  (1 .. 4294967295)
+,	 parameterValue      	 ServiceInstanceId
+}
+
+
+
+-- This enumerated parameter reports the fwdAosSyncAndChnlEncoding FR resource status
+--  and can take on four values:
+-- - 'configured'; 
+-- - 'operational';
+-- - 'interrupted';
+-- -
+--  'halted'.
+fwdFlfSyncResourceStatType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 7000 1 1 1 1 }
+
+FwdAosSyncResourceStat	 ::= ENUMERATED
+{
+	 value0              	 	 (0)
+,	 value1              	 	 (1)
+}
+
+
+
+-- This parameter configures and reports the name assigned to the forward physical channel
+--  used to radiate "AOS" frames. This name is a Visible String which has a length of
+--  1 to 32 characters.
+fwdAosSyncPhysicalChnlNameType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 7000 1 2 1 1 }
+
+FwdAosSyncPhysicalChnlName	 ::= VisibleString (SIZE( 1 .. 32)) 
+
+
+-- This parameter configures and reports the length in octets of a CADU the FR accepts
+--  for further processing. If the FR instance is not configured to accept AOS CADUs
+--  as incoming service data units, the value of this parameter shall be flagged as
+--  'undefined'.
+fwdAosSyncCaduLengthType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 7000 1 3 1 1 }
+
+FwdAosSyncCaduLength	 ::= INTEGER 
+
+
+-- This enumerated parameter reports if the FR randomizes the AOS frames. This parameter
+--  can take on two values:
+-- - 'randomization';
+-- - 'no randomization'.
+-- The details
+--  regarding the randomization are specified in CCSDS 131.0-B-2.  If the FR instance
+--  is not configued to accept AOS frames as incoming service data units, the value
+--  of this parameter shall be flagged as 'undefined'.
+fwdAosFrameRandomizationType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 7000 1 4 1 1 }
+
+FwdAosFrameRandomization	 ::= ENUMERATED
+{
+	 randomization       	 	 (0)
+,	 noRandomization     	 	 (1)
+}
+
+
+
+-- This enumerated parameter configures and reports the encoding that is applied to
+--  the AOS frames. This parameter can take on the following values:
+-- - 'uncoded';
+-- -
+--  'convolutional';
+-- - 'reedSolomon';
+-- - 'concatenated';
+-- - 'turbo';
+-- - 'ldpc'.
+-- If
+--  the FR instance is not configured to accept AOS Frames as incoming service data
+--  units, the value of this parameter shall be flagged as 'undefined'.
+-- Note: The length
+--  and pattern of the ASM is determined by the applicable encoding.
+fwdAosSyncFrameEncodingType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 7000 1 5 1 1 }
+
+FwdAosSyncFrameEncoding	 ::= ENUMERATED
+{
+	 uncoded             	 	 (0)
+,	 convolutional       	 	 (1)
+,	 reedSolomon         	 	 (2)
+,	 concatenated        	 	 (3)
+,	 turbo               	 	 (4)
+,	 ldpc                	 	 (5)
+}
+
+
+
+-- This enumerated parameter configures and reports the coding rate set for the convolutional
+--  encoding of the AOS frames. The convolutional encoding is applied to the ASM and
+--  the uncoded or Reed-Solomon encoded frame. This parameter can take on the following
+--  values:
+-- - 'rate1/2';
+-- - 'rate2/3';
+-- - 'rate3/4';
+-- - 'rate5/6';
+-- - 'rate7/8'.
+-- IF
+--  ((incoming service data unit NOT AOS frame) OR (fwdAosSyncFrameEncoding = 'reedSolomon')
+--  OR (fwdAosSyncFrameEncoding = 'turbo') OR (fwdAosSyncFrameEncoding = 'ldpc')), the
+--  value of this parameter shall be flagged as 'undefined'.
+fwdAosSyncFrameConvolCodeRateType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 7000 1 6 1 1 }
+
+FwdAosSyncFrameConvolCodeRate	 ::= ENUMERATED
+{
+	 rate12              	 	 (0)
+,	 rate23              	 	 (1)
+,	 rate34              	 	 (2)
+,	 rate56              	 	 (3)
+,	 rate78              	 	 (4)
+}
+
+
+
+-- This enumerated parameter configures and reports the correction capability of the
+--  applied Reed-Solomon code. It can take on the following values:
+-- - 'corrects8';
+-- -
+--  'corrects16'.
+-- IF ((incoming service data unit NOT AOS Frame) OR NOT ((fwdAosSyncFrameEncoding
+--  = 'reedSolomon') OR (fwdAosSyncFrameEncoding = 'concatenated'))), the value of this
+--  parameter shall be flagged as 'undefined'.
+fwdAosSyncFrameRsErrorCorrectionCapabilityType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 7000 1 7 1 1 }
+
+FwdAosSyncFrameRsErrorCorrectionCapability	 ::= ENUMERATED
+{
+	 corrects8           	 	 (0)
+,	 corrects16          	 	 (1)
+}
+
+
+
+-- This enumerated parameter configures and reports the interleaving depth of the applied
+--  Reed-Solomon encoding. It can take on the following values:
+-- - 'interleaving1';
+-- -
+--  'interleaving2';
+-- - 'interleaving3';
+-- - 'interleaving4';
+-- - 'interleaving5';
+-- -
+--  'interleaving8'.
+-- If ((incoming service data unit NOT MC Frame) OR NOT ((frame-encoding
+--  = 'reedSolomon') OR (frame-encoding = 'concatenated'))), the value of this parameter
+--  shall be flagged as 'undefined'.
+-- Note: If and how much virtual fill needs to be
+--  inserted is determined based on the values of transfer-frame-length and rs-interleaving-depth.
+fwdAosSyncFrameRsInterleavingDepthType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 7000 1 8 1 1 }
+
+FwdAosSyncFrameRsInterleavingDepth	 ::= ENUMERATED
+{
+	 interleaving1       	 	 (0)
+,	 interleaving2       	 	 (1)
+,	 interleaving3       	 	 (2)
+,	 interleaving4       	 	 (3)
+,	 interleaving5       	 	 (4)
+,	 interleaving8       	 	 (5)
+}
+
+
+
+-- This enumerated parameter configures and reports the coding rate of the applied turbo
+--  encoding. This parameter can take on the following values:
+-- - 'rate1/2';
+-- - 'rate1/3';
+-- -
+--  'rate1/4';
+-- - 'rate1/6'.
+-- If ((incoming service data unit NOT MC Frame) OR (frame-encoding
+--  ? 'turbo')), the value of this parameter shall be flagged as 'undefined'.
+-- Note:
+--  The information block length is determined by the value of aos-fwd-frame-length.
+fwdAosSyncFrameTurboCodeRateType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 7000 1 9 1 1 }
+
+FwdAosSyncFrameTurboCodeRate	 ::= ENUMERATED
+{
+	 rate12              	 	 (0)
+,	 rate13              	 	 (1)
+,	 rate14              	 	 (2)
+,	 rate16              	 	 (3)
+}
+
+
+
+-- This enumerated parameter configures and reports the coding rate of the applied ldpc
+--  encoding. This parameter can take on the following values:
+-- - 'rate1/2';
+-- - 'rate2/3';
+-- -
+--  'rate3/4';
+-- - 'rate7/8'.
+-- If ((incoming service data unit NOT MC Frame) OR (fwdAosSyncFrameEncoding
+--  ? 'ldpc')), the value of this parameter shall be flagged as 'undefined'.
+-- Note:
+--  The information block length is determined by the value of transfer-frame-length.
+fwdAosSyncFrameLdpcCodeRateType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 7000 1 10 1 1 }
+
+FwdAosSyncFrameLdpcCodeRate	 ::= ENUMERATED
+{
+	 rate12              	 	 (0)
+,	 rate23              	 	 (1)
+,	 rate34              	 	 (2)
+,	 rate78              	 	 (3)
+}
+
+
+
+-- The event value reports the fwdAosSyncResourceStat value that applies since the notified
+--  fwdAosResourceStatChange event occurred.
+fwdAosSyncResourceStatValueType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 7000 2 1 1 1 }
+
+FwdAosSyncResourceStatValue	 ::= ResourceStat
+
+
+-- The directive qualifier specifies the FR instance the directive shall act on and
+--  contains a set of parameter identifier and parameter value pairs. To be valid, the
+--  parameter identifier must reference a controllable parameter of the fwdAosSyncAndChannelEncoding
+--  FR and the parameter value must be of the same type as the parameter value that
+--  shall be set.
+-- 
+fwdAosSyncParamIdsAndValuesType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 7000 3 1 1 1 }
+
+FwdAosSyncParamIdsAndValues	 ::= DirectiveQualifier
+
+
+-- This enumerated parameter reports the return telemetry synchronization and decoding
+--  resource status and can take on four values:
+-- - 'configured': the return link synchronization
+--  and decoding equipment has been configured, but no incoming symbol stream is present;
+-- -
+--  'operational': the return link is active, i.e., all syncronization and decoding
+--  is in nominal condition;
+-- - 'interrupted': a failure has been detected, e.g. the
+--  incoming data cannot be decoded;
+-- - 'halted': the return link has been taken out
+--  of service. 
+rtnTmSyncResourceStatType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 8000 1 1 1 1 }
+
+RtnTmSyncResourceStat	 ::= ResourceStat
+
+
+-- This parameter configures and reports the frame synchronizer behavior in terms of
+--  the correlation error threshold for declaring 'ASM lock', and for declaring 'ASM
+--  out of lock', the number of consecutive frames with 'ASM lock' required to transition
+--  from 'notLocked' to 'verify', the number of consecutive frames with 'ASM lock' required
+--  to transition from 'verify' to 'locked' and the number of consecutive frames with
+--  'ASM out of lock' required to transition from 'locked' to 'notLocked' and the to
+--  be tolerated ASM position error in number of symbols (i.e. unexpected frame length)
+--  for not triggering the transition to 'notLocked'. 
+rtnTmSyncAsmConfigType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 8000 1 2 1 1 }
+
+RtnTmSyncAsmConfig  	 ::= SEQUENCE
+{
+	 asmCorrelationLockThreshold	 INTEGER  (0 .. 191)
+,	 asmCorrelationOutOfLockThreshold	 INTEGER  (1 .. 192)
+,	 verifyThreshold     	 INTEGER  (1 .. 15)
+,	 lockedThreshold     	 INTEGER  (1 .. 15)
+,	 notLockedThreshold  	 INTEGER  (1 .. 15)
+,	 -- in number of symbols
+	 frameLengthErrorThreshold	 INTEGER  (-10 .. 10)
+}
+
+
+
+-- This parameter reports the number of symbols in the most recently received ASM that
+--  differ from the nominal ASM pattern. When comparing these numbers, one needs to
+--  take into consideration whether the synchronization is done on the (pre Viterbi
+--  decoder) symbol stream or on the (post Viterbi decoder) bit stream which may be
+--  the case if rtnTmSyncDecode is either 'convolutional' or 'concatenated'.
+-- The frame
+--  synchronization is also used to remove the phase ambiguity of some modulation schemes.
+--  To that end, the correlation process is performed both for the standard ASM pattern
+--  and its inversion.
+-- A given implementation will specify if the the synchronization
+--  is performed in the symbol or bit domain. This shall be recorded in the Service
+--  Agreement.
+rtnTmSyncAsmCorrelationErrorType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 8000 1 3 1 1 }
+
+RtnTmSyncAsmCorrelationError	 ::= INTEGER  (0 .. 192)
+
+
+-- This enumerated parameter reports the frame synchronizer lock status. It can take
+--  on the following values:
+-- - 'locked': The synchronizer has found at least two Attached
+--  Sync Markers with the expected number of symbols or bits between them and with each
+--  ASM having a correlation error that is lower than the configured error limit;
+-- -
+--  'verify': the frame synchronizer has found one ASM in the symbol or bit stream with
+--  the correlation error lower than the configured threshold and is looking for a second
+--  ASM at the expected number of symbols or bits after the first ASM; if such ASM is
+--  found, the lock status changes to 'locked'; if no ASM is found where expected, the
+--  lock status changes to 'not locked'; if an ASM is found, but at a larger distance
+--  in terms of symbols or bits than expected, that newly found ASM will be the reference
+--  for searching the next verification ASM;
+-- - not locked: the frame synchronizer did
+--  not find any ASM with a correlation error below the correlation error limit. 
+rtnTmSyncFrameSyncLockStatType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 8000 1 4 1 1 }
+
+RtnTmSyncFrameSyncLockStat	 ::= ENUMERATED
+{
+	 locked              	 	 (0)
+,	 verify              	 	 (1)
+,	 notLocked           	 	 (2)
+}
+
+
+
+-- This enumerated parameter reports if, based on the observed polarity of the ASM,
+--  the symbol stream had to be inverted or not. It can take two values:
+-- - 'yes': the
+--  frame synchronizer locked on the inverted ASM pattern and therefore inverts the
+--  polarity of the symbol stream;
+-- - 'no': the frame synchronizer locked on the ASM
+--  with the pattern in positive logic and therefore does not invert the symbol stream.
+-- As
+--  long as frame-synchronizer-lock-status is ? 'locked', this parameter shall be flagged
+--  as unavailable.
+rtnTmSyncSymbolInversionType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 8000 1 5 1 1 }
+
+RtnTmSyncSymbolInversion	 ::= ENUMERATED
+{
+	 yes                 	 	 (0)
+,	 no                  	 	 (1)
+}
+
+
+
+-- The parameter reports the ratio of erred frames to the total number of frames processed
+--  for the most recent n frames. The value of n shall be documented in the Service
+--  Agreeemnet. If the frames are RS or LDPC encoded, then frames for which the RS or
+--  LDPC correction is not possible are considered erred. Frames are also considered
+--  erred if the FECF is present and the check of the FECF is negative. In all other
+--  cases, i.e., if the frames are neither RS nor LDPC encoded nor do they contain a
+--  CCSDS compliant FECF, this parameter shall be flagged as 'undefined'.
+rtnTmSyncFrameErrorRateType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 8000 1 6 1 1 }
+
+RtnTmSyncFrameErrorRate	 ::= REAL (0 .. 1)
+
+
+-- This parameter reports the number of bits in the frame corrected by means of the
+--  RS trailer. The number of bits that can be corrected depends on the coding and the
+--  interleaving depth. If rtnTmSyncDecode is neither 'reedSolomon' nor 'concatenated',
+--  this parameter shall be flagged as 'undefined'.
+rtnTmSyncNumberOfRsErrorsCorrectedType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 8000 1 7 1 1 }
+
+RtnTmSyncNumberOfRsErrorsCorrected	 ::= INTEGER  (0 .. 128)
+
+
+-- This enumerated parameter reports if the time tags used to annotate the telemetry
+--  frames with the Earth Receive Time (ERT) are generated by a time code generator
+--  slaved to a high precision reference or if this generator is free running. It can
+--  take on two values:
+-- - 'yes' - The time tags are generated by a system that is locked
+--  to the station's frequency and timing system;
+-- - 'no' - the system generating the
+--  time tags is free-running. 
+rtnTmSyncErtAnnotationLockedToReferenceType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 8000 1 8 1 1 }
+
+RtnTmSyncErtAnnotationLockedToReference	 ::= ENUMERATED
+{
+	 yes                 	 	 (0)
+,	 no                  	 	 (1)
+}
+
+
+
+-- This parameter configures and reports the length in octets of the CADU the frame
+--  synchronizer shall attempt to lock on. Depending on the implementation, the frame
+--  synchronizer may operate on the convolutionally encoded symbol stream or the already
+--  convolutionally decoded symbol stream, if convolutional encoding is applied at all.
+rtnTmSyncCaduLengthType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 8000 1 9 1 1 }
+
+RtnTmSyncCaduLength 	 ::= INTEGER  (48 .. 32768)
+
+
+-- This enumerated parameter configures and reports if the FR is configured to derandomize
+--  the incoming frames. This parameter can take on two values:
+-- - 'derandomization';
+-- -
+--  'no derandomization'.
+-- The details regarding the randomization are specified in
+--  CCSDS 131.0-B-2.  
+rtnTmSyncDerandomizationType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 8000 1 10 1 1 }
+
+RtnTmSyncDerandomization	 ::= ENUMERATED
+{
+	 derandomization     	 	 (0)
+,	 noDerandomization   	 	 (1)
+}
+
+
+
+-- This parameter configures and reports the decoding the RtnTmSyncAndDecoding FR is
+--  configured to apply to the incoming frames. This parameter can take on the following
+--  values:
+-- - 'no decoding';
+-- - 'convolutional';
+-- - 'reedSolomon';
+-- - 'concatenated';
+-- -
+--  'turbo';
+-- - 'ldpc'.
+-- For the configured decoding option the parameter also specifies
+--  the associated configuration details.
+-- 
+-- Note: The length and pattern of the ASM
+--  is implicitly specified by the decoding that is to be applied.
+rtnTmSyncDecodeType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 8000 1 11 1 1 }
+
+RtnTmSyncDecode     	 ::= CHOICE
+{
+	 noDecoding          	 [0]	 	 NULL
+,	 convolutional       	 [1]	 	 ENUMERATED
+	 {
+	 	 rate12              	 	 (0)
+	 ,	 rate23              	 	 (1)
+	 ,	 rate34              	 	 (2)
+	 ,	 rate56              	 	 (3)
+	 ,	 rate78              	 	 (4)
+	 }
+
+,	 reedSolomon         	 [2]	 	 SEQUENCE
+	 {
+	 	 rsCorrectionCapabilty	 ENUMERATED
+	 	 {
+	 	 	 corrects8           	 	 (0)
+	 	 ,	 corrects16          	 	 (1)
+	 	 }
+
+,	 	 rsInterleavingDepth 	 ENUMERATED
+	 	 {
+	 	 	 interleaving1       	 	 (0)
+	 	 ,	 interleaving2       	 	 (1)
+	 	 ,	 interleaving3       	 	 (2)
+	 	 ,	 interleaving4       	 	 (3)
+	 	 ,	 interleaving5       	 	 (4)
+	 	 ,	 interleaving8       	 	 (5)
+	 	 }
+
+	 }
+
+,	 concatenated        	 [3]	 	 SEQUENCE
+	 {
+	 	 convolutional       	 ENUMERATED
+	 	 {
+	 	 	 rate12              	 	 (0)
+	 	 ,	 rate23              	 	 (1)
+	 	 ,	 rate34              	 	 (2)
+	 	 ,	 rate56              	 	 (3)
+	 	 ,	 rate78              	 	 (4)
+	 	 }
+
+,	 	 rsCorrectionCapabilty	 ENUMERATED
+	 	 {
+	 	 	 corrects8           	 	 (0)
+	 	 ,	 corrects16          	 	 (1)
+	 	 }
+
+,	 	 rsInterleavingDepth 	 ENUMERATED
+	 	 {
+	 	 	 interleaving1       	 	 (0)
+	 	 ,	 interleaving2       	 	 (1)
+	 	 ,	 interleaving3       	 	 (2)
+	 	 ,	 interleaving4       	 	 (3)
+	 	 ,	 interleaving5       	 	 (4)
+	 	 ,	 interleaving8       	 	 (5)
+	 	 }
+
+	 }
+
+,	 turbo               	 [4]	 	 ENUMERATED
+	 {
+	 	 rate12              	 	 (0)
+	 ,	 rate13              	 	 (1)
+	 ,	 rate14              	 	 (2)
+	 ,	 rate16              	 	 (3)
+	 }
+
+,	 ldpc                	 [5]	 	 ENUMERATED
+	 {
+	 	 rate12              	 	 (0)
+	 ,	 rate23              	 	 (1)
+	 ,	 rate34              	 	 (2)
+	 ,	 rate78              	 	 (3)
+	 }
+
+}
+
+
+
+-- This parameter configures and reports if in the frame to be processed the FECF is
+--  present. It can take on two values:
+-- - 'yes';
+-- - 'no'.
+rtnTmSyncFecfPresentType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 8000 1 12 1 1 }
+
+RtnTmSyncFecfPresent	 ::= ENUMERATED
+{
+	 yes                 	 	 (0)
+,	 no                  	 	 (1)
+}
+
+
+
+-- The event value reports the rtnTmSyncResourceStat value that applies since the notified
+--  rtnTmSyncResourceStatChange occurred.
+rtnTmSyncEventResourceStatValueType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 8000 2 1 1 1 }
+
+RtnTmSyncEventResourceStatValue	 ::= RtnTmSyncResourceStat
+
+
+-- The event value reports the tnTmSyncFrameSyncLockStatValue that applies since the
+--  notified rtnTmSyncFrameSyncLockStatChange event occurred.
+-- no type OID available
+
+RtnTmSyncFrameSyncLockStatValue	 ::= ENUMERATED
+{
+	 locked              	 	 (0)
+,	 verify              	 	 (1)
+,	 notLocked           	 	 (2)
+}
+
+
+
+-- The directive qualifier specifies the FR instance the directive shall act on and
+--  contains a set of parameter identifier and parameter value pairs. To be valid, the
+--  parameter identifier must reference a controllable parameter of the RtnTmSyncAndChnlDecode
+--  FR and the parameter value must be of the same type as the parameter value that
+--  shall be set.
+rtnTmSyncContrParamIdsAndValuesType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 8000 3 1 1 1 }
+
+RtnTmSyncContrParamIdsAndValues	 ::= DirectiveQualifier
+
+
+-- This enumerated parameter reports on the return Forward TC MC Multiplexer resource
+--  status and can take on four values:
+-- - 'configured';
+-- - 'operational';
+-- - 'interrupted';
+-- -
+--  'halted'.
+fwdTcMcMuxResourceStatType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 9000 1 1 1 1 }
+
+FwdTcMcMuxResourceStat	 ::= ResourceStat
+
+
+-- This parameter configures and reports the maximum number of TC MC frames that may
+--  be converted into a single CLTU. 
+fwdTcMcMuxMaxNumberOfFramesPerCltuType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 9000 1 2 1 1 }
+
+FwdTcMcMuxMaxNumberOfFramesPerCltu	 ::= INTEGER  (1 .. 15)
+
+
+-- This parameter configures and reports the maximum length in octets of a TC MC frame
+--  the FR accepts for further processing. The reported length refers to the frame length
+--  after insertion of the Frame Error Control Field if applicable. 
+fwdTcMcMuxMaxFrameLengthType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 9000 1 3 1 1 }
+
+-- The engineering unit of this parameter is octet.
+FwdTcMcMuxMaxFrameLength	 ::= INTEGER  (1 .. 1024)
+
+
+-- This parameter configures and reports how the TC Master Channels are multiplexed
+--  on the physical channel. In case fwdTcMcMuxScheme =  �fifo�, this parameter will
+--  be flagged as undefined. fwdTcMcMuxScheme = 'absolute priority', then this parameter
+--  contains a sequence of the SCIDs used on the forward link where the first SCID in
+--  the sequence has the highest priority, the second has the second-highest priority
+--  etc. Consequently the sequence has as many elements as Spacecraft Identifiers are
+--  permitted on the given physical channel. If fwdTcMcMuxScheme = 'polling vector',
+--  then the sequence consists of up to 3072 elements where each element is a SCID.
+--  Each SCID used in fwdTcMcMuxControl must be an element of fspTcMcMuxValidScids.
+-- 
+--  If the given FR instance is not configured to accept TC MC frames as incoming service
+--  data units, the value of this parameter shall be flagged as 'undefined'. 
+fwdTcMcMuxContrType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 9000 1 4 1 1 }
+
+FwdTcMcMuxContr     	 ::= CHOICE
+{
+	 fifo                	 [0]	 	 NULL
+,	 absolutePriority    	 [1]	 	 SEQUENCE  (SIZE( 1 .. 1024))  OF	 	 	 scid                	 INTEGER  (0 .. 1023)
+,	 pollingVector       	 [2]	 	 SEQUENCE  (SIZE( 1 .. 3072))  OF	 	 	 scid                	 INTEGER  (0 .. 1023)
+}
+
+
+
+-- This enumerated parameter configures and reports if the FR inserts the Frame Error
+--  Control Field into each frame before passing it to the FwdTcPlopSyncAndChnlEncode
+--  FR. This parameter can take on two values:
+-- - 'present';
+-- - 'absent'.
+-- The details
+--  regarding the FEC are specified in CCSDS 232.0-B-2. 
+fwdTcMcMuxPresenceOfFecType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 9000 1 5 1 1 }
+
+FwdTcMcMuxPresenceOfFec	 ::= ENUMERATED
+{
+	 present             	 	 (0)
+,	 absent              	 	 (1)
+}
+
+
+
+-- The event value reports the fwdTcMcMuxResourceStat value that applies since the notified
+--  fwdTcMcMuxResourceStatChange event has occurred.
+fwdTcMcMuxEventResourceStatValueType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 9000 2 1 1 1 }
+
+FwdTcMcMuxEventResourceStatValue	 ::= FwdTcMcMuxResourceStat
+
+
+-- The directive qualifier specifies the FR instance the directive shall act on and
+--  contains a set of parameter identifier and parameter value pairs. To be valid, the
+--  parameter identifier must reference a controllable parameter of the FwdTcMcMux FR
+--  and the parameter value must be of the same type as the parameter value that shall
+--  be set.
+-- The directive qualifier specifies the FR instance the directive shall act
+--  on and contains a set of parameter identifier and parameter value pairs. To be valid,
+--  the parameter identifier must reference a controllable parameter of the TC MC Mux
+--  FR and the parameter value must be of the same type as the parameter value that
+--  shall be set.
+fwdTcMcMuxContrParamIdsAndValuesType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 9000 3 1 1 1 }
+
+FwdTcMcMuxContrParamIdsAndValues	 ::= DirectiveQualifier
+
+
+-- This directive does not need a qualifier value.   
+fwdTcMcMuxDiscardDataUnitsQualifierType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 9000 3 2 1 1 }
+
+FwdTcMcMuxDiscardDataUnitsQualifier	 ::= SEQUENCE
+{
+	 functResourceInstanceNumber	 INTEGER  (1 .. 4294967295)
+,	 functResourceQualifiers	 NULL
+}
+
+
+
+-- This enumerated parameter reports on the return Forward TC VC Multiplexer resource
+--  status and can take on four values:
+-- - 'configured';
+-- - 'operational';
+-- - 'interrupted';
+-- -
+--  'halted'.
+fwdTcVcMuxResourceStatType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 9001 1 1 1 1 }
+
+FwdTcVcMuxResourceStat	 ::= ResourceStat
+
+
+-- This parameter configures and reports on the maximum TC VC frame length in octets
+--  that the FR accepts as input for further processing where the specified length shall
+--  not take into account the Frame Error Control Field, if present on the physical
+--  channel.
+-- Note: The value of the maximum-tc-vc-frame-length parameter of an instance
+--  of this FR must be less than or equal to the parameter maximum-tc-mc-frame-length
+--  of the TC MC Mux FR consuming the TC MC frames generated by this TC VC Mux FR instance.
+fwdTcVcMaxFrameLengthType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 9001 1 2 1 1 }
+
+FwdTcVcMaxFrameLength	 ::= INTEGER  (1 .. 1024)
+
+
+-- This parameter configures and reports how an AD frame on the given Virtual Channel
+--  shall be annotated in terms of number of times it shall be transmitted to the spacecraft.
+--  
+fwdTcVcMuxAdFrameRepetitionsType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 9001 1 3 1 1 }
+
+FwdTcVcMuxAdFrameRepetitions	 ::= SEQUENCE  (SIZE( 1 .. 64))  OF	 	 vcAdFrameRepetition 	 SEQUENCE
+	 {
+	 	 vcid                	 INTEGER  (0 .. 63)
+,	 	 repetitions         	 INTEGER  (1 .. 5)
+	 }
+
+
+
+-- This parameter configures and reports the Master Channel that is provided by the
+--  given FR instance. The Master Channel ID is the concatenation of TFVN and SCID.
+--  Given that this FR type handles only TC frames, the TFVN is fixed and only the SCID
+--  is variable. 
+fwdTcVcMuxMcType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 9001 1 5 1 1 }
+
+FwdTcVcMuxMc        	 ::= SEQUENCE
+{
+	 tfvn                	 INTEGER  (0)
+,	 scid                	 INTEGER  (0 .. 1023)
+}
+
+
+
+-- This parameter configures and reports how the Virtual Channels are multiplexed into
+--  the Master Channel formed by this FR instance. In case fwdTcVcMuxScheme = �fifo�,
+--  this parameter will be flagged as undefined. If fwdTcVcMuxScheme = 'absolute priority',
+--  then this parameter contains a sequence of the VCIDs used on the given Master Channel
+--  where the first VCID in the sequence has the highest priority, the second has the
+--  second-highest priority etc. Consequently the sequence has as many elements as Virtual
+--  Channels exist on the Master Channel provided by the given FR instance. If fwdTcVcMuxScheme
+--  = 'polling vector', then the sequence consists of up to 192 elements where each
+--  element is a VCID. 
+fwdTcVcMuxContrType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 9001 1 6 1 1 }
+
+FwdTcVcMuxContr     	 ::= CHOICE
+{
+	 fifo                	 [0]	 	 NULL
+,	 absolutePriority    	 [1]	 	 SEQUENCE  (SIZE( 1 .. 64))  OF	 	 	 vcId                	 INTEGER  (0 .. 63)
+,	 pollingVector       	 [2]	 	 SEQUENCE  (SIZE( 1 .. 192))  OF	 	 	 vcId                	 INTEGER  (0 .. 63)
+}
+
+
+
+-- The event value reports the fwdTcVcMuxResourceStat value that applies since the notified
+--  fwdTcVcMuxResourceStatChange event has occurred.
+fwdTcVcMuxResourceStatValueType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 9001 2 1 1 1 }
+
+FwdTcVcMuxResourceStatValue	 ::= ResourceStat
+
+
+-- The directive qualifier specifies the FR instance the directive shall act on and
+--  contains a set of parameter identifier and parameter value pairs. To be valid, the
+--  parameter identifier must reference a controllable parameter of the FwdTcVcMux FR
+--  and the parameter value must be of the same type as the parameter value that shall
+--  be set.
+fwdTcVcMuxContrParamIdsAndValuesType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 9001 3 1 1 1 }
+
+FwdTcVcMuxContrParamIdsAndValues	 ::= DirectiveQualifier
+
+
+-- This directive does not need a qualifier value.   
+fwdTcVcMuxDiscardDataUnitsQualifierType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 9001 3 2 1 1 }
+
+FwdTcVcMuxDiscardDataUnitsQualifier	 ::= SEQUENCE
+{
+	 functResourceInstanceNumber	 INTEGER  (1 .. 4294967295)
+,	 functResourceQualifiers	 NULL
+}
+
+
+
+-- This enumerated parameter reports the RtnTmMcDemux FR resource status and can take
+--  on four values:
+-- - 'configured'; 
+-- - 'operational';
+-- - 'interrupted';
+-- - 'halted'.
+rtnTmMcDemuxResourceStatType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 13000 1 1 1 1 }
+
+RtnTmMcDemuxResourceStat	 ::= ResourceStat
+
+
+-- This parameter reports the Master Channel ID the given FR instance is configured
+--  to process.  
+rtnTmMcDemuxMcIdType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 13000 1 2 1 1 }
+
+RtnTmMcDemuxMcId    	 ::= SEQUENCE
+{
+	 -- For Tm frames the Transfer Frame Version Number is always 0.
+	 tfvn                	 INTEGER  (0)
+,	 scid                	 INTEGER  (0 .. 1023)
+}
+
+
+
+-- This enumerated parameter configures and reports if the FR instance shall extract
+--  CLCWs from the MC frames and forward them to the FR types that consume them. It
+--  can take on two values:
+-- - clcw: the CLCW shall be extracted from frames of the
+--  configured Master Channel;
+-- - no clcw: no CLCW extraction shall take place, either
+--  because the configured MC does not carry CLCWs or no FR is set up to consume the
+--  MC CLCW stream. 
+rtnTmMcDemuxClcwExtractionType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 13000 1 3 1 1 }
+
+RtnTmMcDemuxClcwExtraction	 ::= ENUMERATED
+{
+	 clcw                	 	 (0)
+,	 noClcw              	 	 (1)
+}
+
+
+
+-- The event value reports the rtnMcDemuxResourceStat value that applies since the notified
+--  rtnMcDemuxResourceStatChange event occurred.
+rtnTmMcDemuxEventResourceStatValueType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 13000 2 1 1 1 }
+
+RtnTmMcDemuxEventResourceStatValue	 ::= RtnTmMcDemuxResourceStat
+
+
+-- The directive qualifier specifies the FR instance the directive shall act on and
+--  contains a set of parameter identifier and parameter value pairs. To be valid, the
+--  parameter identifier must reference a controllable parameter of the RtnMcDemux FR
+--  and the parameter value must be of the same type as the parameter value that shall
+--  be set.
+-- 
+rtnTmMcDemuxContrParamIdsAndValuesType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 13000 3 1 1 1 }
+
+RtnMcDemuxContrParamIdsAndValues	 ::= DirectiveQualifier
+
+
+-- This enumerated parameter reports the RtnTmVcDemux FR resource status and can take
+--  on four values:
+-- - 'configured'; 
+-- - 'operational';
+-- - 'interrupted';
+-- - 'halted'.
+rtnTmVcDemuxResourceStatType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 13001 1 1 1 1 }
+
+RtnTmVcDemuxResourceStat	 ::= ResourceStat
+
+
+-- This parameter configures and reports the Virtual Channel ID the given FR instance
+--  is configured to process. 
+rtnTmVcDemuxVcIdType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 13001 1 2 1 1 }
+
+RtnTmVcDemuxVcId    	 ::= INTEGER  (0 .. 7)
+
+
+-- This enumerated parameter configures and reports if the FR instance shall extract
+--  CLCWs from the VC frames and forward them to the FR types that consume them. It
+--  can take on two values:
+-- - clcw: the CLCW shall be extracted from frame of the configured
+--  Master Channel;
+-- - no clcw: no CLCW extraction shall take place, either because
+--  the configured VC does not carry CLCWs or no FR is set up to consume the VC CLCW
+--  stream. 
+rtnTmVcDemuxClcwExtractionType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 13001 1 3 1 1 }
+
+RtnTmVcDemuxClcwExtraction	 ::= ENUMERATED
+{
+	 clcw                	 	 (0)
+,	 noClcw              	 	 (1)
+}
+
+
+
+-- This parameter reports the GVCID of the frames being delivered by this FR instance.
+--  The Master Channel Id being part of the GVCID is redundant in the sense that it
+--  is determined by the configuration of the RtnTmMcDemux FR delivering frames to the
+--  given RtmVcDemux FR instance. However, the GVCID is a frequently used parameter
+--  and is provided by the RtnTmVcDemus FR for convenience.
+rtnTmVcDemuxGvcidType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 13001 1 4 1 1 }
+
+RtnTmVcDemuxGvcid   	 ::= SEQUENCE
+{
+	 -- The Transfer Frame Version Number of TM frames is always 0.
+	 tfvn                	 INTEGER  (0)
+,	 scid                	 INTEGER  (0 .. 1023)
+,	 vcid                	 INTEGER  (0 .. 7)
+}
+
+
+
+-- The directive qualifier specifies the FR instance the directive shall act on and
+--  contains a set of parameter identifier and parameter value pairs. To be valid, the
+--  parameter identifier must reference a controllable parameter of the RtnTmVcDemux
+--  FR and the parameter value must be of the same type as the parameter value that
+--  shall be set.
+-- 
+rtnTmVcDemuxContrParamIdsAndValuesType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 13001 3 1 1 1 }
+
+RtnTmVcDemuxContrParamIdsAndValues	 ::= DirectiveQualifier
+
+
+-- This parameter reports the set of APIDs of the space packets that are to be forwarded
+--  by means of Packet.indication primitives to the Return File Service Production FR.
+--   If the APID set contains an element set to the value -1, no space packets shall
+--  be forwarded to the Return File Service Production FR. 
+rfspApidSetType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 13002 1 1 1 1 }
+
+RfspApidSet         	 ::= NULL
+
+
+-- This parameter reports the service package on behalf of which telemetry frames are
+--  passed to one or more offline frame buffers.
+servicePackageIdType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 17000 1 1 1 1 }
+
+ServicePackageId    	 ::= SEQUENCE
+{
+	 element1            	 INTEGER  (0 .. 1000)
+,	 element2            	 DirectiveQualifier
+}
+
+
+
+-- This parameter configers and reports the Spacecraft IDs and consequently the Master
+--  Channels that are permitted on the given forward link.  
+fwdTcMcMuxValidScidsType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 32000 1 16 1 1 }
+
+FwdTcMcMuxValidScids	 ::= SEQUENCE  (SIZE( 1 .. 1024))  OF	 	 scid                	 INTEGER  (0 .. 1023)
+
+
+-- This parameter configures and reports the VC-IDs of the TC VC frames the FR instance
+--  accepts as input.
+fwdTcVcMuxValidTcVcIdsType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 32000 1 17 1 1 }
+
+FwdTcVcMuxValidTcVcIds	 ::= SEQUENCE  (SIZE( 1 .. 64))  OF	 	 vcId                	 INTEGER  (0 .. null)
+
+
+-- This enumerated parameter reports the status of the service production process used
+--  by the given instance of a F-CLTU service. It can take on the following values:
+-- -
+--  'configured': equipment has been assigned to support the service instance, but the
+--  production process is not yet capable of radiating CLTUs;
+-- - 'operational': the
+--  production process has been configured for support, has completed the acquisition
+--  sequence, and is capable of radiating CLTUs;
+-- - 'interrupted': the production process
+--  is stopped due to a fault;
+-- - 'halted': the production process is stopped and production
+--  equipment is out of service due to management action.
+fwdCltuProductionStatType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 33000 1 1 1 1 }
+
+FwdCltuProductionStat	 ::= ProductionStat
+
+
+-- This parameter reports the identifier of the given service instance. 
+fwdCltuServiceInstanceIdentifierType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 33000 1 2 1 1 }
+
+FwdCltuServiceInstanceIdentifier	 ::= SleServiceInstanceId
+
+
+-- This enumerated parameter reports the delivery mode of the given instance of the
+--  F-CLTU service. For the present version of this service only the �forward online�
+--  delivery mode is defined.
+fwdCltuDeliveryModeType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 33000 1 3 1 1 }
+
+FwdCltuDeliveryMode 	 ::= ENUMERATED
+{
+	 fwdOnline           	 	 (0)
+}
+
+
+
+-- This parameter configures and reports the setting of the maximum time period in seconds
+--  permitted from when a confirmed F-CLTU operation is invoked until the return has
+--  to be received by the invoker.
+fwdCltuReturnTimeoutPeriodType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 33000 1 4 1 1 }
+
+-- The engineering unit of this parameter is second.
+FwdCltuReturnTimeoutPeriod	 ::= SleReturnTimeout
+
+
+-- This enumerated parameter configures and reports how the F-CLTU provider notifies
+--  certain changes of fwdCltuProductionStat to the service user. It can take on two
+--  values:
+-- - 'immediate': the user is notified of a fwdCltuProductionStat change to
+--  'interrupted' as soon as this transition is detected;
+-- - 'deferred': the user is
+--  notified about the fwdCltuProductionStat change only if and when the radiation of
+--  a CLTU is affected.
+fwdCltuNotificationModeType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 33000 1 5 1 1 }
+
+FwdCltuNotificationMode	 ::= ENUMERATED
+{
+	 immediate           	 	 (0)
+,	 deferred            	 	 (1)
+}
+
+
+
+-- This enumerated parameter configures and reports the way the F-CLTU service provider
+--  will act in the event of a protocol abort. This parameter can take on two values:
+-- -
+--  'abort': service production will cease in the event of a protocol abort;
+-- - 'continue':
+--  service production will disregard the protocol abort event and continue radiating
+--  the CLTUs already buffered at the time of the event.
+fwdCltuProtocolAbortModeType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 33000 1 6 1 1 }
+
+FwdCltuProtocolAbortMode	 ::= ENUMERATED
+{
+	 abort               	 	 (0)
+,	 continue            	 	 (1)
+}
+
+
+
+-- This enumerated parameter reports the status of the given instance of the F-CLTU
+--  service. It can take on the following values:
+-- - 'unbound': all resources required
+--  to enable the provision of the Forward CLTU service have been allocated, and all
+--  objects required to provide the service have been instantiated; however, no association
+--  yet exists between the user and the provider, i.e., the F-CLTU transfer service
+--  provider port is not bound;
+-- - 'ready': an association has been established between
+--  the user and the provider, and they may interact by means of the service operations.
+--  However, sending of CLTUs from the user to the provider (by means of the CLTU-TRANSFER-DATA
+--  operation) is not permitted; the user may enable the delivery of CLTUs by means
+--  of the appropriate service operation (CLTU-START), which, in turn, will cause the
+--  provider to transition to the state 'active';
+-- - 'active':  this state resembles
+--  state �ready�, except that now the user can send CLTUs and the provider is enabled
+--  to radiate CLTUs to the spacecraft; the service continues in this state until the
+--  user invokes either the CLTU-STOP operation to cause the provider to suspend transmission
+--  of CLTUs and transition back to state 'ready' or the user invokes the PEER-ABORT
+--  operation to cause the service to transition back to the 'unbound' state.
+fwdCltuSiStateType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 33000 1 7 1 1 }
+
+FwdCltuSiState      	 ::= SleSiState
+
+
+-- This parameter reports the current setting of the time in seconds between successive
+--  CLTU-STATUS-REPORT invocations sent by the F-CLTU service provider. The permissible
+--  values are in the range (2 .. 600). If cyclic reporting is off, this parameter shall
+--  be flagged as 'undefined'.
+fwdCltuReportingCycleType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 33000 1 8 1 1 }
+
+-- The engineering unit of this parameter is second.
+FwdCltuReportingCycle	 ::= SleReportingCycle
+
+
+-- This parameter reports the value of the cltu-identification the F-CLTU service provider
+--  expects to receive in the next CLTU-TRANSFER-DATA invocation for this invocation
+--  to be valid. As long as fwdCltuSiState ? 'active', the value reported will be zero.
+fwdCltuExpectedCltuIdentificationType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 33000 1 9 1 1 }
+
+FwdCltuExpectedCltuIdentification	 ::= INTEGER  (0 .. 4294967295)
+
+
+-- This parameter reports the value of the event-invocation-identification the F-CLTU
+--  service provider expects to receive in the next CLTU-THROW-EVENT invocation for
+--  this invocation to be valid. The initial value of this parameter is zero.
+fwdCltuExpectedEventInvocationIdType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 33000 1 10 1 1 }
+
+FwdCltuExpectedEventInvocationId	 ::= INTEGER  (0 .. 4294967295)
+
+
+-- This parameter reports the total number of CLTUs received while the given service
+--  instance has been accessible to the user. Only CLTUs that the service provider accepted
+--  and consequently buffered are counted in the total.
+fwdCltuNumberOfCltusReceivedType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 33000 1 11 1 1 }
+
+FwdCltuNumberOfCltusReceived	 ::= INTEGER  (0 .. 4294967295)
+
+
+-- This parameter reports the number of CLTUs that the provider attempted to radiate
+--  while the given service instance has been active including
+-- - CLTUs that radiated
+--  successfully;
+-- - CLTUs that expired;
+-- - CLTUs that aborted;
+-- - a CLTU in the process
+--  of being radiated.
+fwdCltuNumberOfCltusProcessedType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 33000 1 12 1 1 }
+
+FwdCltuNumberOfCltusProcessed	 ::= INTEGER  (0 .. 4294967295)
+
+
+-- This parameter reports the number of CLTUs that the provider successfully radiated
+--  completely during the service provision period. A CLTU in the process of being radiated
+--  is not included in this count.
+fwdCltuNumberOfCltusRadiatedType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 33000 1 13 1 1 }
+
+FwdCltuNumberOfCltusRadiated	 ::= INTEGER  (0 .. 4294967295)
+
+
+-- The event value reports the fwdCltuProductionStatus value that applies since the
+--  notified fwdCltuProductionStatusChange event occurred.
+-- no type OID available
+
+FwdCltuEventProductionStatValue	 ::= FwdCltuProductionStat
+
+
+-- The directive qualifier specifies the FR instance the directive shall act on and
+--  contains a set of parameter identifier and parameter value pairs. To be valid, the
+--  parameter identifier must reference a controllable parameter of the FwdCltuTsProvider
+--  FR and the parameter value must be of the same type as the parameter value that
+--  shall be set.
+fwdCltuContrParamIdsAndValuesType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 33000 3 1 1 1 }
+
+FwdCltuContrParamIdsAndValues	 ::= DirectiveQualifier
+
+
+-- This enumerated parameter reports the status of the service production process used
+--  by the given instance of an RAF service. It can take on the following values:
+-- -
+--  'running' - the RAF production process is capable of processing a return space link
+--  physical channel, if available;
+-- - 'interrupted' - the RAF production process is
+--  stopped due to a fault;
+-- - 'halted' - the RAF production process is stopped and production
+--  equipment is out of service due to management action.
+rafProductionStatusType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 36000 1 1 1 1 }
+
+RafProductionStatus 	 ::= SleRtnProductionStat
+
+
+-- This parameter reports the identifier of the given service instance. 
+rafServiceInstanceIdentifierType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 36000 1 2 1 1 }
+
+RafServiceInstanceIdentifier	 ::= SleServiceInstanceId
+
+
+-- This enumerated parameter reports the delivery mode of the given RAF service instance.
+--  It can take on three values:
+-- - 'online timely'  - the timely online delivery mode
+--  limits the size of the backlog of not yet delivered data that is allowed to accumulate
+--  by discarding data that cannot be delivered within a certain time. Furthermore,
+--  when data is discarded, it is discarded �in chunks�, i.e., as a sufficiently large
+--  block of contiguous frames rather than as random frames here and there; in general,
+--  this approach maximizes the usefulness of the data that is delivered.
+-- - 'online
+--  complete' - this delivery mode attempts to deliver all acquired frames having the
+--  user selected characteristics, in order, with minimum delay consistent with the
+--  available ground communications bandwidth. To that end, the service provider has
+--  a buffer sufficiently large to deal with communications service delays, outages,
+--  and bandwidth limitations;
+-- - 'offline' - in this delivery mode, the provider side
+--  buffer enables data to be delivered hours or days after their acquisition. To that
+--  end, this buffer is sufficiently large to hold all data that might be accumulated
+--  during several space link sessions.
+rafDeliveryModeType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 36000 1 3 1 1 }
+
+RafDeliveryMode     	 ::= SleRtnDeliveryMode
+
+
+-- This parameter reports the setting of the maximum time period in seconds permitted
+--  from when a confirmed RAF operation is invoked until the return is received by the
+--  invoker.
+rafReturnTimeoutPeriodType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 36000 1 4 1 1 }
+
+-- The engineering unit of this parameter is second.
+RafReturnTimeoutPeriod	 ::= SleReturnTimeout
+
+
+-- This parameter reports the maximum allowable delivery latency time, in seconds, for
+--  the online delivery modes, i.e., the maximum delay from when the frame is acquired
+--  by the provider until it is delivered to the user.  If rafDeliveryMode = 'offline',
+--  rafLatencyLimit has no effect.
+rafLatencyLimitType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 36000 1 5 1 1 }
+
+-- The engineering unit of this parameter is second
+RafLatencyLimit     	 ::= INTEGER  (1 .. 100)
+
+
+-- This parameter reports the number of frames the provider shall block in one RAF-PDU
+--  before passing it to the underlying communications layer except if expiry of the
+--  latency limit requires earlier release of the RAF-PDU.
+rafTransferBufferSizeType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 36000 1 6 1 1 }
+
+RafTransferBufferSize	 ::= INTEGER  (1 .. 1000)
+
+
+-- This enumerated parameter reports the set of the quality of the frames that the user
+--  may select with the given RAF service instance. The permitted frame quality settings
+--  must be chosen from the following set of values: 
+-- - 'good' - only frames that based
+--  on successful RS or LDPC decoding/correcting and/or based on the check of the FECF
+--  are assumed to be error free will be delivered to the user;
+-- - 'erred' - only frames
+--  that based on unsuccessful RS or LDPC decoding/correcting or  based on the failed
+--  check of the FECF were found to contain errors will be delivered to the user;
+-- -
+--  'all'  - all frames regardless if error free or not are delivered to the user; this
+--  includes telemetry frames for which due to lack of compatibility with the pertinent
+--  CCSDS Recommendations the quality cannot be determined.
+rafPermittedFrameQualityType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 36000 1 7 1 1 }
+
+RafPermittedFrameQuality	 ::= SET  (SIZE( 1 .. 3))  OF	 	 	 ENUMERATED
+	 {
+	 	 good                	 	 (0)
+	 ,	 erred               	 	 (1)
+	 ,	 all                 	 	 (2)
+	 }
+
+
+
+-- This enumerated parameter reports the quality of the frames that shall be delivered
+--  by the given RAF service instance. It can take on three values:
+-- - 'good' - only
+--  frames that based on successful RS or LDPC decoding/correcting and/or based on the
+--  check of the FECF are assumed to be error free will be delivered to the user;
+-- -
+--  'erred' - only frames that based on unsuccessful RS or LDPC decoding/correcting
+--  and/or based on the failed check of the FECF were found to contain errors will be
+--  delivered to the user;
+-- - 'all'  - all frames regardless if error free or not are
+--  delivered to the user; this includes telemetry frames for which due to lack of compatibility
+--  with the pertinent CCSDS Recommendations the quality cannot be determined.
+-- If the
+--  given service instance does not constrain this parameter to a single value, it shall
+--  be flagged 'undefined' whenever si-state ? 'active'.
+rafRequestedFrameQualityType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 36000 1 8 1 1 }
+
+RafRequestedFrameQuality	 ::= ENUMERATED
+{
+	 good                	 	 (0)
+,	 erred               	 	 (1)
+,	 all                 	 	 (2)
+}
+
+
+
+-- This enumerated parameter reports the status of the given instance of the RAF service.
+--  It can take on the following values:
+-- - 'unbound' - All resources required to enable
+--  the provision of the RAF service have been allocated, and all objects required to
+--  provide the service have been instantiated; however, no association yet exists between
+--  the user and the provider, i.e., the RAF transfer service provider port is not bound;
+-- -
+--  'ready'- An association has been established between the user and the provider,
+--  and they may interact by means of the service operations. However, sending of telemetry
+--  frames from the provider to the user (by means of the RAF-TRANSFER-DATA operation)
+--  is not permitted; the user may enable the delivery of telemetry frames by means
+--  of the appropriate service operation (RAF-START), which, in turn, will cause the
+--  provider to transition to the state 'active';
+-- - 'active' -  This state resembles
+--  state �ready�, except that now the provider will send telemetry frames provided
+--  frames of the selected characteristics are made available by the RAF production
+--  process; the service continues in this state until the user invokes either the RAF-STOP
+--  operation to cause the provider to suspend delivery of telemetry frames and transition
+--  back to state 'ready' or the PEER-ABORT invocation to cause the service to transition
+--  back to the 'unbound' state.
+rafSiStateType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 36000 1 9 1 1 }
+
+RafSiState          	 ::= SleSiState
+
+
+-- This parameter reports the current setting of the time in seconds between successive
+--  RAF-STATUS-REPORT invocations sent by the RAF service provider. The permissible
+--  values are in the range (2 .. 600). If cyclic reporting is off, this parameter shall
+--  be flagged as 'undefined'.
+rafReportingCycleType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 36000 1 10 1 1 }
+
+-- The engineering unit of this parameter is second.
+RafReportingCycle   	 ::= SleReportingCycle
+
+
+-- This parameter reports the  total number of telemetry frames that were annotated
+--  with a frame-quality of �good� and delivered to the user since the start of the
+--  service instance provision period.
+rafNumberOfErrorFreeFramesDeliveredType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 36000 1 11 1 1 }
+
+RafNumberOfErrorFreeFramesDelivered	 ::= INTEGER  (0 .. 4294967295)
+
+
+-- This parameter reports the  total number of telemetry frames that were delivered
+--  to the user since the start of the service instance provision period.
+rafNumberOfFramesDeliveredType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 36000 1 12 1 1 }
+
+RafNumberOfFramesDelivered	 ::= INTEGER  (0 .. 4294967295)
+
+
+-- The event value reports the rafTsProductionStatus value that applies since the notified
+--  rafTsProductionStatusChange event occurred.
+rafEventProductionStatusValueType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 36000 2 1 1 1 }
+
+RafEventProductionStatusValue	 ::= RafProductionStatus
+
+
+-- The directive qualifier specifies the FR instance the directive shall act on and
+--  contains a set of parameter identifier and parameter value pairs. To be valid, the
+--  parameter identifier must reference a controllable parameter of the RafTsProvider
+--  FR and the parameter value must be of the same type as the parameter value that
+--  shall be set.
+rafControlledParameterIdsAndValuesType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 36000 3 1 1 1 }
+
+RafControlledParameterIdsAndValues	 ::= DirectiveQualifier
+
+
+-- This enumerated parameter reports the status of the service production process used
+--  by the given instance of an RCF service. It can take on the following values:
+-- -
+--  'running' - the RCF production process is capable of processing a return link Master
+--  or Virtual Channel, if available;
+-- - 'interrupted' - the RCF production process is
+--  stopped due to a fault;
+-- - 'halted' - the RCF production process is stopped and production
+--  equipment is out of service due to management action.
+rcfProductionStatusType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 37000 1 1 1 1 }
+
+RcfProductionStatus 	 ::= SleRtnProductionStat
+
+
+-- This parameter reports the identifier of the given service instance. 
+rcfServiceInstanceIdentifierType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 37000 1 2 1 1 }
+
+RcfServiceInstanceIdentifier	 ::= SleServiceInstanceId
+
+
+-- This enumerated parameter reports the delivery mode of the given RCF service instance.
+--  It can take on three values:
+-- - 'online timely'  - the timely online delivery mode
+--  limits the size of the backlog of not yet delivered data that is allowed to accumulate
+--  by discarding data that cannot be delivered within a certain time. Furthermore,
+--  when data is discarded, it is discarded �in
+-- chunks�, i.e., as a sufficiently large
+--  block of contiguous frames rather than as random frames here and there; in general,
+--  this approach maximizes the usefulness of the data that is delivered.
+-- - 'online
+--  complete' - this delivery mode attempts to deliver all acquired frames having the
+--  user selected characteristics, in order, with minimum delay consistent with the
+--  available ground communications bandwidth. To that end, the service provider has
+--  a buffer sufficiently large to deal with communications service delays, outages,
+--  and bandwidth limitations;
+-- - 'offline' - in this delivery mode, the provider side
+--  buffer enables data to be delivered hours or days after their acquisition. To that
+--  end, this buffer is sufficiently large to hold all data that might be accumulated
+--  during several space link sessions.
+rcfDeliveryModeType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 37000 1 3 1 1 }
+
+RcfDeliveryMode     	 ::= SleRtnDeliveryMode
+
+
+-- This parameter reports the setting of the maximum time period in seconds permitted
+--  from when a confirmed RCF operation is invoked until the return is received by the
+--  invoker.
+rcfReturnTimeoutPeriodType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 37000 1 4 1 1 }
+
+-- The engineering unit of this parameter is second.
+RcfReturnTimeoutPeriod	 ::= SleReturnTimeout
+
+
+-- This parameter reports the maximum allowable delivery latency time, in seconds, for
+--  the online delivery modes, i.e., the maximum delay from when the frame is acquired
+--  by the provider until it is delivered to the user. This parameter shall be flagged
+--  as undefined if delivery-mode = 'offline'.
+rcfLatencyLimitType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 37000 1 5 1 1 }
+
+-- The engineering unit of this parameter is second.
+RcfLatencyLimit     	 ::= INTEGER  (1 .. 100)
+
+
+-- This parameter reports the number of frames the provider shall block in one RCF-PDU
+--  before passing it to the underlying communications layer except if expiry of latency-limit
+--  requires earlier release of the RCF-PDU. If delivery-mode = 'offline', latency-limit
+--  has no effect.
+rcfTransferBufferSizeType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 37000 1 6 1 1 }
+
+RcfTransferBufferSize	 ::= INTEGER  (1 .. 100)
+
+
+-- This parameter reports the set of Master and/or Virtual Channel that the given RCF
+--  service instance permits the user to select. The parameter is a set of the concatenation
+--  of the CCSDS assigned Spacecraft Identifier (SCID), the Transfer Frame Version Number
+--  (TFVN) and, if applicable, the Virtual Channel Identifier (VCID). The range of the
+--  Spacecraft Identifier and the Virtual Channel Identifier depend on the TFVN as follows:
+-- -
+--  TFVN = 0 (version 1) - SCID = (0 .. 1023)10, VCID = (0 .. 7)10;
+-- - TFVN = 1 (version
+--  2) - SCID = (0 .. 255)10, VCID = (0 .. 63)10.
+rcfPermittedGlobalVcidSetType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 37000 1 7 1 1 }
+
+RcfPermittedGlobalVcidSet	 ::= SET  OF	 CHOICE
+	 {
+	 	 tm                  	 [0]	 	 SEQUENCE
+	 	 {
+	 	 	 -- The TFVN of Tm frames is always 0.
+	 	 	 tfvn                	 INTEGER  (0)
+,	 	 	 scid                	 INTEGER  (0 .. 1023)
+,	 	 	 vcid                	 CHOICE
+	 	 	 {
+	 	 	 	 -- For the Master Channel the vcid remains unspecified.
+	 	 	 	 masterChannel       	 [0]	 	 NULL
+,	 	 	 	 virtualChannel      	 [1]	 	 INTEGER  (0 .. 7)
+	 	 	 }
+
+	 	 }
+
+,	 	 aos                 	 [1]	 	 SEQUENCE
+	 	 {
+	 	 	 -- The TFVN of AOS frames is always 1.
+	 	 	 tfvn                	 INTEGER  (1)
+,	 	 	 scid                	 INTEGER  (0 .. 255)
+,	 	 	 vcid                	 CHOICE
+	 	 	 {
+	 	 	 	 -- For the Master Channel the vcid remains unspecified.
+	 	 	 	 masterChannel       	 [0]	 	 NULL
+,	 	 	 	 virtualChannel      	 [1]	 	 INTEGER  (0 .. 63)
+	 	 	 }
+
+	 	 }
+
+	 }
+
+
+
+-- This parameter reports the Master or Virtual Channel that the given RCF service instance
+--  shall deliver to the user. The parameter is a concatenation of the CCSDS assigned
+--  Spacecraft Identifier (SCID), the Transfer Frame Version Number (TFVN) and, if applicable,
+--  the Virtual Channel Identifier (VCID). The range of the Spacecraft Identifier and
+--  the Virtual Channel Identifier depend on the TFVN as follows:
+-- - TFVN = 0 (version
+--  1) - SCID = (0 .. 1023)10, VCID = (0 .. 7)10;
+-- - TFVN = 1 (version 2) - SCID = (0
+--  .. 255)10, VCID = (0 .. 63)10.
+-- If the global VCID is not constrained to a single
+--  value by the given RCF service instance (see permitted-global-vcid-set), then this
+--  parameter shall be flagged undefined as long as si-state ? 'active.
+rcfRequestedGlobalVcidType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 37000 1 8 1 1 }
+
+RcfRequestedGlobalVcid	 ::= CHOICE
+{
+	 tm                  	 [0]	 	 SEQUENCE
+	 {
+	 	 -- The TFVN of TM frames is always 0.
+	 	 tfvn                	 INTEGER  (0)
+,	 	 scid                	 INTEGER  (0 .. 1023)
+,	 	 vcid                	 CHOICE
+	 	 {
+	 	 	 -- In case the Master Channel is selected, the VCID remains unspecified.
+	 	 	 masterChannel       	 [0]	 	 NULL
+,	 	 	 vcid                	 [1]	 	 INTEGER  (0 .. 7)
+	 	 }
+
+	 }
+
+,	 -- The TFVN of AOS frames is always 1.
+	 aos                 	 [1]	 	 SEQUENCE
+	 {
+	 	 -- The TFVN of AOS frames is always 1.
+	 	 tfvn                	 INTEGER  (1)
+,	 	 scid                	 INTEGER  (0 .. 255)
+,	 	 vcid                	 CHOICE
+	 	 {
+	 	 	 -- When a Master Channel is selected, the VCID remains unspecified.
+	 	 	 masterChannel       	 [0]	 	 NULL
+,	 	 	 virtualChannel      	 [1]	 	 INTEGER  (0 .. 63)
+	 	 }
+
+	 }
+
+}
+
+
+
+-- This enumerated parameter reports the status of the given instance of the RCF service.
+--  It can take on the following values:
+-- - 'unbound' - All resources required to enable
+--  the provision of the RCF service have been allocated, and all objects required to
+--  provide the service have been instantiated; however, no association yet exists between
+--  the user and the provider, i.e., the RCF transfer service provider port is not bound;
+-- -
+--  'ready'- An association has been established between the user and the provider,
+--  and they may interact by means of the service operations. However, sending of telemetry
+--  frames from the provider to the user (by means of the RCF-TRANSFER-DATA operation)
+--  is not permitted; the user may enable the delivery of telemetry frames by means
+--  of the appropriate service operation (RCF-START), which, in turn, will cause the
+--  provider to transition to the state 'active';
+-- - 'active' -  This state resembles
+--  state �ready�, except that now the provider will send telemetry frames provided
+--  frames of the selected characteristics are made available by the RCF production
+--  process; the service continues in this state until the user invokes the RCF-STOP
+--  operation to cause the provider to suspend delivery of telemetry frames and transition
+--  back to state 'ready' or the PEER-ABORT invocation to cause the service to transition
+--  back to the 'unbound' state.
+rcfSiStateType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 37000 1 9 1 1 }
+
+RcfSiState          	 ::= SleSiState
+
+
+-- This parameter reports the current setting of the time in seconds between successive
+--  RCF-STATUS-REPORT invocations sent by the RCF service provider. The permissible
+--  values are in the range (2 .. 600). If cyclic reporting is off, the value reported
+--  is zero.
+rcfReportingCycleType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 37000 1 10 1 1 }
+
+RcfReportingCycle   	 ::= SleReportingCycle
+
+
+-- This parameter reports the total number of telemetry frames that were delivered to
+--  the user since the start of the service instance provision period.
+rcfNumberOfFramesDeliveredType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 37000 1 11 1 1 }
+
+RcfNumberOfFramesDelivered	 ::= INTEGER  (0 .. 4294967295)
+
+
+-- This enumerated parameter reports the status of the service production process used
+--  by the given instance of an ROCF service. It can take on the following values:
+-- -
+--  'running' - the ROCF production process is capable of processing a return link Master
+--  or Virtual Channel, if available;
+-- - 'interrupted' - the ROCF production process
+--  is stopped due to a fault;
+-- - 'halted' - the ROCF production process is stopped and
+--  production equipment is out of service due to management action.
+rocfProductionStatusType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 38000 1 1 1 1 }
+
+RocfProductionStatus	 ::= SleRtnProductionStat
+
+
+-- This parameter reports the identifier of the given service instance. 
+rocfServiceInstanceIdentifierType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 38000 1 2 1 1 }
+
+RocfServiceInstanceIdentifier	 ::= SleServiceInstanceId
+
+
+-- This enumerated parameter reports the delivery mode of the given ROCF service instance.
+--  It can take on three values:
+-- - 'online timely'  - the timely online delivery mode
+--  limits the size of the backlog of not yet delivered data that is allowed to accumulate
+--  by discarding data that cannot be delivered within a certain time. Furthermore,
+--  when data is discarded, it is discarded �in
+-- chunks�, i.e., as a OCFs extracted
+--  from a sufficiently large block of contiguous frames rather than as OCFs from random
+--  frames here and there; in general, this approach maximizes the usefulness of the
+--  data that is delivered.
+-- - 'online complete' - this delivery mode attempts to deliver
+--  the OCFs having the user selected characteristics from all acquired frames, in order,
+--  with minimum delay consistent with the available ground communications bandwidth.
+--  To that end, the service provider has a buffer be sufficiently large to deal with
+--  communications service delays, outages, and bandwidth limitations;
+-- - 'offline'
+--  - in this delivery mode, the provider side buffer enables data to be delivered hours
+--  or days after their acquisition. To that end, this buffer is sufficiently large
+--  to hold all data that might be accumulated during several space link sessions.
+rocfDeliveryModeType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 38000 1 3 1 1 }
+
+RocfDeliveryMode    	 ::= SleRtnDeliveryMode
+
+
+-- This parameter reports the setting of the maximum time period in seconds permitted
+--  from when a confirmed ROCF operation is invoked until the return is received by
+--  the invoker.
+rocfReturnTimeoutPeriodType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 38000 1 4 1 1 }
+
+-- The engineering unit of this parameter is second
+RocfReturnTimeoutPeriod	 ::= SleReturnTimeout
+
+
+-- This parameter reports the maximum allowable delivery latency time, in seconds, for
+--  the online delivery modes, i.e., the maximum delay from when the provider extracts
+--  an OCF from a newly acquired frame until it is delivered to the user: this parameter
+--  shall be flagged as undefined if delivery-mode = 'offline'.
+rocfLatencyLimitType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 38000 1 5 1 1 }
+
+-- The engineering unit of this parameter is second.
+RocfLatencyLimit    	 ::= INTEGER  (1 .. 100)
+
+
+-- This parameter reports the number of OCFs the provider shall block in one ROCF-PDU
+--  before passing it to the underlying communications layer except if expiry of latency-limit
+--  requires earlier release of the ROCF-PDU. If delivery-mode = 'offline', latency-limit
+--  has no effect.
+rocfTransferBufferSizeType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 38000 1 6 1 1 }
+
+RocfTransferBufferSize	 ::= INTEGER  (1 .. 100)
+
+
+-- This parameter reports the telemetry Master and/or Virtual Channel out of which the
+--  given ROCF service instance extracts the OCFs. The parameter is a set of the concatenation
+--  of the CCSDS assigned Spacecraft Identifier (SCID), the Transfer Frame Version Number
+--  (TFVN) and, if applicable, the Virtual Channel Identifier (VCID). The range of the
+--  Spacecraft Identifier and the Virtual Channel Identifier depend on the TFVN as follows:
+-- -
+--  TFVN = 0 (version 1) - SCID = (0 .. 1023)10, VCID = (0 .. 7)10;
+-- - TFVN = 1 (version
+--  2) - SCID = (0 .. 255)10, VCID = (0 .. 63)10.
+rocfPermittedGlobalVcidSetType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 38000 1 7 1 1 }
+
+RocfPermittedGlobalVcidSet	 ::= SET  OF	 CHOICE
+	 {
+	 	 tm                  	 [0]	 	 SEQUENCE
+	 	 {
+	 	 	 -- The TFVN of Tm frames is always 0.
+	 	 	 tfvn                	 INTEGER  (0)
+,	 	 	 scid                	 INTEGER  (0 .. 1023)
+,	 	 	 vcid                	 CHOICE
+	 	 	 {
+	 	 	 	 -- For the Master Channel the vcid remains unspecified.
+	 	 	 	 masterChannel       	 [0]	 	 NULL
+,	 	 	 	 virtualChannel      	 [1]	 	 INTEGER  (0 .. 7)
+	 	 	 }
+
+	 	 }
+
+,	 	 aos                 	 [1]	 	 SEQUENCE
+	 	 {
+	 	 	 -- The TFVN of AOS frames is always 1.
+	 	 	 tfvn                	 INTEGER  (1)
+,	 	 	 scid                	 INTEGER  (0 .. 255)
+,	 	 	 vcid                	 CHOICE
+	 	 	 {
+	 	 	 	 -- For the Master Channel the vcid remains unspecified.
+	 	 	 	 masterChannel       	 [0]	 	 NULL
+,	 	 	 	 virtualChannel      	 [1]	 	 INTEGER  (0 .. 63)
+	 	 	 }
+
+	 	 }
+
+	 }
+
+
+
+-- This parameter reports the set of Master and/or Virtual Channel that the given ROCF
+--  service instance permits the user to select. The parameter is a set of the concatenation
+--  of the CCSDS assigned Spacecraft Identifier (SCID), the Transfer Frame Version Number
+--  (TFVN) and, if applicable, the Virtual Channel Identifier (VCID). The range of the
+--  Spacecraft Identifier and the Virtual Channel Identifier depend on the TFVN as follows:
+-- -
+--  TFVN = 0 (version 1) - SCID = (0 .. 1023)10, VCID = (0 .. 7)10;
+-- - TFVN = 1 (version
+--  2) - SCID = (0 .. 255)10, VCID = (0 .. 63)10.
+-- If the global VCID is not constrained
+--  to a single value by the given ROCF service instance, then this parameter shall
+--  be flagged as undefined as long as si-state ? 'active.
+rocfRequestedGlobalVcidType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 38000 1 8 1 1 }
+
+RocfRequestedGlobalVcid	 ::= CHOICE
+{
+	 tm                  	 [0]	 	 SEQUENCE
+	 {
+	 	 -- The TFVN of TM frames is always 0.
+	 	 tfvn                	 INTEGER  (0)
+,	 	 scid                	 INTEGER  (0 .. 1023)
+,	 	 vcid                	 CHOICE
+	 	 {
+	 	 	 -- In case the Master Channel is selected, the VCID remains unspecified.
+	 	 	 masterChannel       	 [0]	 	 NULL
+,	 	 	 vcid                	 [1]	 	 INTEGER  (0 .. 7)
+	 	 }
+
+	 }
+
+,	 -- The TFVN of AOS frames is always 1.
+	 aos                 	 [1]	 	 SEQUENCE
+	 {
+	 	 -- The TFVN of AOS frames is always 1.
+	 	 tfvn                	 INTEGER  (1)
+,	 	 scid                	 INTEGER  (0 .. 255)
+,	 	 vcid                	 CHOICE
+	 	 {
+	 	 	 -- When a Master Channel is selected, the VCID remains unspecified.
+	 	 	 masterChannel       	 [0]	 	 NULL
+,	 	 	 virtualChannel      	 [1]	 	 INTEGER  (0 .. 63)
+	 	 }
+
+	 }
+
+}
+
+
+
+-- This parameter reports the set of OCF types that the given ROCF service instance
+--  permits the user to select. Three types are defined:
+-- - 'all control word types'
+--  - all OCFs shall be delivered regardless of their type;
+-- - 'clcw' - only OCFs containing
+--  the CCSDS defined Communication Link Control Word (CLCW) data structure shall be
+--  delivered;
+-- - 'not-clcw' - only privately defined OCFs shall be delivered.   
+rocfPermittedControlWordTypeSetType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 38000 1 9 1 1 }
+
+RocfPermittedControlWordTypeSet	 ::= SET  (SIZE( 1 .. 3))  OF	 	 	 ENUMERATED
+	 {
+	 	 allControlWordTypes 	 	 (0)
+	 ,	 clcwsOnly           	 	 (1)
+	 ,	 nonClcwsOnly        	 	 (2)
+	 }
+
+
+
+-- This enumerated parameter reports the type of the OCFs that shall be delivered. It
+--  can take on three values:
+-- - all control word types' - the service provider delivers
+--  all OCFs extracted from the selected telemetry channel, regardless of the control
+--  word type they contain;
+-- - 'clcws only' - the service provider delivers the OCFs
+--  extracted from the selected telemetry channel that contain CLCW reports;
+-- - 'non-clcws
+--  only' - the service provider delivers the OCFs extracted from the selected telemetry
+--  channel that contain reports different from CLCWs.
+rocfRequestedControlWordTypeType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 38000 1 10 1 1 }
+
+RocfRequestedControlWordType	 ::= ENUMERATED
+{
+	 allControlWordTypes 	 	 (0)
+,	 clcwsOnly           	 	 (1)
+,	 nonClcwsOnly        	 	 (2)
+}
+
+
+
+-- This parameter reports the TC Master Channel and/or the Virtual Channels that the
+--  CLCWs that shall be extracted are associated with. If requested-control-word-type
+--  ? 'clcw', this parameter shall be flagged as undefined. 
+rocfPermittedTcVcidSetType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 38000 1 11 1 1 }
+
+RocfPermittedTcVcidSet	 ::= SEQUENCE
+{
+	 -- The TFVN of TC frames is always 0.
+	 tfvn                	 INTEGER  (0)
+,	 scid                	 INTEGER  (0 .. 1023)
+,	 vcid                	 SET  (SIZE( 1 .. 65))  OF	 	 	 	 CHOICE
+	 	 {
+	 	 	 -- When the Master Channel is selected, the VCID remains unspecified.
+	 	 	 masterChannel       	 [0]	 	 NULL
+,	 	 	 vcid                	 [1]	 	 INTEGER  (0 .. 63)
+	 	 }
+
+}
+
+
+
+-- This parameter reports which TC Master Channel or Virtual Channel the OCFs to be
+--  delivered shall be associated with. The parameter is a concatenation of the CCSDS
+--  assigned Spacecraft Identifier (SCID), the Transfer Frame Version Number (TFVN)
+--  and, if applicable, the Virtual Channel Identifier (VCID).
+-- If requested-control-word-type
+--  ? clcw, this parameter shall be flagged as undefined.
+rocfRequestedTcVcidType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 38000 1 12 1 1 }
+
+RocfRequestedTcVcid 	 ::= SEQUENCE
+{
+	 -- The TFVN of TC frames is always 0.
+	 tfvn                	 INTEGER  (0)
+,	 scid                	 INTEGER  (0 .. 1023)
+,	 vcid                	 CHOICE
+	 {
+	 	 -- When the Master Channel is selected, the VCID remains unspecified.
+	 	 masterChannel       	 [0]	 	 NULL
+,	 	 vcid                	 [1]	 	 INTEGER  (0 .. 63)
+	 }
+
+}
+
+
+
+-- This parameter reports the update modes that the given ROCF service instance permits.
+--  The update modes are:
+-- - 'continuous' - the given ROCF service permits the 'continuous'
+--  mode, i.e. the OCF service provider delivers each OCF that fulfills the delivery
+--  criteria specified by the ROCF-START invocation parameters start-time, stop-time,
+--  requested-global-VCID, control-word-type, and tc-vcid;
+-- - 'change-based' - the ROCF
+--  service provider delivers those OCFs that fulfill the delivery criteria specified
+--  by the ROCF-START invocation parameters start-time, stop-time, requested-global-VCID,
+--  control-word-type, and tc-vcid provided the content of the OCF is different than
+--  the one of the OCF with the same tc-vcid value previously delivered. 
+rocfPermittedUpdateModeType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 38000 1 13 1 1 }
+
+RocfPermittedUpdateMode	 ::= SET  (SIZE( 1 .. 2))  OF	 	 	 ENUMERATED
+	 {
+	 	 continuous          	 	 (0)
+	 ,	 onChange            	 	 (1)
+	 }
+
+
+
+-- This enumerated parameter reports the update mode applied by the ROCF service provider
+--  for the delivery of OCFs. It can take on two values:
+-- - 'continuous' - the ROCF service
+--  provider delivers each OCF that fulfills the delivery criteria specified by the
+--  ROCF-START invocation parameters start-time, stop-time, requested-global-VCID, control-word-type,
+--  and tc-vcid;
+-- - 'change-based' - the ROCF service provider delivers those OCFs that
+--  fulfill the delivery criteria specified by the ROCF-START invocation parameters
+--  start-time, stop-time, requested-global-VCID, control-word-type, and tc-vcid provided
+--  the content of the OCF is different than the one of the OCF with the same tc-vcid
+--  value previously delivered. 
+rocfRequestedUpdateModeType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 38000 1 14 1 1 }
+
+RocfRequestedUpdateMode	 ::= ENUMERATED
+{
+	 continuous          	 	 (0)
+,	 onChange            	 	 (1)
+}
+
+
+
+-- This enumerated parameter reports the status of the given instance of the ROCF service.
+--  It can take on the following values:
+-- - 'unbound' - All resources required to enable
+--  the provision of the ROCF service have been allocated, and all objects required
+--  to provide the service have been instantiated; however, no association yet exists
+--  between the user and the provider, i.e., the ROCF transfer service provider port
+--  is not bound;
+-- - 'ready'- An association has been established between the user and
+--  the provider, and they may interact by means of the service operations. However,
+--  sending of Operational Control Fields (OCFs) from the provider to the user (by means
+--  of the ROCF-TRANSFER-DATA operation) is not permitted; the user may enable the delivery
+--  of OCFs by means of the appropriate service operation (ROCF-START), which, in turn,
+--  will cause the provider to transition to the state 'active';
+-- - 'active' -  This
+--  state resembles state �ready�, except that now the provider will send OCFs provided
+--  frames of the selected characteristics are made available by the ROCF production
+--  process; the service continues in this state until the user invokes the ROCF-STOP
+--  operation to cause the provider to suspend delivery of OCFs and transition back
+--  to state 'ready or the PEER-ABORT invocation to cause the service to transition
+--  back to the 'unbound' state.
+rocfSiStateType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 38000 1 15 1 1 }
+
+RocfSiState         	 ::= SleSiState
+
+
+-- This parameter reports the current setting of the time in seconds between successive
+--  ROCF-STATUS-REPORT invocations sent by the ROCF service provider. The permissible
+--  values are in the range (2 .. 600). If cyclic reporting is off, the value reported
+--  is undefined.
+rocfReportingCycleType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 38000 1 16 1 1 }
+
+RocfReportingCycle  	 ::= SleReportingCycle
+
+
+-- This parameter reports the  total number of OCFs that were delivered to the user
+--  since the start of the service instance provision period.
+rocfNumberOfOcfsDeliveredType	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 38000 1 17 1 1 }
+
+RocfNumberOfOcfsDelivered	 ::= INTEGER  (0 .. 4294967295)
+
+END
