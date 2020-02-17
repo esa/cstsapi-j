@@ -58,18 +58,24 @@ public class MdSiProvider extends MdSi {
 		System.out.println("MD Provider received protocol abort");
 	}
 	
-	public void setAntAzimut(long value, int crProcedureInstanceNo) {
-		
-		/**
-		 * Below is an example how to encode a single parameter value for a Functional resource Instance
-		 */		
+	/**
+	 * This is an example method illustrating how to set a Functional Resource Parameter into
+	 * the list of qualified values of the Cyclic Report Procedure.
+	 * 
+	 * Again: This shall just illustrate the principle for parameter setting. 
+	 * A real approach should be generic and/or rely on code generation from a functional resource (instance) model.
+	 * 
+	 * @param value
+	 * @param crProcedureInstanceNo
+	 */
+	public void setAntAzimut(long value, int crProcedureInstanceNo) {	
 		IOnChangeCyclicReport cr = getCyclicReportProcedure(crProcedureInstanceNo);
 		
-		ObjectIdentifier anrFrOid = ObjectIdentifier.of(1, 3, 112, 4, 4, 2, 1, 1000);
+		ObjectIdentifier antFrOid = ObjectIdentifier.of(1, 3, 112, 4, 4, 2, 1, 1000);
 		ObjectIdentifier antAzimuthOid = ObjectIdentifier.of(OidValues.antAccumulatedPrecipitationType.value);
-		FunctionalResourceType frt = FunctionalResourceType.of(anrFrOid);
-		FunctionalResourceName frn = FunctionalResourceName.of(frt, 0 /*FR instance*/);
-		Name antennaAzimuthParamName = Name.of(antAzimuthOid, frn /*TODO: generate the FR OIDs*/);
+		FunctionalResourceType antFrType = FunctionalResourceType.of(antFrOid);
+		FunctionalResourceName antFrInstance = FunctionalResourceName.of(antFrType, 0 /*FR instance number*/);
+		Name antennaAzimuthParamName = Name.of(antAzimuthOid, antFrInstance);
 		
 		QualifiedParameter qualifiedParameter = new QualifiedParameter(antennaAzimuthParamName); 
 		QualifiedValues qv = new QualifiedValues(ParameterQualifier.VALID);
