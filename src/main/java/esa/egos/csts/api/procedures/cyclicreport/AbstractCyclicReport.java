@@ -410,7 +410,7 @@ public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliver
 		data.setSequenceCounter(getCurrentSequenceCounter());
 		data.setEmbeddedData(encodeDataRefinement());
 		getState().process(data);
-		getQualifiedParameters().clear();
+		//getQualifiedParameters().clear(); // https://sdejira.esa.int/browse/CSTSAPI-12
 	}
 
 	@Override
@@ -472,6 +472,8 @@ public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliver
 			dataRefinement.code = os.getArray();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch(Throwable t) {
+			t.printStackTrace();
 		}
 
 		return EmbeddedData.of(OIDs.crTransferDataInvocDataRef, dataRefinement.code);
