@@ -44,6 +44,9 @@ import esa.egos.csts.test.mdslite.impl.simulator.Utils;
  */
 public abstract class MdCstsSiUserInform extends MdCstsSi<InformationQueryUser, CyclicReportUser, NotificationUser>
 {
+    /** the size of buffer for printing an operation parameters */
+    protected static final int PRINT_BUFF_SIZE = 1024;
+
     /** lock protecting this service instance */
     protected final Lock retLock;
 
@@ -132,6 +135,8 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<InformationQueryUser, 
     {
         System.out.println("MdCstsSiUserInform#informOpInvocation() begin");
 
+        System.out.println(operation.print(PRINT_BUFF_SIZE));
+
         switch (operation.getType())
         {
         case TRANSFER_DATA:
@@ -171,6 +176,8 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<InformationQueryUser, 
     public void informOpReturn(IConfirmedOperation operation)
     {
         System.out.println("MdCstsSiUserInform#informOpReturn() begin");
+
+        System.out.println(operation.print(PRINT_BUFF_SIZE));
 
         switch (operation.getType())
         {
