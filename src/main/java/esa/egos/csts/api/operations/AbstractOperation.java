@@ -186,6 +186,21 @@ public abstract class AbstractOperation implements IOperation {
 		return true;
 	}
 
+	/**
+	 * Return Standard Unconfirmed CSTS operation parameters
+	 * @param i capacity
+	 * @return String w/ CSTS operation parameters
+	 */
+	@Override
+	public String print(int i) {
+		StringBuilder sb = new StringBuilder();
+		// Standard Unconfirmed Operation Header Parameters
+		sb.append("Invoker Credentials            : ").append('\n'); // // TODO invoker credintials
+		sb.append("Invocation Identifier          : ").append(getInvokeIdentifier()).append('\n');
+		sb.append("Procedure Instance Identifier  : ").append(getProcedureInstanceIdentifier()).append('\n');
+		return sb.toString();
+	}
+
 	@Override
 	public String toString() {
 		return "AbstractOperation [LOG=" + LOG + ", invokerCredentials=" + invokerCredentials

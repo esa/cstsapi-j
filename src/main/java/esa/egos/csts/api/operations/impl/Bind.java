@@ -164,11 +164,42 @@ public class Bind extends AbstractConfirmedOperation implements IBind {
 		}
 	}
 
+	/**
+	 * Return a String w/ CSTS Bind operation parameters
+	 * @param i capacity
+	 * @return String w/ CSTS Bind parameters
+	 */
 	@Override
 	public String print(int i) {
-		return "Bind [responderId=" + responderIdentifier + ", responderPortId=" + responderPortIdentifier
-				+ ", initiatorId=" + initiatorIdentifier + ", serviceType=" + serviceType + ", diagnostics="
-				+ diagnostics + ", invocationExtension=" + invocationExtension + ", version=" + versionNumber + "]";
+		StringBuilder sb = new StringBuilder(i);
+		sb.append("\nOperation                      : BIND\n");
+		sb.append(super.print(i));
+
+		String diagnosticType = "no diagnostics";
+		String bindDiagnostic = "";
+		String commonDiagnostic = "";
+		if (getResult() == OperationResult.NEGATIVE) {
+			if (getDiagnostic().isExtended()) {
+				bindDiagnostic = getBindDiagnostic().name();
+			}
+			else {
+				commonDiagnostic = getDiagnostic().getText();
+			}
+			diagnosticType = getDiagnostic().getType().name();
+		}
+
+		sb.append("Procedure Instance Identifier  : ").append(getProcedureInstanceIdentifier()).append('\n');
+		sb.append("Confirmed Operation            : true\n");
+		sb.append("Diagnostic Type                : ").append(diagnosticType).append('\n');
+		sb.append("Common Diagnostics             : ").append(commonDiagnostic).append('\n');
+		sb.append("Bind Diagnostic                : ").append(bindDiagnostic).append('\n');
+		sb.append("Initiator Identifier           : ").append(this.initiatorIdentifier).append('\n');
+		sb.append("Responder Identifier           : ").append(this.responderIdentifier).append('\n');
+		sb.append("Rsp Port Identifier            : ").append(this.responderPortIdentifier).append('\n');
+		sb.append("Service Type                   : ").append(this.getServiceType().getOid()).append('\n');
+		sb.append("Version                        : ").append(this.versionNumber).append('\n');
+		sb.append("Service Instance Id            : ").append(this.getServiceInstanceIdentifier()).append('\n');
+		return sb.toString();
 	}
 
 	@Override

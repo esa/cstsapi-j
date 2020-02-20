@@ -269,6 +269,22 @@ public abstract class AbstractConfirmedOperation extends AbstractOperation imple
 		return true;
 	}
 
+	/**
+	 * Return Standard Confirmed CSTS operation parameters
+	 * @param i capacity
+	 * @return String w/ CSTS operation parameters
+	 */
+	@Override
+	public String print(int i) {
+		// TODO invoker and performer credintial
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.print(i));
+		// Standard Confirmed Operation Header Parameters
+		sb.append("Performer Credentials          : ").append('\n');
+		sb.append("Operation Result               : ").append(getResult().name()).append('\n');
+		return sb.toString();
+	}
+
 	@Override
 	public String toString() {
 		return "AbstractConfirmedOperation [operationResult=" + operationResult + ", diagnostic=" + diagnostic
