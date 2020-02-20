@@ -71,7 +71,7 @@ public class MdSiProvider extends MdSi {
 	public void setAntAzimut(long value, int crProcedureInstanceNo) {	
 		IOnChangeCyclicReport cr = getCyclicReportProcedure(crProcedureInstanceNo);
 		
-		ObjectIdentifier antFrOid = ObjectIdentifier.of(1, 3, 112, 4, 4, 2, 1, 1000);
+		ObjectIdentifier antFrOid = ObjectIdentifier.of(OidValues.antennaType.value);
 		ObjectIdentifier antAzimuthOid = ObjectIdentifier.of(OidValues.antAccumulatedPrecipitationType.value);
 		FunctionalResourceType antFrType = FunctionalResourceType.of(antFrOid);
 		FunctionalResourceName antFrInstance = FunctionalResourceName.of(antFrType, 0 /*FR instance number*/);
