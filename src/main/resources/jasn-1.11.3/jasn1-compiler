@@ -1,0 +1,22 @@
+#!/bin/bash
+
+JARS_LOCATION=`pwd`
+JARS_LOCATION=$JARS_LOCATION/main/resources/jasn-1.11.3
+echo "JARS_LOCATION is $JARS_LOCATION"
+MAIN_CLASS="com.beanit.jasn1.compiler.Compiler"
+SYSPROPS=""
+PARAMS=""
+
+CLASSPATH=$(JARS=("$JARS_LOCATION"/*.jar); IFS=:; echo "${JARS[*]}")
+echo "CLASSPATH is $CLASSPATH"
+
+
+for i in $@; do 
+    if [[ $i == -D* ]]; then
+	    SYSPROPS="$SYSPROPS $i";
+    else
+	    PARAMS="$PARAMS $i";
+    fi
+done
+
+java $SYSPROPS -cp "$CLASSPATH" $MAIN_CLASS $PARAMS
