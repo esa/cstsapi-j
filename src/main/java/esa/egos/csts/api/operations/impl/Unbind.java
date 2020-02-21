@@ -38,7 +38,14 @@ public class Unbind extends AbstractConfirmedOperation implements IUnbind {
 
 	@Override
 	public String print(int i) {
-		return "Unbind [invocationExtension=" + invocationExtension + "]";
+		StringBuilder sb = new StringBuilder(i);
+		sb.append("\nOperation                      : UNBIND\n");
+		sb.append(super.print(i));
+		sb.append("Confirmed Operation            : true\n");
+		sb.append("Diagnostic Type                : no diagnostic\n");
+		sb.append("Common Diagnostics             : Invalid\n");
+
+		return sb.toString();
 	}
 
 	@Override

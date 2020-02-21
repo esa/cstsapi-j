@@ -62,7 +62,14 @@ public class Start extends AbstractConfirmedOperation implements IStart {
 
 	@Override
 	public String print(int i) {
-		return "Start [startDiagnostics=" + startDiagnostic + "]";
+		StringBuilder sb = new StringBuilder(i);
+		sb.append("\nOperation                      : START\n");
+		sb.append(super.print(i));
+		sb.append("Confirmed Operation            : true\n");
+		sb.append("Diagnostic Type                : no diagnostic\n");
+		sb.append("Common Diagnostics             : Invalid\n");
+
+		return sb.toString();
 	}
 
 	@Override
