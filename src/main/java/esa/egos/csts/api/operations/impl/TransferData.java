@@ -124,8 +124,20 @@ public class TransferData extends AbstractOperation implements ITransferData {
 
 	@Override
 	public String print(int i) {
-		return "TransferData [generationTime=" + generationTime + ", sequenceCounter=" + sequenceCounter + ", data="
-				+ Arrays.toString(data) + "]";
+		StringBuilder sb = new StringBuilder(i);
+		String dataString = data != null ? data.toString() : "";
+
+		sb.append("\nOperation                      : TRANSFER-DATA").append('\n');
+		sb.append(super.print(i));
+		sb.append("Confirmed Operation            : ").append(this.isConfirmed()).append('\n');
+		sb.append("Operation Result               : positive\n");
+		sb.append("Diagnostic Type                : no diagnostics\n");
+		sb.append("Common Diagnostics             : invalid\n");
+		sb.append("Generation time                : ").append(this.generationTime.toInstant()).append('\n');
+		sb.append("Sequence counter               : ").append(this.sequenceCounter).append('\n');
+		sb.append("Data                           : ").append(dataString).append('\n');
+
+		return sb.toString();
 	}
 
 	@Override
