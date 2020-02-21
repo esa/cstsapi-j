@@ -17,7 +17,7 @@ import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IStart;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
-import esa.egos.csts.test.mdslite.procedures.IOnChangeCyclicReport;
+import esa.egos.csts.monitored.data.procedures.IOnChangeCyclicReport;
 import esa.egos.proxy.enums.AssocState;
 
 
@@ -134,12 +134,12 @@ public class MdSiUser extends MdSi {
 			System.out.println("Start the Cyclic Report procedure");
 			
 			IOnChangeCyclicReport cyclicReport = getCyclicReportProcedure(instanceNumber);
-			setCyclicReportProcedureState(cyclicReport, ProcedureState.START_PENDING);
+			setCyclicReportProcedureState(cyclicReport, ProcedureState.ACTIVATION_PENDING);
 			
 			if(cyclicReport != null) {				
 				res = cyclicReport.requestCyclicReport(deliveryCycle, onChange, cyclicReport.getListOfParameters());
 				
-				while(getCyclicReportProcedureState(cyclicReport) == ProcedureState.START_PENDING) {
+				while(getCyclicReportProcedureState(cyclicReport) == ProcedureState.ACTIVATION_PENDING) {
 					try {						
 						boolean signalled = retCond.await(RET_TIMEOUT, TimeUnit.SECONDS);
 						if(signalled == false) {
@@ -176,10 +176,10 @@ public class MdSiUser extends MdSi {
 		try {
 			IOnChangeCyclicReport cyclicReport = getCyclicReportProcedure(instanceNumber);
 			if(cyclicReport != null) { 
-				setCyclicReportProcedureState(cyclicReport, ProcedureState.STOP_PENDING);
+				setCyclicReportProcedureState(cyclicReport, ProcedureState.DEACTIVATION_PENDING);
 				res = cyclicReport.endCyclicReport();
 
-				while(getCyclicReportProcedureState(cyclicReport) == ProcedureState.STOP_PENDING) {
+				while(getCyclicReportProcedureState(cyclicReport) == ProcedureState.DEACTIVATION_PENDING) {
 					try {						
 						boolean signalled = retCond.await(RET_TIMEOUT, TimeUnit.SECONDS);
 						if(signalled == false) {

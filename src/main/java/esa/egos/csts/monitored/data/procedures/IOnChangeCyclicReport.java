@@ -1,4 +1,4 @@
-package esa.egos.csts.test.mdslite.procedures;
+package esa.egos.csts.monitored.data.procedures;
 
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;

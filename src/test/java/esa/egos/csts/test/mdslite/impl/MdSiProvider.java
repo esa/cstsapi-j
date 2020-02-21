@@ -20,7 +20,7 @@ import esa.egos.csts.api.parameters.impl.ParameterValue;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 import esa.egos.csts.api.parameters.impl.QualifiedValues;
 import esa.egos.csts.api.types.Name;
-import esa.egos.csts.test.mdslite.procedures.IOnChangeCyclicReport;
+import esa.egos.csts.monitored.data.procedures.IOnChangeCyclicReport;
 import frm.csts.functional.resource.types.AntActualAzimuth;
 import frm.csts.functional.resource.types.OidValues;
 

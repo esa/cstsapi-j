@@ -5,7 +5,7 @@ package esa.egos.csts.test.mdslite.impl;
  */
 public enum ProcedureState {
 	INACTIVE,
-	START_PENDING,
+	ACTIVATION_PENDING,
 	ACTIVE,
-	STOP_PENDING
+	DEACTIVATION_PENDING
 }
