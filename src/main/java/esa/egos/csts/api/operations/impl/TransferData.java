@@ -122,6 +122,11 @@ public class TransferData extends AbstractOperation implements ITransferData {
 		}
 	}
 
+	/**
+	 * Return a String w/ CSTS Transfer-Data operation parameters
+	 * @param i capacity
+	 * @return String w/ CSTS Transfer-Data parameters
+	 */
 	@Override
 	public String print(int i) {
 		StringBuilder sb = new StringBuilder(i);
