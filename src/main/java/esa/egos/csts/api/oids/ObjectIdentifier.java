@@ -8,7 +8,11 @@ import java.util.stream.IntStream;
  */
 public class ObjectIdentifier {
 
+	/** The integer array representation of the CCSDS ObjectIdentifier type */
 	private final int[] oidArray;
+
+	/** The string representation of the CCSDS ObjectIdentifier type */
+	private String oidString = null;
 
 	private ObjectIdentifier(int[] oidArray) {
 		this.oidArray = oidArray.clone();
@@ -87,9 +91,20 @@ public class ObjectIdentifier {
 		return true;
 	}
 
+	/**
+	 * Convert the integer array representation to the string representation with labels
+	 */
 	@Override
-	public String toString() {
-		return Arrays.toString(oidArray);
+	public synchronized String toString() {
+		if (this.oidString == null) {
+			try {
+				this.oidString = OidTree.getInstance().print(this.oidArray);
+			} catch (Exception e) {
+				this.oidString = "";
+				System.out.println("UNKNWON OID: " + Arrays.toString(this.oidArray));
+			}
+		}
+		return ((this.oidString.isEmpty()) ? Arrays.toString(this.oidArray) : this.oidString);
 	}
 
 }

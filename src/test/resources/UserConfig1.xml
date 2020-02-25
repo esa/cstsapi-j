@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<UserConfig authentication_delay="180" local_id="CSTS-USER"
+<UserConfig oid_config_file="src/test/resources/OidConfig.xml" authentication_delay="180" local_id="CSTS-USER"
 	local_password="ffdf01449809e4e5e677818892" non_useheartbeat="true"
 	proxy_role="INITIATOR" startup_timer="180" transmit_queue_size="10"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

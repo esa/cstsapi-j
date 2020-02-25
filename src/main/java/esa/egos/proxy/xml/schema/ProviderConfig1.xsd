@@ -43,6 +43,7 @@
     <xs:attribute name="min_heartbeat" type="xs:int" use="required"/>
     <xs:attribute name="max_heartbeat" type="xs:int" use="required"/>
     <xs:attribute name="transfer_type" type="transferType" use="required"/>
+    <xs:attribute name="oid_config_file" type="xs:string" use="optional"/>
   </xs:complexType>
 
   <xs:complexType name="configServiceType">

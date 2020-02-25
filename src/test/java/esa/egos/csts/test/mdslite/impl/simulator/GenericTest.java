@@ -52,7 +52,7 @@ public class GenericTest
     @Before
     public void setUp() throws ApiException
     {
-        File file = new File("src/test/resources/ProviderConfig.xml");
+	File file = new File("src/test/resources/ProviderConfig.xml");
         String providerConfigName = file.getAbsolutePath();
 
         file = new File("src/test/resources/UserConfig.xml");

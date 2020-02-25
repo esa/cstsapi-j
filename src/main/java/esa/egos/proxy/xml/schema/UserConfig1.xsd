@@ -36,6 +36,7 @@
     <xs:attribute name="authentication_delay" type="xs:int" use="required"/>
     <xs:attribute name="transfer_type" type="transferType" use="required"/>
     <xs:attribute name="transmit_queue_size" type="xs:int" use="required"/>
+    <xs:attribute name="oid_config_file" type="xs:string" use="optional"/>
   </xs:complexType>
 
   <xs:complexType name="configServiceType">

@@ -14,6 +14,7 @@ import esa.egos.csts.api.diagnostics.BindDiagnostic;
 import esa.egos.csts.api.enumerations.AppRole;
 import esa.egos.csts.api.enumerations.Result;
 import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.oids.OidTree;
 import esa.egos.csts.api.operations.IBind;
 import esa.egos.csts.api.procedures.associationcontrol.IAssociationControl;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
@@ -44,6 +45,8 @@ import esa.egos.proxy.util.ITime;
 import esa.egos.proxy.util.IUtil;
 import esa.egos.proxy.util.impl.Util;
 import esa.egos.proxy.xml.LogicalPort;
+import esa.egos.proxy.xml.Oid;
+import esa.egos.proxy.xml.OidConfig;
 import esa.egos.proxy.xml.PortMapping;
 import esa.egos.proxy.xml.ProviderConfig;
 import esa.egos.proxy.xml.ProxyConfig;
@@ -106,11 +109,14 @@ public class CstsApi implements IApi, ILocator {
 			throw new ApiException("File not found: " + this.configFile);
 		}
 
+		String oidConfigFile = null;
+
 		if (this.role == AppRole.USER) {
 
 			this.userConfig = UserConfig.load(configFileStream);
 			if (this.userConfig != null && this.userConfig.getRole() == ProxyRoleEnum.INITIATOR) {
-				this.proxyConfig = new ProxyConfig(userConfig);
+				this.proxyConfig = new ProxyConfig(this.userConfig);
+				oidConfigFile = this.userConfig.getOidConfigFile();
 			} else {
 				throw new ApiException("The role specified in the configuration file does not match the role " + "used to construct the CSTS API instance.");
 			}
@@ -119,6 +125,7 @@ public class CstsApi implements IApi, ILocator {
 			this.providerConfig = ProviderConfig.load(configFileStream);
 			if (this.providerConfig != null && this.providerConfig.getRole() == ProxyRoleEnum.RESPONDER) {
 				this.proxyConfig = new ProxyConfig(providerConfig);
+				oidConfigFile = this.providerConfig.getOidConfigFile();
 			} else {
 				throw new ApiException("The role specified in the configuration file does not match the role " + "used to construct the CSTS API instance.");
 			}
@@ -128,13 +135,13 @@ public class CstsApi implements IApi, ILocator {
 
 			@Override
 			public void notifyApplication(IServiceInstanceIdentifier sii, CstsLogMessageType type, String message) {
-				// TODO Auto-generated method stub
+				System.out.println("[" + type.name() + "] " + message);
 			}
 
 			@Override
 			public void logRecord(IServiceInstanceIdentifier sii, ProcedureInstanceIdentifier procedureIdentifier, Component component, AlarmLevel alarm, CstsLogMessageType type,
 					String message) {
-				// TODO Auto-generated method stub
+				System.out.println("[" + type.name() + "] " + message);
 			}
 		};
 
@@ -150,6 +157,8 @@ public class CstsApi implements IApi, ILocator {
 		initProxyMap();
 		addProxy(proxyAdmin.getProtocolId(), this.role, proxyAdmin);
 
+		// add external OIDs
+		loadOidConfiguration(oidConfigFile);
 	}
 
 	@Override
@@ -579,4 +588,31 @@ public class CstsApi implements IApi, ILocator {
 		return null;
 	}
 
+	/**
+	 * Load application's OID from the optional OID configuration file
+	 * 
+	 * @param oidConfigFile The path and file name of the 
+	 */
+	private void loadOidConfiguration(String oidConfigFile) {
+		try {
+			// add application's (e.g. FRs) OIDs to API's OID tree
+			if (oidConfigFile != null && !oidConfigFile.isEmpty()) {
+				this.reporter.notifyApplication(null, CstsLogMessageType.INFO,
+						"Processing OID configuration file '" + oidConfigFile + "'");
+
+				OidConfig oidConfig = OidConfig.load(oidConfigFile);
+				if (oidConfig != null) {
+					ArrayList<Oid> oidLabelList = oidConfig.getOidLabelList();
+					oidLabelList.forEach(e -> OidTree.getInstance().addNode(e.getAsArray(), e.getLabel()));
+				}
+
+				this.reporter.notifyApplication(null, CstsLogMessageType.INFO,
+						"OID configuration file '" + oidConfigFile + "' successfully processed");
+			}
+		} catch (Exception e) {
+			this.reporter.notifyApplication(null, CstsLogMessageType.ALARM,
+					"Failed to process OID configuration file '" + oidConfigFile + "'. " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
 }
