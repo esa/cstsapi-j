@@ -20,7 +20,7 @@ import esa.egos.csts.api.parameters.impl.ParameterValue;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 import esa.egos.csts.api.parameters.impl.QualifiedValues;
 import esa.egos.csts.api.types.Name;
-import esa.egos.csts.test.mdslite.procedures.IOnChangeCyclicReport;
+import esa.egos.csts.monitored.data.procedures.IOnChangeCyclicReport;
 import frm.csts.functional.resource.types.AntActualAzimuth;
 import frm.csts.functional.resource.types.OidValues;
 
@@ -71,7 +71,7 @@ public class MdSiProvider extends MdSi {
 	public void setAntAzimut(long value, int crProcedureInstanceNo) {	
 		IOnChangeCyclicReport cr = getCyclicReportProcedure(crProcedureInstanceNo);
 		
-		ObjectIdentifier antFrOid = ObjectIdentifier.of(1, 3, 112, 4, 4, 2, 1, 1000);
+		ObjectIdentifier antFrOid = ObjectIdentifier.of(OidValues.antennaType.value);
 		ObjectIdentifier antAzimuthOid = ObjectIdentifier.of(OidValues.antAccumulatedPrecipitationType.value);
 		FunctionalResourceType antFrType = FunctionalResourceType.of(antFrOid);
 		FunctionalResourceName antFrInstance = FunctionalResourceName.of(antFrType, 0 /*FR instance number*/);

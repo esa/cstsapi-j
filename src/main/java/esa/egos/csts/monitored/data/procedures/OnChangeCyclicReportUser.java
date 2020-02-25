@@ -1,4 +1,4 @@
-package esa.egos.csts.test.mdslite.procedures;
+package esa.egos.csts.monitored.data.procedures;
 
 import java.io.IOException;
 

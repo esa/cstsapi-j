@@ -20,9 +20,9 @@ import esa.egos.csts.api.serviceinstance.IServiceInform;
 import esa.egos.csts.api.serviceinstance.IServiceInstance;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceIdentifier;
 import esa.egos.csts.api.serviceinstance.impl.ServiceInstanceIdentifier;
-import esa.egos.csts.test.mdslite.procedures.IOnChangeCyclicReport;
-import esa.egos.csts.test.mdslite.procedures.OnChangeCyclicReportProvider;
-import esa.egos.csts.test.mdslite.procedures.OnChangeCyclicReportUser;
+import esa.egos.csts.monitored.data.procedures.IOnChangeCyclicReport;
+import esa.egos.csts.monitored.data.procedures.OnChangeCyclicReportProvider;
+import esa.egos.csts.monitored.data.procedures.OnChangeCyclicReportUser;
 import esa.egos.proxy.enums.AssocState;
 
 /**
