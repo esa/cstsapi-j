@@ -1,8 +1,9 @@
 package esa.egos.csts.test.mdslite.impl.simulator.user;
 
-import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.enumerations.OperationResult;
 import esa.egos.csts.api.enumerations.ProcedureRole;
@@ -17,6 +18,7 @@ import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.procedures.informationquery.InformationQueryUser;
 import esa.egos.csts.api.procedures.notification.NotificationUser;
+import esa.egos.csts.api.serviceinstance.IServiceInstanceInternal;
 import esa.egos.csts.api.states.service.ServiceStatus;
 import esa.egos.csts.test.mdslite.impl.simulator.MdCstsSiConfig;
 
@@ -68,9 +70,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
     @Override
     protected CyclicReportUser createCyclicReportProcedure() throws ApiException
     {
-        CyclicReportUser ret = this.serviceInstance.createProcedure(CyclicReportUser.class);
-        this.cyclicReportProcedures.put(ret, ProcedureState.INACTIVE);
-        return ret;
+        return this.serviceInstance.createProcedure(CyclicReportUser.class);
     }
 
     /**
@@ -81,9 +81,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
     @Override
     protected NotificationUser createNotificationProcedure() throws ApiException
     {
-        NotificationUser ret = this.serviceInstance.createProcedure(NotificationUser.class);
-        this.notificationProcedures.put(ret, ProcedureState.INACTIVE);
-        return ret;
+        return this.serviceInstance.createProcedure(NotificationUser.class);
     }
 
     /**
@@ -112,8 +110,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
                 // invocation initiation succeeded
                 // wait for the bind operation return
                 ret = waitForReturnOrAbort(this.associationProcedure,
-                                           "service instance is still not bound",
-                                           null);
+                                           "service instance is still not bound");
             }
         }
         finally
@@ -153,15 +150,14 @@ public class MdCstsSiUser extends MdCstsSiUserInform
                     // invocation initiation succeeded
                     // wait for the unbind operation return
                     ret = waitForReturnOrAbort(this.associationProcedure,
-                                               "service instance is still bound",
-                                               null);
+                                               "service instance is still bound");
                 }
             }
             else
             {
                 // there is still active at least one procedure
                 ret = CstsResult.FAILURE;
-                setDiagnostic(ProcedureState.ACTIVE);
+                setDiagnostic("ACTIVE");
             }
         }
         finally
@@ -170,6 +166,23 @@ public class MdCstsSiUser extends MdCstsSiUserInform
         }
 
         System.out.println("MdCstsSiUser#unbind() end");
+        return ret;
+    }
+
+    /**
+     * Invokes PEER-ABORT on the remote peer of this SI.
+     * 
+     * @return The result of the BUNIND
+     * @throws InterruptedException
+     */
+    public CstsResult peerAbort() throws InterruptedException
+    {
+        System.out.println("MdCstsSiUser#peerAbort() begin");
+
+        CstsResult ret = this.associationProcedure.abort(PeerAbortDiagnostics.OPERATIONAL_REQUIREMENT);
+
+        System.out.println("MdCstsSiUser#peerAbort() end");
+
         return ret;
     }
 
@@ -199,12 +212,8 @@ public class MdCstsSiUser extends MdCstsSiUserInform
             {
                 // get the cyclic report procedure from the instance number
                 CyclicReportUser cyclicReport = getProcedure(CyclicReportUser.class, instanceNumber);
-                if (this.cyclicReportProcedures.get(cyclicReport) == ProcedureState.INACTIVE)
+                if (!cyclicReport.isActive())
                 {
-                    // indicate transition from the INACTIVE state to the ACTIVE
-                    // state
-                    updateProcedureState(cyclicReport.getProcedureInstanceIdentifier(), ProcedureState.START_PENDING);
-
                     // reset the operation result and diagnostic
                     resetOperationResult();
                     // initiate the start operation
@@ -215,14 +224,13 @@ public class MdCstsSiUser extends MdCstsSiUserInform
                         // operation return
                         ret = waitForReturnOrAbort(cyclicReport,
                                                    "cyclic report procedure (" + instanceNumber
-                                                   + ") is still not active",
-                                                   ProcedureState.INACTIVE);
+                                                   + ") is still not active");
                     }
                 }
                 else
                 {
                     // the procedure is already active and cannot be started
-                    setDiagnostic(ProcedureState.ACTIVE);
+                    setDiagnostic("ACTIVE");
                 }
             }
             else
@@ -263,12 +271,8 @@ public class MdCstsSiUser extends MdCstsSiUserInform
             {
                 // get the cyclic report procedure from the instance number
                 CyclicReportUser cyclicReport = getProcedure(CyclicReportUser.class, instanceNumber);
-                if (this.cyclicReportProcedures.get(cyclicReport) == ProcedureState.ACTIVE)
+                if (cyclicReport.isActive())
                 {
-                    // indicate transition from the ACTIVE state to the INACTIVE
-                    // state
-                    updateProcedureState(cyclicReport.getProcedureInstanceIdentifier(), ProcedureState.STOP_PENDING);
-
                     // reset the operation result and diagnostic
                     resetOperationResult();
                     // initiate the stop operation
@@ -279,14 +283,13 @@ public class MdCstsSiUser extends MdCstsSiUserInform
                         // operation return
                         ret = waitForReturnOrAbort(cyclicReport,
                                                    "cyclic report procedure (" + instanceNumber
-                                                   + ") is still active",
-                                                   ProcedureState.ACTIVE);
+                                                   + ") is still active");
                     }
                 }
                 else
                 {
                     // the procedure is inactive and cannot be stopped
-                    setDiagnostic(ProcedureState.INACTIVE);
+                    setDiagnostic("INACTIVE");
                 }
             }
             else
@@ -331,12 +334,8 @@ public class MdCstsSiUser extends MdCstsSiUserInform
             {
                 // get the cyclic report procedure from the instance number
                 NotificationUser notification = getProcedure(NotificationUser.class, instanceNumber);
-                if (this.notificationProcedures.get(notification) == ProcedureState.INACTIVE)
+                if (!notification.isActive())
                 {
-                    // indicate transition from the INACTIVE state to the ACTIVE
-                    // state
-                    updateProcedureState(notification.getProcedureInstanceIdentifier(), ProcedureState.START_PENDING);
-
                     // reset the operation result and diagnostic
                     resetOperationResult();
                     // initiate the start operation
@@ -347,14 +346,13 @@ public class MdCstsSiUser extends MdCstsSiUserInform
                         // operation return
                         ret = waitForReturnOrAbort(notification,
                                                    "notification procedure (" + instanceNumber
-                                                   + ") is still not active",
-                                                   ProcedureState.INACTIVE);
+                                                   + ") is still not active");
                     }
                 }
                 else
                 {
                     // the procedure is already active and cannot be started
-                    setDiagnostic(ProcedureState.ACTIVE);
+                    setDiagnostic("ACTIVE");
                 }
             }
             else
@@ -395,12 +393,8 @@ public class MdCstsSiUser extends MdCstsSiUserInform
             {
                 // get the notification procedure from the instance number
                 NotificationUser notification = getProcedure(NotificationUser.class, instanceNumber);
-                if (this.notificationProcedures.get(notification) == ProcedureState.ACTIVE)
+                if (notification.isActive())
                 {
-                    // indicate transition from the ACTIVE state to the INACTIVE
-                    // state
-                    updateProcedureState(notification.getProcedureInstanceIdentifier(), ProcedureState.STOP_PENDING);
-
                     // reset the operation result and diagnostic
                     resetOperationResult();
                     // initiate the stop operation
@@ -411,14 +405,13 @@ public class MdCstsSiUser extends MdCstsSiUserInform
                         // operation return
                         ret = waitForReturnOrAbort(notification,
                                                    "notification procedure (" + instanceNumber
-                                                   + ") is still active",
-                                                   ProcedureState.ACTIVE);
+                                                   + ") is still active");
                     }
                 }
                 else
                 {
                     // the procedure is inactive and cannot be stopped
-                    setDiagnostic(ProcedureState.INACTIVE);
+                    setDiagnostic("INACTIVE");
                 }
             }
             else
@@ -473,8 +466,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
                         // operation return
                         ret = waitForReturnOrAbort(informationQuery,
                                                    "information query procedure (" + instanceNumber
-                                                   + ") still not received new parameters",
-                                                   null);
+                                                   + ") still not received new parameters");
                     }
             }
             else
@@ -495,8 +487,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
     }
 
     protected CstsResult waitForReturnOrAbort(IProcedure proc,
-                                              String waitMsg,
-                                              ProcedureState initialProcState) throws InterruptedException
+                                              String waitMsg) throws InterruptedException
     {
         while (this.operationResult == OperationResult.INVALID)
         {
@@ -514,12 +505,6 @@ public class MdCstsSiUser extends MdCstsSiUserInform
         if (ret == CstsResult.FAILURE)
         {
             System.out.println("DIAGNOSTIC: " + getDiagnostic());
-            if (proc instanceof CyclicReportUser || proc instanceof NotificationUser)
-            {
-                // NEGATIVE operation result or return timeout, set
-                // procedure's state to the state prior to the last invocation
-                updateProcedureState(proc.getProcedureInstanceIdentifier(), initialProcState);
-            }
         }
 
         return ret;
@@ -615,23 +600,28 @@ public class MdCstsSiUser extends MdCstsSiUserInform
         return ret;
     }
 
-    private boolean isAnyStartableProcedureActive()
-    {
-        boolean ret = false;
+	private boolean isAnyStartableProcedureActive() {
+		boolean ret = false;
 
-        if (Collections.frequency(this.cyclicReportProcedures.values(), ProcedureState.ACTIVE) == 0)
-        {
-            if (Collections.frequency(this.notificationProcedures.values(), ProcedureState.ACTIVE) > 0)
-            {
-                // there is at least one active notification procedure
-                ret = true;
-            }
-        }
-        else
-        {
-            // there is at least one active cyclic report procedure
-            ret = true;
-        }
-        return ret;
-    }
+		List<IProcedure> procedures = ((IServiceInstanceInternal) this.serviceInstance).getProcedures();
+		for (IProcedure procedure : procedures) {
+			if (procedure instanceof CyclicReportUser) {
+				if (((CyclicReportUser) procedure).isActive()) {
+					ret = true;
+					break;
+				}
+			} else if (procedure instanceof NotificationUser) {
+				if (((NotificationUser) procedure).isActive()) {
+					ret = true;
+					break;
+				}
+			}
+		}
+
+		return ret;
+	}
+
+	public boolean isBound() {
+		return this.serviceInstance.isBound();
+	}
 }

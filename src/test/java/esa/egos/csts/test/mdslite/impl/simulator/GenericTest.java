@@ -309,4 +309,92 @@ public class GenericTest
         }
     }
 
+    @Test
+    public void testPeerAbort()
+    {
+        System.out.println("Test the peer abort");
+
+        try
+        {
+            // S/C identifier
+            ObjectIdentifier scId = ObjectIdentifier.of(1, 3, 112, 4, 7, 0);
+            // G/S identifier
+            ObjectIdentifier facilityId = ObjectIdentifier.of(1, 3, 112, 4, 6, 0);
+
+            // cyclic report procedure identifier
+            ProcedureInstanceIdentifier piid = ProcedureInstanceIdentifier.of(ProcedureType.of(OIDs.cyclicReport),
+                                                                              ProcedureRole.PRIME,
+                                                                              0);
+
+            // all procedure identifiers
+            List<ProcedureInstanceIdentifier> piids = Collections.singletonList(piid);
+
+            // create provider SI configuration
+            MdCstsSiProviderConfig mdSiProviderConfig = new MdCstsSiProviderConfig(50,
+                                                                                   new LabelList("", true),
+                                                                                   scId,
+                                                                                   facilityId,
+                                                                                   0,
+                                                                                   "CSTS_USER",
+                                                                                   "CSTS_PT1",
+                                                                                   piids);
+
+            // create provider SI configuration
+            MdCstsSiConfig mdSiUserConfig = new MdCstsSiConfig(scId,
+                                                               facilityId,
+                                                               0,
+                                                               "CSTS_PROVIDER",
+                                                               "CSTS_PT1",
+                                                               piids);
+
+            // create provider SI
+            MdCstsSiProvider providerSi = new MdCstsSiProvider(this.providerApi, mdSiProviderConfig);
+
+            // create user SI
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, mdSiUserConfig, 1);
+
+            // create FR parameters and attach them to the provider SI
+            MdCollection mdCollection = MdCollection.createSimpleMdCollection();
+            providerSi.setMdCollection(mdCollection);
+
+            System.out.println("BIND...");
+            TestUtils.verifyResult(userSi.bind(), "BIND");
+
+            System.out.println("START-CYCLIC-REPORT...");
+            TestUtils.verifyResult(userSi.startCyclicReport(piid.getInstanceNumber(), mdCollection.getParameterNameSet(), 3000), "START-CYCLIC-REPORT");
+
+            // wait for one cyclic report
+            Thread.sleep(4000);
+
+            System.out.println("PEER-ABORT...");
+            TestUtils.verifyResult(userSi.peerAbort(), "PEER-ABORT");
+            Thread.sleep(1000);
+
+            System.out.println("again PEER-ABORT...");
+            TestUtils.verifyResult(userSi.peerAbort(), "PEER-ABORT", CstsResult.FAILURE);
+
+            System.out.println("BIND...");
+            TestUtils.verifyResult(userSi.bind(), "BIND");
+
+            System.out.println("START-CYCLIC-REPORT...");
+            TestUtils.verifyResult(userSi.startCyclicReport(piid.getInstanceNumber(), mdCollection.getParameterNameSet(), 3000), "START-CYCLIC-REPORT");
+
+            // wait for one cyclic report
+            Thread.sleep(4000);
+
+            System.out.println("PEER-ABORT...");
+            TestUtils.verifyResult(userSi.peerAbort(), "PEER-ABORT");
+            Thread.sleep(1000);
+
+            providerSi.destroy();
+            userSi.destroy();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
+
+
 }

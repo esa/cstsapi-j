@@ -1,9 +1,7 @@
 package esa.egos.csts.test.mdslite.impl.simulator.user;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -15,7 +13,6 @@ import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.enumerations.OperationResult;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.main.ICstsApi;
-import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IBind;
 import esa.egos.csts.api.operations.IConfirmedOperation;
@@ -29,7 +26,6 @@ import esa.egos.csts.api.operations.IUnbind;
 import esa.egos.csts.api.parameters.impl.ParameterValue;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 import esa.egos.csts.api.parameters.impl.QualifiedValues;
-import esa.egos.csts.api.procedures.IProcedure;
 import esa.egos.csts.api.procedures.cyclicreport.CyclicReportUser;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.informationquery.InformationQueryUser;
@@ -58,12 +54,6 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<InformationQueryUser, 
 
     /** the diagnostic of the last failed operation */
     protected AtomicReference<String> dignostic;
-
-    /** cyclic report procedures states */
-    protected Map<CyclicReportUser, ProcedureState> cyclicReportProcedures;
-
-    /** notification procedures states */
-    protected Map<NotificationUser, ProcedureState> notificationProcedures;
 
     /**
      * parameters received on the GET operation return from a query inform
@@ -108,21 +98,6 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<InformationQueryUser, 
         resetOperationResult();
 
         System.out.println("MdCstsSiUserInform#MdCstsSiUser() end");
-    }
-
-    /**
-     * Create maps of procedures' states for start-able procedures
-     * @param config The SI configuration
-     * @throws ApiException
-     */
-    @Override
-    protected void createProcedures(MdCstsSiConfig config) throws ApiException
-    {
-        // create maps of procedures' states
-        this.cyclicReportProcedures = new HashMap<CyclicReportUser, ProcedureState>();
-        this.notificationProcedures = new HashMap<NotificationUser, ProcedureState>();
-
-        super.createProcedures(config);
     }
 
     /**
@@ -222,9 +197,6 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<InformationQueryUser, 
         try
         {
             System.out.print("PROTOCOL ABORT");
-            // update all procedures states to INACTIVE
-            this.cyclicReportProcedures.replaceAll((proc, procState) -> procState = ProcedureState.INACTIVE);
-            this.notificationProcedures.replaceAll((proc, procState) -> procState = ProcedureState.INACTIVE);
             this.retCond.signal();
         }
         finally
@@ -276,27 +248,6 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<InformationQueryUser, 
     }
 
     /**
-     * Update an start-able procedure state
-     * 
-     * @param piid The procedure instance identifier
-     * @param procedureState The new procedure state
-     */
-    protected void updateProcedureState(ProcedureInstanceIdentifier piid, ProcedureState procedureState)
-    {
-        IProcedure procedure = this.serviceInstance.getProcedure(piid);
-        System.out.println("Updating procedure " + procedure.getClass().getSimpleName() + "(" + piid.getInstanceNumber()
-                           + ") state to " + procedureState);
-        if (piid.getType().getOid().equals(OIDs.cyclicReport))
-        {
-            this.cyclicReportProcedures.put((CyclicReportUser) procedure, procedureState);
-        }
-        else if (piid.getType().getOid().equals(OIDs.notification))
-        {
-            this.notificationProcedures.put((NotificationUser) procedure, procedureState);
-        }
-    }
-
-    /**
      * Process a start operation return
      * 
      * @param start The returned start operation
@@ -309,15 +260,6 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<InformationQueryUser, 
 
         try
         {
-            ProcedureInstanceIdentifier piid = start.getProcedureInstanceIdentifier();
-            if (start.getResult() == OperationResult.POSITIVE)
-            {
-                updateProcedureState(piid, ProcedureState.ACTIVE);
-            }
-            else
-            {
-                updateProcedureState(piid, ProcedureState.INACTIVE);
-            }
             onReturn(start, () -> { return start.getStartDiagnostic().getType().name();});
         }
         finally
@@ -341,15 +283,6 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<InformationQueryUser, 
 
         try
         {
-            ProcedureInstanceIdentifier piid = stop.getProcedureInstanceIdentifier();
-            if (stop.getResult() == OperationResult.POSITIVE)
-            {
-                updateProcedureState(piid, ProcedureState.INACTIVE);
-            }
-            else
-            {
-                updateProcedureState(piid, ProcedureState.ACTIVE);
-            }
             onReturn(stop, ()->{ return stop.getDiagnostic().getType().name();});
         }
         finally
