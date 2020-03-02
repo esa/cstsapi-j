@@ -670,8 +670,8 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 
 		this.unboundStateIsDisconnected = true;
 
-		// send a peer abort operation to the client
-		if (this.srvProxyInform != null && (ao == AbortOriginator.INTERNAL)) {
+		// send a peer abort operation to the client #hd# we must inform abut peer abort from the peer as well
+		if (this.srvProxyInform != null && (ao == AbortOriginator.INTERNAL || ao == AbortOriginator.PEER)) {
 			// send the peer abort operation
 			long seqc = this.sequenceCounter++;
 

@@ -1,5 +1,6 @@
 package esa.egos.csts.test.mdslite.impl;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
+import esa.egos.csts.api.procedures.IStatefulProcedure;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.informationquery.IInformationQuery;
 import esa.egos.csts.api.procedures.informationquery.InformationQueryProvider;
@@ -23,24 +25,19 @@ import esa.egos.csts.api.serviceinstance.impl.ServiceInstanceIdentifier;
 import esa.egos.csts.monitored.data.procedures.IOnChangeCyclicReport;
 import esa.egos.csts.monitored.data.procedures.OnChangeCyclicReportProvider;
 import esa.egos.csts.monitored.data.procedures.OnChangeCyclicReportUser;
-import esa.egos.proxy.enums.AssocState;
 
 /**
  * Base class for MD SI 
  */
-public abstract class MdSi  implements IServiceInform {
-
-	protected IServiceInstance serviceInstance;
-	protected IInformationQuery informationQuery;
-	//protected Map<ICyclicReport, ProcedureState> cyclicReportProcedures = new HashMap<ICyclicReport, ProcedureState>();
-	private Map<IOnChangeCyclicReport, ProcedureState> cyclicReportProcedures = new HashMap<IOnChangeCyclicReport, ProcedureState>();
+public abstract class MdSi  implements IServiceInform {	
+	private IServiceInstance apiServiceInstance;
+	protected IInformationQuery informationQuery;	
+	private Map<Integer, IOnChangeCyclicReport> cyclicReportProcedures = new HashMap<Integer, IOnChangeCyclicReport>();
 	protected INotification notification;
-	protected volatile AssocState assocState;
 	private final ICstsApi api;
 
 	public MdSi(ICstsApi api, SiConfig config, List<ListOfParameters> parameterLists, boolean provider) throws ApiException {
 		super();
-		this.assocState = AssocState.sleAST_unbound;
 		
 		this.api = api;
 		
@@ -49,7 +46,7 @@ public abstract class MdSi  implements IServiceInform {
 																				ObjectIdentifier.of(1,3,112,4,4,1,2), 
 																				config.getInstanceNumber());
 		
-		serviceInstance = api.createServiceInstance(identifier, this);		
+		apiServiceInstance = api.createServiceInstance(identifier, this);		
 
 		int index = 0;
 		for(ListOfParameters list : parameterLists) {
@@ -57,42 +54,42 @@ public abstract class MdSi  implements IServiceInform {
 			IOnChangeCyclicReport cyclicReport;
 			if(provider == true) {
 				//cyclicReport = serviceInstance.createProcedure(CyclicReportProvider.class);
-				cyclicReport = serviceInstance.createProcedure(OnChangeCyclicReportProvider.class);
+				cyclicReport = apiServiceInstance.createProcedure(OnChangeCyclicReportProvider.class);
 			} else {
 				//cyclicReport = serviceInstance.createProcedure(CyclicReportUser.class);
-				cyclicReport = serviceInstance.createProcedure(OnChangeCyclicReportUser.class);
+				cyclicReport = apiServiceInstance.createProcedure(OnChangeCyclicReportUser.class);
 			}
 			cyclicReport.setRole(ProcedureRole.PRIME, index);
 			cyclicReport.setListOfParameters(list);
-			serviceInstance.addProcedure(cyclicReport);
+			apiServiceInstance.addProcedure(cyclicReport);
 			if(provider == true) {
 				cyclicReport.getMinimumAllowedDeliveryCycle().initializeValue(50);
 			}
+			this.cyclicReportProcedures.put(new Integer(index), cyclicReport);
 			index++;			
-			this.cyclicReportProcedures.put(cyclicReport, ProcedureState.INACTIVE);
 		}
 
 		if(provider == true) {
-			informationQuery = serviceInstance.createProcedure(InformationQueryProvider.class);
+			informationQuery = apiServiceInstance.createProcedure(InformationQueryProvider.class);
 		} else {
-			informationQuery = serviceInstance.createProcedure(InformationQueryUser.class);
+			informationQuery = apiServiceInstance.createProcedure(InformationQueryUser.class);
 		}
 		informationQuery.setRole(ProcedureRole.SECONDARY, 0);
-		serviceInstance.addProcedure(informationQuery);
+		apiServiceInstance.addProcedure(informationQuery);
 		
 		if(provider == true) {
-			notification = serviceInstance.createProcedure(NotificationProvider.class);
+			notification = apiServiceInstance.createProcedure(NotificationProvider.class);
 		} else {
-			notification = serviceInstance.createProcedure(NotificationUser.class);
+			notification = apiServiceInstance.createProcedure(NotificationUser.class);
 		}
 		notification.setRole(ProcedureRole.SECONDARY, 0);
-		serviceInstance.addProcedure(notification);
+		apiServiceInstance.addProcedure(notification);
 		
 		
 		// the application needs to make sure that it chooses valid values from the proxy configuration
-		serviceInstance.setPeerIdentifier(config.getPeerIdentifier());
-		serviceInstance.setResponderPortIdentifier(config.getResponderPortIdentifier());
-		serviceInstance.configure();			
+		apiServiceInstance.setPeerIdentifier(config.getPeerIdentifier());
+		apiServiceInstance.setResponderPortIdentifier(config.getResponderPortIdentifier());
+		apiServiceInstance.configure();			
 	}
 
 	/**
@@ -101,7 +98,7 @@ public abstract class MdSi  implements IServiceInform {
 	 * @return The cyclic report procedure or null if no such procedure instance identifier is known
 	 */
 	protected IOnChangeCyclicReport getCyclicReportProcedure(ProcedureInstanceIdentifier procedureInstanceId) {
-		for(IOnChangeCyclicReport cr : this.cyclicReportProcedures.keySet()) {
+		for(IOnChangeCyclicReport cr : this.cyclicReportProcedures.values()) {
 			if(procedureInstanceId.equals(cr.getProcedureInstanceIdentifier())) {
 				return cr;
 			}
@@ -116,31 +113,27 @@ public abstract class MdSi  implements IServiceInform {
 	 * @return The cyclic report procedure or null if no such instance number is known
 	 */
 	protected IOnChangeCyclicReport getCyclicReportProcedure(int instanceNumber) {
-		for(IOnChangeCyclicReport cr : this.cyclicReportProcedures.keySet()) {
-			if(cr.getProcedureInstanceIdentifier().getInstanceNumber() == instanceNumber) {
-				return cr;
-			}
-		}
 		
-		return null;
-	}
-	
-	protected ProcedureState getCyclicReportProcedureState(IOnChangeCyclicReport procedure) {
-		return this.cyclicReportProcedures.get(procedure);
-	}
-	
-	
-	/**
-	 * Sets the procedure state of the given procedure
-	 * @param procedure
-	 * @param state
-	 */
-	protected void setCyclicReportProcedureState(IOnChangeCyclicReport procedure, ProcedureState state) {
-		this.cyclicReportProcedures.put(procedure, state);
+		return this.cyclicReportProcedures.get(new Integer(instanceNumber));
 	}
 	
 	public void destroy() throws ApiException {
-		this.api.destroyServiceInstance(serviceInstance);
+		this.api.destroyServiceInstance(apiServiceInstance);
 	}
 	
+	public static void printProcedureState(IStatefulProcedure proc) {
+		System.err.println("Procedure state of " + proc.getClass().getSimpleName() + " role " + proc.getRole() + System.lineSeparator() + 
+				"\tActivation Pending:\t" + proc.isActivationPending() + System.lineSeparator() + 
+				"\tActive:\t\t\t" + proc.isActive() + System.lineSeparator() + 
+				"\tDeactivationPending:\t" + proc.isDeactivationPending());
+		System.err.flush();
+	}
+	
+	public IServiceInstance getApiServiceInstance() {
+		return this.apiServiceInstance;
+	}
+	
+	public Collection<IOnChangeCyclicReport> getCyclicReportProcedures() {
+		return this.cyclicReportProcedures.values();
+	}
 }

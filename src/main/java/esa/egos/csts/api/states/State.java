@@ -11,7 +11,7 @@ import esa.egos.csts.api.procedures.IStatefulProcedureInternal;
  * state machine of a stateful procedure.
  * 
  * States are only relevant to providers. For user roles the state is
- * initialized with an instance of {@link UserState}.
+ * initialized with an instance of {@link UserStateInactive}.
  * 
  * @param <T> the stateful procedure interface type implementing the underlying
  *        state machine
@@ -56,5 +56,21 @@ public abstract class State<T extends IStatefulProcedureInternal> {
 	 *         false otherwise
 	 */
 	abstract public boolean isActive();
+	
+	/**
+	 * Default implementation for transition state activation pending 
+	 * @return false
+	 */
+	public boolean isActivationPending() {
+		return false;
+	}
 
+	/**
+	 * Default implementation for transition state deactivation pending
+	 * @return false
+	 */
+	public boolean isDeactivationPending() {
+		return false;
+	}
+	
 }

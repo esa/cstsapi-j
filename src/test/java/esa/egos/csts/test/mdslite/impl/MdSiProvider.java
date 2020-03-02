@@ -2,9 +2,9 @@ package esa.egos.csts.test.mdslite.impl;
 
 import java.io.IOException;
 import java.util.List;
-
 import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 
+import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.enumerations.ParameterQualifier;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.extensions.EmbeddedData;
@@ -19,6 +19,7 @@ import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.parameters.impl.ParameterValue;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 import esa.egos.csts.api.parameters.impl.QualifiedValues;
+import esa.egos.csts.api.states.service.ServiceStatus;
 import esa.egos.csts.api.types.Name;
 import esa.egos.csts.monitored.data.procedures.IOnChangeCyclicReport;
 import frm.csts.functional.resource.types.AntActualAzimuth;
@@ -28,7 +29,7 @@ import frm.csts.functional.resource.types.OidValues;
  * MD Provider implementation for testing 
  */
 public class MdSiProvider extends MdSi {
-	
+		
 	public MdSiProvider(ICstsApi api, SiConfig config, List<ListOfParameters> parameterLists) throws ApiException {
 		super(api, config, parameterLists, true);
 		
@@ -39,8 +40,11 @@ public class MdSiProvider extends MdSi {
 	}
 	
 	@Override
-	public void informOpInvocation(IOperation operation) {
+	public synchronized void informOpInvocation(IOperation operation) {
 		System.out.println("MD Provider received operation " + operation);
+		if(operation.getType() == OperationType.PEER_ABORT) {
+			this.notify();
+		}
 	}
 
 	@Override
@@ -97,5 +101,22 @@ public class MdSiProvider extends MdSi {
 		
 		cr.getQualifiedParameters().clear(); // clear prev.values
 		cr.getQualifiedParameters().add(qualifiedParameter);
+	}
+	
+	/**
+	 * If the SI is bound, wait for an abort
+	 * @param timeoutMillies
+	 */
+	public synchronized void waitForAbort(long timeoutMillies) {
+		try {
+			while(this.getApiServiceInstance().getStatus() == ServiceStatus.BOUND) {
+				long start = System.currentTimeMillis();
+				this.wait(timeoutMillies);
+				System.out.println("Provider SI, wait for abort ("+ timeoutMillies + " ms) returned with " 
+						+ (System.currentTimeMillis() - start) + " ms SI status: " + this.getApiServiceInstance().getStatus());
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 }

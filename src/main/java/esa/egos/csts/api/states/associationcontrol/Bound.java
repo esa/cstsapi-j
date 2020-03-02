@@ -37,13 +37,20 @@ public class Bound extends AssociationControlState {
 		} else if (operation.getType() == OperationType.PEER_ABORT) {
 			IPeerAbort peerAbort = (IPeerAbort) operation;
 			CstsResult result;
+
+			// Terminate the procedures before sending the abort. 
+			// Otherwise procedure states may be active when forwarding the peer abort to the application
+			procedure.terminateProcedures();
+			procedure.terminate();
+
 			if (isInvocation) {
 				result = procedure.forwardInvocationToProxy(peerAbort);
 			} else {
+				procedure.setState(new Unbound(procedure)); // set the procedure state before going up to the application
 				result = procedure.forwardInvocationToApplication(peerAbort);
 			}
-			procedure.terminateProcedures();
-			procedure.terminate();
+//			procedure.terminateProcedures();
+//			procedure.terminate();
 			return result;
 		} else {
 			procedure.abort(PeerAbortDiagnostics.PROTOCOL_ERROR);

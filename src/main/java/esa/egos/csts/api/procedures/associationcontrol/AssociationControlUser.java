@@ -37,6 +37,7 @@ public class AssociationControlUser extends AbstractAssociationControl {
 		
 		try {
 			operation.verifyInvocationArguments();
+			
 		} catch (ApiException e) {
 			return CstsResult.INVOCATION_ARGUMENT_VERIFICATION_FAILED;
 		}
@@ -62,6 +63,7 @@ public class AssociationControlUser extends AbstractAssociationControl {
 		} else if (operation.getType() == OperationType.PEER_ABORT) {
 			terminateProcedures();
 			CstsResult result = forwardInvocationToProxy(operation);
+			getServiceInstanceInternal().setState(ServiceStatus.UNBOUND);
 			try {
 				releaseAssociation();
 			} catch (ApiException e) {

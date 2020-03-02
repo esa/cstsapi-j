@@ -6,13 +6,13 @@ import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
-import esa.egos.csts.api.states.UserState;
+import esa.egos.csts.api.states.UserStateInactive;
 
 public class SequenceControlledDataProcessingUser extends AbstractSequenceControlledDataProcessing {
 
 	@Override
 	protected void initializeState() {
-		setState(new UserState(this));
+		setState(new UserStateInactive(this));
 	}
 	
 	@Override

@@ -12,4 +12,8 @@ public interface IState<T extends IStatefulProcedure> {
 	
 	boolean isActive();
 	
+	boolean isActivationPending();
+
+	boolean isDeactivationPending();
+	
 }

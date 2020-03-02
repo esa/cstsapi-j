@@ -3,6 +3,7 @@ package esa.egos.csts.api.serviceinstance.impl;
 import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.enumerations.AppRole;
 import esa.egos.csts.api.enumerations.CstsResult;
+import esa.egos.csts.api.enumerations.OperationResult;
 import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.enumerations.ProcedureRole;
 import esa.egos.csts.api.exceptions.ApiException;
@@ -13,12 +14,15 @@ import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IPeerAbort;
 import esa.egos.csts.api.procedures.IProcedureInternal;
+import esa.egos.csts.api.procedures.IStatefulProcedureInternal;
 import esa.egos.csts.api.procedures.associationcontrol.AssociationControlUser;
 import esa.egos.csts.api.procedures.associationcontrol.IAssociationControl;
 import esa.egos.csts.api.procedures.associationcontrol.IAssociationControlInternal;
 import esa.egos.csts.api.serviceinstance.AbstractServiceInstance;
 import esa.egos.csts.api.serviceinstance.IServiceInform;
 import esa.egos.csts.api.serviceinstance.ReturnPair;
+import esa.egos.csts.api.states.UserStateActive;
+import esa.egos.csts.api.states.UserStateInactive;
 import esa.egos.csts.api.states.service.ServiceStatus;
 
 public class ServiceInstanceUser extends AbstractServiceInstance {
@@ -154,6 +158,7 @@ public class ServiceInstanceUser extends AbstractServiceInstance {
 		IProcedureInternal toBeForwardedTo = getProcedureInternal(confOperation.getProcedureInstanceIdentifier());
 		if (toBeForwardedTo != null) {
 			toBeForwardedTo.checkSupportedOperationType(confOperation);
+			setUserProcedureState(toBeForwardedTo, confOperation);
 			toBeForwardedTo.informOperationReturn(confOperation);
 		} else {
 			String msg = "Unknown procedure for the operation " + confOperation.getProcedureInstanceIdentifier().toString();
@@ -162,6 +167,17 @@ public class ServiceInstanceUser extends AbstractServiceInstance {
 		}
 	}
 
+	/**
+	 * Adjusts the state of the user procedure for stateful procedures and START/STOP return operations
+	 * @param procedure
+	 * @param confOperation
+	 */
+	private void setUserProcedureState(IProcedureInternal procedure, IConfirmedOperation confOperation) {
+		if(procedure instanceof IStatefulProcedureInternal) {
+			((IStatefulProcedureInternal)procedure).getState().process(confOperation);
+		}
+	}
+	
 	@Override
 	protected void doInformOpAck(IAcknowledgedOperation operation) throws ApiException {
 

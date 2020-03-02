@@ -1,7 +1,10 @@
 package esa.egos.csts.api.procedures;
 
+import esa.egos.csts.api.enumerations.CstsResult;
+import esa.egos.csts.api.enumerations.OperationType;
+import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.states.State;
-import esa.egos.csts.api.states.UserState;
+import esa.egos.csts.api.states.UserStateInactive;
 import esa.egos.csts.api.states.service.ServiceSubStatus;
 
 /**
@@ -22,7 +25,7 @@ public abstract class AbstractStatefulProcedure extends AbstractProcedure implem
 
 	/**
 	 * This method initializes the State of a Procedure. If a Procedure is in the
-	 * role of the User, the state should be initialized using {@link UserState}.
+	 * role of the User, the state should be initialized using {@link UserStateInactive}.
 	 */
 	protected abstract void initializeState();
 
@@ -47,5 +50,50 @@ public abstract class AbstractStatefulProcedure extends AbstractProcedure implem
 		}
 		this.state = state;
 	}
+	
+	@Override
+	public synchronized boolean isActive() {
+		if(state != null) {
+			return state.isActive();
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Returns the activation pending state
+	 * @return true is procedure activation is pending
+	 */
+	@Override
+	public boolean isActivationPending() {
+		if(state != null) {
+			return state.isActivationPending();
+		}
+		
+		return false;
+	}
 
+	/**
+	 * Return the deactivation pending state
+	 * @return true if the deactivation is pending
+	 */
+	@Override
+	public boolean isDeactivationPending() {
+		if(state != null) {
+			return state.isDeactivationPending();
+		}
+		
+		return false;
+	}
+
+	@Override
+	public CstsResult forwardInvocationToProxy(IOperation operation) {
+		// without if condition endless loop for TD operation
+		if(operation.getType() == OperationType.START || operation.getType() == OperationType.STOP) {
+			getState().process(operation); // adjust the state for the user to start pending or stop pending
+		}
+		
+		return super.forwardInvocationToProxy(operation);
+	}
+	
 }

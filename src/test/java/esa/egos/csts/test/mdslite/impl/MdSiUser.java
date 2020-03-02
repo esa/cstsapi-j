@@ -17,10 +17,8 @@ import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IStart;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
+import esa.egos.csts.api.states.service.ServiceStatus;
 import esa.egos.csts.monitored.data.procedures.IOnChangeCyclicReport;
-import esa.egos.proxy.enums.AssocState;
-
-
 
 /**
  * CSTS MD User SI  
@@ -42,7 +40,7 @@ public class MdSiUser extends MdSi {
 
 		this.retLock = new ReentrantLock();
 		this.retCond = retLock.newCondition();
-		this.serviceInstance.setVersion(version);
+		getApiServiceInstance().setVersion(version);
 	}
 
 	/**
@@ -51,17 +49,15 @@ public class MdSiUser extends MdSi {
 	 * @return  The result of the BIND
 	 */
 	public CstsResult bind() {
-		if(this.assocState != AssocState.sleAST_unbound) {
+		if(getApiServiceInstance().getStatus() != ServiceStatus.UNBOUND) {
 			return CstsResult.FAILURE;
 		}
 		
-		this.assocState = AssocState.sleAST_bindPending;
-		CstsResult res = this.serviceInstance.getAssociationControlProcedure().bind();
+		CstsResult res = getApiServiceInstance().getAssociationControlProcedure().bind();
 		
 		this.retLock.lock();
-		try {
-			// TODO The assoc procedure could provide the state?!
-			while(res == CstsResult.SUCCESS && this.assocState == AssocState.sleAST_bindPending) {
+		try {			
+			while(res == CstsResult.SUCCESS && getApiServiceInstance().getStatus() == ServiceStatus.BIND_PENDING) {
 				try {
 					boolean signalled = retCond.await(RET_TIMEOUT, TimeUnit.SECONDS);
 					if(signalled == false) {
@@ -73,7 +69,7 @@ public class MdSiUser extends MdSi {
 					e.printStackTrace();
 				}
 			}
-			if(this.assocState != AssocState.sleAST_bound) {
+			if(getApiServiceInstance().getStatus() != ServiceStatus.BOUND) {
 				res = CstsResult.FAILURE;
 			}
 		} finally {
@@ -90,16 +86,15 @@ public class MdSiUser extends MdSi {
 	 * @return  The result of the BUNIND
 	 */
 	public CstsResult unbind() {
-		if(this.assocState != AssocState.sleAST_bound) {
+		if(getApiServiceInstance().getStatus() != ServiceStatus.BOUND) {
 			return CstsResult.FAILURE;
 		}
 		
-		this.assocState = AssocState.sleAST_remoteUnbindPending;
-		CstsResult res = this.serviceInstance.getAssociationControlProcedure().unbind();
+		CstsResult res = getApiServiceInstance().getAssociationControlProcedure().unbind();
 		
 		this.retLock.lock();
 		try {
-			while(this.assocState == AssocState.sleAST_remoteUnbindPending) {
+			while(getApiServiceInstance().getStatus() == ServiceStatus.UNBIND_PENDING) {
 				try {
 					boolean signalled = retCond.await(RET_TIMEOUT, TimeUnit.SECONDS);
 					if(signalled == false) {
@@ -111,7 +106,7 @@ public class MdSiUser extends MdSi {
 					e.printStackTrace();
 				}
 			}		
-			if(this.assocState != AssocState.sleAST_unbound) {
+			if(getApiServiceInstance().getStatus() != ServiceStatus.UNBOUND) {
 				res = CstsResult.FAILURE;
 			}
 		} finally {
@@ -131,15 +126,15 @@ public class MdSiUser extends MdSi {
 		
 		retLock.lock();
 		try {
-			System.out.println("Start the Cyclic Report procedure");
-			
 			IOnChangeCyclicReport cyclicReport = getCyclicReportProcedure(instanceNumber);
-			setCyclicReportProcedureState(cyclicReport, ProcedureState.ACTIVATION_PENDING);
-			
+			//printProcedureState(cyclicReport);
+			System.out.println("Start the Cyclic Report procedure");
+
 			if(cyclicReport != null) {				
 				res = cyclicReport.requestCyclicReport(deliveryCycle, onChange, cyclicReport.getListOfParameters());
+				printProcedureState(cyclicReport);
 				
-				while(getCyclicReportProcedureState(cyclicReport) == ProcedureState.ACTIVATION_PENDING) {
+				while(cyclicReport.isActivationPending()) {
 					try {						
 						boolean signalled = retCond.await(RET_TIMEOUT, TimeUnit.SECONDS);
 						if(signalled == false) {
@@ -151,7 +146,7 @@ public class MdSiUser extends MdSi {
 					}
 				}	
 				
-				if(getCyclicReportProcedureState(cyclicReport) == ProcedureState.ACTIVE) {
+				if(cyclicReport.isActive() == true) {
 					res = CstsResult.SUCCESS;
 				} else {
 					res = CstsResult.FAILURE;
@@ -176,10 +171,11 @@ public class MdSiUser extends MdSi {
 		try {
 			IOnChangeCyclicReport cyclicReport = getCyclicReportProcedure(instanceNumber);
 			if(cyclicReport != null) { 
-				setCyclicReportProcedureState(cyclicReport, ProcedureState.DEACTIVATION_PENDING);
 				res = cyclicReport.endCyclicReport();
+				System.out.println("Stop the cyclic report procedure...");
+				printProcedureState(cyclicReport);
 
-				while(getCyclicReportProcedureState(cyclicReport) == ProcedureState.DEACTIVATION_PENDING) {
+				while(cyclicReport.isDeactivationPending()) {
 					try {						
 						boolean signalled = retCond.await(RET_TIMEOUT, TimeUnit.SECONDS);
 						if(signalled == false) {
@@ -191,7 +187,7 @@ public class MdSiUser extends MdSi {
 					}
 				}	
 				
-				if(getCyclicReportProcedureState(cyclicReport) == ProcedureState.INACTIVE) {
+				if(cyclicReport.isActive() == false) {
 					res = CstsResult.SUCCESS;
 				} else {
 					res = CstsResult.FAILURE;
@@ -223,20 +219,10 @@ public class MdSiUser extends MdSi {
 		
 		if(operation.getType() == OperationType.BIND) {	
 			this.retLock.lock();
-			if(operation.getResult() == OperationResult.POSITIVE) {
-				this.assocState = AssocState.sleAST_bound;
-			} else {
-				this.assocState = AssocState.sleAST_unbound;
-			}
 			this.retCond.signal();
 			this.retLock.unlock();
 		} else if(operation.getType() == OperationType.UNBIND) {	
 			this.retLock.lock();
-			if(operation.getResult() == OperationResult.POSITIVE) {
-				this.assocState = AssocState.sleAST_unbound;
-			} else {
-				this.assocState = AssocState.sleAST_bound;
-			}
 			this.retCond.signal();
 			this.retLock.unlock();
 		} else if(operation.getType() == OperationType.START) {	
@@ -246,14 +232,13 @@ public class MdSiUser extends MdSi {
 
 				if(cr != null) {
 					if(operation.getResult() == OperationResult.POSITIVE) {
-						setCyclicReportProcedureState(cr, ProcedureState.ACTIVE);
-						System.out.println("Positive Start return: " + operation);
+						System.out.println("Positive Start return: " + operation + " CR procedure state active " + cr.isActive());
 					} else {
-						setCyclicReportProcedureState(cr, ProcedureState.INACTIVE);
 						CyclicReportStartDiagnostics diag = cr.getStartDiagnostic();
 						System.out.println("Negative Start return: " + ((IStart)operation).getDiagnostic());
 						System.out.println("Negative Start return proc diag: " + diag);
 					}
+					printProcedureState(cr);
 				} else {
 					System.err.println("Start return for unknown rocedure: " + operation.getProcedureInstanceIdentifier());
 				}
@@ -264,17 +249,16 @@ public class MdSiUser extends MdSi {
 			this.retLock.lock();
 			// check if this is for the cyclic report procedure
 			IOnChangeCyclicReport cr = getCyclicReportProcedure(operation.getProcedureInstanceIdentifier());
-
+			
 			if(cr != null) {
 				if(operation.getResult() == OperationResult.POSITIVE) {
-					setCyclicReportProcedureState(cr, ProcedureState.INACTIVE);
 					System.out.println("Positive Stop return: " + operation);
 				} else {
-					setCyclicReportProcedureState(cr, ProcedureState.ACTIVE);
 					CyclicReportStartDiagnostics diag = cr.getStartDiagnostic();
 					System.out.println("Negative Stop return: " + ((IStart)operation).getDiagnostic());
 					System.out.println("Negative Stop return proc diag: " + diag);
 				}
+				printProcedureState(cr);
 			} else {
 				System.err.println("Start return for unknown rocedure: " + operation.getProcedureInstanceIdentifier());
 			}		

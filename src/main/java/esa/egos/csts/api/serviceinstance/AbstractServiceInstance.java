@@ -984,6 +984,12 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 					}
 				}
 			}
+			
+			// the peer abort is a pseudo-operation of only one byte. Received from the network
+			// it does not have a procedure instance identifier.
+			if(operation instanceof IPeerAbort && operation.getProcedureInstanceIdentifier() == null) {
+				operation.setProcedureInstanceIdentifier(getAssociationControlProcedure().getProcedureInstanceIdentifier());
+			}
 			doInformOpInvoke(operation);
 
 		} catch (ApiException e) {
