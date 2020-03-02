@@ -172,10 +172,31 @@ public class Get extends AbstractConfirmedOperation implements IGet {
 		}
 	}
 
+	/**
+	 * Return a String w/ CSTS Get operation parameters
+	 * @param i capacity
+	 * @return String w/ CSTS Get parameters
+	 */
 	@Override
 	public String print(int i) {
-		return "Get [listOfParameters=" + listOfParameters + ", qualifiedParameters=" + qualifiedParameters
-				+ ", listOfParametersDiagnostics=" + listOfParametersDiagnostics + "]";
+		StringBuilder sb = new StringBuilder(i);
+		String listOfParameter = listOfParameters == null ? "" : listOfParameters.toString();
+
+		sb.append("\nOperation                      : GET\n");
+		sb.append(super.print(i));
+		sb.append("Confirmed Operation            : true\n");
+		sb.append("Diagnostic Type                : no diagnostic\n");
+		sb.append("Common Diagnostics             : Invalid\n");
+		sb.append("List of parameters             : ").append(listOfParameter).append('\n');
+		sb.append("Qualified parameters           : ");
+		for (QualifiedParameter parameter : qualifiedParameters) {
+			if (parameter.getName() == null) {
+				sb.append(parameter.getName()).append("; ");
+			}
+		}
+		sb.append('\n');
+
+		return sb.toString();
 	}
 
 	@Override

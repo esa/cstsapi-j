@@ -5,6 +5,7 @@
 package esa.egos.proxy.spl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -181,7 +182,7 @@ public class RespondingAssoc extends Association
                 ArrayList<ConfigServiceType> pSrvTypeList = this.config.getServiceTypeList();
                 ConfigServiceType pSrvType = null;
                 for(ConfigServiceType serverType: pSrvTypeList){
-                	if(serverType.getServiceId().equals(pBind.getServiceType().getOid().toString()))
+                	if(serverType.getServiceId().equals(Arrays.toString(pBind.getServiceType().getOid().toArray())))
                 		pSrvType = serverType;
                 }
                 if (pSrvType == null)

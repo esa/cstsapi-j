@@ -31,6 +31,8 @@ public class ProviderConfig {
 	protected int authenticationDelay;
 	@XmlAttribute(name = "transmit_queue_size")
 	private int transmissionQueueSize;
+	@XmlAttribute(name = "oid_config_file", required = false)
+	private String oidConfigFile;
 
 	@XmlElementWrapper(name = "service_types", required = false)
 	// XmlElement sets the name of the entities
@@ -184,7 +186,14 @@ public class ProviderConfig {
 	public void setReportingAdress(String reportingAdress) {
 		this.reportingAdress = reportingAdress;
 	}
-	
+
+	public String getOidConfigFile() {
+		return this.oidConfigFile;
+	}
+
+	public void setOidConfigFile(String oidConfigFile) {
+		this.oidConfigFile = oidConfigFile;
+	}
     /**
      * @param stream
      * @return the result

@@ -1,5 +1,7 @@
 package esa.egos.csts.api.serviceinstance.impl;
 
+import java.util.Arrays;
+
 import b1.ccsds.csts.common.types.IntUnsigned;
 import b1.ccsds.csts.common.types.PublishedIdentifier;
 import esa.egos.csts.api.oids.ObjectIdentifier;
@@ -129,8 +131,8 @@ public class ServiceInstanceIdentifier implements IServiceInstanceIdentifier {
 
 	@Override
 	public String toAscii() {
-		return "spacecraft=" + spacecraftIdentifier.toString() + ". facility=" + facilityIdentifier.toString()
-				+ ". type=" + typeIdentifier.toString() + ". serviceinstance=" + serviceInstanceNumber;
+		return "spacecraft=" + Arrays.toString(spacecraftIdentifier.toArray()) + ". facility=" + Arrays.toString(facilityIdentifier.toArray())
+				+ ". type=" + Arrays.toString(typeIdentifier.toArray()) + ". serviceinstance=" + serviceInstanceNumber;
 	}
 
 }

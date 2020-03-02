@@ -1,6 +1,7 @@
 package esa.egos.csts.api.serviceinstance.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import esa.egos.csts.api.oids.ObjectIdentifier;
 
@@ -38,7 +39,7 @@ public class ServiceType {
 	
 	@Override
 	public String toString() {
-		return "ServiceType [oid=" + oid + ", supportedVersions=" + supportedVersions + "]";
+		return "ServiceType [oid=" + Arrays.toString(oid.toArray()) + ", supportedVersions=" + supportedVersions + "]";
 	}
 	
 	public b1.ccsds.csts.association.control.types.ServiceType encode() {

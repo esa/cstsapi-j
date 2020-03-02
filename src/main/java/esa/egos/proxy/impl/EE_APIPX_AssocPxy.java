@@ -6,6 +6,7 @@ package esa.egos.proxy.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -772,7 +773,7 @@ public class EE_APIPX_AssocPxy extends EE_APIPX_LinkAdapter implements IChannelI
         pSrvTypeList = this.config.getServiceTypeList();
         for (ConfigServiceType serverType: pSrvTypeList){
         	
-        	if(serverType.getServiceId().equals(bindop.getServiceType().getOid().toString())
+        	if(serverType.getServiceId().equals(Arrays.toString(bindop.getServiceType().getOid().toArray()))
         			//&& serverType.getServerVersion().contains(bindop.getServiceType().getVersions())
         			)
         		pSrvType = serverType;

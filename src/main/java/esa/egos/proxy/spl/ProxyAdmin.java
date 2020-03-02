@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.concurrent.locks.ReentrantLock;
@@ -486,7 +487,7 @@ public class ProxyAdmin implements IProxy
         	ArrayList<ConfigServiceType> pSrvTypeList = this.config.getServiceTypeList();
         	ConfigServiceType pSrvType = null;
         	for(ConfigServiceType serverType: pSrvTypeList){
-        		if(serverType.getServiceId().equals(srvType.getOid().toString()))
+        		if(serverType.getServiceId().equals(Arrays.toString(srvType.getOid().toArray())))
         			pSrvType = serverType;
         	}
             if (pSrvType == null)

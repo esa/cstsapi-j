@@ -271,7 +271,7 @@ public class InformationQueryTest
             mdCollection.updateIntegerParameter(mdCollection.getParameterNameSet().getParameterNames().get(0), 5);
 
             System.out.println("again QUERY-INFORMATION...");
-            TestUtils.verifyResult(userSi.queryInformation(0, mdCollection.getParameterNameSet()), "QUERY-INFORMATION");
+            TestUtils.verifyResult(userSi.queryInformation(0, ListOfParameters.of(functionalResourceName)), "QUERY-INFORMATION");
 
             List<QualifiedParameter> queriedParameters_02 = userSi.getLastQueriedParameters();
             assertFalse("did not get any parameters from provider", queriedParameters_02.isEmpty());
@@ -342,7 +342,8 @@ public class InformationQueryTest
 
             // verify that diagnostic contains the OID of the unknown parameter
             assertTrue("missing OID of the non-existent parameter in the GET operation diagnostic",
-                       userSi.getDiagnostic().contains("1, 3, 112, 4, 4, 2, 1, 1, 1, 1, 1"));
+                       userSi.getDiagnostic().contains("iso(1).identifiedOrganisation(3).standard(112).ccsds(4).css(4)"
+                       		+ ".crossSupportResources(2).crossSupportFunctionalities(1).unknown(1)"));
 
             System.out.println("UNBIND...");
             TestUtils.verifyResult(userSi.unbind(), "UNBIND");
@@ -485,7 +486,8 @@ public class InformationQueryTest
             // verify that diagnostic contains the OID of the unknown parameter
             System.out.println();
             assertTrue("missing OID of the non-existent parameter in the GET operation diagnostic",
-                       userSi.getDiagnostic().contains("1, 3, 112, 4, 4, 2, 1, 1, 1, 1, 1"));
+                       userSi.getDiagnostic().contains("iso(1).identifiedOrganisation(3).standard(112).ccsds(4).css(4)"
+                       		+ ".crossSupportResources(2).crossSupportFunctionalities(1).unknown(1)"));
 
             System.out.println("UNBIND...");
             TestUtils.verifyResult(userSi.unbind(), "UNBIND");
@@ -629,7 +631,8 @@ public class InformationQueryTest
 
             // verify that diagnostic contains the OID of the unknown parameter
             assertTrue("missing OID of the non-existent parameter in the GET operation diagnostic",
-                       userSi.getDiagnostic().contains("1, 3, 112, 4, 4, 2, 1, 1, 1, 1, 1"));
+                       userSi.getDiagnostic().contains("iso(1).identifiedOrganisation(3).standard(112).ccsds(4).css(4)"
+                       		+ ".crossSupportResources(2).crossSupportFunctionalities(1).unknown(1)"));
 
             System.out.println("UNBIND...");
             TestUtils.verifyResult(userSi.unbind(), "UNBIND");

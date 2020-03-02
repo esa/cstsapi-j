@@ -25,7 +25,8 @@ import javax.xml.bind.annotation.XmlType;
     "remotePeerList",
     "foreignLogicalPortList",
     "portList",
-    "transferType"
+    "transferType",
+    "oidConfigFile"
 })
 
 @XmlRootElement(name = "UserConfig")
@@ -54,6 +55,8 @@ public class UserConfig {
 	private int authenticationDelay;
 	@XmlAttribute(name = "transmit_queue_size")
 	private int transmissionQueueSize;
+	@XmlAttribute(name = "oid_config_file", required = false)
+	private String oidConfigFile;
 
 	@XmlElementWrapper(name = "service_types", required = false)
 	// XmlElement sets the name of the entities
@@ -75,7 +78,7 @@ public class UserConfig {
 	
 	@XmlAttribute(name = "transfer_type", required = true)
 	private TransferType transferType;
-	
+
 	public ProxyRoleEnum getRole() {
 		return this.role;
 	}
@@ -164,7 +167,15 @@ public class UserConfig {
 	public void setTransmissionQueueSize(int transmissionQueueSize) {
 		this.transmissionQueueSize = transmissionQueueSize;
 	}
-	
+
+	public String getOidConfigFile() {
+		return this.oidConfigFile;
+	}
+
+	public void setOidConfigFile(String oidConfigFile) {
+		this.oidConfigFile = oidConfigFile;
+	}
+
     /**
      * @param stream
      * @return the result

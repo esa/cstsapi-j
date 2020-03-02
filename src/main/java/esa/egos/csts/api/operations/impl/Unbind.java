@@ -36,6 +36,11 @@ public class Unbind extends AbstractConfirmedOperation implements IUnbind {
 		return true;
 	}
 
+	/**
+	 * Return a String w/ CSTS Unbind operation parameters
+	 * @param i capacity
+	 * @return String w/ CSTS Unbind parameters
+	 */
 	@Override
 	public String print(int i) {
 		StringBuilder sb = new StringBuilder(i);

@@ -188,7 +188,6 @@ public class Bind extends AbstractConfirmedOperation implements IBind {
 			diagnosticType = getDiagnostic().getType().name();
 		}
 
-		sb.append("Procedure Instance Identifier  : ").append(getProcedureInstanceIdentifier()).append('\n');
 		sb.append("Confirmed Operation            : true\n");
 		sb.append("Diagnostic Type                : ").append(diagnosticType).append('\n');
 		sb.append("Common Diagnostics             : ").append(commonDiagnostic).append('\n');
