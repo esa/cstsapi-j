@@ -373,7 +373,7 @@ public class EE_APIPX_AssocPxy extends EE_APIPX_LinkAdapter implements IChannelI
             byte[] acMessByteArray = acMess.toByteArray();
 
             // create the Header Msg
-            Header_Mess hMess = new Header_Mess(false,
+            Header_Mess hMess = new Header_Mess(true,
                                                           MessId.mid_PeerAbort.getCode(),
                                                           acMessByteArray.length);
 
@@ -389,6 +389,7 @@ public class EE_APIPX_AssocPxy extends EE_APIPX_LinkAdapter implements IChannelI
 
             // send the message
             sendMessageNoWait(data);
+            releaseChannel();
         }
     }
 
