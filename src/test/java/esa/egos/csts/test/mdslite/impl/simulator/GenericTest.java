@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
+import org.junit.rules.TestRule;
 
 import esa.egos.csts.api.enumerations.AppRole;
 import esa.egos.csts.api.enumerations.CstsResult;
@@ -26,12 +27,20 @@ import esa.egos.csts.test.mdslite.impl.simulator.user.MdCstsSiUser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Rule;
 
 /**
  * Test the CSTS API at the example of the monitored data service
  */
 public class GenericTest
 {
+
+    @ClassRule
+    public static TestRule classWatcher = new CstsTestWatcher();
+
+    @Rule
+    public TestRule testWatcher = new CstsTestWatcher();
 
     private ICstsApi providerApi;
 
@@ -384,7 +393,6 @@ public class GenericTest
 
             System.out.println("PEER-ABORT...");
             TestUtils.verifyResult(userSi.peerAbort(), "PEER-ABORT");
-            Thread.sleep(1000);
 
             providerSi.destroy();
             userSi.destroy();

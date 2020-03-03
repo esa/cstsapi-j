@@ -196,7 +196,7 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<InformationQueryUser, 
 
         try
         {
-            System.out.print("PROTOCOL ABORT");
+            System.out.println("PROTOCOL ABORT");
             this.retCond.signal();
         }
         finally
