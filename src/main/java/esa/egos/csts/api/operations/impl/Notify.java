@@ -105,8 +105,17 @@ public class Notify extends AbstractOperation implements INotify {
 
 	@Override
 	public String print(int i) {
-		return "Notify [eventTime=" + eventTime + ", eventName=" + eventName + ", eventValue=" + eventValue + "]";
-	}
+		StringBuilder sb = new StringBuilder(i);
+		sb.append("\nOperation                      : NOTIFY\n");
+		sb.append(super.print(i));
+		sb.append("Confirmed Operation            : true\n");
+		sb.append("Diagnostic Type                : no diagnostic\n");
+		sb.append("Common Diagnostics             : Invalid\n");
+		sb.append("Event time                     : ").append(this.eventTime.toInstant()).append('\n');
+		sb.append("Event name                     : ").append(this.eventName.toString()).append('\n');
+		sb.append("Event value                    : ").append(this.eventValue.getType()).append('\n');
+
+		return sb.toString();	}
 
 	@Override
 	public NotifyInvocation encodeNotifyInvocation() {
