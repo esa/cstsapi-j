@@ -4,7 +4,7 @@ import java.util.List;
 
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
-import esa.egos.csts.api.types.LabelList;
+import esa.egos.csts.api.types.Label;
 
 /**
  * Encapsulate the provider SI configuration
@@ -14,7 +14,7 @@ public class MdCstsSiProviderConfig extends MdCstsSiConfig
 
     private final long minimumAllowedDeliveryCycle;
 
-    private final LabelList defaultLabelList;
+    private final List<Label> defaultLabelList;
 
 
     /**
@@ -33,7 +33,7 @@ public class MdCstsSiProviderConfig extends MdCstsSiConfig
      *            teh proxy configuration
      */
     public MdCstsSiProviderConfig(long minimumAllowedDeliveryCycle,
-                                  LabelList defaultLabelList,
+                                  List<Label> defaultLabelList,
                                   ObjectIdentifier scId,
                                   ObjectIdentifier facilityId,
                                   int instanceNumber,
@@ -51,7 +51,7 @@ public class MdCstsSiProviderConfig extends MdCstsSiConfig
         return this.minimumAllowedDeliveryCycle;
     }
 
-    public LabelList getDefaultLabelList()
+    public List<Label> getDefaultLabelList()
     {
         return this.defaultLabelList;
     }

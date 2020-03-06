@@ -3,11 +3,14 @@ package esa.egos.csts.test.mdslite.impl.simulator;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import org.junit.Test;
+import org.junit.rules.TestRule;
 
 import esa.egos.csts.api.enumerations.AppRole;
 import esa.egos.csts.api.enumerations.CstsResult;
@@ -25,7 +28,6 @@ import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.types.Label;
-import esa.egos.csts.api.types.LabelList;
 import esa.egos.csts.api.types.Name;
 import esa.egos.csts.test.mdslite.impl.simulator.provider.MdCollection;
 import esa.egos.csts.test.mdslite.impl.simulator.provider.MdCstsSiProvider;
@@ -34,13 +36,20 @@ import esa.egos.csts.test.mdslite.impl.simulator.user.MdCstsSiUser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Ignore;
+import org.junit.Rule;
 
 /**
  * Test the CSTS API at the example of the monitored data service
  */
 public class InformationQueryTest
 {
+    @ClassRule
+    public static TestRule classWatcher = new CstsTestWatcher();
+
+    @Rule
+    public TestRule testWatcher = new CstsTestWatcher();
 
     private ICstsApi providerApi;
 
@@ -66,17 +75,17 @@ public class InformationQueryTest
 
     private long minimumAllowedDeliveryCycle = 50;
 
-    static LabelList defaultLabelList = new LabelList("", true);
+    static List<Label> defaultLabelList = new ArrayList<Label>();
     {
-        ObjectIdentifier antActualAzimuthId = ObjectIdentifier.of(new int[] { 1, 3, 112, 4, 4, 2, 1, 1, 1, 3, 1 });
+        ObjectIdentifier antActualAzimuthId = ObjectIdentifier.of(new int[] { 1, 3, 112, 4, 4, 2, 1, 1000, 1, 3, 1});
         FunctionalResourceType antActualAzimuthType = FunctionalResourceType.of(antActualAzimuthId);
 
-        defaultLabelList.getLabels().add(Label.of(antActualAzimuthId, antActualAzimuthType));
+        defaultLabelList = Collections.singletonList(Label.of(antActualAzimuthId, antActualAzimuthType));
     }
 
     // create provider SI configuration
     private MdCstsSiProviderConfig mdSiProviderConfig = new MdCstsSiProviderConfig(this.minimumAllowedDeliveryCycle,
-                                                                                   defaultLabelList,
+                                                                                   null,
                                                                                    this.scId,
                                                                                    this.facilityId,
                                                                                    0,
@@ -152,11 +161,12 @@ public class InformationQueryTest
         System.out.println("CSTS user and provider API stopped");
     }
 
+    /**
+     * Test Information Query procedure and its GET operation w/ default list => ListOfParameter /w type EMPTY
+     */
     @Test
-    public void testQueryEmpty()
+    public void testQueryDefaultLabelList()
     {
-        System.out.println("Test Information Query procedure and its GET operation w/ default list => ListOfParameter /w type EMPTY");
-
         try
         {
             // create provider SI
@@ -182,25 +192,37 @@ public class InformationQueryTest
             assertTrue("missing OID of the non-existent parameter in the GET operation diagnostic",
                        userSi.getDiagnostic().contains("Default list not defined"));
 
-            
+            System.out.println("UNBIND...");
+            TestUtils.verifyResult(userSi.unbind(), "UNBIND");
+
+            // set the default label list to provider SI
+//            List<Label> defaultLabelList = new ArrayList<Label>();
+//            Name name = mdCollection.getParameterName();
+//            FunctionalResourceType functionalResourceType = name.getFunctionalResourceName().getType();
+//            Label label = new Label(OIDs.pIQnamedLabelLists, FunctionalResourceType.of(functionalResourceType));
+            providerSi.setDefaultLabelList(this.piid_prime, defaultLabelList);
+
+            System.out.println("BIND...");
+            TestUtils.verifyResult(userSi.bind(), "BIND");
+
             // TODO try to once again w/ defined default list
-//            // the primary procedure w/ instance number 0 has defined the default list
-//            System.out.println("QUERY-INFORMATION...");
-//            TestUtils.verifyResult(userSi.queryInformation(0, ListOfParameters.empty()),
-//                                   "QUERY-INFORMATION");
-//
-//            List<QualifiedParameter> queriedParameters_01 = userSi.getLastQueriedParameters();
-//            assertFalse("did not get any parameters from provider", queriedParameters_01.isEmpty());
-//
-//            // verify that the user SI received all queried qualified parameters
-//            Optional<QualifiedParameter> result_01 = queriedParameters_01
-//                    .stream().filter(qualifiedParameter -> qualifiedParameter.getName().getFunctionalResourceName()
-//                            .getType().equals(defaultLabelList.getLabels().get(0).getFunctionalResourceType()))
-//                    .findAny();
-//            assertTrue(result_01.isPresent());
-//
-//            QualifiedParameter qualifiedParameter_01 = result_01.get();
-//            System.out.println("got: " + qualifiedParameter_01);
+            // the primary procedure w/ instance number 0 has defined the default list
+            System.out.println("QUERY-INFORMATION...");
+            TestUtils.verifyResult(userSi.queryInformation(0, ListOfParameters.empty()),
+                                   "QUERY-INFORMATION");
+
+            List<QualifiedParameter> queriedParameters_01 = userSi.getLastQueriedParameters();
+            assertFalse("did not get any parameters from provider", queriedParameters_01.isEmpty());
+
+            // verify that the user SI received all queried qualified parameters
+            Optional<QualifiedParameter> result_01 = queriedParameters_01
+                    .stream().filter(qualifiedParameter -> qualifiedParameter.getName().getFunctionalResourceName()
+                            .getType().equals(defaultLabelList.get(0).getFunctionalResourceType()))
+                    .findAny();
+            assertTrue(result_01.isPresent());
+
+            QualifiedParameter qualifiedParameter_01 = result_01.get();
+            System.out.println("got: " + qualifiedParameter_01);
 
             System.out.println("UNBIND...");
             TestUtils.verifyResult(userSi.unbind(), "UNBIND");
@@ -649,7 +671,7 @@ public class InformationQueryTest
     }
 
     @Test
-    public void testQueryLableSet()
+    public void testQueryLabelSet()
     {
         System.out.println("Test Information Query procedure and its GET operation");
 
