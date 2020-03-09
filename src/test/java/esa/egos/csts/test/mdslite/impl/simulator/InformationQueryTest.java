@@ -37,7 +37,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Rule;
 
 /**
@@ -196,17 +195,12 @@ public class InformationQueryTest
             TestUtils.verifyResult(userSi.unbind(), "UNBIND");
 
             // set the default label list to provider SI
-//            List<Label> defaultLabelList = new ArrayList<Label>();
-//            Name name = mdCollection.getParameterName();
-//            FunctionalResourceType functionalResourceType = name.getFunctionalResourceName().getType();
-//            Label label = new Label(OIDs.pIQnamedLabelLists, FunctionalResourceType.of(functionalResourceType));
             providerSi.setDefaultLabelList(this.piid_prime, defaultLabelList);
 
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");
 
-            // TODO try to once again w/ defined default list
-            // the primary procedure w/ instance number 0 has defined the default list
+            // try to once again w/ a defined default list
             System.out.println("QUERY-INFORMATION...");
             TestUtils.verifyResult(userSi.queryInformation(0, ListOfParameters.empty()),
                                    "QUERY-INFORMATION");
@@ -238,11 +232,12 @@ public class InformationQueryTest
         }
     }
 
+    /**
+     * Test Information Query procedure and its GET operation w/ FUNCTIONAL_RESOURCE_NAME
+     */
     @Test
     public void testQueryFunctionalResourceName()
     {
-        System.out.println("Test Information Query procedure and its GET operation w/ FUNCTIONAL_RESOURCE_NAME");
-
         try
         {
             // create provider SI
@@ -333,12 +328,12 @@ public class InformationQueryTest
         }
     }
 
+    /**
+     * Test Information Query procedure and its GET operation w/ non-existent FUNCTIONAL_RESOURCE_NAME 
+     */
     @Test
     public void testQueryFunctionalResourceNameNonExistent()
     {
-        System.out
-                .println("Test Information Query procedure and its GET operation w/ FUNCTIONAL_RESOURCE_NAME non-existent");
-
         try
         {
             // create provider SI
@@ -381,11 +376,12 @@ public class InformationQueryTest
         }
     }
 
+    /**
+     * Test Information Query procedure and its GET operation w/ FUNCTIONAL_RESOURCE_TYPE
+     */
     @Test
     public void testQueryFunctionalResourceType()
     {
-        System.out.println("Test Information Query procedure and its GET operation w/ FUNCTIONAL_RESOURCE_TYPE");
-
         try
         {
             // create provider SI
@@ -476,12 +472,12 @@ public class InformationQueryTest
         }
     }
 
+    /**
+     * Test Information Query procedure and its GET operation w/ non-existent FUNCTIONAL_RESOURCE_TYPE
+     */
     @Test
     public void testQueryFunctionalResourceTypeNonExistent()
     {
-        System.out
-                .println("Test Information Query procedure and its GET operation w/ FUNCTIONAL_RESOURCE_TYPE non-existent");
-
         try
         {
             // create provider SI
@@ -525,11 +521,12 @@ public class InformationQueryTest
         }
     }
 
+    /**
+     * Test Information Query procedure and its GET operation w/ NAME_SET"
+     */
     @Test
     public void testQueryNameSet()
     {
-        System.out.println("Test Information Query procedure and its GET operation w/ NAME_SET");
-
         try
         {
             // create provider SI
@@ -622,11 +619,12 @@ public class InformationQueryTest
         }
     }
 
+    /**
+     * Test Information Query procedure and its GET operation w/ NAME_SET w/ non-existent NAME"
+     */
     @Test
     public void testQueryNameSetNonExistentParameter()
     {
-        System.out.println("Test Information Query procedure and its GET operation");
-
         try
         {
             // create provider SI
@@ -670,11 +668,12 @@ public class InformationQueryTest
         }
     }
 
+    /**
+     * Test Information Query procedure and its GET operation w/ LABEL_SET"
+     */
     @Test
     public void testQueryLabelSet()
     {
-        System.out.println("Test Information Query procedure and its GET operation");
-
         try
         {
             // create provider SI
@@ -724,7 +723,59 @@ public class InformationQueryTest
         }
     }
 
-    @Ignore
+    /**
+     * Test Information Query procedure and its GET operation w/ LABEL_SET w/ non-existent LABEL"
+     */
+    @Test
+    public void testQueryLabelSetNonExistent()
+    {
+        try
+        {
+            // create provider SI
+            MdCstsSiProvider providerSi = new MdCstsSiProvider(this.providerApi, this.mdSiProviderConfig);
+
+            // create FR parameters and attach them to the provider SI
+            MdCollection mdCollection = MdCollection.createSimpleMdCollection();
+            providerSi.setMdCollection(mdCollection);
+
+            // create user SI
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, 1);
+
+            System.out.println("BIND...");
+            TestUtils.verifyResult(userSi.bind(), "BIND");
+
+//            Label parameterLabel = mdCollection.getParameterLabelSet().getParameterLabels().get(0);
+            Label nonExistentParameterLabel = Label.of(ObjectIdentifier.of(1, 1, 2), FunctionalResourceType.of(ObjectIdentifier.of(1, 1, 50)));
+            Label nonExistentParameterLabel2 = Label.of(ObjectIdentifier.of(1, 1, 3), FunctionalResourceType.of(ObjectIdentifier.of(1, 1, 51)));
+
+            // create list of parameters NAME_SET /w a non existent parameter
+            ListOfParameters listOfParameters = ListOfParameters.of(nonExistentParameterLabel, mdCollection.getParameterLabelSet().getParameterLabels().get(0), nonExistentParameterLabel2);
+            System.out.println("QUERY-INFORMATION...");
+            TestUtils.verifyResult(userSi.queryInformation(0, listOfParameters),
+                                   "QUERY-INFORMATION",
+                                   CstsResult.FAILURE);
+
+            // verify that diagnostic contains the OID of the unknown parameter
+            assertTrue("missing OID of the non-existent parameter in the GET operation diagnostic",
+                       userSi.getDiagnostic().contains("UNKNOWN_PARAMETER_IDENTIFIER"));
+
+            System.out.println("UNBIND...");
+            TestUtils.verifyResult(userSi.unbind(), "UNBIND");
+
+            providerSi.destroy();
+            userSi.destroy();
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
+
+    /**
+     * Test as a secondary procedure w/ a parallel cyclic report 
+     */
     @Test
     public void testMultipleInformationQuerySecondary()
     {

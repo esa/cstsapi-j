@@ -125,15 +125,17 @@ public abstract class AbstractInformationQuery extends AbstractProcedure impleme
 		ListOfParametersDiagnostics diag = new ListOfParametersDiagnostics(
 				ListOfParametersDiagnosticsType.UNKNOWN_PARAMETER_IDENTIFIER);
 
+		int prevParamCount = 0;
 		for (Label label : labels) {
-			
 			getParameters().stream()
 			.filter(p -> p.getLabel().equals(label))
 			.forEach(p -> get.getQualifiedParameters().add(p.toQualifiedParameter()));
 			
-			if (get.getQualifiedParameters().isEmpty()) {
+			int paramCount = get.getQualifiedParameters().size();
+			if (paramCount == prevParamCount) {
 				diag.getUnknownParameterLabels().add(label);
 			}
+			prevParamCount = paramCount;
 		}
 
 		if (diag.getUnknownParameterLabels().isEmpty()) {
@@ -156,7 +158,7 @@ public abstract class AbstractInformationQuery extends AbstractProcedure impleme
 			.forEach(p -> get.getQualifiedParameters().add(p.toQualifiedParameter()));
 			
 			int paramCount = get.getQualifiedParameters().size();
-			if ( paramCount == prevParamCount) {
+			if (paramCount == prevParamCount) {
 				diag.getUnknownParameterNames().add(name);
 			}
 			prevParamCount = paramCount;
