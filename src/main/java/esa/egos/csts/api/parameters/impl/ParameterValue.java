@@ -369,6 +369,61 @@ public class ParameterValue {
 	}
 	
 	@Override
+	public String toString() {
+	    StringBuilder sb = new StringBuilder("ParameterValue [type=");
+	    sb.append(this.type.name());
+	    if (this.type == ParameterType.EXTENDED) {
+	        sb.append(", extension=");
+	        sb.append(this.extension.toString());
+	    } else if (this.type == ParameterType.OCTET_STRING) {
+            sb.append(", values=[");
+            Iterator<byte[]> it = this.octetStringParameterValues.iterator();
+            while (it.hasNext()) {
+                sb.append(Arrays.toString(it.next()));
+                if (it.hasNext()) sb.append(", ");
+            }
+	    } else {
+            sb.append(", values=[");
+            Iterator<?> it = null;
+            switch (this.type) {
+            case BOOLEAN:
+                it = this.boolParameterValues.iterator();
+                break;
+            case CHARACTER_STRING:
+                it = this.stringParameterValues.iterator();
+                break;
+            case DURATION:
+                it = this.durationParameterValues.iterator();
+                break;
+            case ENUMERATED:
+            case INTEGER:
+            case POSITIVE_INTEGER:
+            case UNSIGNED_INTEGER:
+                it = this.integerParameterValues.iterator();
+                break;
+            case OBJECT_IDENTIFIER:
+            case PUBLISHED_IDENTIFIER:
+                it = this.OIDparameterValues.iterator();
+                break;
+            case REAL:
+                it = this.realParameterValues.iterator();
+                break;
+            case TIME:
+                it = this.timeParameterValues.iterator();
+                break;
+            default:
+                break; // should not get here
+            }
+            while (it.hasNext()) {
+                sb.append(it.next().toString());
+                if (it.hasNext()) sb.append(", ");
+            }
+		}
+	    sb.append("]]");
+	    return sb.toString();
+	}
+	
+	@Override
 	public boolean equals(Object o) {
 		if (o == this) {
 			return true;

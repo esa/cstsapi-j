@@ -1,6 +1,7 @@
 package esa.egos.csts.api.parameters.impl;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.beanit.jasn1.ber.types.BerNull;
@@ -119,6 +120,21 @@ public class QualifiedValues {
 			}
 		}
 		return newQualifiedValues;
+	}
+	
+	@Override
+	public String toString() {
+	    StringBuilder sb = new StringBuilder("QualifiedValues [qualifier=");
+	    sb.append(this.qualifier.name());
+	    sb.append(", parameterValues=[");
+	    Iterator<ParameterValue> it = this.parameterValues.iterator();
+	    while (it.hasNext()) {
+	        ParameterValue pv = it.next();
+	        sb.append(pv.toString());
+	        if (it.hasNext()) sb.append(", ");
+	    }
+	    sb.append("]]");
+	    return sb.toString();
 	}
 	
 	@Override

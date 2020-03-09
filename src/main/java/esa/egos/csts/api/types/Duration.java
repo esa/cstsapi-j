@@ -93,6 +93,11 @@ public class Duration implements Comparable<Duration> {
 	}
 	
 	@Override
+	public String toString() {
+	    return "Duration [type=" + this.type.name() + ", duration=" + this.duration.toString() + "]";
+	}
+	
+	@Override
 	public boolean equals(Object o) {
 		if (o == this) {
 			return true;

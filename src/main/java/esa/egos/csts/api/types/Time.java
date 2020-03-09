@@ -539,6 +539,11 @@ public class Time implements Comparable<Time> {
 	}
 	
 	@Override
+	public String toString() {
+	    return "Time [type=" + this.type.name() + ", value=[" + Arrays.toString(this.value) + "]]";
+	}
+
+	@Override
 	public boolean equals(Object o) {
 		if (o == this) {
 			return true;

@@ -80,6 +80,12 @@ public class QualifiedParameter {
 		}
 		return newQualifiedParameter;
 	}
+	
+	@Override
+	public String toString() {
+	    return "QualifiedParameter [name=" + this.name.toString()
+	           + ", qualifiedValues=" + this.qualifiedValues.toString() + "]";
+	}
 
 	@Override
 	public boolean equals(Object o) {
