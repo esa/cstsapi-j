@@ -1,6 +1,7 @@
 package esa.egos.csts.api.serviceinstance;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
@@ -152,7 +153,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 	private IAssociationControl associationControlProcedure;
 
-	private List<ReturnPair> remoteReturns = new ArrayList<ReturnPair>();
+	private List<ReturnPair> remoteReturns = Collections.synchronizedList(new ArrayList<ReturnPair>());
 
 	private List<IConfirmedOperation> localReturns = new ArrayList<IConfirmedOperation>();
 
@@ -372,11 +373,14 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 		Result rc = Result.S_OK;
 
-		ElapsedTimer et = new ElapsedTimer();
-		ReturnPair rr = new ReturnPair(confOp, et);
+		ReturnPair rr = null;
 
 		try {
-			if (confOp != null) this.remoteReturns.add(rr);
+			if (confOp != null) {
+				// create the return pair with the return timer only in case of a confirmed op 
+				rr = new ReturnPair(confOp, new ElapsedTimer());
+				this.remoteReturns.add(rr);
+			}
 			// #hd# take into account failed return code
 			Result res = getProxyInitiate().initiateOpInvoke(operation, reportTransmission, this.pxySeqCount);
 			if(res != Result.S_OK && res != Result.SLE_S_TRANSMITTED && res != Result.SLE_S_QUEUED) {
@@ -389,7 +393,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 		// #hd# unify error handling also for failure of getProxyInitiate().initiateOpInvoke
 		if(rc == Result.E_FAIL) {
 			LOG.fine("Forward initiate proxy operation invoke failed.");
-			if (confOp != null) this.remoteReturns.remove(rr);			
+			if (confOp != null) this.remoteReturns.remove(rr);
 		}
 
 		// SLE_S_QUEUED means suspended
@@ -400,10 +404,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 				rc = Result.SLE_S_DISCARDED;
 				// tell the proxy to kick the operation out of the queue
 				getProxyInitiate().discardOperation(operation);
-
-				if (confOp != null)
-					this.remoteReturns.remove(rr);
-
+				if (confOp != null) this.remoteReturns.remove(rr);
 			} else {
 				rc = Result.S_OK;
 			}
@@ -417,7 +418,15 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 			CstsDuration tmo = new CstsDuration(this.returnTimeout);
 			try {
-				et.start(tmo, this, 0); // start return timer
+				boolean alreadyReturnedOrAborted = false;
+				synchronized (this.remoteReturns) {
+					// check whether the pair was not removed by informOpReturn() or handleAbort() 
+					alreadyReturnedOrAborted = !this.remoteReturns.contains(rr);
+					// start the return timer only if operation is not returned or aborted
+					if (!alreadyReturnedOrAborted) {
+						rr.getElapsedTimer().start(tmo, this, 0); // start return timer
+					}
+				}
 			} catch (ApiException e1) {
 				LOG.log(Level.FINE, "ApiException ", e1);
 			}
@@ -819,7 +828,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 	@Override
 	public void handlerAbort(Object timer) {
-
+	    synchronized (this.remoteReturns) {
 		for (ReturnPair i : this.remoteReturns) {
 			if (i.getElapsedTimer().equals(timer)) {
 				LOG.fine("Return Timer aborted");
@@ -827,6 +836,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 				return;
 			}
 		}
+	    }
 	}
 
 	/**
@@ -1012,17 +1022,19 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 		try {
 			boolean found = false;
-			for (ReturnPair rr : this.remoteReturns) {
-				IConfirmedOperation returnConfOp = rr.getConfirmedOperation();
-				ElapsedTimer eTimer = rr.getElapsedTimer();
-				if (returnConfOp.equals(confOperation)) {
-					int index = this.remoteReturns.indexOf(rr);
+			synchronized (this.remoteReturns) {
+				for (ReturnPair rr : this.remoteReturns) {
+					IConfirmedOperation returnConfOp = rr.getConfirmedOperation();
+					ElapsedTimer eTimer = rr.getElapsedTimer();
+					if (returnConfOp.equals(confOperation)) {
+						int index = this.remoteReturns.indexOf(rr);
 
-					this.remoteReturns.remove(index);
-					eTimer.cancel();
-					found = true;
-					break;
+						this.remoteReturns.remove(index);
+						eTimer.cancel();
+						found = true;
+						break;
 
+					}
 				}
 			}
 			if (!found) {
@@ -1043,11 +1055,13 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 	public void informOpAck(IAcknowledgedOperation operation, long seqCount) throws ApiException {
 		try {
 			boolean found = false;
-			for (ReturnPair rr : this.remoteReturns) {
-				IConfirmedOperation returnConfOp = rr.getConfirmedOperation();
-				if (returnConfOp.equals(operation)) {
-					found = true;
-					break;
+			synchronized (this.remoteReturns) {
+				for (ReturnPair rr : this.remoteReturns) {
+					IConfirmedOperation returnConfOp = rr.getConfirmedOperation();
+					if (returnConfOp.equals(operation)) {
+						found = true;
+						break;
+					}
 				}
 			}
 			if (!found) {
@@ -1212,11 +1226,13 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 	 * Clears all pending remote return PDUs.
 	 */
 	protected void clearInternalRemoteReturns() {
-		Iterator<ReturnPair> iter = this.remoteReturns.listIterator();
-		while (iter.hasNext()) {
-			ReturnPair rr = iter.next();
-			rr.getElapsedTimer().cancel();
-			iter.remove();
+		synchronized (this.remoteReturns) {
+			Iterator<ReturnPair> iter = this.remoteReturns.listIterator();
+			while (iter.hasNext()) {
+				ReturnPair rr = iter.next();
+				rr.getElapsedTimer().cancel();
+				iter.remove();
+			}
 		}
 	}
 
@@ -1307,9 +1323,25 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 	@Override
 	public void processTimeout(Object timer, int invocationId) {
-		// check for end of provision period
 		if (LOG.isLoggable(Level.FINEST)) {
-			LOG.finest("method in doProcessTimeout");
+			LOG.finest("method in processTimeout");
+		}
+		// check for return timeout
+		synchronized (this.remoteReturns) {
+			for (ReturnPair rr : this.remoteReturns) {
+				if (rr.getElapsedTimer().equals(timer)) {
+					// abort and cleanup
+					// print all operation information
+					IConfirmedOperation pop = rr.getConfirmedOperation();
+					String opDump = pop.print(500);
+
+					LOG.fine("Return timer expired for operation " + opDump);
+					if (getStatus() != ServiceStatus.UNBOUND) {
+						abort(PeerAbortDiagnostics.RETURN_TIMEOUT);
+					}
+					return;
+				}
+			}
 		}
 	}
 

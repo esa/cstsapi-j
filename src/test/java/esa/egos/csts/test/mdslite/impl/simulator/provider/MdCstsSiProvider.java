@@ -1,16 +1,21 @@
 package esa.egos.csts.test.mdslite.impl.simulator.provider;
 
-import esa.egos.csts.api.enumerations.ProcedureRole;
+import java.util.ArrayList;
+import java.util.List;
+
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
+import esa.egos.csts.api.parameters.impl.LabelLists;
 import esa.egos.csts.api.procedures.IProcedure;
 import esa.egos.csts.api.procedures.cyclicreport.CyclicReportProvider;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.informationquery.InformationQueryProvider;
 import esa.egos.csts.api.procedures.notification.NotificationProvider;
+import esa.egos.csts.api.types.Label;
+import esa.egos.csts.api.types.LabelList;
 import esa.egos.csts.test.mdslite.impl.simulator.MdCstsSi;
 import esa.egos.csts.test.mdslite.impl.simulator.MdCstsSiConfig;
 import esa.egos.csts.test.mdslite.impl.simulator.MdCstsSiProviderConfig;
@@ -36,30 +41,41 @@ public class MdCstsSiProvider extends MdCstsSi<InformationQueryProvider, CyclicR
     {
         super.addProcedure(procedure, pii, config);
 
-        if (procedure instanceof CyclicReportProvider)
-        {
+        if (procedure instanceof CyclicReportProvider) {
             ((CyclicReportProvider) procedure).getMinimumAllowedDeliveryCycle()
                     .initializeValue(((MdCstsSiProviderConfig) config).getMinimumAllowedDeliveryCycle());
-            if (pii.getRole() == ProcedureRole.PRIME)
-            {
-                // the defaul list is set to the prime procedure only for
-                // testing purposes
-                // TODO find out how to set the default list
-//                ((CyclicReportProvider) procedure).getLabelLists()
-//                        .add(((MdCstsSiProviderConfig) config).getDefaultLabelList());
-            }
+    		updateDefaultLabelList(((CyclicReportProvider) procedure).getLabelLists(),
+    				((MdCstsSiProviderConfig) config).getDefaultLabelList());
         }
-        else if (procedure instanceof InformationQueryProvider)
-        {
-            if (pii.getRole() == ProcedureRole.PRIME)
-            {
-                // the defaul list is set to the prime procedure only for
-                // testing purposes
-                // TODO find out how to set the default list
-//                ((InformationQueryProvider) procedure).getLabelLists()
-//                        .add(((MdCstsSiProviderConfig) config).getDefaultLabelList());
-            }
+        else if (procedure instanceof InformationQueryProvider) {
+    		updateDefaultLabelList(((InformationQueryProvider) procedure).getLabelLists(),
+    				((MdCstsSiProviderConfig) config).getDefaultLabelList());
         }
+    }
+
+    public void setDefaultLabelList(ProcedureInstanceIdentifier piid, List<Label> defaultLabeList) throws Exception {
+    	IProcedure procedure = this.serviceInstance.getProcedure(piid);
+    	if (procedure instanceof CyclicReportProvider) {
+    		updateDefaultLabelList(((CyclicReportProvider) procedure).getLabelLists(), defaultLabeList);
+    	}
+    	else if (procedure instanceof InformationQueryProvider) {
+    		updateDefaultLabelList(((InformationQueryProvider) procedure).getLabelLists(), defaultLabeList);
+    	}
+    	else {
+    		throw new Exception("procedure " + piid + " does not support the default label list feature");
+    	}
+    }
+
+    private void updateDefaultLabelList(LabelLists labelLists, List<Label> defaultLabeList) {
+		if (defaultLabeList != null) {
+			LabelList oldDelaultLabelList = labelLists.queryDefaultList();
+			if (oldDelaultLabelList != null) {
+				labelLists.remove(oldDelaultLabelList);
+			}
+			LabelList newDefaultLabelList = new LabelList("default", true);
+			newDefaultLabelList.getLabels().addAll(new ArrayList<Label>(defaultLabeList));
+			labelLists.add(newDefaultLabelList);
+		}
     }
 
     public void informOpInvocation(IOperation operation)
@@ -67,7 +83,7 @@ public class MdCstsSiProvider extends MdCstsSi<InformationQueryProvider, CyclicR
         System.out.println("MdCstsSiProvider#informOpInvocation() begin");
 
         System.out.println("Operation invocation:  " + operation);
-        
+
         System.out.println("MdCstsSiProvider#informOpInvocation() end");
     }
 

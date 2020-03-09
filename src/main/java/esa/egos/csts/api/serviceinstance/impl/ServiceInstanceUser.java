@@ -1,9 +1,7 @@
 package esa.egos.csts.api.serviceinstance.impl;
 
-import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.enumerations.AppRole;
 import esa.egos.csts.api.enumerations.CstsResult;
-import esa.egos.csts.api.enumerations.OperationResult;
 import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.enumerations.ProcedureRole;
 import esa.egos.csts.api.exceptions.ApiException;
@@ -20,10 +18,6 @@ import esa.egos.csts.api.procedures.associationcontrol.IAssociationControl;
 import esa.egos.csts.api.procedures.associationcontrol.IAssociationControlInternal;
 import esa.egos.csts.api.serviceinstance.AbstractServiceInstance;
 import esa.egos.csts.api.serviceinstance.IServiceInform;
-import esa.egos.csts.api.serviceinstance.ReturnPair;
-import esa.egos.csts.api.states.UserStateActive;
-import esa.egos.csts.api.states.UserStateInactive;
-import esa.egos.csts.api.states.service.ServiceStatus;
 
 public class ServiceInstanceUser extends AbstractServiceInstance {
 
@@ -35,34 +29,6 @@ public class ServiceInstanceUser extends AbstractServiceInstance {
 	public ServiceInstanceUser(CstsApi api, IServiceInform serviceInform, /* ServiceType serviceType, */ IAssociationControl associationControlProcedure) throws ApiException {
 		super(api, serviceInform, AppRole.USER, /* serviceType, */ associationControlProcedure);
 		// this.assocCreated = false;
-	}
-
-	@Override
-	public void processTimeout(Object timer, int invocationId) {
-		super.processTimeout(timer, invocationId);
-
-		// check for return timeout
-		for (ReturnPair rr : getRemoteReturns()) {
-			if (rr.getElapsedTimer().equals(timer)) {
-				// abort and cleanup
-				// print all operation information
-				IConfirmedOperation pop = rr.getConfirmedOperation();
-				String opDump = pop.print(500);
-
-				LOG.fine("Return timer expired for operation " + opDump);
-				/*
-				 * ServiceInstanceStateEnum serviceState = null; try { serviceState =
-				 * getState().getStateEnum(); } catch (NoServiceInstanceStateException e) {
-				 * return; }
-				 */
-				// if (serviceState != ServiceInstanceStateEnum.unbound)
-				if (getStatus() == ServiceStatus.UNBOUND) {
-					abort(PeerAbortDiagnostics.RETURN_TIMEOUT);
-				}
-
-				return;
-			}
-		}
 	}
 
 	@Override

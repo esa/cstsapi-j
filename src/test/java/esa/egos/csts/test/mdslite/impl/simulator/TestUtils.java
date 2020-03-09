@@ -15,7 +15,7 @@ public class TestUtils
         }
         else
         {
-            System.out.println(what + res + " OK ");
+            System.out.println(what + " " + res + " OK ");
         }
     }
 
@@ -28,7 +28,7 @@ public class TestUtils
         }
         else
         {
-            System.out.println(what + " OK " + res);
+            System.out.println(what + " " + res + " OK ");
         }
     }
 }
