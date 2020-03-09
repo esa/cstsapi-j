@@ -120,5 +120,30 @@ public class QualifiedValues {
 		}
 		return newQualifiedValues;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
+		if (!(o instanceof QualifiedValues)) {
+			return false;
+		}
+		QualifiedValues qualifiedValue = (QualifiedValues)o;
+		if (!qualifiedValue.getQualifier().equals(this.qualifier)) {
+			return false;
+		}
+		return qualifiedValue.getParameterValues().equals(this.parameterValues);
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 31*hash + this.qualifier.ordinal();
+		for (ParameterValue pv : this.parameterValues) {
+			hash = 31*hash + pv.hashCode();
+		}
+		return hash;
+	}
 
 }

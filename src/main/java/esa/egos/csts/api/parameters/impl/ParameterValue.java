@@ -1,6 +1,8 @@
 package esa.egos.csts.api.parameters.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import com.beanit.jasn1.ber.types.BerBoolean;
@@ -364,6 +366,117 @@ public class ParameterValue {
 		}
 
 		return parameterValue;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
+		if (!(o instanceof ParameterValue)) {
+			return false;
+		}
+		ParameterValue parameterValue = (ParameterValue)o;
+		if (!parameterValue.getType().equals(this.type)) {
+			return false;
+		}
+		switch (this.type) {
+		case BOOLEAN:
+			return boolParameterValues.equals(parameterValue.getBoolParameterValues());
+		case CHARACTER_STRING:
+			return stringParameterValues.equals(parameterValue.getStringParameterValues());
+		case DURATION:
+			return durationParameterValues.equals(parameterValue.getDurationParameterValues());
+		case ENUMERATED:
+		case INTEGER:
+		case POSITIVE_INTEGER:
+		case UNSIGNED_INTEGER:
+			return integerParameterValues.equals(parameterValue.getIntegerParameterValues());
+		case EXTENDED:
+			return false;
+		case OBJECT_IDENTIFIER:
+		case PUBLISHED_IDENTIFIER:
+			return OIDparameterValues.equals(parameterValue.getOIDparameterValues());
+		case OCTET_STRING:
+			if (octetStringParameterValues.size() != parameterValue.getOctetStringParameterValues().size()) {
+				return false;
+			}
+			if (octetStringParameterValues.size() == 0) {
+				return true;
+			}
+			Iterator<byte[]> i1 = octetStringParameterValues.iterator();
+			Iterator<byte[]> i2 = parameterValue.getOctetStringParameterValues().iterator();
+			while (i1.hasNext()) {
+				if (!Arrays.equals(i1.next(), i2.next())) {
+					return false;
+				}
+			}
+			return true;
+		case REAL:
+			return realParameterValues.equals(parameterValue.getRealParameterValues());
+		case TIME:
+			return timeParameterValues.equals(parameterValue.getTimeParameterValues());
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 31*hash + this.type.ordinal();
+		switch (this.type) {
+		case BOOLEAN:
+			for (Boolean b : this.boolParameterValues) {
+				hash = 31*hash + ((Boolean.TRUE.equals(b)) ? 1 : 0);
+			}
+			break;
+		case CHARACTER_STRING:
+			for (String s : this.stringParameterValues) {
+				hash = 31*hash + ((s != null) ? s.hashCode() : 0);
+			}
+			break;
+		case DURATION:
+			for (Duration d : this.durationParameterValues) {
+				hash = 31*hash + ((d != null) ? d.hashCode() : 0);
+			}
+			break;
+		case ENUMERATED:
+		case INTEGER:
+		case POSITIVE_INTEGER:
+		case UNSIGNED_INTEGER:
+			for (Long l : this.integerParameterValues) {
+				hash = 31*hash + ((l != null) ? l.hashCode() : 0);
+			}
+			break;
+		case EXTENDED:
+			break;
+		case OBJECT_IDENTIFIER:
+		case PUBLISHED_IDENTIFIER:
+			for (ObjectIdentifier oi : this.OIDparameterValues) {
+				hash = 31*hash + ((oi != null) ? oi.hashCode() : 0);
+			}
+			break;
+		case OCTET_STRING:
+			for (byte[] ba : this.octetStringParameterValues) {
+				if (ba != null) {
+					for (int i = 0; i < ba.length; i++) {
+						hash = 31*hash + ba[i];
+					}
+				}
+			}
+			break;
+		case REAL:
+			for (Double d : this.realParameterValues) {
+				hash = 31*hash + ((d != null) ? d.hashCode() : 0);
+			}
+			break;
+		case TIME:
+			for (Time t : this.timeParameterValues) {
+				hash = 31*hash + ((t != null) ? t.hashCode() : 0);
+			}
+			break;
+		}
+		return hash;
 	}
 
 }

@@ -91,5 +91,28 @@ public class Duration implements Comparable<Duration> {
 	public int compareTo(Duration o) {
 		return duration.compareTo(o.duration);
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
+		if (!(o instanceof Duration)) {
+			return false;
+		}
+		Duration duration = (Duration)o;
+		if (!duration.getType().equals(this.type)) {
+			return false;
+		}
+		return duration.getDuration().equals(this.duration);
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 31*hash + this.type.ordinal();
+		hash = 31*hash + this.duration.hashCode();
+		return hash;
+	}
 
 }

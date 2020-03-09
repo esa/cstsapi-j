@@ -9,6 +9,7 @@ import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import b1.ccsds.csts.common.types.TimeCCSDSMilli;
@@ -535,6 +536,31 @@ public class Time implements Comparable<Time> {
 	@Override
 	public int compareTo(Time o) {
 		return toLocalDateTime().compareTo(o.toLocalDateTime());
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
+		if (!(o instanceof Time)) {
+			return false;
+		}
+		Time time = (Time)o;
+		if (time.getType() != this.type) {
+			return false;
+		}
+		return Arrays.equals(time.toArray(), this.value);
+	}
+	
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 31*hash + this.type.ordinal();
+		for (int i = 0; i < this.value.length; i++) {
+			hash = 31*hash + this.value[i];
+		}
+		return hash;
 	}
 
 }
