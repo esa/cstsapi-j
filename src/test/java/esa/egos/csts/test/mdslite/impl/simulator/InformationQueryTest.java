@@ -17,6 +17,7 @@ import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.enumerations.ParameterType;
 import esa.egos.csts.api.enumerations.ProcedureRole;
 import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.exceptions.ConfigurationParameterNotModifiableException;
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.main.CstsApi;
@@ -191,16 +192,29 @@ public class InformationQueryTest
             assertTrue("missing OID of the non-existent parameter in the GET operation diagnostic",
                        userSi.getDiagnostic().contains("Default list not defined"));
 
+            Exception exc_01 = null;
+            try
+            {
+                    System.out.println("try to set the default label list to bound provider SI");
+                    providerSi.setDefaultLabelList(this.piid_prime, defaultLabelList);
+            }
+            catch (ConfigurationParameterNotModifiableException e)
+            {
+        	    exc_01 = e;
+            }
+            assertNotNull("setDefaultLabelList() did not throw ConfigurationParameterNotModifiableException on bound SI", exc_01); 
+
+            // the default list parameter is not dynamically modifiable so unbound is needed
             System.out.println("UNBIND...");
             TestUtils.verifyResult(userSi.unbind(), "UNBIND");
 
-            // set the default label list to provider SI
+            System.out.println("set the default label list to provider SI");
             providerSi.setDefaultLabelList(this.piid_prime, defaultLabelList);
 
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");
 
-            // try to once again w/ a defined default list
+            // try to once again w/ the defined default list
             System.out.println("QUERY-INFORMATION...");
             TestUtils.verifyResult(userSi.queryInformation(0, ListOfParameters.empty()),
                                    "QUERY-INFORMATION");
@@ -758,6 +772,138 @@ public class InformationQueryTest
             // verify that diagnostic contains the OID of the unknown parameter
             assertTrue("missing OID of the non-existent parameter in the GET operation diagnostic",
                        userSi.getDiagnostic().contains("UNKNOWN_PARAMETER_IDENTIFIER"));
+
+            System.out.println("UNBIND...");
+            TestUtils.verifyResult(userSi.unbind(), "UNBIND");
+
+            providerSi.destroy();
+            userSi.destroy();
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
+
+    /**
+     * Test Information Query procedure and its GET operation w/ procedure itself identifier"
+     */
+    @Test
+    public void testQueryItSelfProcedure()
+    {
+        try
+        {
+            // create provider SI
+            MdCstsSiProvider providerSi = new MdCstsSiProvider(this.providerApi, this.mdSiProviderConfig);
+
+            // create user SI
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, 1);
+
+            System.out.println("BIND...");
+            TestUtils.verifyResult(userSi.bind(), "BIND");
+
+            System.out.println("QUERY-INFORMATION...");
+            TestUtils.verifyResult(userSi.queryInformation(0, ListOfParameters.of(this.piid_prime)),
+                                   "QUERY-INFORMATION");
+
+            List<QualifiedParameter> queriedParameters_01 = userSi.getLastQueriedParameters();
+            assertFalse("did not get any parameters from provider", queriedParameters_01.isEmpty());
+
+            System.out.println(queriedParameters_01.get(0).toString());
+            assertTrue("did not get just one parameter from provider", queriedParameters_01.get(0).toString().contains("pIQnamedLabelLists"));
+
+            assertTrue("got non-empty list of QualifiedValues but the default label list has not been set yet",
+        		    queriedParameters_01.get(0).getQualifiedValues().isEmpty());
+
+            System.out.println("UNBIND...");
+            TestUtils.verifyResult(userSi.unbind(), "UNBIND");
+
+            System.out.println("set the default label list to provider SI");
+            providerSi.setDefaultLabelList(this.piid_prime, defaultLabelList);
+
+            System.out.println("BIND...");
+            TestUtils.verifyResult(userSi.bind(), "BIND");
+
+            System.out.println("QUERY-INFORMATION...");
+            TestUtils.verifyResult(userSi.queryInformation(0, ListOfParameters.of(this.piid_prime)),
+                                   "QUERY-INFORMATION");
+
+            List<QualifiedParameter> queriedParameters_02 = userSi.getLastQueriedParameters();
+            assertFalse("did not get any parameters from provider", queriedParameters_02.isEmpty());
+
+            System.out.println(queriedParameters_02.get(0).toString());
+            assertTrue("did not get just one parameter from provider", queriedParameters_02.get(0).toString().contains("pIQnamedLabelLists"));
+
+            assertFalse("got empty list of QualifiedValues but the default label list has already been set",
+        		    queriedParameters_02.get(0).getQualifiedValues().isEmpty());
+
+            System.out.println("UNBIND...");
+            TestUtils.verifyResult(userSi.unbind(), "UNBIND");
+
+            providerSi.destroy();
+            userSi.destroy();
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
+
+    /**
+     * Test Information Query procedure and its GET operation w/ a foreign procedure identifier"
+     */
+    @Test
+    public void testQueryForeignProcedure()
+    {
+        try
+        {
+            // create provider SI
+            MdCstsSiProvider providerSi = new MdCstsSiProvider(this.providerApi, this.mdSiProviderConfig);
+
+            // create user SI
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, 1);
+
+            System.out.println("BIND...");
+            TestUtils.verifyResult(userSi.bind(), "BIND");
+
+            System.out.println("QUERY-INFORMATION...");
+            TestUtils.verifyResult(userSi.queryInformation(0, ListOfParameters.of(this.piid_secondary)),
+                                   "QUERY-INFORMATION");
+
+            List<QualifiedParameter> queriedParameters_01 = userSi.getLastQueriedParameters();
+            assertFalse("did not get any parameters from provider", queriedParameters_01.isEmpty());
+
+            System.out.println(queriedParameters_01.get(0).toString());
+            assertTrue("did not get just one parameter from provider", queriedParameters_01.get(0).toString().contains("pIQnamedLabelLists"));
+
+            assertTrue("got non-empty list of QualifiedValues but the default label list has not been set yet",
+        		    queriedParameters_01.get(0).getQualifiedValues().isEmpty());
+
+            System.out.println("UNBIND...");
+            TestUtils.verifyResult(userSi.unbind(), "UNBIND");
+
+            System.out.println("set the default label list to provider SI");
+            providerSi.setDefaultLabelList(this.piid_secondary, defaultLabelList);
+
+            System.out.println("BIND...");
+            TestUtils.verifyResult(userSi.bind(), "BIND");
+
+            System.out.println("QUERY-INFORMATION...");
+            TestUtils.verifyResult(userSi.queryInformation(0, ListOfParameters.of(this.piid_secondary)),
+                                   "QUERY-INFORMATION");
+
+            List<QualifiedParameter> queriedParameters_02 = userSi.getLastQueriedParameters();
+            assertFalse("did not get any parameters from provider", queriedParameters_02.isEmpty());
+
+            System.out.println(queriedParameters_02.get(0).toString());
+            assertTrue("did not get just one parameter from provider", queriedParameters_02.get(0).toString().contains("pIQnamedLabelLists"));
+
+            assertFalse("got empty list of QualifiedValues but the default label list has already been set",
+        		    queriedParameters_02.get(0).getQualifiedValues().isEmpty());
 
             System.out.println("UNBIND...");
             TestUtils.verifyResult(userSi.unbind(), "UNBIND");

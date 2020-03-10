@@ -58,7 +58,7 @@ public class OnChangeCyclicReportProvider extends CyclicReportProvider implement
 	
 	@Override
 	protected void initializeConfigurationParameters() {
-		LabelLists namedLists = new LabelLists(OIDs.pCRnamedLabelLists, true, true /*false #hd# how can that be used with false ??? */, this);
+		LabelLists namedLists = new LabelLists(OIDs.pCRnamedLabelLists, true, false, this);
 		LabelList list = new LabelList("test-list-1", true);
 		namedLists.add(list);
 		

@@ -12,7 +12,7 @@ public class InformationQueryProvider extends AbstractInformationQuery {
 
 	@Override
 	protected void initializeConfigurationParameters() {
-		addConfigurationParameter(new LabelLists(OIDs.pIQnamedLabelLists, true, true, this));
+		addConfigurationParameter(new LabelLists(OIDs.pIQnamedLabelLists, true, false, this));
 	}
 	
 	@Override
