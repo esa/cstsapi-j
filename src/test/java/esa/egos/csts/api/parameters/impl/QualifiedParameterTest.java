@@ -8,6 +8,7 @@ import org.junit.Test;
 import esa.egos.csts.api.enumerations.DurationType;
 import esa.egos.csts.api.enumerations.ParameterQualifier;
 import esa.egos.csts.api.enumerations.ParameterType;
+import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.types.Duration;
@@ -70,6 +71,8 @@ public class QualifiedParameterTest {
 		pv = new ParameterValue(ParameterType.UNSIGNED_INTEGER);
 		pv.getIntegerParameterValues().add(Long.valueOf(5));
 		pvList.add(pv);
+		pv = new ParameterValue(ParameterType.EXTENDED);
+		pvList.add(pv);
 		
 		int hash = qp.hashCode();
 		
@@ -124,6 +127,8 @@ public class QualifiedParameterTest {
 		pv1 = new ParameterValue(ParameterType.UNSIGNED_INTEGER);
 		pv1.getIntegerParameterValues().add(Long.valueOf(5));
 		pvList1.add(pv1);
+		pv1 = new ParameterValue(ParameterType.EXTENDED);
+		pvList1.add(pv1);
 		
 		int hash1 = qp1.hashCode();
 		
@@ -142,6 +147,49 @@ public class QualifiedParameterTest {
 		
 		Assert.assertFalse(qp.equals(qp2));
 		Assert.assertFalse(hash == hash2);
+		
+		// EmbeddedData - equal
+		QualifiedParameter qp3 = new QualifiedParameter(
+				Name.of(ObjectIdentifier.of(1,3,112,4,4,1,3), (FunctionalResourceName)null));
+		List<QualifiedValues> qpList3 = qp3.getQualifiedValues();
+		QualifiedValues qv3 = new QualifiedValues(ParameterQualifier.UNDEFINED);
+		qpList3.add(qv3);
+		qv3.getParameterValues().add(new ParameterValue(ParameterType.EXTENDED));
+		int hash3 = qp3.hashCode();
+		
+		QualifiedParameter qp4 = new QualifiedParameter(
+				Name.of(ObjectIdentifier.of(1,3,112,4,4,1,3), (FunctionalResourceName)null));
+		List<QualifiedValues> qpList4 = qp4.getQualifiedValues();
+		QualifiedValues qv4 = new QualifiedValues(ParameterQualifier.UNDEFINED);
+		qpList4.add(qv4);
+		qv4.getParameterValues().add(new ParameterValue(ParameterType.EXTENDED));
+		int hash4 = qp4.hashCode();
+		
+		Assert.assertTrue(qp3.equals(qp4));
+		Assert.assertTrue(hash3 == hash4);
+		
+		// EmbeddedData - not equal
+		QualifiedParameter qp5 = new QualifiedParameter(
+				Name.of(ObjectIdentifier.of(1,3,112,4,4,1,4), (FunctionalResourceName)null));
+		List<QualifiedValues> qpList5 = qp5.getQualifiedValues();
+		QualifiedValues qv5 = new QualifiedValues(ParameterQualifier.UNDEFINED);
+		qpList5.add(qv5);
+		qv5.getParameterValues().add(new ParameterValue(EmbeddedData.of(ObjectIdentifier.of(1,2,3), (byte[])null)));
+		int hash5 = qp5.hashCode();
+		
+		QualifiedParameter qp6 = new QualifiedParameter(
+				Name.of(ObjectIdentifier.of(1,3,112,4,4,1,4), (FunctionalResourceName)null));
+		List<QualifiedValues> qpList6 = qp6.getQualifiedValues();
+		QualifiedValues qv6 = new QualifiedValues(ParameterQualifier.UNDEFINED);
+		qpList6.add(qv6);
+		qv6.getParameterValues().add(new ParameterValue(EmbeddedData.of(ObjectIdentifier.of(1,2,3), new byte[] { 0 })));
+		int hash6 = qp6.hashCode();
+		
+		Assert.assertFalse(qp5.equals(qp3));
+		Assert.assertFalse(hash5 == hash3);
+
+		Assert.assertFalse(qp5.equals(qp6));
+		Assert.assertFalse(hash5 == hash6);
 	}
 
 }

@@ -448,7 +448,7 @@ public class ParameterValue {
 		case UNSIGNED_INTEGER:
 			return integerParameterValues.equals(parameterValue.getIntegerParameterValues());
 		case EXTENDED:
-			return false;
+			return (hashCode() == parameterValue.hashCode());
 		case OBJECT_IDENTIFIER:
 		case PUBLISHED_IDENTIFIER:
 			return OIDparameterValues.equals(parameterValue.getOIDparameterValues());
@@ -504,6 +504,9 @@ public class ParameterValue {
 			}
 			break;
 		case EXTENDED:
+		    if (this.extension != null) {
+		        hash = 31*hash + this.extension.hashCode();
+		    }
 			break;
 		case OBJECT_IDENTIFIER:
 		case PUBLISHED_IDENTIFIER:
