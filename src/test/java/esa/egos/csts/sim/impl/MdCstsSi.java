@@ -1,4 +1,4 @@
-package esa.egos.csts.test.mdslite.impl.simulator;
+package esa.egos.csts.sim.impl;
 
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.main.ICstsApi;

@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.junit.Test;
+import org.junit.rules.TestRule;
 
 import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.enumerations.AppRole;
@@ -17,20 +18,25 @@ import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.states.service.ServiceStatus;
 import esa.egos.csts.monitored.data.procedures.IOnChangeCyclicReport;
-import esa.egos.csts.test.mdslite.impl.simulator.TestBootstrap;
+import esa.egos.csts.api.CstsTestWatcher;
+import esa.egos.csts.api.TestBootstrap;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 
 /**
  * Test the CSTS API at the example of the monitored data service 
  */
 public class TestMds {
 
-	private ICstsApi providerApi;
-	private ICstsApi userApi;
+    @Rule
+    public TestRule testWatcher = new CstsTestWatcher();
+
+    private ICstsApi providerApi;
+    private ICstsApi userApi;
 
     @BeforeClass
     public static void setUpClass() throws ApiException

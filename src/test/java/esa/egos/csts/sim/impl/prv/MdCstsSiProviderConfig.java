@@ -1,10 +1,11 @@
-package esa.egos.csts.test.mdslite.impl.simulator;
+package esa.egos.csts.sim.impl.prv;
 
 import java.util.List;
 
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.types.Label;
+import esa.egos.csts.sim.impl.MdCstsSiConfig;
 
 /**
  * Encapsulate the provider SI configuration

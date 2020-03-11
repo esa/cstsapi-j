@@ -1,4 +1,4 @@
-package esa.egos.csts.test.mdslite.impl.simulator.provider;
+package esa.egos.csts.sim.impl.prv;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +16,8 @@ import esa.egos.csts.api.procedures.informationquery.InformationQueryProvider;
 import esa.egos.csts.api.procedures.notification.NotificationProvider;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.LabelList;
-import esa.egos.csts.test.mdslite.impl.simulator.MdCstsSi;
-import esa.egos.csts.test.mdslite.impl.simulator.MdCstsSiConfig;
-import esa.egos.csts.test.mdslite.impl.simulator.MdCstsSiProviderConfig;
+import esa.egos.csts.sim.impl.MdCstsSi;
+import esa.egos.csts.sim.impl.MdCstsSiConfig;
 
 /**
  * MD-CSTS Provider service instance (SI) implementation for testing

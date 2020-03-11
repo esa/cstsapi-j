@@ -1,4 +1,4 @@
-package esa.egos.csts.test.mdslite.impl.simulator.frm;
+package esa.egos.csts.sim.impl.frm;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -93,7 +93,7 @@ public class FunctionalResourceMetadata {
 		System.out.println("OIDs size: " + paramEventOids.size());
 
 		// FRs OIDs from hard coded map {FR-bit number, FR label}
-		Map<String, int[]> frOids = findCrossSupportFunctionalities2(paramEventOids, BitLabels.FrMap);
+		Map<String, int[]> frOids = findCrossSupportFunctionalities2(paramEventOids, FunctionalResourceBitLabels.FrMap);
 
 		// OIDs of FRs + FR params + FR events + FR directives
 		frOids.putAll(paramEventOids);

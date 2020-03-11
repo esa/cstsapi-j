@@ -1,4 +1,4 @@
-package esa.egos.csts.test.mdslite.impl.simulator;
+package esa.egos.csts.api;
 
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
@@ -49,9 +49,9 @@ public class CstsTestWatcher extends TestWatcher {
 			}
 
 			System.out.println();
-			System.out.println("************************************************************************************");
+			System.out.println("*************************************************************************************************************************");
 			System.out.println(sb.toString());
-			System.out.println("************************************************************************************");
+			System.out.println("*************************************************************************************************************************");
 
 			if (null != e) {
 				e.printStackTrace(System.out);

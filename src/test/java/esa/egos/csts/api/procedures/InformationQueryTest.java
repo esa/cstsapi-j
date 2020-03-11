@@ -1,4 +1,4 @@
-package esa.egos.csts.test.mdslite.impl.simulator;
+package esa.egos.csts.api.procedures;
 
 import static org.junit.Assert.*;
 
@@ -24,20 +24,25 @@ import esa.egos.csts.api.main.CstsApi;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.oids.ObjectIdentifier;
+import esa.egos.csts.api.parameters.impl.FunctionalResourceParameter;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.Name;
-import esa.egos.csts.test.mdslite.impl.simulator.provider.MdCollection;
-import esa.egos.csts.test.mdslite.impl.simulator.provider.MdCstsSiProvider;
-import esa.egos.csts.test.mdslite.impl.simulator.user.MdCstsSiUser;
+import esa.egos.csts.sim.impl.MdCstsSiConfig;
+import esa.egos.csts.sim.impl.prv.MdCollection;
+import esa.egos.csts.sim.impl.prv.MdCstsSiProvider;
+import esa.egos.csts.sim.impl.prv.MdCstsSiProviderConfig;
+import esa.egos.csts.sim.impl.usr.MdCstsSiUser;
+import esa.egos.csts.api.CstsTestWatcher;
+import esa.egos.csts.api.TestBootstrap;
+import esa.egos.csts.api.TestUtils;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Rule;
 
 /**
@@ -45,9 +50,6 @@ import org.junit.Rule;
  */
 public class InformationQueryTest
 {
-    @ClassRule
-    public static TestRule classWatcher = new CstsTestWatcher();
-
     @Rule
     public TestRule testWatcher = new CstsTestWatcher();
 
@@ -69,6 +71,9 @@ public class InformationQueryTest
     private ProcedureInstanceIdentifier piid_secondary = ProcedureInstanceIdentifier.of(ProcedureType.of(OIDs.informationQuery),
                                                                               ProcedureRole.SECONDARY,
                                                                               1);
+
+    // all IQ procedure identifiers
+    private List<ProcedureInstanceIdentifier> iq_piids = Arrays.asList(piid_prime, piid_secondary);
 
     // all procedure identifiers
     private List<ProcedureInstanceIdentifier> piids = Arrays.asList(this.piid_prime, this.piid_secondary);
@@ -162,10 +167,10 @@ public class InformationQueryTest
     }
 
     /**
-     * Test Information Query procedure and its GET operation w/ default list => ListOfParameter /w type EMPTY
+     * Test information query procedure and its GET operation w/ default list => ListOfParameter /w type EMPTY
      */
     @Test
-    public void testQueryDefaultLabelList()
+    public void testQueryInformationWithDefaultLabelList()
     {
         try
         {
@@ -247,10 +252,10 @@ public class InformationQueryTest
     }
 
     /**
-     * Test Information Query procedure and its GET operation w/ FUNCTIONAL_RESOURCE_NAME
+     * Test information query procedure and its GET operation w/ FUNCTIONAL_RESOURCE_NAME
      */
     @Test
-    public void testQueryFunctionalResourceName()
+    public void testQueryInformationWithFunctionalResourceName()
     {
         try
         {
@@ -280,23 +285,9 @@ public class InformationQueryTest
             // verify that the user SI received all queried qualified parameters
             Optional<QualifiedParameter> result_01 = queriedParameters_01.stream()
                     .filter(qualifiedParameter -> qualifiedParameter.getName().equals(name)).findAny();
-            assertTrue(result_01.isPresent());
+            assertTrue("missing qualified parameter " + name, result_01.isPresent());
 
-            QualifiedParameter qualifiedParameter_01 = result_01.get();
-            System.out.println("got: " + qualifiedParameter_01);
-
-            if (qualifiedParameter_01.getQualifiedValues().get(0).getParameterValues().get(0)
-                    .getType() == ParameterType.INTEGER)
-            {
-                long providerValue = mdCollection.getQualifiedParameter(name).getQualifiedValues().get(0)
-                        .getParameterValues().get(0).getIntegerParameterValues().get(0);
-                long userValue = qualifiedParameter_01.getQualifiedValues().get(0).getParameterValues().get(0)
-                        .getIntegerParameterValues().get(0);
-
-                System.out.println("providerValue = " + providerValue);
-                System.out.println("userValue = " + userValue);
-                assertEquals("parameter " + name + " value is different", providerValue, userValue);
-            }
+            TestUtils.verifyEquals(mdCollection.getQualifiedParameter(name), result_01.get(), "provider's", "user's");
 
             System.out.println("update provider's parameter value");
             mdCollection.updateIntegerParameter(mdCollection.getParameterNameSet().getParameterNames().get(0), 5);
@@ -310,23 +301,9 @@ public class InformationQueryTest
             // verify that the user SI received all queried qualified parameters
             Optional<QualifiedParameter> result_02 = queriedParameters_02.stream()
                     .filter(qualifiedParameter -> qualifiedParameter.getName().equals(name)).findAny();
-            assertTrue(result_02.isPresent());
+            assertTrue("missing qualified parameter " + name, result_02.isPresent());
 
-            QualifiedParameter qualifiedParameter_02 = result_02.get();
-            System.out.println("got: " + qualifiedParameter_02);
-
-            if (qualifiedParameter_02.getQualifiedValues().get(0).getParameterValues().get(0)
-                    .getType() == ParameterType.INTEGER)
-            {
-                long providerValue = mdCollection.getQualifiedParameter(name).getQualifiedValues().get(0)
-                        .getParameterValues().get(0).getIntegerParameterValues().get(0);
-                long userValue = qualifiedParameter_02.getQualifiedValues().get(0).getParameterValues().get(0)
-                        .getIntegerParameterValues().get(0);
-
-                System.out.println("providerValue = " + providerValue);
-                System.out.println("userValue = " + userValue);
-                assertEquals("parameter " + name + " value is different", providerValue, userValue);
-            }
+            TestUtils.verifyEquals(mdCollection.getQualifiedParameter(name), result_02.get(), "provider's", "user's");
 
             System.out.println("UNBIND...");
             TestUtils.verifyResult(userSi.unbind(), "UNBIND");
@@ -343,10 +320,10 @@ public class InformationQueryTest
     }
 
     /**
-     * Test Information Query procedure and its GET operation w/ non-existent FUNCTIONAL_RESOURCE_NAME 
+     * Test information query procedure and its GET operation w/ non-existent FUNCTIONAL_RESOURCE_NAME 
      */
     @Test
-    public void testQueryFunctionalResourceNameNonExistent()
+    public void testQueryInformationWithNonExistentFunctionalResourceName()
     {
         try
         {
@@ -364,8 +341,7 @@ public class InformationQueryTest
             TestUtils.verifyResult(userSi.bind(), "BIND");
 
             System.out.println("QUERY-INFORMATION...");
-            TestUtils.verifyResult(
-                                   userSi.queryInformation(0,
+            TestUtils.verifyResult(userSi.queryInformation(0,
                                                            ListOfParameters.of(this.nonExistentParameterName
                                                                    .getFunctionalResourceName())),
                                    "QUERY-INFORMATION",
@@ -391,10 +367,10 @@ public class InformationQueryTest
     }
 
     /**
-     * Test Information Query procedure and its GET operation w/ FUNCTIONAL_RESOURCE_TYPE
+     * Test information query procedure and its GET operation w/ FUNCTIONAL_RESOURCE_TYPE
      */
     @Test
-    public void testQueryFunctionalResourceType()
+    public void testQueryInformationWithFunctionalResourceType()
     {
         try
         {
@@ -426,21 +402,7 @@ public class InformationQueryTest
                     .filter(qualifiedParameter -> qualifiedParameter.getName().equals(name)).findAny();
             assertTrue(result_01.isPresent());
 
-            QualifiedParameter qualifiedParameter_01 = result_01.get();
-            System.out.println("got: " + qualifiedParameter_01);
-
-            if (qualifiedParameter_01.getQualifiedValues().get(0).getParameterValues().get(0)
-                    .getType() == ParameterType.INTEGER)
-            {
-                long providerValue = mdCollection.getQualifiedParameter(name).getQualifiedValues().get(0)
-                        .getParameterValues().get(0).getIntegerParameterValues().get(0);
-                long userValue = qualifiedParameter_01.getQualifiedValues().get(0).getParameterValues().get(0)
-                        .getIntegerParameterValues().get(0);
-
-                System.out.println("providerValue = " + providerValue);
-                System.out.println("userValue = " + userValue);
-                assertEquals("parameter " + name + " value is different", providerValue, userValue);
-            }
+            TestUtils.verifyEquals(mdCollection.getQualifiedParameter(name), result_01.get(), "provider's", "user's");
 
             System.out.println("update provider's parameter value");
             mdCollection.updateIntegerParameter(mdCollection.getParameterNameSet().getParameterNames().get(0), 10);
@@ -456,21 +418,7 @@ public class InformationQueryTest
                     .filter(qualifiedParameter -> qualifiedParameter.getName().equals(name)).findAny();
             assertTrue(result_02.isPresent());
 
-            QualifiedParameter qualifiedParameter_02 = result_02.get();
-            System.out.println("got: " + qualifiedParameter_02);
-
-            if (qualifiedParameter_02.getQualifiedValues().get(0).getParameterValues().get(0)
-                    .getType() == ParameterType.INTEGER)
-            {
-                long providerValue = mdCollection.getQualifiedParameter(name).getQualifiedValues().get(0)
-                        .getParameterValues().get(0).getIntegerParameterValues().get(0);
-                long userValue = qualifiedParameter_02.getQualifiedValues().get(0).getParameterValues().get(0)
-                        .getIntegerParameterValues().get(0);
-
-                System.out.println("providerValue = " + providerValue);
-                System.out.println("userValue = " + userValue);
-                assertEquals("parameter " + name + " value is different", providerValue, userValue);
-            }
+            TestUtils.verifyEquals(mdCollection.getQualifiedParameter(name), result_02.get(), "provider's", "user's");
 
             System.out.println("UNBIND...");
             TestUtils.verifyResult(userSi.unbind(), "UNBIND");
@@ -487,10 +435,10 @@ public class InformationQueryTest
     }
 
     /**
-     * Test Information Query procedure and its GET operation w/ non-existent FUNCTIONAL_RESOURCE_TYPE
+     * Test information query procedure and its GET operation w/ non-existent FUNCTIONAL_RESOURCE_TYPE
      */
     @Test
-    public void testQueryFunctionalResourceTypeNonExistent()
+    public void testQueryInformationWithNonExistentFunctionalResourceType()
     {
         try
         {
@@ -508,8 +456,7 @@ public class InformationQueryTest
             TestUtils.verifyResult(userSi.bind(), "BIND");
 
             System.out.println("QUERY-INFORMATION...");
-            TestUtils.verifyResult(
-                                   userSi.queryInformation(0,
+            TestUtils.verifyResult(userSi.queryInformation(0,
                                                            ListOfParameters.of(this.nonExistentParameterName
                                                                    .getFunctionalResourceName())),
                                    "QUERY-INFORMATION",
@@ -536,10 +483,10 @@ public class InformationQueryTest
     }
 
     /**
-     * Test Information Query procedure and its GET operation w/ NAME_SET"
+     * Test information query procedure and its GET operation w/ NAME_SET"
      */
     @Test
-    public void testQueryNameSet()
+    public void testQueryInformationWithNameSet()
     {
         try
         {
@@ -569,21 +516,7 @@ public class InformationQueryTest
                         .filter(qualifiedParameter -> qualifiedParameter.getName().equals(name)).findAny();
                 assertTrue(result.isPresent());
 
-                QualifiedParameter qualifiedParameter = result.get();
-                System.out.println("got: " + qualifiedParameter);
-
-                if (qualifiedParameter.getQualifiedValues().get(0).getParameterValues().get(0)
-                        .getType() == ParameterType.INTEGER)
-                {
-                    long providerValue = mdCollection.getQualifiedParameter(name).getQualifiedValues().get(0)
-                            .getParameterValues().get(0).getIntegerParameterValues().get(0);
-                    long userValue = qualifiedParameter.getQualifiedValues().get(0).getParameterValues().get(0)
-                            .getIntegerParameterValues().get(0);
-
-                    System.out.println("providerValue = " + providerValue);
-                    System.out.println("userValue = " + userValue);
-                    assertEquals("parameter " + name + " value is different", providerValue, userValue);
-                }
+                TestUtils.verifyEquals(mdCollection.getQualifiedParameter(name), result.get(), "provider's", "user's");
             }
 
             System.out.println("update provider's parameter value");
@@ -602,21 +535,7 @@ public class InformationQueryTest
                         .filter(qualifiedParameter -> qualifiedParameter.getName().equals(name)).findAny();
                 assertTrue(result.isPresent());
 
-                QualifiedParameter qualifiedParameter = result.get();
-                System.out.println("got: " + qualifiedParameter);
-
-                if (qualifiedParameter.getQualifiedValues().get(0).getParameterValues().get(0)
-                        .getType() == ParameterType.INTEGER)
-                {
-                    long providerValue = mdCollection.getQualifiedParameter(name).getQualifiedValues().get(0)
-                            .getParameterValues().get(0).getIntegerParameterValues().get(0);
-                    long userValue = qualifiedParameter.getQualifiedValues().get(0).getParameterValues().get(0)
-                            .getIntegerParameterValues().get(0);
-
-                    System.out.println("providerValue = " + providerValue);
-                    System.out.println("userValue = " + userValue);
-                    assertEquals("parameter " + name + " value is different", providerValue, userValue);
-                }
+                TestUtils.verifyEquals(mdCollection.getQualifiedParameter(name), result.get(), "provider's", "user's");
             }
 
             System.out.println("UNBIND...");
@@ -634,10 +553,10 @@ public class InformationQueryTest
     }
 
     /**
-     * Test Information Query procedure and its GET operation w/ NAME_SET w/ non-existent NAME"
+     * Test information query procedure and its GET operation w/ NAME_SET w/ non-existent NAME"
      */
     @Test
-    public void testQueryNameSetNonExistentParameter()
+    public void testQueryInformationWithNameSetWithNonExistentName()
     {
         try
         {
@@ -683,10 +602,10 @@ public class InformationQueryTest
     }
 
     /**
-     * Test Information Query procedure and its GET operation w/ LABEL_SET"
+     * Test information query procedure and its GET operation w/ LABEL_SET"
      */
     @Test
-    public void testQueryLabelSet()
+    public void testQueryInformationWithLabelSet()
     {
         try
         {
@@ -711,16 +630,15 @@ public class InformationQueryTest
             assertFalse("did not get any parameters from provider", queriedParameters_01.isEmpty());
 
             // verify that the user SI received all queried qualified parameters
-            for (Label label : mdCollection.getParameterLabelSet().getParameterLabels())
+            for (FunctionalResourceParameter parameter : mdCollection.getParameters())
             {
                 Optional<QualifiedParameter> result = queriedParameters_01.stream()
                         .filter(qualifiedParameter -> qualifiedParameter.getName().getFunctionalResourceName().getType()
-                                .equals(label.getFunctionalResourceType()))
+                                .equals(parameter.getLabel().getFunctionalResourceType()))
                         .findAny();
-                assertTrue(result.isPresent());
+                assertTrue("missing FR parameter " + parameter, result.isPresent());
 
-                QualifiedParameter qualifiedParameter = result.get();
-                System.out.println("got: " + qualifiedParameter);
+                TestUtils.verifyEquals(parameter.toQualifiedParameter(), result.get(), "provider's", "user's");
             }
 
             System.out.println("UNBIND...");
@@ -738,10 +656,10 @@ public class InformationQueryTest
     }
 
     /**
-     * Test Information Query procedure and its GET operation w/ LABEL_SET w/ non-existent LABEL"
+     * Test information query procedure and its GET operation w/ LABEL_SET w/ non-existent LABEL"
      */
     @Test
-    public void testQueryLabelSetNonExistent()
+    public void testQueryInformationWithLabelSetWithNonExistentLabel()
     {
         try
         {
@@ -758,12 +676,13 @@ public class InformationQueryTest
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");
 
-//            Label parameterLabel = mdCollection.getParameterLabelSet().getParameterLabels().get(0);
             Label nonExistentParameterLabel = Label.of(ObjectIdentifier.of(1, 1, 2), FunctionalResourceType.of(ObjectIdentifier.of(1, 1, 50)));
             Label nonExistentParameterLabel2 = Label.of(ObjectIdentifier.of(1, 1, 3), FunctionalResourceType.of(ObjectIdentifier.of(1, 1, 51)));
 
             // create list of parameters NAME_SET /w a non existent parameter
-            ListOfParameters listOfParameters = ListOfParameters.of(nonExistentParameterLabel, mdCollection.getParameterLabelSet().getParameterLabels().get(0), nonExistentParameterLabel2);
+            ListOfParameters listOfParameters = ListOfParameters.of(nonExistentParameterLabel,
+        		    mdCollection.getParameterLabelSet().getParameterLabels().get(0),
+        		    nonExistentParameterLabel2);
             System.out.println("QUERY-INFORMATION...");
             TestUtils.verifyResult(userSi.queryInformation(0, listOfParameters),
                                    "QUERY-INFORMATION",
@@ -788,10 +707,12 @@ public class InformationQueryTest
     }
 
     /**
-     * Test Information Query procedure and its GET operation w/ procedure itself identifier"
+     * Test information query procedure and its GET operation w/ procedure itself identifier"
+     * in order to get its configuration parameters"
+     * NOTE: The information query procedure has the pIQnamedLabelLists configuration parameter only
      */
     @Test
-    public void testQueryItSelfProcedure()
+    public void testQueryInformationWithItSelfProcedureIdentifier()
     {
         try
         {
@@ -854,10 +775,12 @@ public class InformationQueryTest
     }
 
     /**
-     * Test Information Query procedure and its GET operation w/ a foreign procedure identifier"
+     * Test information query procedure and its GET operation w/ a foreign procedure identifier
+     * in order to get its configuration parameters"
+     * NOTE: The information query procedure has the pIQnamedLabelLists configuration parameter only
      */
     @Test
-    public void testQueryForeignProcedure()
+    public void testQueryInformationWithForeignProcedureIdentifier()
     {
         try
         {
@@ -904,6 +827,63 @@ public class InformationQueryTest
 
             assertFalse("got empty list of QualifiedValues but the default label list has already been set",
         		    queriedParameters_02.get(0).getQualifiedValues().isEmpty());
+
+            System.out.println("UNBIND...");
+            TestUtils.verifyResult(userSi.unbind(), "UNBIND");
+
+            providerSi.destroy();
+            userSi.destroy();
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
+
+    /**
+     * Test information query procedure and its GET operation w/  information query procedure type
+     * in order to get configuration parameters of all information query procedures"
+     * NOTE: The information query procedure has the pIQnamedLabelLists configuration parameter only
+     */
+    @Test
+    public void testQueryInformationWithProcedureType()
+    {
+        try
+        {
+            // create provider SI
+            MdCstsSiProvider providerSi = new MdCstsSiProvider(this.providerApi, this.mdSiProviderConfig);
+
+            // create user SI
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, 1);
+
+            System.out.println("set the default label list to provider SI");
+            providerSi.setDefaultLabelList(this.piid_prime, defaultLabelList);
+            providerSi.setDefaultLabelList(this.piid_secondary, defaultLabelList);
+
+            System.out.println("BIND...");
+            TestUtils.verifyResult(userSi.bind(), "BIND");
+
+            ProcedureType procedureType = this.piid_prime.getType();
+
+            System.out.println("QUERY-INFORMATION...");
+            TestUtils.verifyResult(userSi.queryInformation(0, ListOfParameters.of(procedureType)),
+                                   "QUERY-INFORMATION");
+
+            List<QualifiedParameter> queriedParameters_01 = userSi.getLastQueriedParameters();
+            System.out.println(queriedParameters_01.size());
+            System.out.println(queriedParameters_01.toString());
+            assertFalse("did not get any parameters from provider", queriedParameters_01.isEmpty());
+
+            for (ProcedureInstanceIdentifier piid : this.iq_piids)
+            {
+                    Optional<QualifiedParameter> result = queriedParameters_01.stream()
+                                    .filter(qualifiedParameter -> qualifiedParameter.getName().getProcedureInstanceIdentifier().getType()
+                                            .equals(procedureType) && qualifiedParameter.getName().toString().contains("pIQnamedLabelLists"))
+                                    .findAny();
+                            assertTrue("missing pIQnamedLabelLists parameter of " + piid, result.isPresent());
+            }
 
             System.out.println("UNBIND...");
             TestUtils.verifyResult(userSi.unbind(), "UNBIND");

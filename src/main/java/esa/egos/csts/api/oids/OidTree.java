@@ -3,12 +3,15 @@ package esa.egos.csts.api.oids;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
+import java.util.logging.Logger;
 
 /**
  * Represents an OID tree to translate numeric OIDs to OIDs with labels attached
  * to the numeric OID bits.
  */
 public class OidTree {
+
+	private static final Logger LOG = Logger.getLogger(OidTree.class.getName());
 
 	/** The strict flag indicating that all parents must exist on addition of a child node */
 	public static final boolean PARENT_NODES_MUST_EXISTS = false;
@@ -83,8 +86,16 @@ public class OidTree {
 			for (Field field : OIDs.class.getFields()) {
 				int[] oidArray = ObjectIdentifier.class.cast(field.get(null)).toArray();
 				addChildNode(oidArray, true, oidArray.length - 1, field.getName());
-				System.out.println(field.getName() + ", "
-						+ Arrays.toString(ObjectIdentifier.class.cast(field.get(null)).toArray()));
+				LOG.finest(() -> {
+					String ret = "";
+					try {
+						ret = field.getName() + ", " + Arrays.toString(
+								ObjectIdentifier.class.cast(field.get(null)).toArray());
+					} catch (IllegalArgumentException | IllegalAccessException e) {
+						e.printStackTrace();
+					}
+					return ret;
+				});
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

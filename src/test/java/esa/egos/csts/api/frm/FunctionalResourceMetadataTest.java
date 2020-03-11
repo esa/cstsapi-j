@@ -1,4 +1,4 @@
-package esa.egos.csts.test.mdslite.impl.simulator.frm;
+package esa.egos.csts.api.frm;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import com.beanit.jasn1.ber.types.BerObjectIdentifier;
 
+import esa.egos.csts.sim.impl.frm.FunctionalResourceMetadata;
 import frm.csts.functional.resource.types.OidValues;
 
 public class FunctionalResourceMetadataTest {

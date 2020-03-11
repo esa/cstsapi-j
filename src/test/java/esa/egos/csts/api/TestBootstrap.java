@@ -1,4 +1,4 @@
-package esa.egos.csts.test.mdslite.impl.simulator;
+package esa.egos.csts.api;
 
 import java.io.File;
 

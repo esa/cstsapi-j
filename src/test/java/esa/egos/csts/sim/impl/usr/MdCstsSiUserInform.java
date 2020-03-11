@@ -1,4 +1,4 @@
-package esa.egos.csts.test.mdslite.impl.simulator.user;
+package esa.egos.csts.sim.impl.usr;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +31,9 @@ import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.informationquery.InformationQueryUser;
 import esa.egos.csts.api.procedures.notification.NotificationUser;
 import esa.egos.csts.api.types.Name;
-import esa.egos.csts.test.mdslite.impl.simulator.MdCstsSi;
-import esa.egos.csts.test.mdslite.impl.simulator.MdCstsSiConfig;
-import esa.egos.csts.test.mdslite.impl.simulator.Utils;
+import esa.egos.csts.sim.impl.MdCstsSi;
+import esa.egos.csts.sim.impl.MdCstsSiConfig;
+import esa.egos.csts.sim.impl.Utils;
 
 /**
  * MD-CSTS User service inform
