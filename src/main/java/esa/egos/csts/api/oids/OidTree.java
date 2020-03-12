@@ -115,10 +115,22 @@ public class OidTree {
 		if (oidArray.length > CROSS_SUPP_FUNC_BIT_POS 
 				&& oidArray[CROSS_SUPP_FUNC_BIT_POS] == CROSS_SUPP_FUNC_BIT_VALUE) {
 			if (CROSS_FUNC_RES_BIT_POS == lastPos) {
-				OidNode node = addChildNode(oidArray, PARENT_NODES_MUST_EXISTS, CROSS_FUNC_RES_BIT_POS, bitLabel);
-				node.addChildNode(PARAM_BIT_VALUE, "parameter");
-				node.addChildNode(EVENT_BIT_VALUE, "event");
-				node.addChildNode(DIREC_BIT_VALUE, "directive");
+				addChildNode(oidArray, PARENT_NODES_MUST_EXISTS, CROSS_FUNC_RES_BIT_POS, bitLabel);
+
+				// add the parameter(1) node
+				int[] parameterOidArray = Arrays.copyOf(oidArray, oidArray.length+1);
+				parameterOidArray[parameterOidArray.length-1] = PARAM_BIT_VALUE;
+				addChildNode(parameterOidArray, PARENT_NODES_MUST_EXISTS, CROSS_SUPP_FUNC_TYPE_BIT_POS, "parameter");
+
+				// add the event(2) node
+				int[] eventOidArray = Arrays.copyOf(oidArray, oidArray.length+1);
+				parameterOidArray[eventOidArray.length-1] = EVENT_BIT_VALUE;
+				addChildNode(eventOidArray, PARENT_NODES_MUST_EXISTS, CROSS_SUPP_FUNC_TYPE_BIT_POS, "event");
+
+				// add the directive(3) node
+				int[] directiveOidArray = Arrays.copyOf(oidArray, oidArray.length+1);
+				directiveOidArray[directiveOidArray.length-1] = DIREC_BIT_VALUE;
+				addChildNode(directiveOidArray, PARENT_NODES_MUST_EXISTS, CROSS_SUPP_FUNC_TYPE_BIT_POS, "directive");
 			}
 			else if (PARAM_OR_EVENT_OR_DIRECT_BIT_POS == lastPos) {
 				addChildNode(oidArray, PARENT_NODES_MUST_EXISTS, PARAM_OR_EVENT_OR_DIRECT_BIT_POS, bitLabel);

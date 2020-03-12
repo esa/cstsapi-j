@@ -93,7 +93,7 @@ public class FunctionalResourceMetadata {
 		System.out.println("OIDs size: " + paramEventOids.size());
 
 		// FRs OIDs from hard coded map {FR-bit number, FR label}
-		Map<String, int[]> frOids = findCrossSupportFunctionalities2(paramEventOids, FunctionalResourceBitLabels.FrMap);
+		Map<String, int[]> frOids = new LinkedHashMap<String, int[]>();//(paramEventOids, FunctionalResourceBitLabels.FrMap);
 
 		// OIDs of FRs + FR params + FR events + FR directives
 		frOids.putAll(paramEventOids);
