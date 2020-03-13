@@ -18,7 +18,7 @@ public class CyclicReportProvider extends AbstractCyclicReport {
 	
 	@Override
 	protected void initializeConfigurationParameters() {
-		addConfigurationParameter(new LabelLists(OIDs.pCRnamedLabelLists, true, false, this));
+		addConfigurationParameter(new LabelLists(OIDs.pCRnamedLabelLists, true, true, this));
 		addConfigurationParameter(new IntegerConfigurationParameter(OIDs.pCRminimumAllowedDeliveryCycle, true, false, this));
 	}
 	

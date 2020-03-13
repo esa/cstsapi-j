@@ -16,6 +16,7 @@ import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.states.service.ServiceStatus;
+import esa.egos.csts.api.types.LabelList;
 import esa.egos.csts.monitored.data.procedures.IOnChangeCyclicReport;
 import esa.egos.csts.test.mdslite.impl.simulator.TestBootstrap;
 
@@ -102,14 +103,21 @@ public class TestMds {
 				
 				MdSiProvider providerSi = new MdSiProvider(providerApi, mdSiProviderConfig, paramLists);
 				MdSiUser userSi = new MdSiUser(userApi, mdSiUserConfig, 1, paramLists);
-			
+
+				// add a label list for the CR provider procedures
+				LabelList list = new LabelList("test-list-1", true);
+				Collection<IOnChangeCyclicReport> procedures = providerSi.getCyclicReportProcedures();
+				for(IOnChangeCyclicReport proc : procedures) {
+					proc.getLabelLists().add(list);
+				}
+				
 				System.out.println("BIND...");
 				verifyResult(userSi.bind(), "BIND");
 
 				boolean onChange = true;
 				userSi.startCyclicReport(1000, onChange, 0);
 				
-				Collection<IOnChangeCyclicReport> procedures = userSi.getCyclicReportProcedures();
+				procedures = userSi.getCyclicReportProcedures();
 				for(IOnChangeCyclicReport proc : procedures) {
 					Assert.assertTrue(proc.isActive() == true);
 					Assert.assertTrue(proc.isActivationPending() == false);

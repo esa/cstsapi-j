@@ -15,11 +15,13 @@ import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
+import esa.egos.csts.api.parameters.impl.LabelLists;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.parameters.impl.ParameterValue;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 import esa.egos.csts.api.parameters.impl.QualifiedValues;
 import esa.egos.csts.api.states.service.ServiceStatus;
+import esa.egos.csts.api.types.LabelList;
 import esa.egos.csts.api.types.Name;
 import esa.egos.csts.monitored.data.procedures.IOnChangeCyclicReport;
 import frm.csts.functional.resource.types.AntActualAzimuth;
@@ -100,7 +102,8 @@ public class MdSiProvider extends MdSi {
 		qualifiedParameter.getQualifiedValues().add(qv);
 		
 		cr.getQualifiedParameters().clear(); // clear prev.values
-		cr.getQualifiedParameters().add(qualifiedParameter);
+		cr.getQualifiedParameters().add(qualifiedParameter);	
+		
 	}
 	
 	/**
