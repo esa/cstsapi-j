@@ -1,4 +1,4 @@
-package esa.egos.csts.test.mdslite.impl.simulator.provider;
+package esa.egos.csts.sim.impl.prv;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,7 +15,7 @@ import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.Name;
-import esa.egos.csts.test.mdslite.impl.simulator.parameters.FunctionalResourceIntegerParameter;
+import esa.egos.csts.sim.impl.frm.FunctionalResourceIntegerParameter;
 
 public class MdCollection
 {

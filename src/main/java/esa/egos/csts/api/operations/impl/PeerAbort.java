@@ -59,8 +59,16 @@ public class PeerAbort extends AbstractOperation implements IPeerAbort {
 
 	@Override
 	public String print(int i) {
-		return "PeerAbort [originator=" + originator + ", diagnostic=" + diagnostic + "]";
-	}
+		StringBuilder sb = new StringBuilder(i);
+		sb.append("\nOperation                      : PEER-ABORT\n");
+		sb.append(super.print(i));
+		sb.append("Confirmed Operation            : true\n");
+		sb.append("Originator                     : ").append(this.originator.toString()).append('\n');
+		sb.append("Operation Type                 : ").append(this.TYPE.toString()).append('\n');
+		sb.append("Common Diagnostics             : ").append(this.diagnostic.toString()).append('\n');
+
+		return sb.toString();
+		}
 
 	@Override
 	public PeerAbortInvocation encodePeerAbortInvocation() {

@@ -65,7 +65,7 @@ public class LabelLists extends AbstractConfigurationParameter implements Observ
 	 *                                                      dynamically modifiable
 	 */
 	public synchronized boolean add(LabelList list) {
-		if (!procedureIsBound() && !isDynamicallyModifiable()) {
+		if (procedureIsBound() && !isDynamicallyModifiable()) {
 			throw new ConfigurationParameterNotModifiableException();
 		}
 		boolean ret = labelLists.add(list);
@@ -85,7 +85,7 @@ public class LabelLists extends AbstractConfigurationParameter implements Observ
 	 *                                                      dynamically modifiable
 	 */
 	public synchronized boolean remove(LabelList list) {
-		if (!procedureIsBound() && !isDynamicallyModifiable()) {
+		if (procedureIsBound() && !isDynamicallyModifiable()) {
 			throw new ConfigurationParameterNotModifiableException();
 		}
 		boolean ret = labelLists.remove(list);

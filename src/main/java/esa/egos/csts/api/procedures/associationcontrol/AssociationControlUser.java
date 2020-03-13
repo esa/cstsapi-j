@@ -4,7 +4,6 @@ import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.enumerations.OperationResult;
 import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.exceptions.ApiException;
-import esa.egos.csts.api.operations.IBind;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.states.service.ServiceStatus;
@@ -23,18 +22,6 @@ public class AssociationControlUser extends AbstractAssociationControl {
 	
 	@Override
 	protected CstsResult doInitiateOperationInvoke(IOperation operation) {
-	
-		// TODO check if needed, should already be filled in all cases
-		if (operation.getType() == OperationType.BIND) {
-			IBind bind = (IBind) operation;
-			if (bind.getResponderIdentifier() == null) {
-				bind.setResponderIdentifier(getServiceInstanceInternal().getPeerIdentifier());
-			}
-			if (bind.getResponderPortIdentifier() == null) {
-				bind.setResponderPortIdentifier(getServiceInstanceInternal().getResponderPortIdentifier());
-			}
-		}
-		
 		try {
 			operation.verifyInvocationArguments();
 			
@@ -47,6 +34,7 @@ public class AssociationControlUser extends AbstractAssociationControl {
 				return CstsResult.ALREADY_BOUND;
 			} else {
 				try {
+					getServiceInstanceInternal().cleanup();
 					createAssociation();
 					assocCreated = true;
 					getServiceInstanceInternal().setState(ServiceStatus.BIND_PENDING);
@@ -66,6 +54,8 @@ public class AssociationControlUser extends AbstractAssociationControl {
 			getServiceInstanceInternal().setState(ServiceStatus.UNBOUND);
 			try {
 				releaseAssociation();
+				terminate();
+				assocCreated = false;
 			} catch (ApiException e) {
 				return CstsResult.FAILURE;
 			}
@@ -81,6 +71,7 @@ public class AssociationControlUser extends AbstractAssociationControl {
 			getServiceInstanceInternal().setState(ServiceStatus.UNBOUND);
 			try {
 				releaseAssociation();
+				assocCreated = false;
 			} catch (ApiException e) {
 				return CstsResult.FAILURE;
 			}

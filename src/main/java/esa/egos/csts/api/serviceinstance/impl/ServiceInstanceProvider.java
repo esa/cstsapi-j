@@ -21,7 +21,6 @@ import esa.egos.csts.api.procedures.associationcontrol.IAssociationControl;
 import esa.egos.csts.api.procedures.associationcontrol.IAssociationControlInternal;
 import esa.egos.csts.api.serviceinstance.AbstractServiceInstance;
 import esa.egos.csts.api.serviceinstance.IServiceInform;
-import esa.egos.csts.api.serviceinstance.ReturnPair;
 import esa.egos.csts.api.states.service.ServiceStatus;
 import esa.egos.proxy.IProxyAdmin;
 import esa.egos.proxy.enums.TimeFormat;
@@ -106,33 +105,6 @@ public class ServiceInstanceProvider extends AbstractServiceInstance {
 			}
 
 			return;
-		}
-
-		// check for return timeout
-		for (ReturnPair rr : getRemoteReturns()) {
-			if (rr.getElapsedTimer().equals(timer)) {
-				// abort and cleanup
-				// print all operation information
-				IConfirmedOperation pop = rr.getConfirmedOperation();
-				String opDump = pop.print(500);
-
-				LOG.fine("Return timer expired for operation " + opDump);
-				/*
-				 * ServiceInstanceStateEnum serviceState = null; try { serviceState =
-				 * getState().getStateEnum(); } catch (NoServiceInstanceStateException e) {
-				 * return; }
-				 * 
-				 * if (serviceState == ServiceInstanceStateEnum.bound || serviceState ==
-				 * ServiceInstanceStateEnum.start_pending || serviceState ==
-				 * ServiceInstanceStateEnum.active || serviceState ==
-				 * ServiceInstanceStateEnum.stop_pending)
-				 */
-				if (getStatus() != ServiceStatus.UNBOUND) {
-					abort(PeerAbortDiagnostics.RETURN_TIMEOUT);
-				}
-
-				return;
-			}
 		}
 	}
 

@@ -80,5 +80,36 @@ public class QualifiedParameter {
 		}
 		return newQualifiedParameter;
 	}
+	
+	@Override
+	public String toString() {
+	    return "QualifiedParameter [name=" + this.name.toString()
+	           + ", qualifiedValues=" + this.qualifiedValues.toString() + "]";
+	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
+		if (!(o instanceof QualifiedParameter)) {
+			return false;
+		}
+		QualifiedParameter qualifiedParameter = (QualifiedParameter)o;
+		if (!qualifiedParameter.getName().equals(this.name)) {
+			return false;
+		}
+		return qualifiedParameter.getQualifiedValues().equals(this.qualifiedValues);
+	}
+	
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 31*hash + this.name.hashCode();
+		for (QualifiedValues qv : this.qualifiedValues) {
+			hash = 31*hash + qv.hashCode();
+		}
+		return hash;
+	}
+	
 }

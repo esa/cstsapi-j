@@ -89,5 +89,26 @@ public class EmbeddedData {
 	public String toString() {
 		return "EmbeddedData [oid=" + oid + ", data=" + Arrays.toString(data) + "]";
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
+		if (!(o instanceof EmbeddedData)) {
+			return false;
+		}
+		EmbeddedData embeddedData = (EmbeddedData)o;
+		if (!embeddedData.getOid().equals(this.oid)) {
+			return false;
+		}
+	    return Arrays.equals(embeddedData.getData(), this.data);
+	}
+	
+	@Override
+	public int hashCode() {
+	    int hash = 31 * (31 + this.oid.hashCode()) + Arrays.hashCode(this.data);
+	    return hash;
+	}
 
 }

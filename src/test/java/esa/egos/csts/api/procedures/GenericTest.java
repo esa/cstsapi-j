@@ -1,4 +1,4 @@
-package esa.egos.csts.test.mdslite.impl.simulator;
+package esa.egos.csts.api.procedures;
 
 import static org.junit.Assert.*;
 
@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
+import org.junit.rules.TestRule;
 
 import esa.egos.csts.api.enumerations.AppRole;
 import esa.egos.csts.api.enumerations.CstsResult;
@@ -18,20 +19,27 @@ import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
-import esa.egos.csts.api.types.LabelList;
-import esa.egos.csts.test.mdslite.impl.simulator.provider.MdCollection;
-import esa.egos.csts.test.mdslite.impl.simulator.provider.MdCstsSiProvider;
-import esa.egos.csts.test.mdslite.impl.simulator.user.MdCstsSiUser;
+import esa.egos.csts.sim.impl.MdCstsSiConfig;
+import esa.egos.csts.sim.impl.prv.MdCollection;
+import esa.egos.csts.sim.impl.prv.MdCstsSiProvider;
+import esa.egos.csts.sim.impl.prv.MdCstsSiProviderConfig;
+import esa.egos.csts.sim.impl.usr.MdCstsSiUser;
+import esa.egos.csts.api.CstsTestWatcher;
+import esa.egos.csts.api.TestBootstrap;
+import esa.egos.csts.api.TestUtils;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 
 /**
  * Test the CSTS API at the example of the monitored data service
  */
 public class GenericTest
 {
+    @Rule
+    public TestRule testWatcher = new CstsTestWatcher();
 
     private ICstsApi providerApi;
 
@@ -83,11 +91,12 @@ public class GenericTest
         System.out.println("CSTS user and provider API stopped");
     }
 
+    /**
+     * Test association procedure and its bind and unbind operations
+     */
     @Test
     public void testAssociation()
     {
-        System.out.println("Test association procedure and its bind and unbind operations");
-
         try
         {
             // S/C identifier
@@ -105,7 +114,7 @@ public class GenericTest
 
             // create provider SI configuration
             MdCstsSiProviderConfig mdSiProviderConfig = new MdCstsSiProviderConfig(50,
-                                                                                   new LabelList("", true),
+                                                                                   null,
                                                                                    scId,
                                                                                    facilityId,
                                                                                    0,
@@ -156,11 +165,12 @@ public class GenericTest
         }
     }
 
+    /**
+     * Test the Cyclic report procedure
+     */
     @Test
     public void testCyclicReport()
     {
-        System.out.println("Test the Cyclic report procedure");
-
         try
         {
             // S/C identifier
@@ -178,7 +188,7 @@ public class GenericTest
 
             // create provider SI configuration
             MdCstsSiProviderConfig mdSiProviderConfig = new MdCstsSiProviderConfig(50,
-                                                                                   new LabelList("", true),
+                                                                                   null,
                                                                                    scId,
                                                                                    facilityId,
                                                                                    0,
@@ -232,11 +242,12 @@ public class GenericTest
         }
     }
 
+    /**
+     * Test the Notification procedure
+     */
     @Test
     public void testNotification()
     {
-        System.out.println("Test the Notification procedure");
-
         try
         {
             // S/C identifier
@@ -254,7 +265,7 @@ public class GenericTest
 
             // create provider SI configuration
             MdCstsSiProviderConfig mdSiProviderConfig = new MdCstsSiProviderConfig(50,
-                                                                                   new LabelList("", true),
+                                                                                   null,
                                                                                    scId,
                                                                                    facilityId,
                                                                                    0,
@@ -309,11 +320,12 @@ public class GenericTest
         }
     }
 
+    /**
+     * Test the peer abort operation
+     */
     @Test
     public void testPeerAbort()
     {
-        System.out.println("Test the peer abort");
-
         try
         {
             // S/C identifier
@@ -331,7 +343,7 @@ public class GenericTest
 
             // create provider SI configuration
             MdCstsSiProviderConfig mdSiProviderConfig = new MdCstsSiProviderConfig(50,
-                                                                                   new LabelList("", true),
+                                                                                   null,
                                                                                    scId,
                                                                                    facilityId,
                                                                                    0,
@@ -384,7 +396,6 @@ public class GenericTest
 
             System.out.println("PEER-ABORT...");
             TestUtils.verifyResult(userSi.peerAbort(), "PEER-ABORT");
-            Thread.sleep(1000);
 
             providerSi.destroy();
             userSi.destroy();
@@ -395,6 +406,5 @@ public class GenericTest
             fail(e.getMessage());
         }
     }
-
 
 }

@@ -1,4 +1,4 @@
-package esa.egos.csts.test.mdslite.impl.simulator.parameters;
+package esa.egos.csts.sim.impl.frm;
 
 import esa.egos.csts.api.enumerations.ParameterQualifier;
 import esa.egos.csts.api.enumerations.ParameterType;
