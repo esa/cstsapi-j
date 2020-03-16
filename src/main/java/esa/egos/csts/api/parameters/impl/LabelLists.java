@@ -30,7 +30,11 @@ public class LabelLists extends AbstractConfigurationParameter implements Observ
 		super(identifier, readable, dynamicallyModifiable, procedure);
 		labelLists = new ObservableArrayList<>();
 		labelLists.addObserver(this);
-		setConfigured(true);
+		
+		// if the list is not dynamically modifiable it is empty and tehrefore not configured
+		if(dynamicallyModifiable == true) {
+			setConfigured(true);
+		}
 	}
 
 	/**
@@ -56,7 +60,7 @@ public class LabelLists extends AbstractConfigurationParameter implements Observ
 
 	/**
 	 * Adds a new Label List if this Configuration Parameter is dynamically
-	 * modifiable.
+	 * modifiable or not configured.
 	 * 
 	 * @param list the list to be added
 	 * @return true if the list could be successfully added
@@ -65,7 +69,7 @@ public class LabelLists extends AbstractConfigurationParameter implements Observ
 	 *                                                      dynamically modifiable
 	 */
 	public synchronized boolean add(LabelList list) {
-		if (procedureIsBound() && !isDynamicallyModifiable()) {
+		if (procedureIsBound() && !isDynamicallyModifiable() && isConfigured() == true) {
 			throw new ConfigurationParameterNotModifiableException();
 		}
 		boolean ret = labelLists.add(list);
@@ -76,7 +80,7 @@ public class LabelLists extends AbstractConfigurationParameter implements Observ
 
 	/**
 	 * Removes a Label List if this Configuration Parameter is dynamically
-	 * modifiable.
+	 * modifiable or not yet configured.
 	 * 
 	 * @param list the list to be removed
 	 * @return true if the list could be successfully removed
@@ -85,7 +89,7 @@ public class LabelLists extends AbstractConfigurationParameter implements Observ
 	 *                                                      dynamically modifiable
 	 */
 	public synchronized boolean remove(LabelList list) {
-		if (procedureIsBound() && !isDynamicallyModifiable()) {
+		if (procedureIsBound() && !isDynamicallyModifiable() && isConfigured() == true) {
 			throw new ConfigurationParameterNotModifiableException();
 		}
 		boolean ret = labelLists.remove(list);

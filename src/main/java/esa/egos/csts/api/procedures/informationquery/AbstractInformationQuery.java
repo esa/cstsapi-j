@@ -59,6 +59,7 @@ public abstract class AbstractInformationQuery extends AbstractProcedure impleme
 		return forwardInvocationToProxy(get);
 	}
 	
+	@Override
 	public LabelLists getLabelLists() {
 		return (LabelLists) getConfigurationParameter(OIDs.pIQnamedLabelLists);
 	}

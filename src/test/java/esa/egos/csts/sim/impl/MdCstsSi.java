@@ -65,7 +65,7 @@ public abstract class MdCstsSi<I extends IInformationQuery, C extends ICyclicRep
             if (pii.getType().getOid().equals(OIDs.cyclicReport))
             {
                 C cyclicReport = createCyclicReportProcedure();
-                addProcedure(cyclicReport, pii, config);               
+                addProcedure(cyclicReport, pii, config);                
             }
             else if (pii.getType().getOid().equals(OIDs.informationQuery))
             {

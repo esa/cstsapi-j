@@ -45,10 +45,12 @@ public class MdCstsSiProvider extends MdCstsSi<InformationQueryProvider, CyclicR
                     .initializeValue(((MdCstsSiProviderConfig) config).getMinimumAllowedDeliveryCycle());
     		updateDefaultLabelList(((CyclicReportProvider) procedure).getLabelLists(),
     				((MdCstsSiProviderConfig) config).getDefaultLabelList());
+    		((CyclicReportProvider) procedure).getLabelLists().setConfigured(true);
         }
         else if (procedure instanceof InformationQueryProvider) {
     		updateDefaultLabelList(((InformationQueryProvider) procedure).getLabelLists(),
     				((MdCstsSiProviderConfig) config).getDefaultLabelList());
+    		((InformationQueryProvider) procedure).getLabelLists().setConfigured(true);
         }
     }
 
@@ -56,9 +58,12 @@ public class MdCstsSiProvider extends MdCstsSi<InformationQueryProvider, CyclicR
     	IProcedure procedure = this.serviceInstance.getProcedure(piid);
     	if (procedure instanceof CyclicReportProvider) {
     		updateDefaultLabelList(((CyclicReportProvider) procedure).getLabelLists(), defaultLabeList);
+    		((CyclicReportProvider) procedure).getLabelLists().setConfigured(true);
+    		
     	}
     	else if (procedure instanceof InformationQueryProvider) {
     		updateDefaultLabelList(((InformationQueryProvider) procedure).getLabelLists(), defaultLabeList);
+    		((InformationQueryProvider) procedure).getLabelLists().setConfigured(true);
     	}
     	else {
     		throw new Exception("procedure " + piid + " does not support the default label list feature");

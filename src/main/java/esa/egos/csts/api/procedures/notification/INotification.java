@@ -2,6 +2,7 @@ package esa.egos.csts.api.procedures.notification;
 
 import esa.egos.csts.api.diagnostics.ListOfParametersDiagnostics;
 import esa.egos.csts.api.enumerations.CstsResult;
+import esa.egos.csts.api.parameters.impl.LabelLists;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.procedures.IStatefulProcedure;
 
@@ -20,6 +21,12 @@ public interface INotification extends IStatefulProcedure {
 	 */
 	ListOfParameters getListOfEvents();
 
+	/**
+	 * Returns the named label lists configuration parameter of this procedure
+	 * @return the label list
+	 */
+	public LabelLists getLabelLists();
+	
 	/**
 	 * Sets the list of Events.
 	 * 

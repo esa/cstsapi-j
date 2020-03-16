@@ -80,7 +80,12 @@ public abstract class AbstractNotification extends AbstractStatefulProcedure imp
 	public ListOfParameters getListOfEvents() {
 		return listOfEvents;
 	}
-
+	
+	@Override
+	public LabelLists getLabelLists() {
+		return (LabelLists) getConfigurationParameter(OIDs.pNnamedLabelLists);
+	}
+	
 	@Override
 	public void setListOfEvents(ListOfParameters listOfEvents) {
 		this.listOfEvents = listOfEvents;

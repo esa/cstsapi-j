@@ -20,6 +20,7 @@ import esa.egos.csts.api.parameters.impl.ParameterValue;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 import esa.egos.csts.api.parameters.impl.QualifiedValues;
 import esa.egos.csts.api.states.service.ServiceStatus;
+import esa.egos.csts.api.types.LabelList;
 import esa.egos.csts.api.types.Name;
 import esa.egos.csts.monitored.data.procedures.IOnChangeCyclicReport;
 import frm.csts.functional.resource.types.AntActualAzimuth;
@@ -30,8 +31,8 @@ import frm.csts.functional.resource.types.OidValues;
  */
 public class MdSiProvider extends MdSi {
 		
-	public MdSiProvider(ICstsApi api, SiConfig config, List<ListOfParameters> parameterLists) throws ApiException {
-		super(api, config, parameterLists, true);
+	public MdSiProvider(ICstsApi api, SiConfig config, List<ListOfParameters> parameterLists, LabelList labelList) throws ApiException {
+		super(api, config, parameterLists, labelList, true);
 		
 		for(int idx= 0; idx<parameterLists.size(); idx++) {
 			setAntAzimut(4711, idx);

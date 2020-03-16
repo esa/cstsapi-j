@@ -39,6 +39,8 @@ public class TestMds {
     private ICstsApi providerApi;
     private ICstsApi userApi;
 
+	private LabelList labelList = new LabelList("test-list-1", true);
+
     @BeforeClass
     public static void setUpClass() throws ApiException
     {
@@ -88,7 +90,6 @@ public class TestMds {
 	public void testMd() {
 			System.out.println("Test Monitored Data Service");			
 			
-			 
 			try {
 				SiConfig mdSiProviderConfig = new SiConfig(ObjectIdentifier.of(1,3,112,4,7,0),
 												ObjectIdentifier.of(1,3,112,4,6,0),
@@ -107,15 +108,16 @@ public class TestMds {
 				List<ListOfParameters> paramLists = new ArrayList<ListOfParameters>();
 				paramLists.add(paramList);
 				
-				MdSiProvider providerSi = new MdSiProvider(providerApi, mdSiProviderConfig, paramLists);
+				MdSiProvider providerSi = new MdSiProvider(providerApi, mdSiProviderConfig, paramLists, labelList);
 				MdSiUser userSi = new MdSiUser(userApi, mdSiUserConfig, 1, paramLists);
 
 				// add a label list for the CR provider procedures
-				LabelList list = new LabelList("test-list-1", true);
+				
 				Collection<IOnChangeCyclicReport> procedures = providerSi.getCyclicReportProcedures();
-				for(IOnChangeCyclicReport proc : procedures) {
-					proc.getLabelLists().add(list);
-				}
+//				for(IOnChangeCyclicReport proc : procedures) {
+//					proc.getLabelLists().add(labelList);
+//					proc.getLabelLists().setConfigured(true); // Indicate that the list is now fully configured
+//				}				
 				
 				System.out.println("BIND...");
 				verifyResult(userSi.bind(), "BIND");
@@ -177,7 +179,7 @@ public class TestMds {
 			List<ListOfParameters> paramLists = new ArrayList<ListOfParameters>();
 			paramLists.add(paramList);
 			
-			MdSiProvider providerSi = new MdSiProvider(providerApi, mdSiProviderConfig, paramLists);
+			MdSiProvider providerSi = new MdSiProvider(providerApi, mdSiProviderConfig, paramLists, labelList);
 			MdSiUser userSi = new MdSiUser(userApi, mdSiUserConfig, 1, paramLists);
 		
 			System.out.println("BIND...");
@@ -241,7 +243,7 @@ public class TestMds {
 			List<ListOfParameters> paramLists = new ArrayList<ListOfParameters>();
 			paramLists.add(paramList);
 			
-			MdSiProvider providerSi = new MdSiProvider(providerApi, mdSiProviderConfig, paramLists);
+			MdSiProvider providerSi = new MdSiProvider(providerApi, mdSiProviderConfig, paramLists, labelList);
 			MdSiUser userSi = new MdSiUser(userApi, mdSiUserConfig, 1, paramLists);
 		
 			System.out.println("BIND...");
