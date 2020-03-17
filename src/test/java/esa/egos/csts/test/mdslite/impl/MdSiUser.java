@@ -11,12 +11,16 @@ import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.enumerations.OperationResult;
 import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IStart;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
+import esa.egos.csts.api.parameters.impl.ParameterValue;
+import esa.egos.csts.api.parameters.impl.QualifiedParameter;
+import esa.egos.csts.api.parameters.impl.QualifiedValues;
 import esa.egos.csts.api.states.service.ServiceStatus;
 import esa.egos.csts.monitored.data.procedures.IOnChangeCyclicReport;
 
@@ -131,7 +135,7 @@ public class MdSiUser extends MdSi {
 			System.out.println("Start the Cyclic Report procedure");
 
 			if(cyclicReport != null) {				
-				res = cyclicReport.requestCyclicReport(deliveryCycle, onChange, cyclicReport.getListOfParameters());
+				res = cyclicReport.requestCyclicReport(deliveryCycle, onChange, cyclicReport.getListOfParameters());				
 				printProcedureState(cyclicReport);
 				
 				while(cyclicReport.isActivationPending()) {
@@ -204,13 +208,33 @@ public class MdSiUser extends MdSi {
 	@Override
 	public void informOpInvocation(IOperation operation) {
 		System.out.println("MD User received operation " + operation);
+		System.out.println("MD User received operation " + operation.print(1024));
+
+		// test decoding of an FR parameter
+		if(operation.getType() == OperationType.TRANSFER_DATA) {
+			// at that point the transfer data refinement of cyclic report is updated in terms of qualified parameters!
+			// how to get hold of them?
+			try {
+				IOnChangeCyclicReport cr = getCyclicReportProcedure(operation.getProcedureInstanceIdentifier());
+				for(QualifiedParameter qp : cr.getQualifiedParameters()) {
+					
+					for(QualifiedValues qv : qp.getQualifiedValues()) {
+						for(ParameterValue pv : qv.getParameterValues()) {
+							EmbeddedData ed = pv.getExtended();
+							DemoAntAzimuthParameter.decodeAzimut(ed);
+						}
+					}
+				}
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
 		
 	}
 
 	@Override
 	public void informOpAcknowledgement(IAcknowledgedOperation operation) {
 		System.out.println("MD User received ack " + operation);
-		
 	}
 
 	@Override

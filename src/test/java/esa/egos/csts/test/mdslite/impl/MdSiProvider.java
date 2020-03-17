@@ -1,30 +1,16 @@
 package esa.egos.csts.test.mdslite.impl;
 
-import java.io.IOException;
 import java.util.List;
-import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
-
 import esa.egos.csts.api.enumerations.OperationType;
-import esa.egos.csts.api.enumerations.ParameterQualifier;
 import esa.egos.csts.api.exceptions.ApiException;
-import esa.egos.csts.api.extensions.EmbeddedData;
-import esa.egos.csts.api.functionalresources.FunctionalResourceName;
-import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.main.ICstsApi;
-import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
-import esa.egos.csts.api.parameters.impl.ParameterValue;
-import esa.egos.csts.api.parameters.impl.QualifiedParameter;
-import esa.egos.csts.api.parameters.impl.QualifiedValues;
 import esa.egos.csts.api.states.service.ServiceStatus;
 import esa.egos.csts.api.types.LabelList;
-import esa.egos.csts.api.types.Name;
 import esa.egos.csts.monitored.data.procedures.IOnChangeCyclicReport;
-import frm.csts.functional.resource.types.AntActualAzimuth;
-import frm.csts.functional.resource.types.OidValues;
 
 /**
  * MD Provider implementation for testing 
@@ -76,32 +62,8 @@ public class MdSiProvider extends MdSi {
 	public void setAntAzimut(long value, int crProcedureInstanceNo) {	
 		IOnChangeCyclicReport cr = getCyclicReportProcedure(crProcedureInstanceNo);
 		
-		ObjectIdentifier antFrOid = ObjectIdentifier.of(OidValues.antennaType.value);
-		ObjectIdentifier antAzimuthOid = ObjectIdentifier.of(OidValues.antAccumulatedPrecipitationType.value);
-		FunctionalResourceType antFrType = FunctionalResourceType.of(antFrOid);
-		FunctionalResourceName antFrInstance = FunctionalResourceName.of(antFrType, 0 /*FR instance number*/);
-		Name antennaAzimuthParamName = Name.of(antAzimuthOid, antFrInstance);
-		
-		QualifiedParameter qualifiedParameter = new QualifiedParameter(antennaAzimuthParamName); 
-		QualifiedValues qv = new QualifiedValues(ParameterQualifier.VALID);
-		
-		AntActualAzimuth azimuth = new AntActualAzimuth(value);
-		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(12, true)) {
-			azimuth.encode(os);
-			azimuth.code = os.getArray();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}	
-		
-		EmbeddedData valueExtension = EmbeddedData.of(antAzimuthOid, azimuth.code);
-		System.out.println("Encoded AntActualAzimuth embedded: " + valueExtension);
-		
-		ParameterValue pv = new ParameterValue(valueExtension);
-		qv.getParameterValues().add(pv);			
-		qualifiedParameter.getQualifiedValues().add(qv);
-		
 		cr.getQualifiedParameters().clear(); // clear prev.values
-		cr.getQualifiedParameters().add(qualifiedParameter);	
+		cr.getQualifiedParameters().add(DemoAntAzimuthParameter.encodeAzimut(value));	
 		
 	}
 	
