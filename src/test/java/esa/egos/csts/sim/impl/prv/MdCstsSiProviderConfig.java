@@ -15,7 +15,9 @@ public class MdCstsSiProviderConfig extends MdCstsSiConfig
 
     private final long minimumAllowedDeliveryCycle;
 
-    private final List<Label> defaultLabelList;
+    private final List<Label> defaultParameterLabelList;
+
+    private final List<Label> defaultEventLabelList;
 
 
     /**
@@ -34,7 +36,8 @@ public class MdCstsSiProviderConfig extends MdCstsSiConfig
      *            teh proxy configuration
      */
     public MdCstsSiProviderConfig(long minimumAllowedDeliveryCycle,
-                                  List<Label> defaultLabelList,
+                                  List<Label> defaultParameterLabelList,
+                                  List<Label> defaultEventLabelList,
                                   ObjectIdentifier scId,
                                   ObjectIdentifier facilityId,
                                   int instanceNumber,
@@ -44,7 +47,8 @@ public class MdCstsSiProviderConfig extends MdCstsSiConfig
     {
         super(scId, facilityId, instanceNumber, peerIdentifier, responderPortIdentifier, proceduresIdentifiers);
         this.minimumAllowedDeliveryCycle = minimumAllowedDeliveryCycle;
-        this.defaultLabelList = defaultLabelList;
+        this.defaultParameterLabelList = defaultParameterLabelList;
+        this.defaultEventLabelList = defaultEventLabelList;
     }
 
     public long getMinimumAllowedDeliveryCycle()
@@ -52,8 +56,13 @@ public class MdCstsSiProviderConfig extends MdCstsSiConfig
         return this.minimumAllowedDeliveryCycle;
     }
 
-    public List<Label> getDefaultLabelList()
+    public List<Label> getDefaultParameterLabelList()
     {
-        return this.defaultLabelList;
+        return this.defaultParameterLabelList;
+    }
+
+    public List<Label> getDefaultEventLabelList()
+    {
+        return this.defaultEventLabelList;
     }
 }

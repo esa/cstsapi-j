@@ -115,6 +115,7 @@ public class GenericTest
             // create provider SI configuration
             MdCstsSiProviderConfig mdSiProviderConfig = new MdCstsSiProviderConfig(50,
                                                                                    null,
+                                                                                   null,
                                                                                    scId,
                                                                                    facilityId,
                                                                                    0,
@@ -188,6 +189,7 @@ public class GenericTest
 
             // create provider SI configuration
             MdCstsSiProviderConfig mdSiProviderConfig = new MdCstsSiProviderConfig(50,
+                                                                                   null,
                                                                                    null,
                                                                                    scId,
                                                                                    facilityId,
@@ -266,6 +268,7 @@ public class GenericTest
             // create provider SI configuration
             MdCstsSiProviderConfig mdSiProviderConfig = new MdCstsSiProviderConfig(50,
                                                                                    null,
+                                                                                   null,
                                                                                    scId,
                                                                                    facilityId,
                                                                                    0,
@@ -343,6 +346,7 @@ public class GenericTest
 
             // create provider SI configuration
             MdCstsSiProviderConfig mdSiProviderConfig = new MdCstsSiProviderConfig(50,
+                                                                                   null,
                                                                                    null,
                                                                                    scId,
                                                                                    facilityId,

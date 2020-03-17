@@ -1,5 +1,7 @@
 package esa.egos.csts.api.parameters.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -7,6 +9,7 @@ import esa.egos.csts.api.exceptions.ConfigurationParameterNotModifiableException
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.parameters.AbstractConfigurationParameter;
 import esa.egos.csts.api.procedures.IProcedure;
+import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.LabelList;
 import esa.egos.csts.api.util.ObservableList;
 import esa.egos.csts.api.util.impl.ObservableArrayList;
@@ -30,9 +33,32 @@ public class LabelLists extends AbstractConfigurationParameter implements Observ
 		super(identifier, readable, dynamicallyModifiable, procedure);
 		labelLists = new ObservableArrayList<>();
 		labelLists.addObserver(this);
-		
-		// if the list is not dynamically modifiable it is empty and tehrefore not configured
-		if(dynamicallyModifiable == true) {
+	}
+
+	/**
+	 * Initializes the label list as empty, if the Configuration Parameter has not been
+	 * configured.
+	 * 
+	 */
+	public synchronized void initialize() {
+		if (!isConfigured()) {
+			setConfigured(true);
+		}
+	}
+
+	/**
+	 * Initializes the label list, if the Configuration Parameter has not been
+	 * configured.
+	 * 
+	 * @param value the initial value
+	 */
+	public synchronized void initializeValue(List<Label> labels) {
+		if (!isConfigured()) {
+			if (labels != null && !labels.isEmpty()) {
+				LabelList labelList = new LabelList("default", true);
+				labelList.getLabels().addAll(new ArrayList<Label>(labels));
+				labelLists.add(labelList);
+			}
 			setConfigured(true);
 		}
 	}
@@ -69,7 +95,7 @@ public class LabelLists extends AbstractConfigurationParameter implements Observ
 	 *                                                      dynamically modifiable
 	 */
 	public synchronized boolean add(LabelList list) {
-		if (procedureIsBound() && !isDynamicallyModifiable() && isConfigured() == true) {
+		if (procedureIsBound() && !isDynamicallyModifiable()) {
 			throw new ConfigurationParameterNotModifiableException();
 		}
 		boolean ret = labelLists.add(list);
@@ -89,7 +115,7 @@ public class LabelLists extends AbstractConfigurationParameter implements Observ
 	 *                                                      dynamically modifiable
 	 */
 	public synchronized boolean remove(LabelList list) {
-		if (procedureIsBound() && !isDynamicallyModifiable() && isConfigured() == true) {
+		if (procedureIsBound() && !isDynamicallyModifiable()) {
 			throw new ConfigurationParameterNotModifiableException();
 		}
 		boolean ret = labelLists.remove(list);
