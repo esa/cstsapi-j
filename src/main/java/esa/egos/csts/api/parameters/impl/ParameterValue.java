@@ -179,6 +179,14 @@ public class ParameterValue {
 	public List<Time> getTimeParameterValues() {
 		return timeParameterValues;
 	}
+	
+	/**
+	 * Returns the extension value
+	 * @return the extension value
+	 */
+	public EmbeddedData getExtended() {
+		return this.extension;
+	}
 
 	/**
 	 * Returns the list of Object Identifier Parameter Values.
