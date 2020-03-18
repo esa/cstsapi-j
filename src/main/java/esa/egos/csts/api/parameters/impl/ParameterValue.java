@@ -4,14 +4,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.beanit.jasn1.ber.types.BerBoolean;
+import com.beanit.jasn1.ber.types.BerEmbeddedPdv.Identification;
 import com.beanit.jasn1.ber.types.BerInteger;
 import com.beanit.jasn1.ber.types.BerObjectIdentifier;
 import com.beanit.jasn1.ber.types.BerOctetString;
 import com.beanit.jasn1.ber.types.BerReal;
 import com.beanit.jasn1.ber.types.string.BerVisibleString;
 
+import b1.ccsds.csts.common.types.Embedded;
 import b1.ccsds.csts.common.types.IntPos;
 import b1.ccsds.csts.common.types.IntUnsigned;
 import b1.ccsds.csts.common.types.PublishedIdentifier;
@@ -226,7 +229,9 @@ public class ParameterValue {
 			typeAndValue.setEnumerated(enumerated);
 			break;
 		case EXTENDED:
-			typeAndValue.setTypeAndValueExtension(extension.encode());
+		    if (extension != null) {
+                typeAndValue.setTypeAndValueExtension(extension.encode());
+		    }
 			break;
 		case INTEGER:
 			Integer integer = new Integer();
@@ -374,14 +379,10 @@ public class ParameterValue {
 	    sb.append(this.type.name());
 	    if (this.type == ParameterType.EXTENDED) {
 	        sb.append(", extension=");
-	        sb.append(this.extension.toString());
+	        sb.append(this.extension);
 	    } else if (this.type == ParameterType.OCTET_STRING) {
             sb.append(", values=[");
-            Iterator<byte[]> it = this.octetStringParameterValues.iterator();
-            while (it.hasNext()) {
-                sb.append(Arrays.toString(it.next()));
-                if (it.hasNext()) sb.append(", ");
-            }
+            sb.append(this.octetStringParameterValues.stream().map(Arrays::toString).collect(Collectors.joining(",")));
 	    } else {
             sb.append(", values=[");
             Iterator<?> it = null;
@@ -432,7 +433,7 @@ public class ParameterValue {
 			return false;
 		}
 		ParameterValue parameterValue = (ParameterValue)o;
-		if (!parameterValue.getType().equals(this.type)) {
+		if (parameterValue.getType() != this.type) {
 			return false;
 		}
 		switch (this.type) {
@@ -448,7 +449,31 @@ public class ParameterValue {
 		case UNSIGNED_INTEGER:
 			return integerParameterValues.equals(parameterValue.getIntegerParameterValues());
 		case EXTENDED:
-			return (hashCode() == parameterValue.hashCode());
+		    Embedded eb1 = this.encode().getTypeAndValueExtension();
+		    Embedded eb2 = parameterValue.encode().getTypeAndValueExtension();
+		    if (eb1 == null && eb2 == null) {
+		        return true;
+		    }
+		    if (eb1 == null || eb2 == null) {
+		        return false;
+		    }
+		    Identification id1 = eb1.getIdentification();
+		    Identification id2 = eb2.getIdentification();
+		    if (id1 != id2) { // both are not null
+		        if (id1 != null && id2 != null) {
+                    if (!id1.toString().equals(id2.toString())) {
+                        return false;
+                    }
+		        } else { // one of them is null
+		            return false;
+		        }
+		    }
+		    BerOctetString os1 = eb1.getDataValue();
+		    BerOctetString os2 = eb2.getDataValue();
+		    if (os1 == null || os2 == null) {
+		        return false;
+		    }
+		    return Arrays.equals(os1.value, os2.value);
 		case OBJECT_IDENTIFIER:
 		case PUBLISHED_IDENTIFIER:
 			return OIDparameterValues.equals(parameterValue.getOIDparameterValues());

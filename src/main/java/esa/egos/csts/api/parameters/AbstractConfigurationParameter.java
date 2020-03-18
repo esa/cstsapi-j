@@ -73,5 +73,50 @@ public abstract class AbstractConfigurationParameter extends AbstractParameter i
 	public ProcedureType getProcedureType() {
 		return procedure.getType();
 	}
+	
+	@Override
+	public String toString() {
+	    return "AbstractConfigurationParameter [" + super.toString()
+	        + ", readable=" + this.readable
+	        + ", dynamicallyModifiable=" + this.dynamicallyModifiable
+	        + ", configured=" + this.configured
+	        + "]";
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
+		if (!(o instanceof AbstractConfigurationParameter)) {
+			return false;
+		}
+	    if (!super.equals(o)) {
+	        return false;
+	    }
+		AbstractConfigurationParameter acp = (AbstractConfigurationParameter)o;
+		if (this.procedure != acp.getProcedure()) {
+		    return false;
+		}
+		if (this.readable != acp.isReadable()) {
+		    return false;
+		}
+		if (this.dynamicallyModifiable != acp.isDynamicallyModifiable()) {
+		    return false;
+		}
+		if (this.configured != acp.isConfigured()) {
+		    return false;
+		}
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+	    int hash = super.hashCode();
+	    hash = 31*hash + (this.readable ? 1 : 0);
+	    hash = 31*hash + (this.dynamicallyModifiable ? 1 : 0);
+	    hash = 31*hash + (this.configured ? 1 : 0);
+	    return hash;
+	}
 
 }

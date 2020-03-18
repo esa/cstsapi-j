@@ -2,6 +2,7 @@ package esa.egos.csts.api.types;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.beanit.jasn1.ber.types.BerBoolean;
 import com.beanit.jasn1.ber.types.string.BerVisibleString;
@@ -127,6 +128,46 @@ public class LabelList {
 			newLabelList.getLabels().add(Label.decode(label));
 		}
 		return newLabelList;
+	}
+	
+	@Override
+	public String toString() {
+	    StringBuilder sb = new StringBuilder("LabelList [name=");
+	    sb.append(this.name);
+	    sb.append(", defaultList=");
+	    sb.append(this.defaultList);
+	    sb.append(", labels=[");
+	    sb.append(this.labels.stream().map(Label::toString).collect(Collectors.joining(",")));
+	    sb.append("]]");
+	    return sb.toString();
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
+		if (!(o instanceof LabelList)) {
+			return false;
+		}
+		LabelList labelList = (LabelList)o;
+		if (!labelList.getName().equals(this.name)) {
+		    return false;
+		}
+		if (labelList.isDefaultList() != this.defaultList) {
+		    return false;
+		}
+		return labelList.getLabels().equals(this.labels);
+	}
+	
+	@Override
+	public int hashCode() {
+		int hash = 31 + this.name.hashCode();
+		hash = 31*hash + (this.defaultList ? 1 : 0);
+		for (Label label : this.labels) {
+		    hash = 31*hash + label.hashCode();
+		}
+	    return hash;
 	}
 
 }

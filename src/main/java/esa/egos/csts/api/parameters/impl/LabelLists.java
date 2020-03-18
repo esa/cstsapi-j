@@ -2,6 +2,7 @@ package esa.egos.csts.api.parameters.impl;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.util.stream.Collectors;
 
 import esa.egos.csts.api.exceptions.ConfigurationParameterNotModifiableException;
 import esa.egos.csts.api.oids.ObjectIdentifier;
@@ -107,6 +108,35 @@ public class LabelLists extends AbstractConfigurationParameter implements Observ
 		// the observable list has been changed
 		setChanged();
 		notifyObservers();
+	}
+
+	@Override
+	public String toString() {
+	    return "LabelLists [" + super.toString() + ", labelLists=["
+            + this.labelLists.stream().map(LabelList::toString).collect(Collectors.joining(","))
+            + "]]";
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
+		if (!(o instanceof LabelLists)) {
+			return false;
+		}
+		if (!super.equals(o)) {
+		    return false;
+		}
+		LabelLists ll = (LabelLists)o;
+		return ll.toQualifiedParameter().equals(this.toQualifiedParameter());
+	}
+	
+	@Override
+	public int hashCode() {
+	    int hash = super.hashCode();
+	    hash = 31*hash + toQualifiedParameter().hashCode();
+	    return hash;
 	}
 
 }
