@@ -1,4 +1,4 @@
-package esa.egos.csts.test.mdslite.impl.simulator;
+package esa.egos.csts.sim.impl;
 
 import java.io.FileOutputStream;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package esa.egos.csts.test.mdslite.impl.simulator;
+package esa.egos.csts.api.procedures;
 
 import static org.junit.Assert.*;
 
@@ -19,14 +19,18 @@ import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
-import esa.egos.csts.test.mdslite.impl.simulator.provider.MdCollection;
-import esa.egos.csts.test.mdslite.impl.simulator.provider.MdCstsSiProvider;
-import esa.egos.csts.test.mdslite.impl.simulator.user.MdCstsSiUser;
+import esa.egos.csts.sim.impl.MdCstsSiConfig;
+import esa.egos.csts.sim.impl.prv.MdCollection;
+import esa.egos.csts.sim.impl.prv.MdCstsSiProvider;
+import esa.egos.csts.sim.impl.prv.MdCstsSiProviderConfig;
+import esa.egos.csts.sim.impl.usr.MdCstsSiUser;
+import esa.egos.csts.api.CstsTestWatcher;
+import esa.egos.csts.api.TestBootstrap;
+import esa.egos.csts.api.TestUtils;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Rule;
 
 /**
@@ -34,9 +38,6 @@ import org.junit.Rule;
  */
 public class GenericTest
 {
-    @ClassRule
-    public static TestRule classWatcher = new CstsTestWatcher();
-
     @Rule
     public TestRule testWatcher = new CstsTestWatcher();
 
@@ -114,6 +115,7 @@ public class GenericTest
             // create provider SI configuration
             MdCstsSiProviderConfig mdSiProviderConfig = new MdCstsSiProviderConfig(50,
                                                                                    null,
+                                                                                   null,
                                                                                    scId,
                                                                                    facilityId,
                                                                                    0,
@@ -187,6 +189,7 @@ public class GenericTest
 
             // create provider SI configuration
             MdCstsSiProviderConfig mdSiProviderConfig = new MdCstsSiProviderConfig(50,
+                                                                                   null,
                                                                                    null,
                                                                                    scId,
                                                                                    facilityId,
@@ -265,6 +268,7 @@ public class GenericTest
             // create provider SI configuration
             MdCstsSiProviderConfig mdSiProviderConfig = new MdCstsSiProviderConfig(50,
                                                                                    null,
+                                                                                   null,
                                                                                    scId,
                                                                                    facilityId,
                                                                                    0,
@@ -342,6 +346,7 @@ public class GenericTest
 
             // create provider SI configuration
             MdCstsSiProviderConfig mdSiProviderConfig = new MdCstsSiProviderConfig(50,
+                                                                                   null,
                                                                                    null,
                                                                                    scId,
                                                                                    facilityId,

@@ -1,4 +1,4 @@
-package esa.egos.csts.test.mdslite.impl.simulator.provider;
+package esa.egos.csts.sim.impl.prv;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,14 +16,12 @@ import esa.egos.csts.api.procedures.informationquery.InformationQueryProvider;
 import esa.egos.csts.api.procedures.notification.NotificationProvider;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.LabelList;
-import esa.egos.csts.test.mdslite.impl.simulator.MdCstsSi;
-import esa.egos.csts.test.mdslite.impl.simulator.MdCstsSiConfig;
-import esa.egos.csts.test.mdslite.impl.simulator.MdCstsSiProviderConfig;
+import esa.egos.csts.sim.impl.MdCstsSi;
 
 /**
  * MD-CSTS Provider service instance (SI) implementation for testing
  */
-public class MdCstsSiProvider extends MdCstsSi<InformationQueryProvider, CyclicReportProvider, NotificationProvider>
+public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, InformationQueryProvider, CyclicReportProvider, NotificationProvider>
 {
     public MdCstsSiProvider(ICstsApi api,
                             MdCstsSiProviderConfig config) throws ApiException
@@ -37,26 +35,39 @@ public class MdCstsSiProvider extends MdCstsSi<InformationQueryProvider, CyclicR
     @Override
     protected void addProcedure(IProcedure procedure,
                                 ProcedureInstanceIdentifier pii,
-                                MdCstsSiConfig config) throws ApiException
+                                MdCstsSiProviderConfig config) throws ApiException
     {
         super.addProcedure(procedure, pii, config);
 
         if (procedure instanceof CyclicReportProvider) {
-            ((CyclicReportProvider) procedure).getMinimumAllowedDeliveryCycle()
-                    .initializeValue(((MdCstsSiProviderConfig) config).getMinimumAllowedDeliveryCycle());
-    		updateDefaultLabelList(((CyclicReportProvider) procedure).getLabelLists(),
-    				((MdCstsSiProviderConfig) config).getDefaultLabelList());
+        	configureProcedure(config, (CyclicReportProvider) procedure);
         }
         else if (procedure instanceof InformationQueryProvider) {
-    		updateDefaultLabelList(((InformationQueryProvider) procedure).getLabelLists(),
-    				((MdCstsSiProviderConfig) config).getDefaultLabelList());
+        	configureProcedure(config, (InformationQueryProvider) procedure);
         }
+        else if (procedure instanceof NotificationProvider) {
+        	configureProcedure(config, (NotificationProvider) procedure);
+        }
+    }
+
+    private void configureProcedure(MdCstsSiProviderConfig config, InformationQueryProvider informationQuery) {
+	    informationQuery.getLabelLists().initializeValue(config.getDefaultParameterLabelList());
+    }
+
+    private void configureProcedure(MdCstsSiProviderConfig config, CyclicReportProvider cyclicReport) {
+	    cyclicReport.getMinimumAllowedDeliveryCycle().initializeValue(config.getMinimumAllowedDeliveryCycle());
+	    cyclicReport.getLabelLists().initializeValue(config.getDefaultParameterLabelList());
+    }
+
+    private void configureProcedure(MdCstsSiProviderConfig config, NotificationProvider notification) {
+	    notification.getLabelLists().initializeValue(config.getDefaultEventLabelList());
     }
 
     public void setDefaultLabelList(ProcedureInstanceIdentifier piid, List<Label> defaultLabeList) throws Exception {
     	IProcedure procedure = this.serviceInstance.getProcedure(piid);
     	if (procedure instanceof CyclicReportProvider) {
     		updateDefaultLabelList(((CyclicReportProvider) procedure).getLabelLists(), defaultLabeList);
+    		
     	}
     	else if (procedure instanceof InformationQueryProvider) {
     		updateDefaultLabelList(((InformationQueryProvider) procedure).getLabelLists(), defaultLabeList);

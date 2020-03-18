@@ -1,9 +1,9 @@
-package esa.egos.csts.test.mdslite.impl.simulator.frm;
+package esa.egos.csts.sim.impl.frm;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class BitLabels {
+public class FunctionalResourceBitLabels {
 
 	public static final Map<String, String> FrRemap;
 

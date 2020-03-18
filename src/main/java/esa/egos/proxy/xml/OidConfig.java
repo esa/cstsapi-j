@@ -12,6 +12,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -19,9 +20,64 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OidConfig {
 
+	@XmlAttribute(name = "number_oids", required = false)
+	protected Integer numOids;
+
+	@XmlAttribute(name = "number_fr_oids", required = false)
+	protected Integer numFrOids;
+
+	@XmlAttribute(name = "number_fr_parameter_oids", required = false)
+	protected Integer numFrParameterOids;
+
+	@XmlAttribute(name = "number_fr_event_oids", required = false)
+	protected Integer numFrEventOids;
+
+	@XmlAttribute(name = "number_fr_directive_oids", required = false)
+	protected Integer numFrDirectiveOids;
+
 	@XmlElement(name = "oid", required = true)
 	private ArrayList<Oid> oidLabels;
 
+
+	public Integer getNumOids() {
+		return numOids;
+	}
+
+	public void setNumOids(Integer numOids) {
+		this.numOids = numOids;
+	}
+
+	public Integer getNumFrOids() {
+		return numFrOids;
+	}
+
+	public void setNumFrOids(Integer numFrOids) {
+		this.numFrOids = numFrOids;
+	}
+
+	public Integer getNumFrParameterOids() {
+		return numFrParameterOids;
+	}
+
+	public void setNumFrParameterOids(Integer numFrParameterOids) {
+		this.numFrParameterOids = numFrParameterOids;
+	}
+
+	public Integer getNumFrEventOids() {
+		return numFrEventOids;
+	}
+
+	public void setNumFrEventOids(Integer numFrEventOids) {
+		this.numFrEventOids = numFrEventOids;
+	}
+
+	public Integer getNumFrDirectiveOids() {
+		return numFrDirectiveOids;
+	}
+
+	public void setNumFrDirectiveOids(Integer numFrDirectiveOids) {
+		this.numFrDirectiveOids = numFrDirectiveOids;
+	}
 
 	public ArrayList<Oid> getOidLabelList() {
 		return this.oidLabels;

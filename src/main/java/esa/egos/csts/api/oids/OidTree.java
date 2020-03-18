@@ -3,12 +3,15 @@ package esa.egos.csts.api.oids;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
+import java.util.logging.Logger;
 
 /**
  * Represents an OID tree to translate numeric OIDs to OIDs with labels attached
  * to the numeric OID bits.
  */
 public class OidTree {
+
+	private static final Logger LOG = Logger.getLogger(OidTree.class.getName());
 
 	/** The strict flag indicating that all parents must exist on addition of a child node */
 	public static final boolean PARENT_NODES_MUST_EXISTS = false;
@@ -19,7 +22,7 @@ public class OidTree {
 	/** The position of the cross support functional resource bit in an integer array */
 	public static final int CROSS_FUNC_RES_BIT_POS = 7;
 	/** The position of the cross support functionality type bit (a parameter or an event or a directive) in an integer array */
-	public static final int CROSS_SUPP_FUNC_TYPE_BIT_POS = 8;
+	public static final int CROSS_SUPP_FUNC_KIND_BIT_POS = 8;
 	/** The position of the parameter, event or directive bit in an integer array */
 	public static final int PARAM_OR_EVENT_OR_DIRECT_BIT_POS = 9;
 	/** The position of the parameter, event or a directive version bit in an integer array */
@@ -83,8 +86,16 @@ public class OidTree {
 			for (Field field : OIDs.class.getFields()) {
 				int[] oidArray = ObjectIdentifier.class.cast(field.get(null)).toArray();
 				addChildNode(oidArray, true, oidArray.length - 1, field.getName());
-				System.out.println(field.getName() + ", "
-						+ Arrays.toString(ObjectIdentifier.class.cast(field.get(null)).toArray()));
+				LOG.finest(() -> {
+					String ret = "";
+					try {
+						ret = field.getName() + ", " + Arrays.toString(
+								ObjectIdentifier.class.cast(field.get(null)).toArray());
+					} catch (IllegalArgumentException | IllegalAccessException e) {
+						e.printStackTrace();
+					}
+					return ret;
+				});
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -104,10 +115,22 @@ public class OidTree {
 		if (oidArray.length > CROSS_SUPP_FUNC_BIT_POS 
 				&& oidArray[CROSS_SUPP_FUNC_BIT_POS] == CROSS_SUPP_FUNC_BIT_VALUE) {
 			if (CROSS_FUNC_RES_BIT_POS == lastPos) {
-				OidNode node = addChildNode(oidArray, PARENT_NODES_MUST_EXISTS, CROSS_FUNC_RES_BIT_POS, bitLabel);
-				node.addChildNode(PARAM_BIT_VALUE, "parameter");
-				node.addChildNode(EVENT_BIT_VALUE, "event");
-				node.addChildNode(DIREC_BIT_VALUE, "directive");
+				addChildNode(oidArray, PARENT_NODES_MUST_EXISTS, CROSS_FUNC_RES_BIT_POS, bitLabel);
+
+				// add the parameter(1) node
+				int[] parameterOidArray = Arrays.copyOf(oidArray, oidArray.length+1);
+				parameterOidArray[parameterOidArray.length-1] = PARAM_BIT_VALUE;
+				addChildNode(parameterOidArray, PARENT_NODES_MUST_EXISTS, CROSS_SUPP_FUNC_KIND_BIT_POS, "parameter");
+
+				// add the event(2) node
+				int[] eventOidArray = Arrays.copyOf(oidArray, oidArray.length+1);
+				parameterOidArray[eventOidArray.length-1] = EVENT_BIT_VALUE;
+				addChildNode(eventOidArray, PARENT_NODES_MUST_EXISTS, CROSS_SUPP_FUNC_KIND_BIT_POS, "event");
+
+				// add the directive(3) node
+				int[] directiveOidArray = Arrays.copyOf(oidArray, oidArray.length+1);
+				directiveOidArray[directiveOidArray.length-1] = DIREC_BIT_VALUE;
+				addChildNode(directiveOidArray, PARENT_NODES_MUST_EXISTS, CROSS_SUPP_FUNC_KIND_BIT_POS, "directive");
 			}
 			else if (PARAM_OR_EVENT_OR_DIRECT_BIT_POS == lastPos) {
 				addChildNode(oidArray, PARENT_NODES_MUST_EXISTS, PARAM_OR_EVENT_OR_DIRECT_BIT_POS, bitLabel);

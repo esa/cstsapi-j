@@ -1,4 +1,4 @@
-package esa.egos.csts.test.mdslite.impl.simulator.user;
+package esa.egos.csts.sim.impl.usr;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +20,7 @@ import esa.egos.csts.api.procedures.informationquery.InformationQueryUser;
 import esa.egos.csts.api.procedures.notification.NotificationUser;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceInternal;
 import esa.egos.csts.api.states.service.ServiceStatus;
-import esa.egos.csts.test.mdslite.impl.simulator.MdCstsSiConfig;
+import esa.egos.csts.sim.impl.MdCstsSiConfig;
 
 /**
  * MD-CSTS User service instance

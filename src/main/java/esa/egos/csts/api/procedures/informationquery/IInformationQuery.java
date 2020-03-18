@@ -1,6 +1,7 @@
 package esa.egos.csts.api.procedures.informationquery;
 
 import esa.egos.csts.api.enumerations.CstsResult;
+import esa.egos.csts.api.parameters.impl.LabelLists;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.procedures.IProcedure;
 
@@ -20,4 +21,10 @@ public interface IInformationQuery extends IProcedure {
 	 */
 	CstsResult queryInformation(ListOfParameters listOfParameters);
 
+	
+	/**
+	 * Returns the named label lists configuration parameter of this procedure
+	 * @return the label list
+	 */
+	public LabelLists getLabelLists();
 }

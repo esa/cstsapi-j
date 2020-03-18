@@ -6,14 +6,10 @@ import java.io.IOException;
 import b1.ccsds.on.change.option.cyclic.report.pdus.OnChangeOptCyclicReportStartInvocExt;
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.extensions.Extension;
-import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.oids.ObjectIdentifier;
-import esa.egos.csts.api.parameters.impl.IntegerConfigurationParameter;
-import esa.egos.csts.api.parameters.impl.LabelLists;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.procedures.cyclicreport.CyclicReportProvider;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
-import esa.egos.csts.api.types.LabelList;
 
 /**
  * Implementation of the On Change Cyclic Report Procedure as per 922.1 B-1 
@@ -54,15 +50,5 @@ public class OnChangeCyclicReportProvider extends CyclicReportProvider implement
 	public CstsResult requestCyclicReport(long deliveryCycle, boolean onChange, ListOfParameters listOfParameters) {
 		throw new UnsupportedOperationException("requestCyclicReport(long deliveryCycle, boolean onChange, ListOfParameters listOfParameters) not supported for OnChangeCyclicReportProvider -"
 				+ " only for user!");
-	}
-	
-	@Override
-	protected void initializeConfigurationParameters() {
-		LabelLists namedLists = new LabelLists(OIDs.pCRnamedLabelLists, true, true /*false #hd# how can that be used with false ??? */, this);
-		LabelList list = new LabelList("test-list-1", true);
-		namedLists.add(list);
-		
-		addConfigurationParameter(namedLists);
-		addConfigurationParameter(new IntegerConfigurationParameter(OIDs.pCRminimumAllowedDeliveryCycle, true, false, this));
 	}
 }

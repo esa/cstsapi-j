@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.junit.Test;
+import org.junit.rules.TestRule;
 
 import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.enumerations.AppRole;
@@ -16,21 +17,29 @@ import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.states.service.ServiceStatus;
+import esa.egos.csts.api.types.LabelList;
 import esa.egos.csts.monitored.data.procedures.IOnChangeCyclicReport;
-import esa.egos.csts.test.mdslite.impl.simulator.TestBootstrap;
+import esa.egos.csts.api.CstsTestWatcher;
+import esa.egos.csts.api.TestBootstrap;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 
 /**
  * Test the CSTS API at the example of the monitored data service 
  */
 public class TestMds {
 
-	private ICstsApi providerApi;
-	private ICstsApi userApi;
+    @Rule
+    public TestRule testWatcher = new CstsTestWatcher();
+
+    private ICstsApi providerApi;
+    private ICstsApi userApi;
+
+	private LabelList labelList = new LabelList("test-list-1", true);
 
     @BeforeClass
     public static void setUpClass() throws ApiException
@@ -81,7 +90,6 @@ public class TestMds {
 	public void testMd() {
 			System.out.println("Test Monitored Data Service");			
 			
-			 
 			try {
 				SiConfig mdSiProviderConfig = new SiConfig(ObjectIdentifier.of(1,3,112,4,7,0),
 												ObjectIdentifier.of(1,3,112,4,6,0),
@@ -100,16 +108,24 @@ public class TestMds {
 				List<ListOfParameters> paramLists = new ArrayList<ListOfParameters>();
 				paramLists.add(paramList);
 				
-				MdSiProvider providerSi = new MdSiProvider(providerApi, mdSiProviderConfig, paramLists);
+				MdSiProvider providerSi = new MdSiProvider(providerApi, mdSiProviderConfig, paramLists, labelList);
 				MdSiUser userSi = new MdSiUser(userApi, mdSiUserConfig, 1, paramLists);
-			
+
+				// add a label list for the CR provider procedures
+				
+				Collection<IOnChangeCyclicReport> procedures = providerSi.getCyclicReportProcedures();
+//				for(IOnChangeCyclicReport proc : procedures) {
+//					proc.getLabelLists().add(labelList);
+//					proc.getLabelLists().setConfigured(true); // Indicate that the list is now fully configured
+//				}				
+				
 				System.out.println("BIND...");
 				verifyResult(userSi.bind(), "BIND");
 
 				boolean onChange = true;
 				userSi.startCyclicReport(1000, onChange, 0);
 				
-				Collection<IOnChangeCyclicReport> procedures = userSi.getCyclicReportProcedures();
+				procedures = userSi.getCyclicReportProcedures();
 				for(IOnChangeCyclicReport proc : procedures) {
 					Assert.assertTrue(proc.isActive() == true);
 					Assert.assertTrue(proc.isActivationPending() == false);
@@ -163,7 +179,7 @@ public class TestMds {
 			List<ListOfParameters> paramLists = new ArrayList<ListOfParameters>();
 			paramLists.add(paramList);
 			
-			MdSiProvider providerSi = new MdSiProvider(providerApi, mdSiProviderConfig, paramLists);
+			MdSiProvider providerSi = new MdSiProvider(providerApi, mdSiProviderConfig, paramLists, labelList);
 			MdSiUser userSi = new MdSiUser(userApi, mdSiUserConfig, 1, paramLists);
 		
 			System.out.println("BIND...");
@@ -227,7 +243,7 @@ public class TestMds {
 			List<ListOfParameters> paramLists = new ArrayList<ListOfParameters>();
 			paramLists.add(paramList);
 			
-			MdSiProvider providerSi = new MdSiProvider(providerApi, mdSiProviderConfig, paramLists);
+			MdSiProvider providerSi = new MdSiProvider(providerApi, mdSiProviderConfig, paramLists, labelList);
 			MdSiUser userSi = new MdSiUser(userApi, mdSiUserConfig, 1, paramLists);
 		
 			System.out.println("BIND...");

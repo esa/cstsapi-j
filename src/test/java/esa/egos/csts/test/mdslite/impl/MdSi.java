@@ -22,6 +22,7 @@ import esa.egos.csts.api.serviceinstance.IServiceInform;
 import esa.egos.csts.api.serviceinstance.IServiceInstance;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceIdentifier;
 import esa.egos.csts.api.serviceinstance.impl.ServiceInstanceIdentifier;
+import esa.egos.csts.api.types.LabelList;
 import esa.egos.csts.monitored.data.procedures.IOnChangeCyclicReport;
 import esa.egos.csts.monitored.data.procedures.OnChangeCyclicReportProvider;
 import esa.egos.csts.monitored.data.procedures.OnChangeCyclicReportUser;
@@ -36,7 +37,7 @@ public abstract class MdSi  implements IServiceInform {
 	protected INotification notification;
 	private final ICstsApi api;
 
-	public MdSi(ICstsApi api, SiConfig config, List<ListOfParameters> parameterLists, boolean provider) throws ApiException {
+	public MdSi(ICstsApi api, SiConfig config, List<ListOfParameters> parameterLists, LabelList labelList, boolean provider) throws ApiException {
 		super();
 		
 		this.api = api;
@@ -61,10 +62,15 @@ public abstract class MdSi  implements IServiceInform {
 			}
 			cyclicReport.setRole(ProcedureRole.PRIME, index);
 			cyclicReport.setListOfParameters(list);
+			
 			apiServiceInstance.addProcedure(cyclicReport);
 			if(provider == true) {
-				cyclicReport.getMinimumAllowedDeliveryCycle().initializeValue(50);
+				cyclicReport.getMinimumAllowedDeliveryCycle().initializeValue(50);				
+				cyclicReport.getLabelLists().add(labelList);
+				cyclicReport.getLabelLists().setConfigured(true); // done from outside - cannot be in the add, several add calls shall be possible
 			}
+			
+			
 			this.cyclicReportProcedures.put(new Integer(index), cyclicReport);
 			index++;			
 		}
@@ -78,6 +84,11 @@ public abstract class MdSi  implements IServiceInform {
 		apiServiceInstance.addProcedure(informationQuery);
 		
 		if(provider == true) {
+			informationQuery.getLabelLists().add(labelList);
+			informationQuery.getLabelLists().setConfigured(true);
+		}
+		
+		if(provider == true) {
 			notification = apiServiceInstance.createProcedure(NotificationProvider.class);
 		} else {
 			notification = apiServiceInstance.createProcedure(NotificationUser.class);
@@ -85,6 +96,10 @@ public abstract class MdSi  implements IServiceInform {
 		notification.setRole(ProcedureRole.SECONDARY, 0);
 		apiServiceInstance.addProcedure(notification);
 		
+		if(provider == true) {
+			notification.getLabelLists().add(labelList);
+			notification.getLabelLists().setConfigured(true);
+		}
 		
 		// the application needs to make sure that it chooses valid values from the proxy configuration
 		apiServiceInstance.setPeerIdentifier(config.getPeerIdentifier());

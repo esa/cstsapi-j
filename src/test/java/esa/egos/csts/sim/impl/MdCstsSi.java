@@ -1,4 +1,4 @@
-package esa.egos.csts.test.mdslite.impl.simulator;
+package esa.egos.csts.sim.impl;
 
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.main.ICstsApi;
@@ -17,7 +17,7 @@ import esa.egos.csts.api.serviceinstance.impl.ServiceInstanceIdentifier;
 /**
  * Base class for MD-CSTS service instance (SI)
  */
-public abstract class MdCstsSi<I extends IInformationQuery, C extends ICyclicReport, N extends INotification>
+public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQuery, C extends ICyclicReport, N extends INotification>
                               implements IServiceInform
 {
     /** The SI identifier */ 
@@ -31,7 +31,7 @@ public abstract class MdCstsSi<I extends IInformationQuery, C extends ICyclicRep
 
 
 
-    public MdCstsSi(ICstsApi api, MdCstsSiConfig config) throws ApiException
+    public MdCstsSi(ICstsApi api, K config) throws ApiException
     {
         super();
 
@@ -58,14 +58,14 @@ public abstract class MdCstsSi<I extends IInformationQuery, C extends ICyclicRep
         System.out.println("MdCstsSi#MdCstsSi() end");
     }
 
-    protected void createProcedures(MdCstsSiConfig config) throws ApiException
+    protected void createProcedures(K config) throws ApiException
     {
         for (ProcedureInstanceIdentifier pii : config.getProceduresIdentifiers())
         {
             if (pii.getType().getOid().equals(OIDs.cyclicReport))
             {
                 C cyclicReport = createCyclicReportProcedure();
-                addProcedure(cyclicReport, pii, config);               
+                addProcedure(cyclicReport, pii, config);                
             }
             else if (pii.getType().getOid().equals(OIDs.informationQuery))
             {
@@ -90,7 +90,7 @@ public abstract class MdCstsSi<I extends IInformationQuery, C extends ICyclicRep
 
     protected abstract N createNotificationProcedure() throws ApiException;
 
-    protected void addProcedure(IProcedure procedure, ProcedureInstanceIdentifier pii, MdCstsSiConfig config) throws ApiException
+    protected void addProcedure(IProcedure procedure, ProcedureInstanceIdentifier pii, K config) throws ApiException
     {
         procedure.setRole(pii.getRole(), new Long(pii.getInstanceNumber()).intValue());
         this.serviceInstance.addProcedure(procedure);

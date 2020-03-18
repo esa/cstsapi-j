@@ -1,4 +1,4 @@
-package esa.egos.csts.test.mdslite.impl.simulator.frm;
+package esa.egos.csts.sim.impl.frm;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -11,9 +11,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import com.beanit.jasn1.ber.types.BerObjectIdentifier;
 import com.beanit.jasn1.ber.types.BerType;
@@ -31,7 +28,7 @@ public class FunctionalResourceMetadata {
 
 	private static final String CLASS_FILE_SUFFIX = ".class";
 
-	private static final String PARAM_EVENT_SUFFIX = "Type";
+	private static final String TYPE_SUFFIX = "Type";
 
 	private List<Class<?>> berClasses = new ArrayList<Class<?>>();
 
@@ -54,7 +51,7 @@ public class FunctionalResourceMetadata {
 	}
 
 	/**
-	 * Load FR metadata from the jASN compiler generated classes
+	 * Load FR meta data from the jASN compiler generated classes
 	 *  
 	 * @param packageName The package name containing the generated classes
 	 * @throws ClassNotFoundException
@@ -89,20 +86,14 @@ public class FunctionalResourceMetadata {
 		System.out.println(this.oidClass);
 
 		// OIDs from the generated OidVals class
-		Map<String, int[]> paramEventOids = collectOids(this.oidClass, BerObjectIdentifier.class);
-		System.out.println("OIDs size: " + paramEventOids.size());
-
-		// FRs OIDs from hard coded map {FR-bit number, FR label}
-		Map<String, int[]> frOids = findCrossSupportFunctionalities2(paramEventOids, BitLabels.FrMap);
-
-		// OIDs of FRs + FR params + FR events + FR directives
-		frOids.putAll(paramEventOids);
+		Map<String, int[]> oids = collectOids(this.oidClass, BerObjectIdentifier.class);
+		System.out.println("OIDs size: " + oids.size());
 
 		// OIDs configuration
-		createOidConfiguration(frOids, "src/test/resources/OidConfig.xml");
+		createOidConfiguration(oids, "src/test/resources/OidConfig.xml");
 
 		// class -> ObjectIdentifier map
-		buildClass2Oid(this.berClasses, frOids);
+		buildClass2Oid(this.berClasses, oids);
 	}
 
 	/**
@@ -160,121 +151,52 @@ public class FunctionalResourceMetadata {
 					if (int[].class.isAssignableFrom(nestedField.getType())) {
 						int[] oidArray = int[].class.cast(nestedField.get(obj));
 						ret.put(fieldName, oidArray);
-						System.out.println(
-								fieldName + " " + Arrays.stream(oidArray).boxed().collect(Collectors.toList()));
 					}
 				}
 			}
 		}
-		return ret;
-	}
-
-	private static String findCommonName(String firstName, String secondName) {
-		StringBuilder commonName = new StringBuilder();
-		int n = (firstName.length() < secondName.length()) ? firstName.length() : secondName.length();
-		for (int i = 0; i < n; i++) {
-			char ch = firstName.charAt(i);
-			if (ch == secondName.charAt(i)) {
-				commonName.append(ch);
-			} else {
-				break;
-			}
-		}
-
-		return commonName.toString();
-	}
-
-	private static List<Integer> findCommonOid(int[] firstOid, int[] secondOid) {
-		List<Integer> ret = new ArrayList<>();
-		int n = (firstOid.length < secondOid.length) ? firstOid.length : secondOid.length;
-		for (int i = 0; i < n; i++) {
-			int oidBit = firstOid[i];
-			if (oidBit == secondOid[i]) {
-				ret.add(oidBit);
-			} else {
-				break;
-			}
-		}
-
 		return ret;
 	}
 
 	/**
 	 * Find CSTS FR OIDs and labels from OIDs
 	 * @param oids The map all parameter and event OIDs
-	 * @param frOidBit2FrLabel The map of FR OID bits and FR labels
 	 * @return The map of FR labels mapped to FR OIDs
 	 */
-	public static Map<String, int[]> findCrossSupportFunctionalities2(Map<String, int[]> oids, Map<Integer, String> frOidBit2FrLabel) {
+	public static Map<String, int[]> findCrossSupportFunctionalities(Map<String, int[]> oids) {
 		LinkedHashMap<String, int[]> ret = new LinkedHashMap<String, int[]>();
 		for (Entry<String, int[]> oidEntry : oids.entrySet()) {
-
-			int[] frOidArray =  IntStream.of(oidEntry.getValue()).limit(OidTree.CROSS_SUPP_FUNC_TYPE_BIT_POS).toArray();
-			if ( ret.entrySet().stream().filter(e -> e.getValue().equals(frOidArray)).findFirst().isPresent())
-			{
-				continue;
-			}
-
-			String frLabel = frOidBit2FrLabel.get(frOidArray[OidTree.CROSS_FUNC_RES_BIT_POS]);
-			if (frLabel != null)
-			{
-				ret.put(frLabel, frOidArray);
-			}
-			else
-			{
-				System.out.println("Could not find a FR label for FR bit (" + frOidArray[OidTree.CROSS_FUNC_RES_BIT_POS] + "), ignore it");
+			if (oidEntry.getValue().length == OidTree.CROSS_FUNC_RES_BIT_POS + 1) {
+				ret.put(removeSuffix(oidEntry.getKey(), TYPE_SUFFIX), oidEntry.getValue());
 			}
 		}
 		return ret;
 	}
 
 	/**
-	 * Find CSTS FR from common parameter and event prefixes with respect their OIDs
-	 * @param oids The parameter and event names mapped to their OIDs
-	 * @return common parameter and event prefixes, ~FR names (e.g. ant ~ Antenna) mapped to FR OIDs
+	 * Find CSTS FR parameters, events or directives
+	 * @param oids The map all parameter and event OIDs
+	 * @param kind The functional resource parameter(1), event(2), directive(3)
+	 * @return The map of FR parameters, events or directives labels mapped to FR OIDs
 	 */
-	public static Map<String, int[]> findCrossSupportFunctionalities(Map<String, int[]> oids) {
-		Map<String, int[]> ret = new HashMap<String, int[]>();
-		for (Entry<String, int[]> oidEntryA : oids.entrySet()) {
-			for (Entry<String, int[]> oidEntryB : oids.entrySet()) {
-				if (oidEntryA.equals(oidEntryB)) {
-					continue;
-				}
-				String commonName = findCommonName(oidEntryA.getKey(), oidEntryB.getKey());
-				if (!commonName.isEmpty()) {
-					List<Integer> commonOid = findCommonOid(oidEntryA.getValue(), oidEntryB.getValue());
-					if (commonOid.size() >= OidTree.CROSS_FUNC_RES_BIT_POS) {
-						commonOid = commonOid.stream().limit(OidTree.CROSS_FUNC_RES_BIT_POS).collect(Collectors.toList());
-						int[] oid = commonOid.stream().mapToInt(Integer::intValue).toArray();
-						Optional<Entry<String, int[]>> op = ret.entrySet().stream()
-								.filter(e -> Arrays.equals(e.getValue(), oid)).findFirst();
-						if (op.isPresent()) {
-							Entry<String, int[]> e = op.get();
-							if (e.getKey().length() > commonName.length()) {
-								// System.out.println("replacing " + e.getKey()
-								// + " with " + commonName + " " +
-								// Arrays.toString(oid));
-								ret.remove(e.getKey());
-								ret.put(commonName, oid);
-							}
-						} else {
-							// System.out.println("adding " + commonName +
-							// Arrays.toString(oid));
-							ret.put(commonName, oid);
-						}
-					}
-				}
+	public static Map<String, int[]> findFunctionalResource(Map<String, int[]> oids, int type) {
+		LinkedHashMap<String, int[]> ret = new LinkedHashMap<String, int[]>();
+		for (Entry<String, int[]> oidEntry : oids.entrySet()) {
+			if (oidEntry.getValue().length >= OidTree.CROSS_SUPP_FUNC_KIND_BIT_POS + 1
+					&& oidEntry.getValue()[OidTree.CROSS_SUPP_FUNC_KIND_BIT_POS] == type) {
+				ret.put(removeSuffix(oidEntry.getKey(), TYPE_SUFFIX), oidEntry.getValue());
 			}
 		}
 		return ret;
 	}
+
 
 	private static String getOidNameFromClassName(Class<?> clazz) {
 		StringBuilder sb = new StringBuilder();
 		String className = clazz.getSimpleName();
 		sb.append(className.substring(0, 1).toUpperCase());
 		sb.append(className.substring(1));
-		sb.append(PARAM_EVENT_SUFFIX);
+		sb.append(TYPE_SUFFIX);
 		return sb.toString();
 	}
 
@@ -330,9 +252,30 @@ public class FunctionalResourceMetadata {
 	 * @param oidConfigFile The output configuration file for the CSTS API
 	 */
 	public static void createOidConfiguration(Map<String, int[]> oids, String oidConfigFile) {
+
+		Map<String, int[]> frOids = FunctionalResourceMetadata.findCrossSupportFunctionalities(oids);
+		Map<String, int[]> frParameterOids = FunctionalResourceMetadata.findFunctionalResource(oids, OidTree.PARAM_BIT_VALUE);
+		Map<String, int[]> frEventOids = FunctionalResourceMetadata.findFunctionalResource(oids, OidTree.EVENT_BIT_VALUE);
+		Map<String, int[]> frDirectiveOids = FunctionalResourceMetadata.findFunctionalResource(oids, OidTree.DIREC_BIT_VALUE);
+
 		OidConfig oidConfig = new OidConfig();
 		ArrayList<Oid> oidLabelList = new ArrayList<>();
-		oids.entrySet().stream().forEach(e -> oidLabelList.add(new Oid(e.getValue(), removeSuffix(e.getKey(), PARAM_EVENT_SUFFIX))));
+
+		// add FR OIDs
+		frOids.entrySet().stream().forEach(e -> oidLabelList.add(new Oid(e.getValue(), e.getKey())));
+		// add FR parameter OIDs
+		frParameterOids.entrySet().stream().forEach(e -> oidLabelList.add(new Oid(e.getValue(), e.getKey())));
+		// add FR event OIDs
+		frEventOids.entrySet().stream().forEach(e -> oidLabelList.add(new Oid(e.getValue(), e.getKey())));
+		// add FR directive OIDs
+		frDirectiveOids.entrySet().stream().forEach(e -> oidLabelList.add(new Oid(e.getValue(), e.getKey())));
+
+		// set sizes
+		oidConfig.setNumFrOids(frOids.size());
+		oidConfig.setNumFrParameterOids(frParameterOids.size());
+		oidConfig.setNumFrEventOids(frEventOids.size());
+		oidConfig.setNumFrDirectiveOids(frDirectiveOids.size());
+
 		oidConfig.setOidLabelList(oidLabelList);
 		oidConfig.save(oidConfigFile);
 	}

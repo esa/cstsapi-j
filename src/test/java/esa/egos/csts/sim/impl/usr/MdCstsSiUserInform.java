@@ -1,4 +1,4 @@
-package esa.egos.csts.test.mdslite.impl.simulator.user;
+package esa.egos.csts.sim.impl.usr;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,14 +31,14 @@ import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.informationquery.InformationQueryUser;
 import esa.egos.csts.api.procedures.notification.NotificationUser;
 import esa.egos.csts.api.types.Name;
-import esa.egos.csts.test.mdslite.impl.simulator.MdCstsSi;
-import esa.egos.csts.test.mdslite.impl.simulator.MdCstsSiConfig;
-import esa.egos.csts.test.mdslite.impl.simulator.Utils;
+import esa.egos.csts.sim.impl.MdCstsSi;
+import esa.egos.csts.sim.impl.MdCstsSiConfig;
+import esa.egos.csts.sim.impl.Utils;
 
 /**
  * MD-CSTS User service inform
  */
-public abstract class MdCstsSiUserInform extends MdCstsSi<InformationQueryUser, CyclicReportUser, NotificationUser>
+public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, InformationQueryUser, CyclicReportUser, NotificationUser>
 {
     /** the size of buffer for printing an operation parameters */
     protected static final int PRINT_BUFF_SIZE = 1024;
@@ -222,7 +222,6 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<InformationQueryUser, 
         try
         {
             this.operationResult = op.getResult();
-            System.out.println("this.operationResult: " + this.operationResult);
             if (this.operationResult == OperationResult.NEGATIVE)
             {
                 String specialDiagnostic = specDiagFn.get();
