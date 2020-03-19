@@ -162,6 +162,20 @@ public class Label {
 		}
 		return newLabel;
 	}
+	
+	@Override
+	public String toString() {
+	    StringBuilder sb = new StringBuilder("Label [identifier=");
+	    sb.append(this.identifier.toString());
+	    sb.append(", typeIdentifier=");
+	    if (this.typeIdentifier == TypeIdentifier.FUNCTIONAL_RESOURCE_TYPE) {
+	        sb.append(this.functionalResourceType.toString());
+	    } else if(this.typeIdentifier == TypeIdentifier.PROCEDURE_TYPE) {
+	        sb.append(this.procedureType.toString());
+	    }
+	    sb.append(']');
+	    return sb.toString();
+	}
 
 	@Override
 	public int hashCode() {

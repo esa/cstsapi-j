@@ -14,7 +14,6 @@ import org.junit.rules.TestRule;
 
 import esa.egos.csts.api.enumerations.AppRole;
 import esa.egos.csts.api.enumerations.CstsResult;
-import esa.egos.csts.api.enumerations.ParameterType;
 import esa.egos.csts.api.enumerations.ProcedureRole;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.exceptions.ConfigurationParameterNotModifiableException;
@@ -90,6 +89,7 @@ public class InformationQueryTest
 
     // create provider SI configuration
     private MdCstsSiProviderConfig mdSiProviderConfig = new MdCstsSiProviderConfig(this.minimumAllowedDeliveryCycle,
+                                                                                   null,
                                                                                    null,
                                                                                    this.scId,
                                                                                    this.facilityId,
@@ -923,6 +923,7 @@ public class InformationQueryTest
             // create provider SI configuration
             MdCstsSiProviderConfig mdSiProviderConfig = new MdCstsSiProviderConfig(this.minimumAllowedDeliveryCycle,
                                                                                    defaultLabelList,
+                                                                                   null,
                                                                                    this.scId,
                                                                                    this.facilityId,
                                                                                    0,
@@ -960,27 +961,13 @@ public class InformationQueryTest
             assertFalse("did not get any parameters from provider", queriedParameters_01.isEmpty());
 
             // verify that the user SI received all queried qualified parameters
-            for (Name name : mdCollection.getParameterNameSet().getParameterNames())
+            for (FunctionalResourceParameter parameter : mdCollection.getParameters())
             {
                 Optional<QualifiedParameter> result = queriedParameters_01.stream()
-                        .filter(qualifiedParameter -> qualifiedParameter.getName().equals(name)).findAny();
-                assertTrue(result.isPresent());
+                                .filter(qualifiedParameter -> qualifiedParameter.getName().equals(parameter.getName())).findAny();
+                assertTrue("missing FR parameter " + parameter.getName(), result.isPresent());
 
-                QualifiedParameter qualifiedParameter = result.get();
-                System.out.println("got: " + qualifiedParameter);
-
-                if (qualifiedParameter.getQualifiedValues().get(0).getParameterValues().get(0)
-                        .getType() == ParameterType.INTEGER)
-                {
-                    long providerValue = mdCollection.getQualifiedParameter(name).getQualifiedValues().get(0)
-                            .getParameterValues().get(0).getIntegerParameterValues().get(0);
-                    long userValue = qualifiedParameter.getQualifiedValues().get(0).getParameterValues().get(0)
-                            .getIntegerParameterValues().get(0);
-
-                    System.out.println("providerValue = " + providerValue);
-                    System.out.println("userValue = " + userValue);
-                    assertEquals("parameter " + name + " value is different", providerValue, userValue);
-                }
+                TestUtils.verifyEquals(parameter.toQualifiedParameter(), result.get(), "provider's", "user's");
             }
 
             // wait for several cyclic reports
@@ -996,27 +983,13 @@ public class InformationQueryTest
             assertFalse("did not get any parameters from provider", queriedParameters_02.isEmpty());
 
             // verify that the user SI received all queried qualified parameters
-            for (Name name : mdCollection.getParameterNameSet().getParameterNames())
+            for (FunctionalResourceParameter parameter : mdCollection.getParameters())
             {
                 Optional<QualifiedParameter> result = queriedParameters_02.stream()
-                        .filter(qualifiedParameter -> qualifiedParameter.getName().equals(name)).findAny();
-                assertTrue(result.isPresent());
+                                .filter(qualifiedParameter -> qualifiedParameter.getName().equals(parameter.getName())).findAny();
+                assertTrue("missing FR parameter " + parameter.getName(), result.isPresent());
 
-                QualifiedParameter qualifiedParameter = result.get();
-                System.out.println("got: " + qualifiedParameter);
-
-                if (qualifiedParameter.getQualifiedValues().get(0).getParameterValues().get(0)
-                        .getType() == ParameterType.INTEGER)
-                {
-                    long providerValue = mdCollection.getQualifiedParameter(name).getQualifiedValues().get(0)
-                            .getParameterValues().get(0).getIntegerParameterValues().get(0);
-                    long userValue = qualifiedParameter.getQualifiedValues().get(0).getParameterValues().get(0)
-                            .getIntegerParameterValues().get(0);
-
-                    System.out.println("providerValue = " + providerValue);
-                    System.out.println("userValue = " + userValue);
-                    assertEquals("parameter " + name + " value is different", providerValue, userValue);
-                }
+                TestUtils.verifyEquals(parameter.toQualifiedParameter(), result.get(), "provider's", "user's");
             }
 
             assertTrue("no cyclic report received", userSi.getCyclicReportCount() > 0);

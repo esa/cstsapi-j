@@ -1,8 +1,8 @@
 package esa.egos.csts.api.parameters.impl;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.beanit.jasn1.ber.types.BerNull;
 
@@ -124,17 +124,10 @@ public class QualifiedValues {
 	
 	@Override
 	public String toString() {
-	    StringBuilder sb = new StringBuilder("QualifiedValues [qualifier=");
-	    sb.append(this.qualifier.name());
-	    sb.append(", parameterValues=[");
-	    Iterator<ParameterValue> it = this.parameterValues.iterator();
-	    while (it.hasNext()) {
-	        ParameterValue pv = it.next();
-	        sb.append(pv.toString());
-	        if (it.hasNext()) sb.append(", ");
-	    }
-	    sb.append("]]");
-	    return sb.toString();
+	    return "QualifiedValues [qualifier=" + this.qualifier.name()
+	            + ", parameterValues="
+	            + this.parameterValues.stream().map(ParameterValue::toString).collect(Collectors.joining(","))
+	            + "]";
 	}
 	
 	@Override

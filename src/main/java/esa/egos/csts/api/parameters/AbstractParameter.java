@@ -61,5 +61,38 @@ public abstract class AbstractParameter extends Observable implements IParameter
 	public ObjectIdentifier getOid() {
 		return name.getOid();
 	}
+	
+	@Override
+	public String toString() {
+	    return "AbstractParameter [label="
+	            + this.label.toString()
+	            + ", name=" + this.name.toString()
+	            + "]";
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
+		if (!(o instanceof AbstractParameter)) {
+			return false;
+		}
+		AbstractParameter ap = (AbstractParameter)o;
+		if (!this.label.equals(ap.getLabel())) {
+		    return false;
+		}
+		if (!this.name.equals(ap.getName())) {
+		    return false;
+		}
+		return true;
+	}
+	
+	@Override
+	public int hashCode() {
+	    int hash = this.label.hashCode();
+	    hash = 31*hash + this.name.hashCode();
+	    return hash;
+	}
 
 }

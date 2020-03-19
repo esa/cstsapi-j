@@ -73,6 +73,7 @@ public class QualifiedParameterTest {
 		pvList.add(pv);
 		pv = new ParameterValue(ParameterType.EXTENDED);
 		pvList.add(pv);
+		System.out.println(qp.toString());
 		
 		int hash = qp.hashCode();
 		
@@ -190,6 +191,7 @@ public class QualifiedParameterTest {
 
 		Assert.assertFalse(qp5.equals(qp6));
 		Assert.assertFalse(hash5 == hash6);
+
 	}
 
 }
