@@ -14,7 +14,7 @@ public class OidTree {
 	private static final Logger LOG = Logger.getLogger(OidTree.class.getName());
 
 	/** The strict flag indicating that all parents must exist on addition of a child node */
-	public static final boolean PARENT_NODES_MUST_EXISTS = false;
+	public static final boolean PARENT_NODES_MUST_EXIST = false;
 	/** The position of the cross support functionalities bit in an integer array */
 	public static final int CROSS_SUPP_FUNC_BIT_POS = 6;
 	/** The position of the cross support functionalities bit in an integer array */
@@ -115,35 +115,35 @@ public class OidTree {
 		if (oidArray.length > CROSS_SUPP_FUNC_BIT_POS 
 				&& oidArray[CROSS_SUPP_FUNC_BIT_POS] == CROSS_SUPP_FUNC_BIT_VALUE) {
 			if (CROSS_FUNC_RES_BIT_POS == lastPos) {
-				addChildNode(oidArray, PARENT_NODES_MUST_EXISTS, CROSS_FUNC_RES_BIT_POS, bitLabel);
+				addChildNode(oidArray, PARENT_NODES_MUST_EXIST, CROSS_FUNC_RES_BIT_POS, bitLabel);
 
 				// add the parameter(1) node
 				int[] parameterOidArray = Arrays.copyOf(oidArray, oidArray.length+1);
 				parameterOidArray[parameterOidArray.length-1] = PARAM_BIT_VALUE;
-				addChildNode(parameterOidArray, PARENT_NODES_MUST_EXISTS, CROSS_SUPP_FUNC_KIND_BIT_POS, "parameter");
+				addChildNode(parameterOidArray, PARENT_NODES_MUST_EXIST, CROSS_SUPP_FUNC_KIND_BIT_POS, "parameter");
 
 				// add the event(2) node
 				int[] eventOidArray = Arrays.copyOf(oidArray, oidArray.length+1);
 				parameterOidArray[eventOidArray.length-1] = EVENT_BIT_VALUE;
-				addChildNode(eventOidArray, PARENT_NODES_MUST_EXISTS, CROSS_SUPP_FUNC_KIND_BIT_POS, "event");
+				addChildNode(eventOidArray, PARENT_NODES_MUST_EXIST, CROSS_SUPP_FUNC_KIND_BIT_POS, "event");
 
 				// add the directive(3) node
 				int[] directiveOidArray = Arrays.copyOf(oidArray, oidArray.length+1);
 				directiveOidArray[directiveOidArray.length-1] = DIREC_BIT_VALUE;
-				addChildNode(directiveOidArray, PARENT_NODES_MUST_EXISTS, CROSS_SUPP_FUNC_KIND_BIT_POS, "directive");
+				addChildNode(directiveOidArray, PARENT_NODES_MUST_EXIST, CROSS_SUPP_FUNC_KIND_BIT_POS, "directive");
 			}
 			else if (PARAM_OR_EVENT_OR_DIRECT_BIT_POS == lastPos) {
-				addChildNode(oidArray, PARENT_NODES_MUST_EXISTS, PARAM_OR_EVENT_OR_DIRECT_BIT_POS, bitLabel);
+				addChildNode(oidArray, PARENT_NODES_MUST_EXIST, PARAM_OR_EVENT_OR_DIRECT_BIT_POS, bitLabel);
 			}
 			else if (PARAM_OR_EVENT_OR_DIRECT_VERSION_BIT_POS == lastPos) {
-				addChildNodeEx(oidArray, PARENT_NODES_MUST_EXISTS, PARAM_OR_EVENT_OR_DIRECT_BIT_POS, bitLabel, "version");
+				addChildNodeEx(oidArray, PARENT_NODES_MUST_EXIST, PARAM_OR_EVENT_OR_DIRECT_BIT_POS, bitLabel, "version");
 			}
 			else if (PARAM_OR_EVENT_OR_DIRECT_QUALIFIER_BIT_POS == lastPos) {
-				addChildNodeEx(oidArray, PARENT_NODES_MUST_EXISTS, PARAM_OR_EVENT_OR_DIRECT_BIT_POS, bitLabel, "version", "qualifier");
+				addChildNodeEx(oidArray, PARENT_NODES_MUST_EXIST, PARAM_OR_EVENT_OR_DIRECT_BIT_POS, bitLabel, "version", "qualifier");
 			}
 		}
 		else {
-			addChildNode(oidArray, PARENT_NODES_MUST_EXISTS, lastPos, bitLabel);
+			addChildNode(oidArray, PARENT_NODES_MUST_EXIST, lastPos, bitLabel);
 		}
 	}
 

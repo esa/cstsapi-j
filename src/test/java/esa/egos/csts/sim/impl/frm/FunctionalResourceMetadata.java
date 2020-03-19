@@ -1,6 +1,9 @@
 package esa.egos.csts.sim.impl.frm;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.AbstractMap;
@@ -11,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import com.beanit.jasn1.ber.types.BerObjectIdentifier;
 import com.beanit.jasn1.ber.types.BerType;
@@ -30,12 +34,34 @@ public class FunctionalResourceMetadata {
 
 	private static final String TYPE_SUFFIX = "Type";
 
-	private List<Class<?>> berClasses = new ArrayList<Class<?>>();
+	private static final Class<?> OID_CONTAINER_CLASS = BerObjectIdentifier.class;
+
+	private Map<String, Class<?>> berClasses;
 
 	private Class<?> oidClass = null;
 
+	private Map<String, int[]> oidName2oidArray;
+
+	private Map<String, int[]> frOidName2oidArray;
+
+	private Map<String, int[]> frParameterOidName2oidArray;
+
+	private Map<String, int[]> frEventOidName2oidArray;
+
+	private Map<String, int[]> frDirectiveOidName2oidArray;
+
+	private Map<Class<?>, List<Class<?>>> frClass2frParameterClasses;
+
+	private Map<Class<?>, List<Class<?>>> frClass2frEventClasses;
+
+
 	private FunctionalResourceMetadata() {
-		this.berClasses = new ArrayList<Class<?>>();
+		this.berClasses = new LinkedHashMap<String, Class<?>>();
+		this.oidName2oidArray = new LinkedHashMap<String, int[]>();
+		this.frOidName2oidArray = new LinkedHashMap<String, int[]>();
+		this.frParameterOidName2oidArray = new LinkedHashMap<String, int[]>();
+		this.frEventOidName2oidArray = new LinkedHashMap<String, int[]>();
+		this.frDirectiveOidName2oidArray = new LinkedHashMap<String, int[]>();
 	}
 
 	public static FunctionalResourceMetadata getInstance() {
@@ -63,59 +89,29 @@ public class FunctionalResourceMetadata {
 		// collect all classes from the generated package
 		List<Class<?>> classes = getLocalPackageClasses(packageName, false);
 
-		// check whether a class implements the BerType IF
-		this.berClasses.clear();
-		List<Class<?>> notBerClasses = new ArrayList<Class<?>>();
-
-		for (Class<?> clazz : classes) {
-			if (BerType.class.isAssignableFrom(clazz)) {
-				this.berClasses.add(clazz);
-			} else {
-				notBerClasses.add(clazz);
-			}
-		}
-
-		// find the OidVals class w/ OIDs definitions 
-		this.oidClass = findOidDefinitionClass(notBerClasses);
-
-		this.berClasses.stream().forEach(clazz -> System.out.println(clazz.getCanonicalName()));
-
-		System.out.println("ber classes size: " + this.berClasses.size());
-		System.out.println(notBerClasses);
-		System.out.println(notBerClasses.size());
-		System.out.println(this.oidClass);
+		processClasses(classes);
 
 		// OIDs from the generated OidVals class
-		Map<String, int[]> oids = collectOids(this.oidClass, BerObjectIdentifier.class);
-		System.out.println("OIDs size: " + oids.size());
+//		Map<String, int[]> oids = collectOids(this.oidClass, BerObjectIdentifier.class);
+//		System.out.println("OIDs size: " + oids.size());
 
 		// OIDs configuration
-		createOidConfiguration(oids, "src/test/resources/OidConfig.xml");
+		createOidConfiguration("src/test/resources/OidConfig.xml");
 
 		// class -> ObjectIdentifier map
-		buildClass2Oid(this.berClasses, oids);
+//		buildClass2Oid(this.berClasses, oids);
 	}
 
 	/**
-	 * Assess whether the class contains the OID definitions
+	 * Get all classes from a package
 	 * 
-	 * @param clazz
-	 * @return
+	 * @param packageName The package name
+	 * @param alsoNestedClasses The nested classes are included
+	 * 
+	 * @return the list of found classes in the package
+	 * @throws ClassNotFoundException 
 	 */
-	private static boolean isOidDefinitionClass(Class<?> clazz) {
-		return (clazz.getSimpleName().toLowerCase().contains("oid"));
-	}
-
-	private static Class<?> findOidDefinitionClass(List<Class<?>> classes) {
-		return classes.stream().filter(clazz -> isOidDefinitionClass(clazz)).findFirst().get();
-	}
-
-	private static int getDotCount(final String str) {
-		return str.length() - str.replaceAll("[.]", "").length();
-	}
-
-	public List<Class<?>> getLocalPackageClasses(String packageName, boolean alsoNestedClasses)
-			throws ClassNotFoundException {
+	public List<Class<?>> getLocalPackageClasses(String packageName, boolean alsoNestedClasses) throws ClassNotFoundException {
 		List<Class<?>> ret = new ArrayList<Class<?>>();
 		File packageDirectory = new File(
 				getClass().getClassLoader().getResource(packageName.replace('.', '/')).getFile());
@@ -139,56 +135,141 @@ public class FunctionalResourceMetadata {
 		return ret;
 	}
 
-	public static Map<String, int[]> collectOids(Class<?> oidClass, Class<?> oidContainerClass) throws IllegalArgumentException, IllegalAccessException
-			 {
-		Map<String, int[]> ret = new LinkedHashMap<String, int[]>();
-		for (Field field : oidClass.getFields()) {
-			Class<?> clazz = field.getType();
-			if (Modifier.isStatic(field.getModifiers()) && oidContainerClass.isAssignableFrom(clazz)) {
-				String fieldName = field.getName();
-				Object obj = field.get(null);
-				for (Field nestedField : obj.getClass().getFields()) {
-					if (int[].class.isAssignableFrom(nestedField.getType())) {
-						int[] oidArray = int[].class.cast(nestedField.get(obj));
-						ret.put(fieldName, oidArray);
+	private void processClasses(List<Class<?>> classes) throws IllegalArgumentException, IllegalAccessException {
+		// check whether a class implements the BerType IF
+		this.berClasses.clear();
+		List<Class<?>> notBerClasses = new ArrayList<Class<?>>();
+
+		for (Class<?> clazz : classes) {
+			if (BerType.class.isAssignableFrom(clazz)) {
+				this.berClasses.put(clazz.getSimpleName(), clazz);
+			} else {
+				notBerClasses.add(clazz);
+			}
+		}
+
+		// find the OidVals class w/ OIDs definitions
+		
+		Optional<Class<?>> opt = findOidDefinitionClass(notBerClasses);
+		if (opt.isPresent())
+		{
+			this.oidClass = opt.get();
+			this.berClasses.values().stream().forEach(clazz -> System.out.println(clazz.getCanonicalName()));
+
+			System.out.println("ber classes size: " + this.berClasses.size());
+			System.out.println(notBerClasses);
+			System.out.println(notBerClasses.size());
+			System.out.println(this.oidClass);
+
+			for (Field field : this.oidClass.getFields()) {
+				Class<?> clazz = field.getType();
+				if (Modifier.isStatic(field.getModifiers()) && OID_CONTAINER_CLASS.isAssignableFrom(clazz)) {
+					String fieldName = field.getName();
+					Object obj = field.get(null);
+					for (Field nestedField : obj.getClass().getFields()) {
+						if (int[].class.isAssignableFrom(nestedField.getType())) {
+							int[] oidArray = int[].class.cast(nestedField.get(obj));
+							processOid(fieldName, oidArray);
+						}
 					}
 				}
 			}
 		}
-		return ret;
+	}
+
+	private void processOid(String oidName, int[] oidArray) {
+		this.oidName2oidArray.put(oidName, oidArray);
+
+		if (oidArray.length == OidTree.CROSS_FUNC_RES_BIT_POS + 1) {
+			this.frOidName2oidArray.put(removeSuffix(oidName, TYPE_SUFFIX), oidArray);
+		}
+		else if (oidArray.length >= OidTree.PARAM_OR_EVENT_OR_DIRECT_BIT_POS + 1) {
+			switch(oidArray[OidTree.PARAM_OR_EVENT_OR_DIRECT_BIT_POS]) {
+			case OidTree.PARAM_BIT_VALUE:
+				this.frParameterOidName2oidArray.put(removeSuffix(oidName, TYPE_SUFFIX), oidArray);
+				break;
+			case OidTree.EVENT_BIT_VALUE:
+				this.frEventOidName2oidArray.put(removeSuffix(oidName, TYPE_SUFFIX), oidArray);
+				break;
+			case OidTree.DIREC_BIT_VALUE:
+				this.frDirectiveOidName2oidArray.put(removeSuffix(oidName, TYPE_SUFFIX), oidArray);
+				break;
+			default:
+				break;
+			}
+		}
+		
 	}
 
 	/**
-	 * Find CSTS FR OIDs and labels from OIDs
-	 * @param oids The map all parameter and event OIDs
-	 * @return The map of FR labels mapped to FR OIDs
+	 * Assess whether the class contains the OID definitions
+	 * 
+	 * @param clazz
+	 * @return
 	 */
-	public static Map<String, int[]> findCrossSupportFunctionalities(Map<String, int[]> oids) {
-		LinkedHashMap<String, int[]> ret = new LinkedHashMap<String, int[]>();
-		for (Entry<String, int[]> oidEntry : oids.entrySet()) {
-			if (oidEntry.getValue().length == OidTree.CROSS_FUNC_RES_BIT_POS + 1) {
-				ret.put(removeSuffix(oidEntry.getKey(), TYPE_SUFFIX), oidEntry.getValue());
-			}
-		}
-		return ret;
+	private static boolean isOidDefinitionClass(Class<?> clazz) {
+		return (clazz.getSimpleName().toLowerCase().contains("oid"));
 	}
 
-	/**
-	 * Find CSTS FR parameters, events or directives
-	 * @param oids The map all parameter and event OIDs
-	 * @param kind The functional resource parameter(1), event(2), directive(3)
-	 * @return The map of FR parameters, events or directives labels mapped to FR OIDs
-	 */
-	public static Map<String, int[]> findFunctionalResource(Map<String, int[]> oids, int type) {
-		LinkedHashMap<String, int[]> ret = new LinkedHashMap<String, int[]>();
-		for (Entry<String, int[]> oidEntry : oids.entrySet()) {
-			if (oidEntry.getValue().length >= OidTree.CROSS_SUPP_FUNC_KIND_BIT_POS + 1
-					&& oidEntry.getValue()[OidTree.CROSS_SUPP_FUNC_KIND_BIT_POS] == type) {
-				ret.put(removeSuffix(oidEntry.getKey(), TYPE_SUFFIX), oidEntry.getValue());
-			}
-		}
-		return ret;
+	private static Optional<Class<?>> findOidDefinitionClass(List<Class<?>> classes) {
+		return classes.stream().filter(clazz -> isOidDefinitionClass(clazz)).findFirst();
 	}
+
+	private static int getDotCount(final String str) {
+		return str.length() - str.replaceAll("[.]", "").length();
+	}
+
+
+//	public static Map<String, int[]> collectOids(Class<?> oidClass, Class<?> oidContainerClass) throws IllegalArgumentException, IllegalAccessException
+//			 {
+//		Map<String, int[]> ret = new LinkedHashMap<String, int[]>();
+//		for (Field field : oidClass.getFields()) {
+//			Class<?> clazz = field.getType();
+//			if (Modifier.isStatic(field.getModifiers()) && oidContainerClass.isAssignableFrom(clazz)) {
+//				String fieldName = field.getName();
+//				Object obj = field.get(null);
+//				for (Field nestedField : obj.getClass().getFields()) {
+//					if (int[].class.isAssignableFrom(nestedField.getType())) {
+//						int[] oidArray = int[].class.cast(nestedField.get(obj));
+//						ret.put(fieldName, oidArray);
+//					}
+//				}
+//			}
+//		}
+//		return ret;
+//	}
+
+//	/**
+//	 * Find CSTS FR OIDs and labels from OIDs
+//	 * @param oids The map all parameter and event OIDs
+//	 * @return The map of FR labels mapped to FR OIDs
+//	 */
+//	public static Map<String, int[]> findCrossSupportFunctionalities(Map<String, int[]> oids) {
+//		LinkedHashMap<String, int[]> ret = new LinkedHashMap<String, int[]>();
+//		for (Entry<String, int[]> oidEntry : oids.entrySet()) {
+//			if (oidEntry.getValue().length == OidTree.CROSS_FUNC_RES_BIT_POS + 1) {
+//				ret.put(removeSuffix(oidEntry.getKey(), TYPE_SUFFIX), oidEntry.getValue());
+//			}
+//		}
+//		return ret;
+//	}
+//
+//	/**
+//	 * Find CSTS FR parameters, events or directives
+//	 * @param oids The map all parameter and event OIDs
+//	 * @param kind The functional resource parameter(1), event(2), directive(3)
+//	 * @return The map of FR parameters, events or directives labels mapped to FR OIDs
+//	 */
+//	public static Map<String, int[]> findFunctionalResource(Map<String, int[]> oids, int type) {
+//		LinkedHashMap<String, int[]> ret = new LinkedHashMap<String, int[]>();
+//		for (Entry<String, int[]> oidEntry : oids.entrySet()) {
+//			if (oidEntry.getValue().length >= OidTree.CROSS_SUPP_FUNC_KIND_BIT_POS + 1
+//					&& oidEntry.getValue()[OidTree.CROSS_SUPP_FUNC_KIND_BIT_POS] == type) {
+//				ret.put(removeSuffix(oidEntry.getKey(), TYPE_SUFFIX), oidEntry.getValue());
+//			}
+//		}
+//		return ret;
+//	}
 
 
 	private static String getOidNameFromClassName(Class<?> clazz) {
@@ -251,32 +332,42 @@ public class FunctionalResourceMetadata {
 	 * @param oids The map containing e.g an FR or an FR parameter label 
 	 * @param oidConfigFile The output configuration file for the CSTS API
 	 */
-	public static void createOidConfiguration(Map<String, int[]> oids, String oidConfigFile) {
+	public void createOidConfiguration(String oidConfigFile) {
 
-		Map<String, int[]> frOids = FunctionalResourceMetadata.findCrossSupportFunctionalities(oids);
-		Map<String, int[]> frParameterOids = FunctionalResourceMetadata.findFunctionalResource(oids, OidTree.PARAM_BIT_VALUE);
-		Map<String, int[]> frEventOids = FunctionalResourceMetadata.findFunctionalResource(oids, OidTree.EVENT_BIT_VALUE);
-		Map<String, int[]> frDirectiveOids = FunctionalResourceMetadata.findFunctionalResource(oids, OidTree.DIREC_BIT_VALUE);
 
 		OidConfig oidConfig = new OidConfig();
 		ArrayList<Oid> oidLabelList = new ArrayList<>();
 
 		// add FR OIDs
-		frOids.entrySet().stream().forEach(e -> oidLabelList.add(new Oid(e.getValue(), e.getKey())));
+		frOidName2oidArray.entrySet().stream().forEach(e -> oidLabelList.add(new Oid(e.getValue(), e.getKey())));
 		// add FR parameter OIDs
-		frParameterOids.entrySet().stream().forEach(e -> oidLabelList.add(new Oid(e.getValue(), e.getKey())));
+		frParameterOidName2oidArray.entrySet().stream().forEach(e -> oidLabelList.add(new Oid(e.getValue(), e.getKey())));
 		// add FR event OIDs
-		frEventOids.entrySet().stream().forEach(e -> oidLabelList.add(new Oid(e.getValue(), e.getKey())));
+		frEventOidName2oidArray.entrySet().stream().forEach(e -> oidLabelList.add(new Oid(e.getValue(), e.getKey())));
 		// add FR directive OIDs
-		frDirectiveOids.entrySet().stream().forEach(e -> oidLabelList.add(new Oid(e.getValue(), e.getKey())));
+		frDirectiveOidName2oidArray.entrySet().stream().forEach(e -> oidLabelList.add(new Oid(e.getValue(), e.getKey())));
 
 		// set sizes
-		oidConfig.setNumFrOids(frOids.size());
-		oidConfig.setNumFrParameterOids(frParameterOids.size());
-		oidConfig.setNumFrEventOids(frEventOids.size());
-		oidConfig.setNumFrDirectiveOids(frDirectiveOids.size());
+		oidConfig.setNumFrOids(frOidName2oidArray.size());
+		oidConfig.setNumFrParameterOids(frParameterOidName2oidArray.size());
+		oidConfig.setNumFrEventOids(frEventOidName2oidArray.size());
+		oidConfig.setNumFrDirectiveOids(frDirectiveOidName2oidArray.size());
 
 		oidConfig.setOidLabelList(oidLabelList);
 		oidConfig.save(oidConfigFile);
+	}
+
+	/**
+	 * Create the FROIDs class
+	 * 
+	 * @param oids The map containing e.g an FR or an FR parameter label 
+	 * @param oidConfigFile The output configuration file for the CSTS API
+	 * @throws UnsupportedEncodingException 
+	 * @throws FileNotFoundException 
+	 */
+	public static void createFROIDs(Map<String, int[]> oids, String packageName) {
+//		List<String> lines = Arrays.asList("The first line", "The second line");
+//		Path file = Paths.get("the-file-name.txt");
+//		Files.write(file, lines, StandardCharsets.UTF_8);
 	}
 }
