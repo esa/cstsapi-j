@@ -1,6 +1,11 @@
 package esa.egos.csts.test.rtn.cfdp.pdu.impl;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -30,6 +35,13 @@ public class TestRtnCfdpPdu {
 
     private ICstsApi providerApi;
     private ICstsApi userApi;
+    
+    Lock testConditionLock = new ReentrantLock();
+    Condition testCondition = testConditionLock.newCondition();
+
+	private long numFramesReceived;
+
+	private long numFramesSent;
 
     @BeforeClass
     public static void setUpClass() throws ApiException
@@ -103,20 +115,34 @@ public class TestRtnCfdpPdu {
 						"CSTS-PROVIDER",
 						"CSTS_PT1");
 				
-				
+				numFramesReceived = 0;
 				RtnCfdpPduSiProvider providerSi = new RtnCfdpPduSiProvider(providerApi, providerConfig, rtnCfdpProcedureConfig);
 				RtnCfdpPduSiUser userSi = new RtnCfdpPduSiUser(userApi, userConfig, new ICfpdPduReceiver() {
 					
 					@Override
 					public void cfdpPdu(byte[] cfdpPdu) {
 						//CSTS_LOG.CSTS_API_LOGGER.fine("Received CFDP PDU of length " + cfdpPdu.length);
+						numFramesReceived++;
 						
+						testConditionLock.lock();
+						if(numFramesReceived == numFramesSent) {
+							System.out.println("Received the expected " + numFramesReceived + " frames");
+							testCondition.signal();
+						}
+						testConditionLock.unlock();
 					}
 				});
 
+				numFramesSent = 0;
 				for(int idx=0; idx<2; idx++) {
-					doDataTransfer(userSi, providerSi);
+					doDataTransfer(userSi, providerSi, 5);					
 				}
+
+				testConditionLock.lock();
+				while(numFramesReceived != numFramesSent) {
+					testCondition.await(100, TimeUnit.SECONDS);
+				}
+				testConditionLock.unlock();
 				
 				providerSi.destroy();
 				userSi.destroy();
@@ -127,7 +153,7 @@ public class TestRtnCfdpPdu {
 			}
 	}
 	
-	private void doDataTransfer(RtnCfdpPduSiUser userSi, RtnCfdpPduSiProvider providerSi) throws InterruptedException {
+	private void doDataTransfer(RtnCfdpPduSiUser userSi, RtnCfdpPduSiProvider providerSi, long numFrames) throws InterruptedException {
 		byte[] cfdpPduData = new byte[1024];
 		
 		CSTS_LOG.CSTS_API_LOGGER.info("BIND...");
@@ -143,14 +169,10 @@ public class TestRtnCfdpPdu {
 		Assert.assertTrue(providerSi.getDeliveryProc().isActivationPending() == false);
 		Assert.assertTrue(providerSi.getDeliveryProc().isDeactivationPending() == false);
 		
-		Thread.sleep(2000); // give some time to report on data
-		
-		for(int idx=0; idx<10; idx++) {
+		for(int idx=0; idx<numFrames; idx++) {
 			providerSi.transferData(cfdpPduData);
+			numFramesSent++;
 		}
-		Thread.sleep(2000); // give some time to report on data
-		//providerSi.setAntAzimut(123, 0);
-
 		
 		verifyResult(userSi.endDataDelivery(), "END DATA Delivery");
 		
