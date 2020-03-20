@@ -208,9 +208,6 @@ public class MdSiUser extends MdSi {
 	
 	@Override
 	public void informOpInvocation(IOperation operation) {
-		System.out.println("MD User received operation " + operation);
-		System.out.println("MD User received operation " + operation.print(1024));
-
 		// test decoding of an FR parameter
 		if(operation.getType() == OperationType.TRANSFER_DATA) {
 			// at that point the transfer data refinement of cyclic report is updated in terms of qualified parameters!
@@ -240,8 +237,6 @@ public class MdSiUser extends MdSi {
 
 	@Override
 	public void informOpReturn(IConfirmedOperation operation) {
-		System.out.println("MD User received operation return " + operation);
-		
 		if(operation.getType() == OperationType.BIND) {	
 			this.retLock.lock();
 			this.retCond.signal();

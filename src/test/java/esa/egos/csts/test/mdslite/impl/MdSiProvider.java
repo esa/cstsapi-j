@@ -29,7 +29,6 @@ public class MdSiProvider extends MdSi {
 	
 	@Override
 	public synchronized void informOpInvocation(IOperation operation) {
-		System.out.println("MD Provider received operation " + operation);
 		if(operation.getType() == OperationType.PEER_ABORT) {
 			this.notify();
 		}
@@ -42,7 +41,6 @@ public class MdSiProvider extends MdSi {
 
 	@Override
 	public void informOpReturn(IConfirmedOperation operation) {
-		System.out.println("MD Provider received operation return " + operation);
 	}
 
 	@Override
