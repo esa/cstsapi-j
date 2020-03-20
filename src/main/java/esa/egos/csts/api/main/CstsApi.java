@@ -600,6 +600,16 @@ public class CstsApi implements IApi, ILocator {
 				this.reporter.notifyApplication(null, CstsLogMessageType.INFO,
 						"Processing OID configuration file '" + oidConfigFile + "'");
 
+				if(new File(oidConfigFile).exists() == false) {
+					// try the path of this config file
+					File oidFile = new File(oidConfigFile);
+					File apiConfigFile = new File(this.configFile);
+					String oidConfigNameNew = apiConfigFile.getAbsolutePath() + File.separator + oidFile.getName();
+					if(new File(oidConfigNameNew).exists() == true) {
+						oidConfigFile = oidConfigNameNew;
+					}
+				}
+				
 				OidConfig oidConfig = OidConfig.load(oidConfigFile);
 				if (oidConfig != null) {
 					ArrayList<Oid> oidLabelList = oidConfig.getOidLabelList();
