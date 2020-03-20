@@ -1,4 +1,4 @@
-package esa.egos.csts.test.mdslite.impl;
+package esa.egos.csts.app.si;
 
 import esa.egos.csts.api.oids.ObjectIdentifier;
 

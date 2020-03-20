@@ -22,6 +22,7 @@ import esa.egos.csts.api.parameters.impl.ParameterValue;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 import esa.egos.csts.api.parameters.impl.QualifiedValues;
 import esa.egos.csts.api.states.service.ServiceStatus;
+import esa.egos.csts.app.si.SiConfig;
 import esa.egos.csts.monitored.data.procedures.IOnChangeCyclicReport;
 
 /**

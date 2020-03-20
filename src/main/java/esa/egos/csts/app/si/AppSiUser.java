@@ -1,4 +1,4 @@
-package esa.egos.csts.test.rtn.cfdp.pdu.impl;
+package esa.egos.csts.app.si;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
@@ -6,13 +6,12 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import esa.egos.csts.api.enumerations.CstsResult;
-import esa.egos.csts.api.enumerations.OperationResult;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.procedures.IStatefulProcedure;
 import esa.egos.csts.api.states.service.ServiceStatus;
-import esa.egos.csts.test.mdslite.impl.SiConfig;
+import esa.egos.csts.api.util.CSTS_LOG;
 
 public abstract class AppSiUser extends AppSi {
 	private static final int RET_TIMEOUT = 100;
@@ -105,34 +104,27 @@ public abstract class AppSiUser extends AppSi {
 	
 	@Override
 	public void informOpReturn(IConfirmedOperation operation) {
-		System.err.println("User received operation return " + operation.print(1000));
-
 		if(operation instanceof IConfirmedOperation) {
 			this.retLock.lock();
 			
 			if (this.pendingProc != null && this.pendingProc.getProcedureInstanceIdentifier()
 					.equals(operation.getProcedureInstanceIdentifier()) == true) {
-				if (operation.getResult() == OperationResult.POSITIVE) {
-					System.out.println("Positive return: " + operation + " Procedure state "
-							+ this.pendingProc.isActive());
-				} else {
-					System.out.println("Negative return: " + ((IConfirmedOperation) operation).getDiagnostic());
-				}
+				this.retCond.signal();
 			} else if(this.getApiSi().getAssociationControlProcedure().getProcedureInstanceIdentifier().equals(operation.getProcedureInstanceIdentifier()) == true) {
-				System.out.println("BIND return is " + operation.getResult());
-			}
+				this.retCond.signal();			}
 			else {
-				System.err.println("Start return for unknown rocedure: " + operation.getProcedureInstanceIdentifier());
+				//System.err.println("Start return for unknown procedure: " + operation.getProcedureInstanceIdentifier());
+				CSTS_LOG.CSTS_API_LOGGER.severe("Start return for unknown procedure: " + operation.getProcedureInstanceIdentifier());
 			}
 
-			this.retCond.signal();			
+						
 			this.retLock.unlock();
 		}
 	}
 	
 	/**
-	 * Waits until the activation/deactivation state of the procedure is either.
-	 * It is assumed that a START/STOP was triggered before calling this method.
+	 * Waits until the activation / de-activation state of the procedure is either.
+	 * It is assumed that a START / STOP was triggered before calling this method.
 	 * 
 	 * @param proc
 	 * @param expectedActivationState The finally expected activation state: true for active, false for inactive
@@ -144,7 +136,7 @@ public abstract class AppSiUser extends AppSi {
 		retLock.lock();
 		
 		if(this.pendingProc != null) {
-			System.err.println("Error, procedure state change already pending for " + this.pendingProc);
+			CSTS_LOG.CSTS_API_LOGGER.severe("Error, procedure state change already pending for " + this.pendingProc);
 			return CstsResult.FAILURE;
 		}
 		

@@ -1,4 +1,4 @@
-package esa.egos.csts.test.rtn.cfdp.pdu.impl;
+package esa.egos.csts.app.si.rtn.cfdp.pdu;
 
 import esa.egos.csts.api.enumerations.DeliveryMode;
 import esa.egos.csts.api.procedures.buffereddatadelivery.IBufferedDataDelivery;

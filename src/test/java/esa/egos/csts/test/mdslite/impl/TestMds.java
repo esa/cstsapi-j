@@ -18,6 +18,7 @@ import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.states.service.ServiceStatus;
 import esa.egos.csts.api.types.LabelList;
+import esa.egos.csts.app.si.SiConfig;
 import esa.egos.csts.monitored.data.procedures.IOnChangeCyclicReport;
 import esa.egos.csts.api.CstsTestWatcher;
 import esa.egos.csts.api.TestBootstrap;

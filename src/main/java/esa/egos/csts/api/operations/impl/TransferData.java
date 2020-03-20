@@ -1,6 +1,7 @@
 package esa.egos.csts.api.operations.impl;
 
 import java.util.Arrays;
+import java.util.logging.Level;
 
 import com.beanit.jasn1.ber.types.BerOctetString;
 
@@ -14,6 +15,7 @@ import esa.egos.csts.api.extensions.Extension;
 import esa.egos.csts.api.operations.AbstractOperation;
 import esa.egos.csts.api.operations.ITransferData;
 import esa.egos.csts.api.types.Time;
+import esa.egos.csts.api.util.CSTS_LOG;
 
 /**
  * This class represents a TRANSFER-DATA operation.
@@ -130,7 +132,13 @@ public class TransferData extends AbstractOperation implements ITransferData {
 	@Override
 	public String print(int i) {
 		StringBuilder sb = new StringBuilder(i);
-		String dataString = data != null ? data.toString() : "";
+		String dataString = "<logged for csts.api.operations.level = FINEST>";
+		
+		if(CSTS_LOG.CSTS_OP_LOGGER.isLoggable(Level.FINEST)) {
+			StringBuilder hexData = new StringBuilder(System.lineSeparator());
+			CSTS_LOG.dumpHex(data, data.length, hexData);
+			dataString = hexData.toString();
+		}
 
 		sb.append("\nOperation                      : TRANSFER-DATA").append('\n');
 		sb.append(super.print(i));

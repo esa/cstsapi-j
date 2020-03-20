@@ -1,4 +1,4 @@
-package esa.egos.csts.test.rtn.cfdp.pdu.impl;
+package esa.egos.csts.app.si;
 
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.exceptions.ConfigException;
@@ -8,7 +8,6 @@ import esa.egos.csts.api.serviceinstance.IServiceInform;
 import esa.egos.csts.api.serviceinstance.IServiceInstance;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceIdentifier;
 import esa.egos.csts.api.serviceinstance.impl.ServiceInstanceIdentifier;
-import esa.egos.csts.test.mdslite.impl.SiConfig;
 
 /**
  * Application SI. implements IServiceInform and holds the API SI.

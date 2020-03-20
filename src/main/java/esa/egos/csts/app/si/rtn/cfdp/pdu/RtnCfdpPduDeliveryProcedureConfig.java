@@ -1,4 +1,4 @@
-package esa.egos.csts.test.rtn.cfdp.pdu.impl;
+package esa.egos.csts.app.si.rtn.cfdp.pdu;
 
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.rtn.cfdp.procedures.CfdpOperationMode;

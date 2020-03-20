@@ -17,7 +17,12 @@ import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.main.CstsApi;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.oids.ObjectIdentifier;
-import esa.egos.csts.test.mdslite.impl.SiConfig;
+import esa.egos.csts.api.util.CSTS_LOG;
+import esa.egos.csts.app.si.SiConfig;
+import esa.egos.csts.app.si.rtn.cfdp.pdu.ICfpdPduReceiver;
+import esa.egos.csts.app.si.rtn.cfdp.pdu.RtnCfdpPduDeliveryProcedureConfig;
+import esa.egos.csts.app.si.rtn.cfdp.pdu.RtnCfdpPduSiProvider;
+import esa.egos.csts.app.si.rtn.cfdp.pdu.RtnCfdpPduSiUser;
 
 public class TestRtnCfdpPdu {
     @Rule
@@ -72,13 +77,18 @@ public class TestRtnCfdpPdu {
 	}
 	
 	@Test
+	public void testRtnCfdpPduDataTransfer2() {
+		testRtnCfdpPduDataTransfer();
+		testRtnCfdpPduDataTransfer();
+	}
+	
+	@Test
 	public void testRtnCfdpPduDataTransfer() {
 			RtnCfdpPduDeliveryProcedureConfig rtnCfdpProcedureConfig = new RtnCfdpPduDeliveryProcedureConfig();
 			rtnCfdpProcedureConfig.setLatencyLimit(1);
 			rtnCfdpProcedureConfig.setReturnBufferSize(2);
 		
 			System.out.println("Test return Cfdp Pdu Service Data Transfer");			
-			byte[] cfdpPduData = new byte[1024];
 			
 			try {
 				SiConfig providerConfig = new SiConfig(ObjectIdentifier.of(1,3,112,4,7,0),
@@ -99,37 +109,14 @@ public class TestRtnCfdpPdu {
 					
 					@Override
 					public void cfdpPdu(byte[] cfdpPdu) {
-						System.out.println("Received CFDP PDU of length " + cfdpPdu.length);
+						//CSTS_LOG.CSTS_API_LOGGER.fine("Received CFDP PDU of length " + cfdpPdu.length);
 						
 					}
 				});
 
-				System.out.println("BIND...");
-				verifyResult(userSi.bind(), "BIND");
-				
-				userSi.requestDataDelivery();
-				
-				Assert.assertTrue(userSi.getDeliveryProc().isActive() == true);
-				Assert.assertTrue(userSi.getDeliveryProc().isActivationPending() == false);
-				Assert.assertTrue(userSi.getDeliveryProc().isDeactivationPending() == false);
-				
-				Assert.assertTrue(providerSi.getDeliveryProc().isActive() == true);
-				Assert.assertTrue(providerSi.getDeliveryProc().isActivationPending() == false);
-				Assert.assertTrue(providerSi.getDeliveryProc().isDeactivationPending() == false);
-				
-				Thread.sleep(2000); // give some time to report on data
-				
-				for(int idx=0; idx<10; idx++) {
-					providerSi.transferData(cfdpPduData);
+				for(int idx=0; idx<2; idx++) {
+					doDataTransfer(userSi, providerSi);
 				}
-				Thread.sleep(2000); // give some time to report on data
-				//providerSi.setAntAzimut(123, 0);
-
-				
-				verifyResult(userSi.endDataDelivery(), "END DATA Delivery");
-				
-				System.out.println("UNBIND...");
-				verifyResult(userSi.unbind(), "UNBIND");
 				
 				providerSi.destroy();
 				userSi.destroy();
@@ -140,12 +127,43 @@ public class TestRtnCfdpPdu {
 			}
 	}
 	
+	private void doDataTransfer(RtnCfdpPduSiUser userSi, RtnCfdpPduSiProvider providerSi) throws InterruptedException {
+		byte[] cfdpPduData = new byte[1024];
+		
+		CSTS_LOG.CSTS_API_LOGGER.info("BIND...");
+		verifyResult(userSi.bind(), "BIND");
+		
+		userSi.requestDataDelivery();
+		
+		Assert.assertTrue(userSi.getDeliveryProc().isActive() == true);
+		Assert.assertTrue(userSi.getDeliveryProc().isActivationPending() == false);
+		Assert.assertTrue(userSi.getDeliveryProc().isDeactivationPending() == false);
+		
+		Assert.assertTrue(providerSi.getDeliveryProc().isActive() == true);
+		Assert.assertTrue(providerSi.getDeliveryProc().isActivationPending() == false);
+		Assert.assertTrue(providerSi.getDeliveryProc().isDeactivationPending() == false);
+		
+		Thread.sleep(2000); // give some time to report on data
+		
+		for(int idx=0; idx<10; idx++) {
+			providerSi.transferData(cfdpPduData);
+		}
+		Thread.sleep(2000); // give some time to report on data
+		//providerSi.setAntAzimut(123, 0);
+
+		
+		verifyResult(userSi.endDataDelivery(), "END DATA Delivery");
+		
+		CSTS_LOG.CSTS_API_LOGGER.info("UNBIND...");
+		verifyResult(userSi.unbind(), "UNBIND");		
+	}
+	
 	private void verifyResult(CstsResult res, String what) {
 		Assert.assertEquals(CstsResult.SUCCESS, res);
 		if(res != CstsResult.SUCCESS) {
-			System.err.println("Failed to " + what + " " + res);
+			CSTS_LOG.CSTS_API_LOGGER.severe("Failed to " + what + " " + res);
 		} else {
-			System.out.println(what + " OK " + res);
+			CSTS_LOG.CSTS_API_LOGGER.info(what + " OK " + res);
 		}		
 	}	
 }

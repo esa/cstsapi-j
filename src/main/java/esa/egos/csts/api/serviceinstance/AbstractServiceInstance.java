@@ -19,6 +19,7 @@ import esa.egos.csts.api.enumerations.AppRole;
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.enumerations.EventValueType;
 import esa.egos.csts.api.enumerations.OperationResult;
+import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.enumerations.ProcedureRole;
 import esa.egos.csts.api.enumerations.Result;
 import esa.egos.csts.api.events.Event;
@@ -38,6 +39,7 @@ import esa.egos.csts.api.operations.IBind;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IPeerAbort;
+import esa.egos.csts.api.operations.IReturnBuffer;
 import esa.egos.csts.api.operations.IUnbind;
 import esa.egos.csts.api.parameters.IParameter;
 import esa.egos.csts.api.procedures.IProcedure;
@@ -52,6 +54,7 @@ import esa.egos.csts.api.states.service.ServiceState;
 import esa.egos.csts.api.states.service.ServiceStatus;
 import esa.egos.csts.api.states.service.ServiceSubStatus;
 import esa.egos.csts.api.types.Time;
+import esa.egos.csts.api.util.CSTS_LOG;
 import esa.egos.proxy.IAssocFactory;
 import esa.egos.proxy.IProxyAdmin;
 import esa.egos.proxy.ISrvProxyInitiate;
@@ -358,6 +361,8 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 		IConfirmedOperation confOp = null;
 
+		traceInitiateOperation(operation); // CSTSAPI-4
+		
 		if (operation.isConfirmed()) {
 			confOp = (IConfirmedOperation) operation;
 
@@ -457,6 +462,8 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 		this.pxySeqCount++;
 		long theSeqCount = this.pxySeqCount;
 
+		traceInitiateOperation(operation); // CSTSAPI-4
+		
 		IConfirmedOperation confOperation = (IConfirmedOperation) operation;
 		localReturns.remove(confOperation);
 		String txt = operation.toString();
@@ -491,6 +498,8 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 		this.pxySeqCount++;
 		long theSeqCount = this.pxySeqCount;
 
+		traceInitiateOperation(operation); // CSTSAPI-4
+		
 		IConfirmedOperation confOperation = (IConfirmedOperation) operation;
 		if (confOperation.isAcknowledged() && confOperation.getResult() == OperationResult.NEGATIVE) {
 			localReturns.remove(confOperation);
@@ -938,6 +947,8 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 		CstsResult result = doInitiateOpInvoke(operation);
 
+		traceInitiateOperation(operation); // CSTSAPI-4		
+		
 		if (result != CstsResult.SUCCESS) {
 			throw new ApiException("Invocation unsuccessful");
 		}
@@ -956,6 +967,9 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 	@Override
 	public void initiateOpReturn(IConfirmedOperation confOperation) throws ApiException {
 		localReturns.remove(confOperation);
+		
+		traceInitiateOperation(confOperation); // CSTSAPI-4		
+		
 		doInitiateOpReturn(confOperation);
 	}
 
@@ -1000,6 +1014,9 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 			if(operation instanceof IPeerAbort && operation.getProcedureInstanceIdentifier() == null) {
 				operation.setProcedureInstanceIdentifier(getAssociationControlProcedure().getProcedureInstanceIdentifier());
 			}
+			
+			traceRcvOperation(operation); // CSTSAPI-4
+			
 			doInformOpInvoke(operation);
 
 		} catch (ApiException e) {
@@ -1043,6 +1060,8 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 				throw new ApiException(msg);
 			}
 
+			traceRcvOperation(confOperation); // CSTSAPI-4
+			
 			doInformOpReturn(confOperation);
 
 		} catch (ApiException e) {
@@ -1378,4 +1397,54 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 		}
 	}
 
+	/** 
+	 * Traces the given operation if applicable for the current log level
+	 * of STS_LOG.CSTS_OP_LOGGER
+	 * CSTSAPI-4
+
+	 * @param operation The operation to trace
+	 */
+	private void traceRcvOperation(IOperation operation) {
+		// CSTSAPI-4
+		if(CSTS_LOG.CSTS_OP_LOGGER.isLoggable(Level.INFO) && 
+				(operation.getType() == OperationType.BIND || 
+				operation.getType() == OperationType.UNBIND ||
+				operation.getType() == OperationType.START ||
+				operation.getType() == OperationType.STOP) ) {
+			CSTS_LOG.CSTS_OP_LOGGER.info("Received for " + this.role + " " + serviceInstanceIdentifier + " " + operation.print(1024));
+		} else if(CSTS_LOG.CSTS_OP_LOGGER.isLoggable(Level.FINE)) {				
+			CSTS_LOG.CSTS_OP_LOGGER.fine("Received for " + this.role + " " + serviceInstanceIdentifier + " " + operation.print(1024));
+//			if(operation.getType() == OperationType.RETURN_BUFFER) {
+//				for(IOperation op : ((IReturnBuffer)operation).getBuffer()) {
+//					CSTS_LOG.CSTS_OP_LOGGER.fine("Retrieved for " + this.role + " " + serviceInstanceIdentifier + " from return buffer" + op.print(1024));
+//				}
+//			}
+		}		
+	}
+	
+	/** 
+	 * Traces the given operation if applicable for the current log level
+	 * of STS_LOG.CSTS_OP_LOGGER
+	 * CSTSAPI-4
+	 *
+	 * @param operation The operation to trace
+	 */
+	private void traceInitiateOperation(IOperation operation) {
+		// CSTSAPI-4
+		if(CSTS_LOG.CSTS_OP_LOGGER.isLoggable(Level.INFO) && 
+				(operation.getType() == OperationType.BIND || 
+				operation.getType() == OperationType.UNBIND ||
+				operation.getType() == OperationType.START ||
+				operation.getType() == OperationType.STOP) ) {
+			CSTS_LOG.CSTS_OP_LOGGER.info("Initiate operation for " + this.role + " " + serviceInstanceIdentifier + " " + operation.print(1024));
+		} else if(CSTS_LOG.CSTS_OP_LOGGER.isLoggable(Level.FINE)) {				
+			CSTS_LOG.CSTS_OP_LOGGER.fine("Initiate operation for " + this.role + " " + serviceInstanceIdentifier + " " + operation.print(1024));
+			if(operation.getType() == OperationType.RETURN_BUFFER) {
+				for(IOperation op : ((IReturnBuffer)operation).getBuffer()) {
+					CSTS_LOG.CSTS_OP_LOGGER.fine("Initiate operation for " + this.role + " " + serviceInstanceIdentifier + " from return buffer" + op.print(1024));
+				}
+			}
+		}		
+	}
+	
 }

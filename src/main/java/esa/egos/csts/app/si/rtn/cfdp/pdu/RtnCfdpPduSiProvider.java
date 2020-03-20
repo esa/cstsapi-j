@@ -1,4 +1,4 @@
-package esa.egos.csts.test.rtn.cfdp.pdu.impl;
+package esa.egos.csts.app.si.rtn.cfdp.pdu;
 
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.enumerations.OperationType;
@@ -8,10 +8,11 @@ import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
+import esa.egos.csts.app.si.AppSi;
+import esa.egos.csts.app.si.SiConfig;
 import esa.egos.csts.rtn.cfdp.procedures.CfdpPduDeliveryProvider;
 import esa.egos.csts.rtn.cfdp.procedures.ICfdpPduDelivery;
 import esa.egos.csts.rtn.cfdp.procedures.ICfdpPduDeliveryProvider;
-import esa.egos.csts.test.mdslite.impl.SiConfig;
 
 /**
  * Application SI for the CFDP Return PDU Service - user side 
@@ -35,7 +36,6 @@ public class RtnCfdpPduSiProvider extends AppSi {
 
 	@Override
 	public void informOpInvocation(IOperation operation) {
-		System.out.println("Return CFDP PDU  Provider received operation " + operation.print(1000));
 		if(operation.getType() == OperationType.PEER_ABORT) {
 			this.notify();
 		}
@@ -61,7 +61,7 @@ public class RtnCfdpPduSiProvider extends AppSi {
 	 * @param data
 	 * @return
 	 */
-	CstsResult transferData(byte[] data) {
+	public CstsResult transferData(byte[] data) {
 		return this.deliveryProcedure.transferData(data);
 	}
 	

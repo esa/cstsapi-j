@@ -1,4 +1,4 @@
-package esa.egos.csts.test.rtn.cfdp.pdu.impl;
+package esa.egos.csts.app.si.rtn.cfdp.pdu;
 
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.enumerations.OperationType;
@@ -9,9 +9,10 @@ import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IReturnBuffer;
 import esa.egos.csts.api.operations.ITransferData;
+import esa.egos.csts.app.si.AppSiUser;
+import esa.egos.csts.app.si.SiConfig;
 import esa.egos.csts.rtn.cfdp.procedures.CfdpPduDeliveryUser;
 import esa.egos.csts.rtn.cfdp.procedures.ICfdpPduDelivery;
-import esa.egos.csts.test.mdslite.impl.SiConfig;
 
 /**
  * Application SI for the CFDP Return PDU Service - user side 
@@ -56,7 +57,6 @@ public class RtnCfdpPduSiUser extends AppSiUser {
 			
 			for(IOperation op : rtnBuffer.getBuffer()) {
 				if(op.getType() == OperationType.TRANSFER_DATA) {
-					System.out.println(((ITransferData)op).print(1000));
 					this.pduReceiver.cfdpPdu(((ITransferData)op).getData());			
 				}
 			}

@@ -34,12 +34,20 @@ public class ReturnBuffer extends AbstractOperation implements IReturnBuffer {
 
 	@Override
 	public String print(int i) {
-		return "ReturnBuffer [returnBuffer=" + returnBuffer + "]";
+		return toString();
 	}
 
 	@Override
 	public String toString() {
-		return "ReturnBuffer [returnBuffer=" + returnBuffer + "]";
+		StringBuilder s = new StringBuilder(System.lineSeparator() + "ReturnBuffer of size " + returnBuffer.size());
+		if(this.returnBuffer != null) {
+			for(int idx=0; idx<this.returnBuffer.size(); idx++) {
+				s.append(System.lineSeparator() + "Return Buffer Operation " + (idx+1) + "/" + returnBuffer.size());
+				s.append(returnBuffer.get(idx).print(1024));
+			}
+		}
+		
+		return s.toString();
 	}
 
 }

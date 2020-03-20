@@ -23,6 +23,7 @@ import esa.egos.csts.api.serviceinstance.IServiceInstance;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceIdentifier;
 import esa.egos.csts.api.serviceinstance.impl.ServiceInstanceIdentifier;
 import esa.egos.csts.api.types.LabelList;
+import esa.egos.csts.app.si.SiConfig;
 import esa.egos.csts.monitored.data.procedures.IOnChangeCyclicReport;
 import esa.egos.csts.monitored.data.procedures.OnChangeCyclicReportProvider;
 import esa.egos.csts.monitored.data.procedures.OnChangeCyclicReportUser;
