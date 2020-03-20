@@ -604,7 +604,7 @@ public class CstsApi implements IApi, ILocator {
 					// try the path of this config file
 					File oidFile = new File(oidConfigFile);
 					File apiConfigFile = new File(this.configFile);
-					String oidConfigNameNew = apiConfigFile.getPath().toString() + File.separator + oidFile.getName();
+					String oidConfigNameNew = apiConfigFile.getParentFile().toString() + File.separator + oidFile.getName();
 					if(new File(oidConfigNameNew).exists() == true) {
 						oidConfigFile = oidConfigNameNew;
 					}
