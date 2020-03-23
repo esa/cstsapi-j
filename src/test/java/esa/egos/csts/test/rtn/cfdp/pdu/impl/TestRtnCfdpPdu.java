@@ -17,6 +17,7 @@ import org.junit.rules.TestRule;
 
 import esa.egos.csts.api.CstsTestWatcher;
 import esa.egos.csts.api.TestBootstrap;
+import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.enumerations.AppRole;
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.exceptions.ApiException;
@@ -151,6 +152,12 @@ public class TestRtnCfdpPdu {
 							testCondition.signal();
 						}
 						testConditionLock.unlock();
+					}
+
+					@Override
+					public void abort(PeerAbortDiagnostics diag) {
+						System.out.println("Return CFDP PDU User aborted. Diagnostic: " + diag);
+						
 					}
 				});
 
