@@ -5,7 +5,6 @@ import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.procedures.IStatefulProcedureInternal;
-import esa.egos.csts.api.types.ConditionalTime;
 
 public interface IBufferedDataDeliveryInternal extends IBufferedDataDelivery, IStatefulProcedureInternal {
 
@@ -33,10 +32,6 @@ public interface IBufferedDataDeliveryInternal extends IBufferedDataDelivery, IS
 
 	EmbeddedData encodeStartDiagnosticExt();
 	
-	ConditionalTime getStartGenerationTime();
-
-	ConditionalTime getStopGenerationTime();
-
 	void initializeReturnBuffer();
 
 	void initializeReturnBufferSize();

@@ -9,6 +9,7 @@ import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IReturnBuffer;
 import esa.egos.csts.api.operations.ITransferData;
+import esa.egos.csts.api.types.Time;
 import esa.egos.csts.app.si.AppSiUser;
 import esa.egos.csts.app.si.SiConfig;
 import esa.egos.csts.rtn.cfdp.procedures.CfdpPduDeliveryUser;
@@ -40,6 +41,15 @@ public class RtnCfdpPduSiUser extends AppSiUser {
 		this.deliveryProcedure.requestDataDelivery();
 		return waitForProcedureReturn(this.deliveryProcedure, true);
 	}
+	
+	/**
+	 * Requests the data delivery from the provider (START)
+	 * @return CstsResult.SUCCESS if the delivery could be started, CstsResult.FAILURE otherwise
+	 */
+	public CstsResult requestDataDelivery(Time startGenerationTime, Time stopGenerationTime) {
+		this.deliveryProcedure.requestDataDelivery(startGenerationTime, stopGenerationTime);
+		return waitForProcedureReturn(this.deliveryProcedure, true);
+	}	
 
 	/**
 	 * Requests the data delivery from the provider to end (STOP)

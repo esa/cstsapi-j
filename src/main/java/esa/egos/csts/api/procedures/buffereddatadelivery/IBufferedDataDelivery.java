@@ -117,6 +117,18 @@ public interface IBufferedDataDelivery extends IStatefulProcedure {
 	 * @param embeddedData the embedded data to be transferred
 	 * @return the result of the transfer attempt
 	 */
-	CstsResult transferData(EmbeddedData embeddedData);
+	CstsResult transferData(EmbeddedData embeddedData);	
+	
+	/**
+	 * Provides access to the start generation time
+	 * @return the start generation time
+	 */
+	ConditionalTime getStartGenerationTime();
+	
+	/**
+	 * Provides access to the stop generation time
+	 * @return the stop generation time
+	 */
+	ConditionalTime getStopGenerationTime();
 
 }

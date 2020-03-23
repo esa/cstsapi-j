@@ -1,6 +1,7 @@
 package esa.egos.csts.test.rtn.cfdp.pdu.impl;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -22,9 +23,11 @@ import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.main.CstsApi;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.oids.ObjectIdentifier;
+import esa.egos.csts.api.types.Time;
 import esa.egos.csts.api.util.CSTS_LOG;
 import esa.egos.csts.app.si.SiConfig;
 import esa.egos.csts.app.si.rtn.cfdp.pdu.ICfpdPduReceiver;
+import esa.egos.csts.app.si.rtn.cfdp.pdu.IRtnCfdpPduProduction;
 import esa.egos.csts.app.si.rtn.cfdp.pdu.RtnCfdpPduDeliveryProcedureConfig;
 import esa.egos.csts.app.si.rtn.cfdp.pdu.RtnCfdpPduSiProvider;
 import esa.egos.csts.app.si.rtn.cfdp.pdu.RtnCfdpPduSiUser;
@@ -116,7 +119,25 @@ public class TestRtnCfdpPdu {
 						"CSTS_PT1");
 				
 				numFramesReceived = 0;
-				RtnCfdpPduSiProvider providerSi = new RtnCfdpPduSiProvider(providerApi, providerConfig, rtnCfdpProcedureConfig);
+				RtnCfdpPduSiProvider providerSi = new RtnCfdpPduSiProvider(providerApi, providerConfig, rtnCfdpProcedureConfig, new IRtnCfdpPduProduction() {
+					
+					@Override
+					public void stopCfdpPduDelivery() {
+						System.out.println("Stop CFDP PDU delivery requested to production");
+						
+					}
+					
+					@Override
+					public void startCfdpPduDelivery(Time startGenerationTime, Time stopGenerationTime) {
+						if(startGenerationTime != null && stopGenerationTime != null) {
+							System.out.println("Start CFDP PDU delivery requested to production. Start time: " + startGenerationTime.toLocalDateTime() 
+								+ " stop time: " + stopGenerationTime.toLocalDateTime());
+						} else {
+							System.out.println("Start CFDP PDU delivery requested to production. No times provided");							
+						}
+						
+					}
+				});
 				RtnCfdpPduSiUser userSi = new RtnCfdpPduSiUser(userApi, userConfig, new ICfpdPduReceiver() {
 					
 					@Override
@@ -135,7 +156,7 @@ public class TestRtnCfdpPdu {
 
 				numFramesSent = 0;
 				for(int idx=0; idx<2; idx++) {
-					doDataTransfer(userSi, providerSi, 5);					
+					doDataTransfer(userSi, providerSi, 5, (idx%2 == 0));					
 				}
 
 				testConditionLock.lock();
@@ -153,13 +174,21 @@ public class TestRtnCfdpPdu {
 			}
 	}
 	
-	private void doDataTransfer(RtnCfdpPduSiUser userSi, RtnCfdpPduSiProvider providerSi, long numFrames) throws InterruptedException {
+	private void doDataTransfer(RtnCfdpPduSiUser userSi, RtnCfdpPduSiProvider providerSi, long numFrames, boolean withTime) throws InterruptedException {
 		byte[] cfdpPduData = new byte[1024];
 		
 		CSTS_LOG.CSTS_API_LOGGER.info("BIND...");
 		verifyResult(userSi.bind(), "BIND");
 		
-		userSi.requestDataDelivery();
+		if(withTime) {
+			Time start = Time.of(LocalDateTime.now());
+			Time stop = Time.of(LocalDateTime.now().plusMinutes(10));
+
+			userSi.requestDataDelivery(start, stop);
+		} else {
+			userSi.requestDataDelivery();
+		}
+		
 		
 		Assert.assertTrue(userSi.getDeliveryProc().isActive() == true);
 		Assert.assertTrue(userSi.getDeliveryProc().isActivationPending() == false);
