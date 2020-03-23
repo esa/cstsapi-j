@@ -72,13 +72,4 @@ public class RtnCfdpPduSiProvider extends AppSi {
 	public ICfdpPduDelivery getDeliveryProc() {
 		return this.deliveryProcedure;
 	}
-	
-	/**
-	 * Transfer data via the prime procedure of this SI
-	 * @param data
-	 * @return Cstsresult.SUCCESS if the data transfer could be initiated
-	 */
-	public CstsResult trnsferData(byte[] data) {
-		return this.deliveryProcedure.transferData(data);
-	}
 }

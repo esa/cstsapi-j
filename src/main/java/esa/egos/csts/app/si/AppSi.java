@@ -1,5 +1,7 @@
 package esa.egos.csts.app.si;
 
+import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
+import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.exceptions.ConfigException;
 import esa.egos.csts.api.main.ICstsApi;
@@ -60,6 +62,16 @@ public abstract class AppSi implements IServiceInform {
 	 */
 	protected IServiceInstance getApiSi() {
 		return this.apiServiceInstance;
+	}
+
+	/**
+	 * Aborts the Service Instance or more specific the Association Control Procedure
+	 * @param diag  The diagnostic to pass to the abort
+	 * 
+	 * @return the Result Enumeration containing the result of the invocation
+	 */
+	public CstsResult abort(PeerAbortDiagnostics diag) {
+		return this.apiServiceInstance.getAssociationControlProcedure().abort(diag);
 	}
 	
 }
