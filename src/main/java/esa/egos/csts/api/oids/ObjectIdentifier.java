@@ -2,11 +2,14 @@ package esa.egos.csts.api.oids;
 
 import java.util.Arrays;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * This class represents the CCSDS ObjectIdentifier type.
  */
 public class ObjectIdentifier {
+
+	private static final String DOT_EXPR = "\\.";
 
 	/** The integer array representation of the CCSDS ObjectIdentifier type */
 	private final int[] oidArray;
@@ -46,6 +49,19 @@ public class ObjectIdentifier {
 		return new ObjectIdentifier(concatOidArray);
 	}
 
+	/**
+	 * Creates an Object Identifier from the given string.
+	 * The string is expected to be numbers separated by a dot, e.g. 1.2.3.4 
+	 *  
+	 * @param str
+	 * @return The created object identifier
+	 * @throws NumberFormatException if elements of the string cannot be converted to an integer number
+	 */
+	public static ObjectIdentifier of(String str) throws NumberFormatException {
+		return ObjectIdentifier.of(Stream.of(str.split(DOT_EXPR))
+	      .map(elem -> new Integer(elem)).mapToInt(i -> i).toArray());
+	}
+	
 	/**
 	 * Returns a cloned array of the internal Object Identifier values. The cloning
 	 * guarantees, that the Object Identifier is not changed externally, since this
