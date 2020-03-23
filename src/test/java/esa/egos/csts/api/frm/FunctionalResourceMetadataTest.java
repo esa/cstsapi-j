@@ -1,11 +1,15 @@
 package esa.egos.csts.api.frm;
 
+import static org.junit.Assert.*;
+
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
 import esa.egos.csts.api.CstsTestWatcher;
 import esa.egos.csts.sim.impl.frm.FunctionalResourceMetadata;
+import esa.egos.proxy.xml.OidConfig;
 
 public class FunctionalResourceMetadataTest {
 
@@ -14,15 +18,34 @@ public class FunctionalResourceMetadataTest {
 
 
 	@Test
-	public void testFunctionalResourceMetadataLoad() throws ClassNotFoundException, IllegalArgumentException, IllegalAccessException
-	{
-		FunctionalResourceMetadata.getInstance().load("frm.csts.functional.resource.types");
-	}
+	public void testFunctionalResourceMetadataLoad() {
+		try {
+			String frTypePackage = "frm.csts.functional.resource.types";
+			String oidConfigFile = "src/test/resources/OidConfig.xml";
+			String frOidsFile = "src/test/java/esa/egos/csts/sim/impl/frm";
 
-	@Test
-	public void testRemoveSuffix()
-	{
-		System.out.println(FunctionalResourceMetadata.removeSuffix("antActualAzimuthType", "Type"));
-	}
+			FunctionalResourceMetadata.getInstance().load(frTypePackage);
 
+			FunctionalResourceMetadata.getInstance().createOidConfiguration(oidConfigFile);
+			FunctionalResourceMetadata.getInstance().createFrTypesClassFile(frOidsFile);
+
+			OidConfig oidConfig = OidConfig.load(oidConfigFile);
+			assertTrue("missing FR OIDs in OID config " + oidConfigFile, oidConfig.getNumFrOids() > 0);
+			assertTrue("missing FR parameter OIDs in OID config " + oidConfigFile,
+					oidConfig.getNumFrParameterOids() > 0);
+			assertTrue("missing FR event OIDs in OID config" + oidConfigFile, oidConfig.getNumFrOids() > 0);
+
+//			List<FunctionalResourceParameterEx<?>> parameters = FunctionalResourceMetadata.getInstance().createParameters(FrTypes.antenna, 0);
+//			assertFalse("missing FR antenna parameters", parameters.isEmpty());
+//			FunctionalResourceParameterEx<?> p = parameters.get(0);
+
+//			Class<?> clazz = p.getBerValueType();
+//			Object v = clazz.cast(p.getBerValue());
+//			v.toString();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+	}
 }

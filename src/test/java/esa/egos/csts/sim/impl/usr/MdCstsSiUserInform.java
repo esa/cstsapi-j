@@ -110,8 +110,6 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
     {
         System.out.println("MdCstsSiUserInform#informOpInvocation() begin");
 
-        System.out.println(operation.print(PRINT_BUFF_SIZE));
-
         switch (operation.getType())
         {
         case TRANSFER_DATA:
@@ -151,8 +149,6 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
     public void informOpReturn(IConfirmedOperation operation)
     {
         System.out.println("MdCstsSiUserInform#informOpReturn() begin");
-
-        System.out.println(operation.print(PRINT_BUFF_SIZE));
 
         switch (operation.getType())
         {

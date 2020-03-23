@@ -29,6 +29,8 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
     /** CSTS SI IF*/
     protected IServiceInstance serviceInstance;
 
+    /** CSTS SI IF*/
+    protected K config;
 
 
     public MdCstsSi(ICstsApi api, K config) throws ApiException
@@ -38,6 +40,7 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
         System.out.println("MdCstsSi#MdCstsSi() begin");
 
         this.api = api;
+        this.config = config;
 
         IServiceInstanceIdentifier identifier = new ServiceInstanceIdentifier(config.getScId(),
                                                                               config.getFacilityId(),
@@ -65,7 +68,7 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
             if (pii.getType().getOid().equals(OIDs.cyclicReport))
             {
                 C cyclicReport = createCyclicReportProcedure();
-                addProcedure(cyclicReport, pii, config);                
+                addProcedure(cyclicReport, pii, config);
             }
             else if (pii.getType().getOid().equals(OIDs.informationQuery))
             {
@@ -79,7 +82,7 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
             }
             else
             {
-                System.err.println("ignore unsupported procedure " + pii.getType().getOid());                               
+                System.err.println("ignore unsupported procedure " + pii.getType().getOid());
             }
         }
     }

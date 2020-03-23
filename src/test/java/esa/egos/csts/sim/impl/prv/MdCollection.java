@@ -2,9 +2,11 @@ package esa.egos.csts.sim.impl.prv;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import esa.egos.csts.api.events.Event;
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
@@ -15,7 +17,10 @@ import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.Name;
+import esa.egos.csts.sim.impl.frm.FunctionalResourceEventEx;
 import esa.egos.csts.sim.impl.frm.FunctionalResourceIntegerParameter;
+import esa.egos.csts.sim.impl.frm.FunctionalResourceMetadata;
+import esa.egos.csts.sim.impl.frm.FunctionalResourceParameterEx;
 
 public class MdCollection
 {
@@ -26,12 +31,79 @@ public class MdCollection
     protected Map<Name, Event> events;
 
 
+    /**
+     * C-tor
+     */
     private MdCollection()
     {
         this.parameters = new LinkedHashMap<Name, FunctionalResourceParameter>();
         this.events = new LinkedHashMap<Name, Event>();
     }
 
+    /**
+     * Create MD collection w/ functional resource parameters and events for each provided {@FunctionalResourceType}.
+     * In case several same {@FunctionalResourceType} provided then this methods creates parameters and events w/
+     * different instance numbers
+     * 
+     * @param functionalResourceTypes The array of {@FunctionalResourceType}
+     * @return MD collection
+     * @throws Exception
+     */
+    public static MdCollection createCollection(FunctionalResourceType... functionalResourceTypes) throws Exception
+    {
+        // create an empty collection
+        MdCollection ret = new MdCollection();
+
+        // keep instance numbers in a map, they might be several FRs w/ the same type
+        HashMap<FunctionalResourceType, Integer> frTypeInstanceNumbers = new HashMap<>();
+        for (FunctionalResourceType frType : functionalResourceTypes)
+        {
+            Integer instanceNumber = frTypeInstanceNumbers.get(frType);
+            if (instanceNumber == null)
+            {
+                // FR type for the first time
+                instanceNumber = 0;
+            }
+            else
+            {
+                // FR type for the second or more time, increment its instance number
+                instanceNumber++;
+            }
+
+            // create FR's parameters
+            // e.g. for FR Antenna: antAccumulatedPrecipitation, antActualAzimuth and etc 
+            List<FunctionalResourceParameterEx<?>> frParameters =
+                    FunctionalResourceMetadata.getInstance().createParameters(frType, instanceNumber);
+
+            // add FR's parameters to the MD collection
+            for (FunctionalResourceParameter frParameter : frParameters)
+            {
+                ret.addParameter(frParameter);
+            }
+
+            // create FR's events
+            // e.g. for FR Antenna: antEventTrackingRxLockStat, antWindSpeedCriticality and etc 
+            List<FunctionalResourceEventEx<?>> frEvents =
+                    FunctionalResourceMetadata.getInstance().createEvents(frType, instanceNumber);
+
+            // add FR's parameters to the MD collection
+            for (Event frEvent : frEvents)
+            {
+                ret.addEvent(frEvent);
+            }
+
+            // keep FR instance number
+            frTypeInstanceNumbers.put(frType, instanceNumber);
+        }
+        return ret;
+    }
+
+    /**
+     * Create a simple MD collection
+     * 
+     * @return MD collection
+     * @throws Exception
+     */
     public static MdCollection createSimpleMdCollection() throws Exception
     {
         MdCollection ret = new MdCollection();
@@ -61,6 +133,12 @@ public class MdCollection
         return ret;
     }
 
+    /**
+     * Add FR parameter to MD collection
+     * 
+     * @param parameter FR parameter
+     * @throws Exception
+     */
     public void addParameter(FunctionalResourceParameter parameter) throws Exception
     {
         synchronized (this.parameters)
@@ -74,6 +152,12 @@ public class MdCollection
         }
     }
 
+    /**
+     * Add FR parameters to MD collection
+     * 
+     * @param parameters FR parameters
+     * @throws Exception
+     */
     public void addParameters(FunctionalResourceParameter... parameters) throws Exception
     {
         for (FunctionalResourceParameter parameter : parameters)
@@ -82,6 +166,12 @@ public class MdCollection
         }
     }
 
+    /**
+     * Add FR event to MD collection
+     * 
+     * @param event FR event
+     * @throws Exception
+     */
     public void addEvent(Event event) throws Exception
     {
         synchronized (this.events)
@@ -95,6 +185,12 @@ public class MdCollection
         }
     }
 
+    /**
+     * Add FR events to MD collection
+     * 
+     * @param event FR events
+     * @throws Exception
+     */
     public void addEvents(Event... events) throws Exception
     {
         for (Event event : events)
@@ -103,6 +199,11 @@ public class MdCollection
         }
     }
 
+    /**
+     * Get FR parameters from MD collection
+     * 
+     * @return The FR parameters
+     */
     public Collection<FunctionalResourceParameter> getParameters()
     {
         Collection<FunctionalResourceParameter> ret;
@@ -115,6 +216,11 @@ public class MdCollection
         return ret;
     }
 
+    /**
+     * Get FR event from MD collection
+     * 
+     * @return The FR events
+     */
     public Collection<Event> getEvents()
     {
         Collection<Event> ret;
@@ -127,7 +233,11 @@ public class MdCollection
         return ret;
     }
 
-    public Name getParameterName()
+    /**
+     * Get the name of the first parameter in MD collection
+     * @return
+     */
+    public Name getFirstParameterName()
     {
         Name ret;
         synchronized (this.parameters)
@@ -139,6 +249,10 @@ public class MdCollection
         return ret;
     }
 
+    /**
+     * Get the set of FR parameters names from MD collection
+     * @return FR parameter names
+     */
     public ListOfParameters getParameterNameSet()
     {
         ListOfParameters ret;
@@ -150,6 +264,10 @@ public class MdCollection
         return ret;
     }
 
+    /**
+     * Get the set of FR parameters labels from MD collection
+     * @return FR parameter labels
+     */
     public ListOfParameters getParameterLabelSet()
     {
         ListOfParameters ret;
@@ -163,6 +281,10 @@ public class MdCollection
         return ret;
     }
 
+    /**
+     * Get the set of FR event names from MD collection
+     * @return FR event names
+     */
     public ListOfParameters getEventNames()
     {
         ListOfParameters ret;
@@ -174,6 +296,9 @@ public class MdCollection
         return ret;
     }
 
+    /**
+     * Fire all FR events in MD collection
+     */
     public void fireAllEvents()
     {
         synchronized (this.events)
@@ -182,6 +307,28 @@ public class MdCollection
         }
     }
 
+    /**
+     * Get the value of an FR parameter from MD collection
+     * @param name FR parameter name
+     * @return FR parameter value
+     */
+    public FunctionalResourceParameter getParameter(Name name)
+    {
+        FunctionalResourceParameter ret = null;
+
+        synchronized (this.parameters)
+        {
+            ret = this.parameters.get(name);
+        }
+
+        return ret;
+    }
+
+    /**
+     * Get the value of an FR parameter from MD collection
+     * @param name FR parameter name
+     * @return FR parameter value
+     */
     public QualifiedParameter getQualifiedParameter(Name name)
     {
         QualifiedParameter ret = null;
@@ -194,6 +341,53 @@ public class MdCollection
         return ret;
     }
 
+    /**
+     * Get the value of the first FR parameter /w the label from MD collection
+     * @param  FR parameter label
+     * @return FR parameter value
+     */
+    public QualifiedParameter getFirstQualifiedParameter(Label label)
+    {
+        QualifiedParameter ret = null;
+
+        synchronized (this.parameters)
+        {
+            Optional<FunctionalResourceParameter> result = this.parameters.values().stream()
+                    .filter(p -> p.getLabel().equals(label)).findFirst();
+            if (result.isPresent())
+            {
+                ret = result.get().toQualifiedParameter();
+            }
+        }
+
+        return ret;
+    }
+
+    /**
+     * Get the value of an FR parameter from MD collection
+     * @param name FR parameter name
+     * @return FR parameter value
+     */
+    public List<QualifiedParameter> getQualifiedParameters()
+    {
+        List<QualifiedParameter> ret = new ArrayList<QualifiedParameter>();
+
+        synchronized (this.parameters)
+        {
+            for (FunctionalResourceParameter parameter : this.parameters.values())
+            {
+                ret.add(parameter.toQualifiedParameter());
+            }
+        }
+
+        return ret;
+    }
+
+    /**
+     * Update the value of an FR integer parameter in MD collection
+     * @param name FR parameter name
+     * @param value The new value
+     */
     public void updateIntegerParameter(Name name, long value)
     {
         synchronized (this.parameters)
@@ -201,5 +395,4 @@ public class MdCollection
             this.parameters.get(name).setValue(value);
         }
     }
-
 }
