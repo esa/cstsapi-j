@@ -15,7 +15,6 @@ public class FunctionalResourceIntegerParameter extends FunctionalResourceParame
                                               FunctionalResourceName functionalResourceName)
     {
         super(identifier, functionalResourceName);
-
     }
 
     public long getLongValue() 

@@ -88,7 +88,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
      * Initiates a BIND to the remote peer of this SI and blocks until the BIND
      * return is received or a return timeout occurs.
      * 
-     * @return The result of the BIND
+     * @return The result of the BIND operation of the association procedure
      * @throws InterruptedException
      */
     public CstsResult bind() throws InterruptedException
@@ -126,7 +126,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
      * Initiates an UNBIND to the remote peer of this SI and blocks until the
      * UNBIND return is received or a return timeout occurs.
      * 
-     * @return The result of the BUNIND
+     * @return The result of the UNIND operation of the association procedure
      * @throws InterruptedException
      */
     public CstsResult unbind() throws InterruptedException
@@ -172,7 +172,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
     /**
      * Invokes PEER-ABORT on the remote peer of this SI.
      * 
-     * @return The result of the BUNIND
+     * @return The result of the PEER-ABORT operation of the association procedure
      * @throws InterruptedException
      */
     public CstsResult peerAbort() throws InterruptedException
@@ -189,14 +189,14 @@ public class MdCstsSiUser extends MdCstsSiUserInform
     /**
      * Start a cyclic report procedure
      * 
-     * @param instanceNumber The cyclic procedure procedure instance number
+     * @param piid The cyclic procedure procedure instance identifier
      * @param listOfParameters The list of requested functional resource
      *            parameters to be cyclically reported
      * @param deliveryCycle The delivery cycle in milliseconds
-     * @return The result of the start
+     * @return The result of the START operation of the cyclic procedure procedure
      * @throws Exception
      */
-    public CstsResult startCyclicReport(long instanceNumber,
+    public CstsResult startCyclicReport(ProcedureInstanceIdentifier piid,
                                         ListOfParameters listOfParameters,
                                         long deliveryCycle) throws Exception
     {
@@ -211,7 +211,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
             if (this.serviceInstance.getStatus() == ServiceStatus.BOUND)
             {
                 // get the cyclic report procedure from the instance number
-                CyclicReportUser cyclicReport = getProcedure(CyclicReportUser.class, instanceNumber);
+                CyclicReportUser cyclicReport = (CyclicReportUser) this.serviceInstance.getProcedure(piid);
                 if (!cyclicReport.isActive())
                 {
                     // reset the operation result and diagnostic
@@ -223,7 +223,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
                         // invocation initiation succeeded, wait for the start
                         // operation return
                         ret = waitForReturnOrAbort(cyclicReport,
-                                                   "cyclic report procedure (" + instanceNumber
+                                                   "cyclic report procedure (" + piid.getInstanceNumber()
                                                    + ") is still not active");
                     }
                 }
@@ -251,13 +251,37 @@ public class MdCstsSiUser extends MdCstsSiUserInform
     }
 
     /**
-     * Stop a cyclic report procedure
+     * Start a cyclic report procedure
      * 
      * @param instanceNumber The cyclic procedure procedure instance number
-     * @return The result of the start
+     * @param listOfParameters The list of requested functional resource
+     *            parameters to be cyclically reported
+     * @param deliveryCycle The delivery cycle in milliseconds
+     * @return The result of the START operation of the cyclic procedure procedure
      * @throws Exception
      */
-    public CstsResult stopCyclicReport(long instanceNumber) throws Exception
+    public CstsResult startCyclicReport(long instanceNumber,
+                                        ListOfParameters listOfParameters,
+                                        long deliveryCycle) throws Exception
+    {
+        System.out.println("MdCstsSiUser#startCyclicReport() begin");
+
+        CyclicReportUser cyclicReport = getProcedure(CyclicReportUser.class, instanceNumber);
+        CstsResult ret = startCyclicReport(cyclicReport.getProcedureInstanceIdentifier(), listOfParameters, deliveryCycle);
+
+        System.out.println("MdCstsSiUser#startCyclicReport() end");
+
+        return ret;
+    }
+
+    /**
+     * Stop a cyclic report procedure
+     * 
+     * @param piid The cyclic procedure instance identifier
+     * @return The result of the STOP operation of the cyclic procedure procedure
+     * @throws Exception
+     */
+    public CstsResult stopCyclicReport(ProcedureInstanceIdentifier piid) throws Exception
     {
         System.out.println("MdCstsSiUser#stopCyclicReport() begin");
 
@@ -270,7 +294,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
             if (this.serviceInstance.getStatus() == ServiceStatus.BOUND)
             {
                 // get the cyclic report procedure from the instance number
-                CyclicReportUser cyclicReport = getProcedure(CyclicReportUser.class, instanceNumber);
+                CyclicReportUser cyclicReport = (CyclicReportUser) this.serviceInstance.getProcedure(piid);
                 if (cyclicReport.isActive())
                 {
                     // reset the operation result and diagnostic
@@ -282,7 +306,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
                         // invocation initiation succeeded, wait for the stop
                         // operation return
                         ret = waitForReturnOrAbort(cyclicReport,
-                                                   "cyclic report procedure (" + instanceNumber
+                                                   "cyclic report procedure (" + piid.getInstanceNumber()
                                                    + ") is still active");
                     }
                 }
@@ -309,17 +333,35 @@ public class MdCstsSiUser extends MdCstsSiUserInform
         return ret;
     }
 
+    /**
+     * Stop a cyclic report procedure
+     * 
+     * @param instanceNumber The cyclic procedure instance number
+     * @return The result of the STOP operation of the cyclic procedure procedure
+     * @throws Exception
+     */
+    public CstsResult stopCyclicReport(long instanceNumber) throws Exception
+    {
+        System.out.println("MdCstsSiUser#stopCyclicReport() begin");
+
+        CyclicReportUser cyclicReport = getProcedure(CyclicReportUser.class, instanceNumber);
+        CstsResult ret = stopCyclicReport(cyclicReport.getProcedureInstanceIdentifier());
+
+        System.out.println("MdCstsSiUser#stopCyclicReport() end");
+
+        return ret;
+    }
 
     /**
      * Start a notification procedure
      * 
-     * @param instanceNumber The cyclic procedure procedure instance number
+     * @param piid The notification procedure instance identifier
      * @param listOfEvents The list of requested functional resource events to be notified
 
-     * @return The result of the start
+     * @return The result of the START of the notification procedure
      * @throws Exception
      */
-    public CstsResult startNotification(long instanceNumber,
+    public CstsResult startNotification(ProcedureInstanceIdentifier piid,
                                         ListOfParameters listOfEvents) throws Exception
     {
         System.out.println("MdCstsSiUser#startNotification() begin");
@@ -333,7 +375,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
             if (this.serviceInstance.getStatus() == ServiceStatus.BOUND)
             {
                 // get the cyclic report procedure from the instance number
-                NotificationUser notification = getProcedure(NotificationUser.class, instanceNumber);
+                NotificationUser notification = (NotificationUser) this.serviceInstance.getProcedure(piid);
                 if (!notification.isActive())
                 {
                     // reset the operation result and diagnostic
@@ -345,7 +387,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
                         // invocation initiation succeeded, wait for the start
                         // operation return
                         ret = waitForReturnOrAbort(notification,
-                                                   "notification procedure (" + instanceNumber
+                                                   "notification procedure (" + piid.getInstanceNumber()
                                                    + ") is still not active");
                     }
                 }
@@ -373,13 +415,35 @@ public class MdCstsSiUser extends MdCstsSiUserInform
     }
 
     /**
-     * Stop a notification procedure
+     * Start a notification procedure
      * 
-     * @param instanceNumber The cyclic procedure procedure instance number
-     * @return The result of the start
+     * @param instanceNumber The notification procedure instance number
+     * @param listOfEvents The list of requested functional resource events to be notified
+
+     * @return The result of the START of the notification procedure
      * @throws Exception
      */
-    public CstsResult stopNotification(long instanceNumber) throws Exception
+    public CstsResult startNotification(long instanceNumber,
+                                        ListOfParameters listOfEvents) throws Exception
+    {
+        System.out.println("MdCstsSiUser#startNotification() begin");
+
+        NotificationUser notification = getProcedure(NotificationUser.class, instanceNumber);
+        CstsResult ret = startNotification(notification.getProcedureInstanceIdentifier(), listOfEvents);
+
+        System.out.println("MdCstsSiUser#startNotification() end");
+
+        return ret;
+    }
+
+    /**
+     * Stop a notification procedure
+     * 
+     * @param piid The notification procedure instance identifier
+     * @return The result of the STOP operation of the notification procedure 
+     * @throws Exception
+     */
+    public CstsResult stopNotification(ProcedureInstanceIdentifier piid) throws Exception
     {
         System.out.println("MdCstsSiUser#stopNotification() begin");
 
@@ -392,7 +456,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
             if (this.serviceInstance.getStatus() == ServiceStatus.BOUND)
             {
                 // get the notification procedure from the instance number
-                NotificationUser notification = getProcedure(NotificationUser.class, instanceNumber);
+                NotificationUser notification = (NotificationUser) this.serviceInstance.getProcedure(piid);
                 if (notification.isActive())
                 {
                     // reset the operation result and diagnostic
@@ -404,7 +468,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
                         // invocation initiation succeeded, wait for the stop
                         // operation return
                         ret = waitForReturnOrAbort(notification,
-                                                   "notification procedure (" + instanceNumber
+                                                   "notification procedure (" + piid.getInstanceNumber()
                                                    + ") is still active");
                     }
                 }
@@ -432,15 +496,34 @@ public class MdCstsSiUser extends MdCstsSiUserInform
     }
 
     /**
-     * Query parameters
+     * Stop a notification procedure
      * 
-     * @param instanceNumber The cyclic procedure procedure instance number
-     * @param queryInformation The list of requested functional resource parameter to be retrieved
-
-     * @return The result of the start
+     * @param instanceNumber The notification procedure instance number
+     * @return The result of the STOP operation of the notification procedure 
      * @throws Exception
      */
-    public CstsResult queryInformation(long instanceNumber,
+    public CstsResult stopNotification(long instanceNumber) throws Exception
+    {
+        System.out.println("MdCstsSiUser#stopNotification() begin");
+
+        NotificationUser notification = getProcedure(NotificationUser.class, instanceNumber);
+        CstsResult ret = stopNotification(notification.getProcedureInstanceIdentifier());
+
+        System.out.println("MdCstsSiUser#stopNotification() end");
+
+        return ret;
+    }
+
+    /**
+     * Query parameters
+     * 
+     * @param piid The procedure instance identifier
+     * @param listOfParameters The list of requested functional resource parameters to be retrieved
+     *
+     * @return The result of the GET operation of the query information procedure
+     * @throws Exception
+     */
+    public CstsResult queryInformation(ProcedureInstanceIdentifier piid,
                                        ListOfParameters listOfParameters) throws Exception
     {
         System.out.println("MdCstsSiUser#queryInformation() begin");
@@ -454,7 +537,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
             if (this.serviceInstance.getStatus() == ServiceStatus.BOUND)
             {
                 // get the information query procedure from the instance number
-                InformationQueryUser informationQuery = getProcedure(InformationQueryUser.class, instanceNumber);
+                InformationQueryUser informationQuery = (InformationQueryUser) this.serviceInstance.getProcedure(piid);
 
                     // reset the operation result and diagnostic
                     resetOperationResult();
@@ -465,7 +548,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
                         // invocation initiation succeeded, wait for the start
                         // operation return
                         ret = waitForReturnOrAbort(informationQuery,
-                                                   "information query procedure (" + instanceNumber
+                                                   "information query procedure (" + piid.getInstanceNumber()
                                                    + ") still not received new parameters");
                     }
             }
@@ -480,6 +563,28 @@ public class MdCstsSiUser extends MdCstsSiUserInform
         {
             this.retLock.unlock();
         }
+
+        System.out.println("MdCstsSiUser#queryInformation() end");
+
+        return ret;
+    }
+
+    /**
+     * Query parameters
+     * 
+     * @param instanceNumber The procedure instance number
+     * @param listOfParameters The list of requested functional resource parameters to be retrieved
+     *
+     * @return The result of the GET operation of the query information procedure
+     * @throws Exception
+     */
+    public CstsResult queryInformation(long instanceNumber,
+                                       ListOfParameters listOfParameters) throws Exception
+    {
+        System.out.println("MdCstsSiUser#queryInformation() begin");
+
+        InformationQueryUser informationQuery = getProcedure(InformationQueryUser.class, instanceNumber);
+        CstsResult ret = queryInformation(informationQuery.getProcedureInstanceIdentifier(), listOfParameters);
 
         System.out.println("MdCstsSiUser#queryInformation() end");
 
@@ -600,28 +705,28 @@ public class MdCstsSiUser extends MdCstsSiUserInform
         return ret;
     }
 
-	private boolean isAnyStartableProcedureActive() {
-		boolean ret = false;
+    private boolean isAnyStartableProcedureActive() {
+        boolean ret = false;
 
-		List<IProcedure> procedures = ((IServiceInstanceInternal) this.serviceInstance).getProcedures();
-		for (IProcedure procedure : procedures) {
-			if (procedure instanceof CyclicReportUser) {
-				if (((CyclicReportUser) procedure).isActive()) {
-					ret = true;
-					break;
-				}
-			} else if (procedure instanceof NotificationUser) {
-				if (((NotificationUser) procedure).isActive()) {
-					ret = true;
-					break;
-				}
-			}
-		}
+        List<IProcedure> procedures = ((IServiceInstanceInternal) this.serviceInstance).getProcedures();
+        for (IProcedure procedure : procedures) {
+            if (procedure instanceof CyclicReportUser) {
+                if (((CyclicReportUser) procedure).isActive()) {
+                    ret = true;
+                    break;
+                }
+            } else if (procedure instanceof NotificationUser) {
+                if (((NotificationUser) procedure).isActive()) {
+                    ret = true;
+                    break;
+                }
+            }
+        }
 
-		return ret;
-	}
+        return ret;
+    }
 
-	public boolean isBound() {
-		return this.serviceInstance.isBound();
-	}
+    public boolean isBound() {
+        return this.serviceInstance.isBound();
+    }
 }

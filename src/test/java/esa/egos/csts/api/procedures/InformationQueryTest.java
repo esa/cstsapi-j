@@ -272,7 +272,7 @@ public class InformationQueryTest
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");
 
-            Name name = mdCollection.getParameterName();
+            Name name = mdCollection.getFirstParameterName();
             FunctionalResourceName functionalResourceName = name.getFunctionalResourceName();
 
             System.out.println("QUERY-INFORMATION...");
@@ -387,7 +387,7 @@ public class InformationQueryTest
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");
 
-            Name name = mdCollection.getParameterName();
+            Name name = mdCollection.getFirstParameterName();
             FunctionalResourceType functionalResourceType = name.getFunctionalResourceName().getType();
 
             System.out.println("QUERY-INFORMATION...");

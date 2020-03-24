@@ -151,5 +151,4 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
         mdCollection.getParameters().stream().forEach(this.serviceInstance::addExternalParameter);
         mdCollection.getEvents().stream().forEach(this.serviceInstance::addExternalEvent);
     }
-
 }
