@@ -98,7 +98,7 @@ public class RtnCfdpPduSiUser extends AppSiUser {
 	@Override
 	public void protocolAbort() {
 		this.pduReceiver.abort(PeerAbortDiagnostics.INVALID);
-
+		super.protocolAbort();
 	}
 
 }

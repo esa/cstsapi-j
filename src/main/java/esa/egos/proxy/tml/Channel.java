@@ -723,7 +723,10 @@ public abstract class Channel implements IChannelInitiate, ITimeoutProcessor
         this.objMutex.lock();
         try
         {
-            this.connectedSock.close();
+        	if(this.connectedSock != null)
+        	{
+        		this.connectedSock.close();
+        	}
         }
         catch (IOException e)
         {
@@ -946,3 +949,5 @@ public abstract class Channel implements IChannelInitiate, ITimeoutProcessor
     	this.channelState.delSLEPDUReq(this.tmlMsgFactory.createPDUMsg(data), last);
 	}
 }
+
+    

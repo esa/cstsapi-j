@@ -1336,7 +1336,8 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 		pa.setAbortOriginator(AbortOriginator.INTERNAL);
 		pa.setPeerAbortDiagnostic(PeerAbortDiagnostics.PROTOCOL_ERROR);
 		((IAssociationControlInternal) getAssociationControlProcedure()).informProtocolAbort();
-		getApplicationServiceInform().protocolAbort();
+		setState(ServiceStatus.UNBOUND); // #hd#
+		getApplicationServiceInform().protocolAbort();		
 		forwardInitiatePxyOpInv(pa, false);
 	}
 

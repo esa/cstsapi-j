@@ -215,6 +215,118 @@ public class TestRtnCfdpPdu {
 		CSTS_LOG.CSTS_API_LOGGER.info("UNBIND...");
 		verifyResult(userSi.unbind(), "UNBIND");		
 	}
+
+	@Test
+	public void testRtnCfdpPduDataNoInitialConnect() {
+			RtnCfdpPduDeliveryProcedureConfig rtnCfdpProcedureConfig = new RtnCfdpPduDeliveryProcedureConfig();
+			rtnCfdpProcedureConfig.setLatencyLimit(1);
+			rtnCfdpProcedureConfig.setReturnBufferSize(2);
+			long numFrames = 10;
+		
+			System.out.println("Test return Cfdp Pdu Service Data Transfer");			
+			
+			try {
+				SiConfig providerConfig = new SiConfig(ObjectIdentifier.of(1,3,112,4,7,0),
+												ObjectIdentifier.of(1,3,112,4,6,0),
+												0, 
+												"CSTS-USER", 
+												"CSTS_PT1");
+
+				SiConfig userConfig = new SiConfig(ObjectIdentifier.of(1,3,112,4,7,0),
+						ObjectIdentifier.of(1,3,112,4,6,0),
+						0, 
+						"CSTS-PROVIDER",
+						"CSTS_PT1");
+				
+				numFramesReceived = 0;
+
+				RtnCfdpPduSiUser userSi = new RtnCfdpPduSiUser(userApi, userConfig, new ICfpdPduReceiver() {
+					
+					@Override
+					public void cfdpPdu(byte[] cfdpPdu) {
+						//CSTS_LOG.CSTS_API_LOGGER.fine("Received CFDP PDU of length " + cfdpPdu.length);
+						numFramesReceived++;
+						
+						testConditionLock.lock();
+						if(numFramesReceived == numFramesSent) {
+							System.out.println("Received the expected " + numFramesReceived + " frames");
+							testCondition.signal();
+						}
+						testConditionLock.unlock();
+					}
+
+					@Override
+					public void abort(PeerAbortDiagnostics diag) {
+						System.out.println("Return CFDP PDU User aborted. Diagnostic: " + diag);
+						
+					}
+				});
+
+				numFramesSent = 0;
+
+				byte[] cfdpPduData = new byte[1024];
+				
+				CSTS_LOG.CSTS_API_LOGGER.info("BIND...");
+				userSi.bind(); // should fail - no active provider!
+				
+				RtnCfdpPduSiProvider providerSi = new RtnCfdpPduSiProvider(providerApi, providerConfig, rtnCfdpProcedureConfig, new IRtnCfdpPduProduction() {
+					
+					@Override
+					public void stopCfdpPduDelivery() {
+						System.out.println("Stop CFDP PDU delivery requested to production");
+						
+					}
+					
+					@Override
+					public void startCfdpPduDelivery(Time startGenerationTime, Time stopGenerationTime) {
+						if(startGenerationTime != null && stopGenerationTime != null) {
+							System.out.println("Start CFDP PDU delivery requested to production. Start time: " + startGenerationTime.toLocalDateTime() 
+								+ " stop time: " + stopGenerationTime.toLocalDateTime());
+						} else {
+							System.out.println("Start CFDP PDU delivery requested to production. No times provided");							
+						}
+						
+					}
+				});				
+
+				verifyResult(userSi.bind(), "BIND...");
+				
+				userSi.requestDataDelivery();
+				
+				
+				Assert.assertTrue(userSi.getDeliveryProc().isActive() == true);
+				Assert.assertTrue(userSi.getDeliveryProc().isActivationPending() == false);
+				Assert.assertTrue(userSi.getDeliveryProc().isDeactivationPending() == false);
+				
+				Assert.assertTrue(providerSi.getDeliveryProc().isActive() == true);
+				Assert.assertTrue(providerSi.getDeliveryProc().isActivationPending() == false);
+				Assert.assertTrue(providerSi.getDeliveryProc().isDeactivationPending() == false);
+				
+				for(int idx=0; idx<numFrames; idx++) {
+					providerSi.transferData(cfdpPduData);
+					numFramesSent++;
+				}
+				
+				verifyResult(userSi.endDataDelivery(), "END DATA Delivery");
+				
+				CSTS_LOG.CSTS_API_LOGGER.info("UNBIND...");
+				verifyResult(userSi.unbind(), "UNBIND");					
+				
+
+				testConditionLock.lock();
+				while(numFramesReceived != numFramesSent) {
+					testCondition.await(100, TimeUnit.SECONDS);
+				}
+				testConditionLock.unlock();
+				
+				providerSi.destroy();
+				userSi.destroy();
+				
+			
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+	}	
 	
 	private void verifyResult(CstsResult res, String what) {
 		Assert.assertEquals(CstsResult.SUCCESS, res);
