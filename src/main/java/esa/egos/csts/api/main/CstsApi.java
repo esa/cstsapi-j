@@ -406,6 +406,13 @@ public class CstsApi implements IApi, ILocator {
 
 			// TODO serviceInstance.destroy();
 			// serviceInstance.getAssociationControlProcedure().releaseAssoc(); ?
+			
+			// #hd# give a chance to remove ports
+			if(serviceInstance instanceof IServiceInstanceInternal)
+			{
+				((IServiceInstanceInternal)serviceInstance).prepareRelease();
+			}
+			
 			this.serviceInstanceList.remove(serviceInstance);
 		}
 	}
