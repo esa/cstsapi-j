@@ -374,7 +374,10 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 		this.pxySeqCount++;
 
-		LOG.fine(operation.toString() + " invocation is being passed to the proxy");
+		if(LOG.isLoggable(Level.FINE))
+		{
+			LOG.fine(operation.toString() + " invocation is being passed to the proxy");
+		}
 
 		Result rc = Result.S_OK;
 
