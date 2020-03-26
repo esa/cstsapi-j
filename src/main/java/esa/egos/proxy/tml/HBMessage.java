@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 
-import esa.egos.proxy.GenStrUtil;
-
 public class HBMessage extends TMLMessage
 {
     private static byte firstByte = 0x03;
@@ -27,7 +25,7 @@ public class HBMessage extends TMLMessage
         // write it to the socket
         socketOutStream.write(buff);
 
-        GenStrUtil.print("Writing to socket:", buff);
+        //GenStrUtil.print("Writing to socket:", buff);
     }
 
     @Override
@@ -40,5 +38,11 @@ public class HBMessage extends TMLMessage
     public int getLength()
     {
         return hdrLength;
+    }
+    
+    @Override
+    public String toString() 
+    {
+    	return "HB: " + super.toString();
     }
 }

@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.util.CSTS_LOG;
 import esa.egos.proxy.tml.types.EE_APIPX_TMLErrors;
 import esa.egos.proxy.util.impl.Reference;
 
@@ -83,7 +84,7 @@ public class TCPCommMng
 
         // take the TMLMessage from the queue
         msgToSend = this.sendingQueue.poll();
-
+        
         sendTMLMessage(msgToSend);
     }
 
@@ -91,9 +92,11 @@ public class TCPCommMng
     {
         if (msgToSend != null)
         {
-            String msgtmp = "Sending TML Message of " + msgToSend.getLength() + "bytes on socket"
-                         + this.channel.getConnectedSock().toString();
-            LOG.finer(msgtmp);
+            if(CSTS_LOG.CSTS_OP_LOGGER.isLoggable(Level.FINEST) == true)
+            {
+            	CSTS_LOG.CSTS_OP_LOGGER.finest("Send TML message " + msgToSend.getLength() + "bytes on socket\n"  
+            			 + this.channel.getConnectedSock().toString()  + "\n" + msgToSend.toString());
+            }
 
             // send the TMLMessage to the socket
             try
@@ -179,9 +182,15 @@ public class TCPCommMng
                 }
             }
 
-            String oss = "Read a TML message of " + tmlMsg.getLength() + " bytes from the socket "
-                         + this.channel.getConnectedSock().toString();
-            LOG.finer(oss);
+//            String oss = "Read a TML message of " + tmlMsg.getLength() + " bytes from the socket "
+//                         + this.channel.getConnectedSock().toString();
+            //LOG.finer(oss);
+
+            if(CSTS_LOG.CSTS_OP_LOGGER.isLoggable(Level.FINEST) == true)
+            {
+            	CSTS_LOG.CSTS_OP_LOGGER.finest("Read TML message " + tmlMsg.getLength() + "bytes on socket\n"  
+            			 + this.channel.getConnectedSock().toString()  + "\n" + tmlMsg.toString());
+            }                        
 
             if (tmlMsg instanceof UrgentByteMessage)
             {

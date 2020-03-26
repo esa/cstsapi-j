@@ -62,4 +62,10 @@ public class PDUMessage extends TMLMessage
     {
         this.body = body;
     }
+    
+    @Override
+    public String toString() 
+    {
+    	return "PDU: " + super.toString();
+    }    
 }

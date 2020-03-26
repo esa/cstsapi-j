@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <provider_config oid_config_file="src/test/resources/OidConfig.xml" authentication_delay="180" local_id="CSTS-PROVIDER"
-	local_password="000102030405060708090a0b0c0d0e0f" max_deadfactor="10"
-	max_heartbeat="600" min_deadfactor="2" min_heartbeat="20"
+	local_password="000102030405060708090a0b0c0d0e0f" max_deadfactor="100"
+	max_heartbeat="600" min_deadfactor="2" min_heartbeat="0"
 	non_useheartbeat="true" proxy_role="RESPONDER" startup_timer="180"
 	transmit_queue_size="10" use_nagel="true"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

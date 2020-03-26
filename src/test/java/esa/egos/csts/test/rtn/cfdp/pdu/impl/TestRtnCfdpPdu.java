@@ -1,5 +1,7 @@
 package esa.egos.csts.test.rtn.cfdp.pdu.impl;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +26,7 @@ import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.main.CstsApi;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.oids.ObjectIdentifier;
+import esa.egos.csts.api.states.service.ServiceStatus;
 import esa.egos.csts.api.types.Time;
 import esa.egos.csts.api.util.CSTS_LOG;
 import esa.egos.csts.app.si.SiConfig;
@@ -327,6 +330,68 @@ public class TestRtnCfdpPdu {
 				e.printStackTrace();
 			}
 	}	
+	
+	@Test
+	public void testHeartBeat() {
+		RtnCfdpPduDeliveryProcedureConfig rtnCfdpProcedureConfig = new RtnCfdpPduDeliveryProcedureConfig();
+		rtnCfdpProcedureConfig.setLatencyLimit(1);
+		rtnCfdpProcedureConfig.setReturnBufferSize(2);
+		long waitSeconds = 10;
+		
+		System.out.println("Test return Cfdp Pdu Service Data Transfer");			
+		
+		try {
+			SiConfig providerConfig = new SiConfig(ObjectIdentifier.of(1,3,112,4,7,0),
+											ObjectIdentifier.of(1,3,112,4,6,0),
+											0, 
+											"CSTS-USER", 
+											"CSTS_PT1");
+
+			SiConfig userConfig = new SiConfig(ObjectIdentifier.of(1,3,112,4,7,0),
+					ObjectIdentifier.of(1,3,112,4,6,0),
+					0, 
+					"CSTS-PROVIDER",
+					"CSTS_PT1");
+			
+			numFramesReceived = 0;
+			RtnCfdpPduSiProvider providerSi = new RtnCfdpPduSiProvider(providerApi, providerConfig, rtnCfdpProcedureConfig);
+			RtnCfdpPduSiUser userSi = new RtnCfdpPduSiUser(userApi, userConfig, new ICfpdPduReceiver() {
+				
+				@Override
+				public void cfdpPdu(byte[] cfdpPdu) {
+				}
+
+				@Override
+				public void abort(PeerAbortDiagnostics diag) {
+					System.out.println("Return CFDP PDU User aborted. Diagnostic: " + diag);
+					testConditionLock.lock();
+					testCondition.signal();
+					testConditionLock.unlock();
+					
+				}
+			});
+		
+			userSi.bind();	
+			assertTrue(userSi.getApiSi().getStatus() == ServiceStatus.BOUND);
+			
+			testConditionLock.lock();			
+			System.out.print("Wait for " + waitSeconds + " seconds...");
+			boolean signalledAbort = testCondition.await(waitSeconds, TimeUnit.SECONDS);
+			System.out.println(" after wait, signalled abort is " + signalledAbort);
+			testConditionLock.unlock();
+			
+			userSi.unbind();
+			assertTrue(userSi.getApiSi().getStatus() == ServiceStatus.UNBOUND);
+			
+			Assert.assertTrue(signalledAbort == false);
+			
+			providerSi.destroy();
+			userSi.destroy();		
+		
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	private void verifyResult(CstsResult res, String what) {
 		Assert.assertEquals(CstsResult.SUCCESS, res);
