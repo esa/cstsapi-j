@@ -20,7 +20,10 @@ import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.oids.OidTree;
+import esa.egos.csts.api.types.Name;
 import esa.egos.csts.sim.impl.Utils;
+import esa.egos.csts.sim.impl.frm.values.ICstsValueFactory;
+import esa.egos.csts.sim.impl.frm.values.impl.CstsValueFactory;
 import esa.egos.proxy.xml.OidConfig;
 import esa.egos.proxy.xml.Oid;
 
@@ -73,6 +76,9 @@ public class FunctionalResourceMetadata
     /** The FR OID to map of FR event OID to event BER class */
     private Map<ObjectIdentifier, Map<ObjectIdentifier, Class<?>>> frOid2frEventOidAndClass;
 
+    /** CSTS value factory */
+    private ICstsValueFactory cstsValueFactory;
+
 
     /**
      * C-tor
@@ -89,6 +95,7 @@ public class FunctionalResourceMetadata
         this.frDirectiveOidName2oidArray = new LinkedHashMap<String, int[]>();
         this.frOid2frParameterOidAndClass = new LinkedHashMap<>();
         this.frOid2frEventOidAndClass = new LinkedHashMap<>();
+        this.cstsValueFactory = CstsValueFactory.getInstance();
     }
 
     /**
@@ -401,6 +408,39 @@ public class FunctionalResourceMetadata
      * @throws IllegalAccessException
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
+    public FunctionalResourceParameterEx<?> createParameter(Name name) throws InstantiationException,
+                                                                                       IllegalAccessException
+    {
+        FunctionalResourceType frType = name.getFunctionalResourceName().getType();
+        Map<ObjectIdentifier, Class<?>> oid2Class = this.frOid2frParameterOidAndClass.get(frType.getOid());
+        if (oid2Class == null)
+        {
+            throw new IllegalArgumentException(frType + " is not supported");
+        }
+
+        Class<?> berClass = oid2Class.get(name.getOid());
+        if (berClass == null)
+        {
+            throw new IllegalArgumentException(name + " is not supported");
+        }
+
+        return new FunctionalResourceParameterEx(name.getOid(),
+                                                 name.getFunctionalResourceName(),
+                                                 berClass,
+                                                 this.cstsValueFactory);
+    }
+
+    /**
+     * Create instances of {@IParameter} for provided
+     * {@FunctionalResourceType} and its instance number
+     * 
+     * @param frType The {@FunctionalResourceType}
+     * @param instanceNumber The instance number
+     * @return the list of all FR parameters
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public List<FunctionalResourceParameterEx<?>> createParameters(FunctionalResourceType frType,
                                                                    int instanceNumber) throws InstantiationException,
                                                                                        IllegalAccessException
@@ -414,7 +454,8 @@ public class FunctionalResourceMetadata
                 FunctionalResourceName frName = FunctionalResourceName.of(frType, instanceNumber);
                 FunctionalResourceParameterEx<?> parameter = new FunctionalResourceParameterEx(e.getKey(),
                                                                                                frName,
-                                                                                               e.getValue());
+                                                                                               e.getValue(),
+                                                                                               this.cstsValueFactory);
                 ret.add(parameter);
             }
         }
@@ -557,5 +598,15 @@ public class FunctionalResourceMetadata
 
         frTypesBuilder.addEpilogue();
         frTypesBuilder.createFrTypesClassFile(dir);
+    }
+
+    /**
+     * Change CSTS value factory 
+     * NOTE: It must be invoked prior to creation of FR parameters or event
+     * @param cstsValueFactory
+     */
+    public void setCstsValueFactory(ICstsValueFactory cstsValueFactory)
+    {
+        this.cstsValueFactory = cstsValueFactory;
     }
 }

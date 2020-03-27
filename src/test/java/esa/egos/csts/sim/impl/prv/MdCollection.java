@@ -21,6 +21,7 @@ import esa.egos.csts.sim.impl.frm.FunctionalResourceEventEx;
 import esa.egos.csts.sim.impl.frm.FunctionalResourceIntegerParameter;
 import esa.egos.csts.sim.impl.frm.FunctionalResourceMetadata;
 import esa.egos.csts.sim.impl.frm.FunctionalResourceParameterEx;
+import esa.egos.csts.sim.impl.frm.values.ICstsValue;
 
 public class MdCollection
 {
@@ -394,5 +395,37 @@ public class MdCollection
         {
             this.parameters.get(name).setValue(value);
         }
+    }
+
+    public void setParameterValue(Name name, ICstsValue value) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InstantiationException
+    {
+        FunctionalResourceParameter parameter = getParameter(name);
+        if (parameter == null)
+        {
+            throw new NullPointerException("Parameter " + name + " is not available in MD collection");
+        }
+
+        if (!(parameter instanceof FunctionalResourceParameterEx<?>))
+        {
+            throw new UnsupportedOperationException("Parameter " + name + " is not an instance of FunctionalResourceParameterEx<?>");
+        }
+
+        ((FunctionalResourceParameterEx<?>) parameter).setCstsValue(value);
+    }
+
+    public ICstsValue getParameterValue(Name name) throws IllegalArgumentException, IllegalAccessException
+    {
+        FunctionalResourceParameter parameter = getParameter(name);
+        if (parameter == null)
+        {
+            throw new NullPointerException("Parameter " + name + " is not available in MD collection");
+        }
+
+        if (!(parameter instanceof FunctionalResourceParameterEx<?>))
+        {
+            throw new UnsupportedOperationException("Parameter " + name + " is not an instance of FunctionalResourceParameterEx<?>");
+        }
+
+        return ((FunctionalResourceParameterEx<?>) parameter).getCstsValue();
     }
 }

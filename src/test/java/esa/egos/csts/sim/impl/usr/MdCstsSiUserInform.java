@@ -1,7 +1,9 @@
 package esa.egos.csts.sim.impl.usr;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -11,6 +13,7 @@ import java.util.function.Supplier;
 import esa.egos.csts.api.diagnostics.DiagnosticType;
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.enumerations.OperationResult;
+import esa.egos.csts.api.enumerations.ParameterType;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
@@ -23,9 +26,7 @@ import esa.egos.csts.api.operations.IStart;
 import esa.egos.csts.api.operations.IStop;
 import esa.egos.csts.api.operations.ITransferData;
 import esa.egos.csts.api.operations.IUnbind;
-import esa.egos.csts.api.parameters.impl.ParameterValue;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
-import esa.egos.csts.api.parameters.impl.QualifiedValues;
 import esa.egos.csts.api.procedures.cyclicreport.CyclicReportUser;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.informationquery.InformationQueryUser;
@@ -34,6 +35,8 @@ import esa.egos.csts.api.types.Name;
 import esa.egos.csts.sim.impl.MdCstsSi;
 import esa.egos.csts.sim.impl.MdCstsSiConfig;
 import esa.egos.csts.sim.impl.Utils;
+import esa.egos.csts.sim.impl.frm.FunctionalResourceMetadata;
+import esa.egos.csts.sim.impl.frm.FunctionalResourceParameterEx;
 
 /**
  * MD-CSTS User service inform
@@ -73,6 +76,8 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
      */
     private List<Name> notifiedEvents;
 
+    /** FR parameters */
+    private Map<Name, FunctionalResourceParameterEx<?>> parameters;
 
     /**
      * Constructs an MD CSTS User SI
@@ -94,6 +99,8 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
         this.queriedParameters = new ArrayList<List<QualifiedParameter>>();
         this.cyclicParameters = new ArrayList<List<QualifiedParameter>>();
         this.notifiedEvents = new ArrayList<Name>();
+
+        this.parameters = new HashMap<Name, FunctionalResourceParameterEx<?>>();
 
         resetOperationResult();
 
@@ -305,9 +312,35 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
             this.operationResult = get.getResult();
             if (this.operationResult == OperationResult.POSITIVE)
             {
-                synchronized (this.queriedParameters)
+                try
                 {
-                    this.queriedParameters.add(new ArrayList<QualifiedParameter>(get.getQualifiedParameters()));
+                    synchronized (this.queriedParameters)
+                    {
+                        synchronized (this.parameters)
+                        {
+                            this.queriedParameters.add(new ArrayList<QualifiedParameter>(get.getQualifiedParameters()));
+                            for (QualifiedParameter qualifiedParameter : get.getQualifiedParameters())
+                            {
+                                if (qualifiedParameter.getQualifiedValues().get(0).getParameterValues().get(0)
+                                        .getType() == ParameterType.EXTENDED)
+                                {
+                                    FunctionalResourceParameterEx<?> parameter = this.parameters
+                                            .get(qualifiedParameter.getName());
+                                    if (parameter == null)
+                                    {
+                                        parameter = FunctionalResourceMetadata.getInstance()
+                                                .createParameter(qualifiedParameter.getName());
+                                        this.parameters.put(qualifiedParameter.getName(), parameter);
+                                    }
+                                    parameter.setValue(qualifiedParameter);
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
                 }
             }
             else
@@ -355,35 +388,34 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
         List<QualifiedParameter> params = ((CyclicReportUser) this.serviceInstance.getProcedure(piid))
                 .getQualifiedParameters();
 
-        boolean first = true;
-        StringBuilder sb = new StringBuilder();
-        for (QualifiedParameter p : params)
-        {
-            sb.append(p.getName());
-
-            for (QualifiedValues vals : p.getQualifiedValues())
-            {
-                for (ParameterValue pv : vals.getParameterValues())
-                {
-                    if (!first)
-                    {
-                        sb.append(",");
-                    }
-                    else
-                    {
-                        sb.append(" ");
-                    }
-                    sb.append(pv.getType() + " : " + pv.getIntegerParameterValues());
-                }
-            }
-        }
-        System.out.println(sb.toString());
-
         synchronized (this.cyclicParameters)
         {
-            synchronized (this.cyclicParameters)
+            this.cyclicParameters.add(new ArrayList<QualifiedParameter>(params));
+            try
             {
-                this.cyclicParameters.add(new ArrayList<QualifiedParameter>(params));
+                synchronized (this.parameters)
+                {
+                    for (QualifiedParameter qualifiedParameter : params)
+                    {
+                        if (qualifiedParameter.getQualifiedValues().get(0).getParameterValues().get(0)
+                                .getType() == ParameterType.EXTENDED)
+                        {
+                            FunctionalResourceParameterEx<?> parameter = this.parameters
+                                    .get(qualifiedParameter.getName());
+                            if (parameter == null)
+                            {
+                                parameter = FunctionalResourceMetadata.getInstance()
+                                        .createParameter(qualifiedParameter.getName());
+                                this.parameters.put(qualifiedParameter.getName(), parameter);
+                            }
+                            parameter.setValue(qualifiedParameter);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
             }
         }
 
@@ -524,4 +556,15 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
         return getNthParameters(this.cyclicParameters, n);
     }
 
+    // TODO clone the map
+    public Map<Name, FunctionalResourceParameterEx<?>> getParameters()
+    {
+        return this.parameters;
+    }
+
+    // TODO clone the parameter
+    public FunctionalResourceParameterEx<?> getParameter(Name name)
+    {
+        return this.parameters.get(name);
+    }
 }
