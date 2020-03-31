@@ -60,7 +60,7 @@ public abstract class AppSi implements IServiceInform {
 	 * Provides the encapsulated API SI.
 	 * @return	non-null but potentially destroyed API SI
 	 */
-	protected IServiceInstance getApiSi() {
+	public IServiceInstance getApiSi() {
 		return this.apiServiceInstance;
 	}
 

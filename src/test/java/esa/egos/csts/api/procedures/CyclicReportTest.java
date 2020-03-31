@@ -283,7 +283,7 @@ public class CyclicReportTest
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");
 
-            Name name = mdCollection.getParameterName();
+            Name name = mdCollection.getParameterNameSet().getParameterNames().get(0);
             FunctionalResourceName functionalResourceName = name.getFunctionalResourceName();
 
             System.out.println("START-CYCLIC-REPORT ...");
@@ -422,7 +422,7 @@ public class CyclicReportTest
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");
 
-            Name name = mdCollection.getParameterName();
+            Name name = mdCollection.getParameterNameSet().getParameterNames().get(0);
             FunctionalResourceType functionalResourceType = name.getFunctionalResourceName().getType();
 
             System.out.println("START-CYCLIC-REPORT...");

@@ -20,7 +20,7 @@ public class Unbound extends AssociationControlState {
 		if (operation.getType() == OperationType.BIND) {
 			IBind bind = (IBind) operation;
 			try {
-				bind.verifyInvocationArguments();
+				bind.verifyInvocationArguments();				
 			} catch (ApiException e) {
 				Diagnostic diagnostic = new Diagnostic(DiagnosticType.OTHER_REASON);
 				diagnostic.setText("Invocation argument verification failed.");
@@ -28,8 +28,11 @@ public class Unbound extends AssociationControlState {
 				return getProcedure().forwardReturnToProxy(bind);
 			}
 			bind.setPositiveResult();
+			// CSTSAPI-20 Invoking operations on an unbound (aborted) SI blocks
+			// all operations queue up in the op sequencer, the internal sequence count is not reset to 1 for the BIND return 
+			getProcedure().cleanup(); 
 			getProcedure().setState(new Bound(getProcedure()));
-			getProcedure().forwardInvocationToApplication(operation);
+			getProcedure().forwardInvocationToApplication(operation);			
 			return getProcedure().forwardReturnToProxy(bind);
 		} else {
 			return CstsResult.IGNORED;

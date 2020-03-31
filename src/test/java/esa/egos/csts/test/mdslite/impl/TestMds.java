@@ -183,36 +183,38 @@ public class TestMds {
 			MdSiProvider providerSi = new MdSiProvider(providerApi, mdSiProviderConfig, paramLists, labelList);
 			MdSiUser userSi = new MdSiUser(userApi, mdSiUserConfig, 1, paramLists);
 		
-			System.out.println("BIND...");
-			verifyResult(userSi.bind(), "BIND");
-
-			boolean onChange = true;
-			userSi.startCyclicReport(1000, onChange, 0);
-			
-			Thread.sleep(2000); // give some time to report on data
-
-			System.out.println("Initiate abort by the user...");
-			userSi.getApiServiceInstance().getAssociationControlProcedure().abort(PeerAbortDiagnostics.OTHER_REASON);		
-			Assert.assertTrue(userSi.getApiServiceInstance().getStatus() == ServiceStatus.UNBOUND);
-			
-			Collection<IOnChangeCyclicReport> procedures = userSi.getCyclicReportProcedures();
-			for(IOnChangeCyclicReport proc : procedures) {
-				Assert.assertTrue(proc.isActive() == false);
-				Assert.assertTrue(proc.isActivationPending() == false);
-				Assert.assertTrue(proc.isDeactivationPending() == false);
+			for(int testRun=1; testRun<3; testRun++) {
+				System.out.println("BIND " + testRun + "...");
+				verifyResult(userSi.bind(), "BIND");
+	
+				boolean onChange = true;
+				userSi.startCyclicReport(1000, onChange, 0);
+				
+				Thread.sleep(2000); // give some time to report on data
+	
+				System.out.println("Initiate abort by the user...");
+				userSi.getApiServiceInstance().getAssociationControlProcedure().abort(PeerAbortDiagnostics.OTHER_REASON);		
+				Assert.assertTrue(userSi.getApiServiceInstance().getStatus() == ServiceStatus.UNBOUND);
+				
+				Collection<IOnChangeCyclicReport> procedures = userSi.getCyclicReportProcedures();
+				for(IOnChangeCyclicReport proc : procedures) {
+					Assert.assertTrue(proc.isActive() == false);
+					Assert.assertTrue(proc.isActivationPending() == false);
+					Assert.assertTrue(proc.isDeactivationPending() == false);
+				}
+				
+				//Thread.sleep(500); // give some time for the abort to arrive at the provider
+				providerSi.waitForAbort(60000);
+				
+				procedures = providerSi.getCyclicReportProcedures();
+				for(IOnChangeCyclicReport proc : procedures) {
+					MdSi.printProcedureState(proc);
+					Assert.assertTrue(proc.isActive() == false);
+					Assert.assertTrue(proc.isActivationPending() == false);
+					Assert.assertTrue(proc.isDeactivationPending() == false);				
+				}			
+				Assert.assertTrue(providerSi.getApiServiceInstance().getStatus() == ServiceStatus.UNBOUND);
 			}
-			
-			//Thread.sleep(500); // give some time for the abort to arrive at the provider
-			providerSi.waitForAbort(60000);
-			
-			procedures = providerSi.getCyclicReportProcedures();
-			for(IOnChangeCyclicReport proc : procedures) {
-				MdSi.printProcedureState(proc);
-				Assert.assertTrue(proc.isActive() == false);
-				Assert.assertTrue(proc.isActivationPending() == false);
-				Assert.assertTrue(proc.isDeactivationPending() == false);				
-			}			
-			Assert.assertTrue(providerSi.getApiServiceInstance().getStatus() == ServiceStatus.UNBOUND);
 			
 			providerSi.destroy();
 			userSi.destroy();
@@ -246,38 +248,49 @@ public class TestMds {
 			
 			MdSiProvider providerSi = new MdSiProvider(providerApi, mdSiProviderConfig, paramLists, labelList);
 			MdSiUser userSi = new MdSiUser(userApi, mdSiUserConfig, 1, paramLists);
-		
-			System.out.println("BIND...");
-			verifyResult(userSi.bind(), "BIND");
 
-			boolean onChange = true;
-			userSi.startCyclicReport(1000, onChange, 0);
 			
-			Thread.sleep(1000); // give some time to report on data
-
-			System.out.println("Initiate abort by the provider...");
-			providerSi.getApiServiceInstance().getAssociationControlProcedure().abort(PeerAbortDiagnostics.OPERATIONAL_REQUIREMENT);		
-			Assert.assertTrue(providerSi.getApiServiceInstance().getStatus() == ServiceStatus.UNBOUND);
-			
-			Collection<IOnChangeCyclicReport> procedures = providerSi.getCyclicReportProcedures();
-			for(IOnChangeCyclicReport proc : procedures) {
-				Assert.assertTrue(proc.isActive() == false);
-				Assert.assertTrue(proc.isActivationPending() == false);
-				Assert.assertTrue(proc.isDeactivationPending() == false);
+			for(int testRun=1; testRun<3; testRun++) {
+				System.out.println("BIND " + testRun + "...");
+				verifyResult(userSi.bind(), "BIND");
+	
+				boolean onChange = true;
+				System.out.println("Start cyclic report procedure, test run " + testRun);
+				userSi.startCyclicReport(1000, onChange, 0);
+				
+				Collection<IOnChangeCyclicReport> procedures = providerSi.getCyclicReportProcedures();
+				for(IOnChangeCyclicReport proc : procedures) {
+					Assert.assertTrue(proc.isActive() == true);
+					Assert.assertTrue(proc.isActivationPending() == false);
+					Assert.assertTrue(proc.isDeactivationPending() == false);
+				}
+				
+				Thread.sleep(1000); // give some time to report on data
+	
+				System.out.println("Initiate abort by the provider...");
+				providerSi.getApiServiceInstance().getAssociationControlProcedure().abort(PeerAbortDiagnostics.OPERATIONAL_REQUIREMENT);		
+				Assert.assertTrue(providerSi.getApiServiceInstance().getStatus() == ServiceStatus.UNBOUND);
+				
+				procedures = providerSi.getCyclicReportProcedures();
+				for(IOnChangeCyclicReport proc : procedures) {
+					Assert.assertTrue(proc.isActive() == false);
+					Assert.assertTrue(proc.isActivationPending() == false);
+					Assert.assertTrue(proc.isDeactivationPending() == false);
+				}
+				
+				//Thread.sleep(500); // give some time for the abort to arrive at the provider
+				//userSi.waitForAbort(60000);
+				Thread.sleep(500);
+				
+				procedures = userSi.getCyclicReportProcedures();
+				for(IOnChangeCyclicReport proc : procedures) {
+					MdSi.printProcedureState(proc);
+					Assert.assertTrue(proc.isActive() == false);
+					Assert.assertTrue(proc.isActivationPending() == false);
+					Assert.assertTrue(proc.isDeactivationPending() == false);				
+				}			
+				Assert.assertTrue(userSi.getApiServiceInstance().getStatus() == ServiceStatus.UNBOUND);
 			}
-			
-			//Thread.sleep(500); // give some time for the abort to arrive at the provider
-			//userSi.waitForAbort(60000);
-			Thread.sleep(500);
-			
-			procedures = userSi.getCyclicReportProcedures();
-			for(IOnChangeCyclicReport proc : procedures) {
-				MdSi.printProcedureState(proc);
-				Assert.assertTrue(proc.isActive() == false);
-				Assert.assertTrue(proc.isActivationPending() == false);
-				Assert.assertTrue(proc.isDeactivationPending() == false);				
-			}			
-			Assert.assertTrue(userSi.getApiServiceInstance().getStatus() == ServiceStatus.UNBOUND);
 			
 			providerSi.destroy();
 			userSi.destroy();

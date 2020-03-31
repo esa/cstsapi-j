@@ -35,6 +35,12 @@ public class OidTree {
 	public static final int EVENT_BIT_VALUE = 2;
 	/** The value of the directive type bit in an integer array */
 	public static final int DIREC_BIT_VALUE = 3;
+	/** The length of a cross support functionality resource integer array */
+	public static final int CROSS_FUNC_RES_BIT_LEN = CROSS_FUNC_RES_BIT_POS + 1;
+	/** The length of a cross support functionality integer array */
+	public static final int CROSS_SUPP_FUNC_KIND_BIT_LEN = CROSS_SUPP_FUNC_KIND_BIT_POS + 1;
+    /** The length of the parameter, event or directive bit integer array */
+    public static final int PARAM_OR_EVENT_OR_DIRECT_BIT_LEN = PARAM_OR_EVENT_OR_DIRECT_QUALIFIER_BIT_POS + 1;
 
 	/** The OID tree singlton */
 	private static OidTree instance;

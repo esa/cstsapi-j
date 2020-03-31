@@ -19,7 +19,7 @@ public class TestBootstrap
             {
                 if (!initialized)
                 {
-                    File file = new File("src/test/resources/ProviderConfig.xml");
+                    File file = new File("src/test/resources/ProviderConfig1.xml");
                     String providerConfigName = file.getAbsolutePath();
 
                     file = new File("src/test/resources/log.properties");

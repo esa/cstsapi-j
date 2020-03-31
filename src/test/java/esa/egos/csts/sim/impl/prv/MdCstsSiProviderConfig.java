@@ -33,7 +33,7 @@ public class MdCstsSiProviderConfig extends MdCstsSiConfig
      * @param peerIdentifier The peer identifier string as in the proxy
      *            configuration
      * @param responderPortIdentifier The responder port identifier string as in
-     *            teh proxy configuration
+     *            the proxy configuration
      */
     public MdCstsSiProviderConfig(long minimumAllowedDeliveryCycle,
                                   List<Label> defaultParameterLabelList,

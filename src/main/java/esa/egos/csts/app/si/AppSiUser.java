@@ -167,5 +167,11 @@ public abstract class AppSiUser extends AppSi {
 		}
 		return res;		
 	}
-	
+
+	@Override
+	public void protocolAbort() {
+		this.retLock.lock();
+		this.retCond.signal();
+		this.retLock.unlock();
+	}
 }

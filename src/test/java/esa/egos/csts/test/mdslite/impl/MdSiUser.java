@@ -16,6 +16,7 @@ import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
+import esa.egos.csts.api.operations.IPeerAbort;
 import esa.egos.csts.api.operations.IStart;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.parameters.impl.ParameterValue;
@@ -226,6 +227,8 @@ public class MdSiUser extends MdSi {
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
+		} else if(operation.getType() == OperationType.PEER_ABORT) {
+			System.out.println("MD User Received PEER APBORT. Diag:  " + ((IPeerAbort)operation).getPeerAbortDiagnostic());
 		}
 		
 	}

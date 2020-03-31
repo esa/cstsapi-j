@@ -64,7 +64,7 @@ public class PeerAbort extends AbstractOperation implements IPeerAbort {
 		sb.append(super.print(i));
 		sb.append("Confirmed Operation            : true\n");
 		sb.append("Originator                     : ").append(this.originator.toString()).append('\n');
-		sb.append("Operation Type                 : ").append(this.TYPE.toString()).append('\n');
+		sb.append("Operation Type                 : ").append(TYPE.toString()).append('\n');
 		sb.append("Common Diagnostics             : ").append(this.diagnostic.toString()).append('\n');
 
 		return sb.toString();

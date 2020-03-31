@@ -19,6 +19,12 @@ public class AssociationControlUser extends AbstractAssociationControl {
 	protected synchronized void releaseAssociation() throws ApiException {
 		getServiceInstanceInternal().releaseAssocation();
 	}
+
+	@Override
+	public void informProtocolAbort() {
+		super.informProtocolAbort(); // terminate
+		assocCreated = false;
+	}	
 	
 	@Override
 	protected CstsResult doInitiateOperationInvoke(IOperation operation) {

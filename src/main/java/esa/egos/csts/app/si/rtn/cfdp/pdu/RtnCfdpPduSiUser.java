@@ -1,5 +1,6 @@
 package esa.egos.csts.app.si.rtn.cfdp.pdu;
 
+import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.enumerations.ProcedureRole;
@@ -9,6 +10,7 @@ import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IReturnBuffer;
 import esa.egos.csts.api.operations.ITransferData;
+import esa.egos.csts.api.operations.IPeerAbort;
 import esa.egos.csts.api.types.Time;
 import esa.egos.csts.app.si.AppSiUser;
 import esa.egos.csts.app.si.SiConfig;
@@ -74,6 +76,8 @@ public class RtnCfdpPduSiUser extends AppSiUser {
 		}
 		else if(operation.getType() == OperationType.TRANSFER_DATA) {
 			this.pduReceiver.cfdpPdu(((ITransferData)operation).getData());			
+		} else if(operation.getType() == OperationType.PEER_ABORT) {			
+			this.pduReceiver.abort(((IPeerAbort)operation).getPeerAbortDiagnostic());
 		}
 	}
 
@@ -84,7 +88,7 @@ public class RtnCfdpPduSiUser extends AppSiUser {
 	}
 
 	/**
-	 * For testing. Should be removed?
+	 * Provides access to the Return CFDP PDU procedure 
 	 * @return
 	 */
 	public ICfdpPduDelivery getDeliveryProc() {
@@ -93,8 +97,8 @@ public class RtnCfdpPduSiUser extends AppSiUser {
 	
 	@Override
 	public void protocolAbort() {
-		// TODO Auto-generated method stub
-
+		this.pduReceiver.abort(PeerAbortDiagnostics.INVALID);
+		super.protocolAbort();
 	}
 
 }

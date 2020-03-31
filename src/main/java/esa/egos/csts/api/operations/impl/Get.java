@@ -189,10 +189,14 @@ public class Get extends AbstractConfirmedOperation implements IGet {
 		sb.append("Common Diagnostics             : Invalid\n");
 		sb.append("List of parameters             : ").append(listOfParameter).append('\n');
 		sb.append("Qualified parameters           : ");
+		boolean first = true;
 		for (QualifiedParameter parameter : qualifiedParameters) {
-			if (parameter.getName() == null) {
-				sb.append(parameter.getName()).append("; ");
-			}
+            if (!first) {
+                sb.append(", ");
+            } else {
+                first = false;
+            }
+		    sb.append(parameter);
 		}
 		sb.append('\n');
 

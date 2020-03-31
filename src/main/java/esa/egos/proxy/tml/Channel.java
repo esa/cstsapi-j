@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 
 import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.util.CSTS_LOG;
 import esa.egos.proxy.LogMsg;
 import esa.egos.proxy.enums.Component;
 import esa.egos.proxy.logging.CstsLogMessageType;
@@ -205,10 +206,11 @@ public abstract class Channel implements IChannelInitiate, ITimeoutProcessor
 
     protected void startTimer(EE_APIPX_TMLTimer which)
     {
-        if ((which == EE_APIPX_TMLTimer.eeAPIPXtt_HBT || which == EE_APIPX_TMLTimer.eeAPIPXtt_HBR) && !this.usingHBT)
-        {
-            return;
-        }
+    	// CSTSAPI-21 non usehearbeat only means a 0, meaning don't use heartbeat, is allowed!
+    	//        if ((which == EE_APIPX_TMLTimer.eeAPIPXtt_HBT || which == EE_APIPX_TMLTimer.eeAPIPXtt_HBR) && !this.usingHBT)
+//        {
+//            return;
+//        }
 
         try
         {
@@ -483,6 +485,7 @@ public abstract class Channel implements IChannelInitiate, ITimeoutProcessor
 
     public void hbtReceived(HBMessage msg)
     {
+    	CSTS_LOG.CSTS_OP_LOGGER.finer("Heartbeat received. " + msg.toString());
         this.channelState.tcpDataInd(msg);
     }
 
@@ -501,6 +504,10 @@ public abstract class Channel implements IChannelInitiate, ITimeoutProcessor
                 LOG.fine("Forwarding PDU (length: " + data.length + " received on channel " + this);
             }
             chInform.rcvSLEPDU(data);
+        }
+        else if(data != null)
+        {
+        	LOG.severe("No channel inform to forward received PDU of length " + data.length);
         }
     }
 
@@ -569,8 +576,10 @@ public abstract class Channel implements IChannelInitiate, ITimeoutProcessor
         this.objMutex.lock();
 
         LOG.finest("TMLTR_SENDPDU " + LogMsg.TMLTR_SENDPDU.getCode());
-
-        this.commMng.sendMsg(new HBMessage());
+        
+        HBMessage msg = new HBMessage();
+        CSTS_LOG.CSTS_OP_LOGGER.finer("Send heartbeat " + msg);        
+        this.commMng.sendMsg(msg);
 
         this.objMutex.unlock();
     }
@@ -723,7 +732,10 @@ public abstract class Channel implements IChannelInitiate, ITimeoutProcessor
         this.objMutex.lock();
         try
         {
-            this.connectedSock.close();
+        	if(this.connectedSock != null)
+        	{
+        		this.connectedSock.close();
+        	}
         }
         catch (IOException e)
         {
@@ -882,11 +894,6 @@ public abstract class Channel implements IChannelInitiate, ITimeoutProcessor
         this.objMutex.unlock();
     }
 
-    public boolean isUsingHBT()
-    {
-        return this.usingHBT;
-    }
-
     public void setUsingHBT(boolean usingHBT)
     {
         this.usingHBT = usingHBT;
@@ -946,3 +953,5 @@ public abstract class Channel implements IChannelInitiate, ITimeoutProcessor
     	this.channelState.delSLEPDUReq(this.tmlMsgFactory.createPDUMsg(data), last);
 	}
 }
+
+    

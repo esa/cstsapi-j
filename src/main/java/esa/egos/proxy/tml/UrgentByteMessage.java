@@ -37,4 +37,10 @@ public class UrgentByteMessage extends TMLMessage
     {
         return this.paDiag;
     }
+    
+    @Override
+    public String toString() 
+    {
+    	return "UB: " + getUBDiagnostic();
+    }    
 }

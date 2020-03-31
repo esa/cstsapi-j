@@ -118,4 +118,10 @@ public class CtxMessage extends TMLMessage
     {
         this.version = version;
     }
+    
+    @Override
+    public String toString() 
+    {
+    	return "CTX: " + super.toString();
+    }    
 }

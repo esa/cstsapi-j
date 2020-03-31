@@ -39,8 +39,8 @@
 	</remote_peers>
 	<foreign_logical_ports>
 		<logical_port tcp_recv_buffer_size="4096" port_name="CSTS_PT1"
-			port_heartbeat_timer="300" tcp_xmit_buffer_size="4096"
-			port_dead_factor="4">
+			port_heartbeat_timer="3" tcp_xmit_buffer_size="4096"
+			port_dead_factor="2">
 			<port_data port_number="5018" ip_address="127.0.0.1"></port_data>
 		</logical_port>
 	</foreign_logical_ports>

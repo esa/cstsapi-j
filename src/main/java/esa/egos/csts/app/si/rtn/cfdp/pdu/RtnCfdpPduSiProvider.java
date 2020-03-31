@@ -61,7 +61,7 @@ public class RtnCfdpPduSiProvider extends AppSi {
 			this.notify();
 			
 			if(prod != null) {
-				prod.stopCfdpPduDelivery();
+				prod.stopCfdpPduDelivery();				
 			}
 		} else if (operation.getType() == OperationType.STOP) {
 			if(prod != null) {
@@ -98,7 +98,10 @@ public class RtnCfdpPduSiProvider extends AppSi {
 
 	@Override
 	public void protocolAbort() {
-		// ignored
+		IRtnCfdpPduProduction prod = this.production.get();
+		if(prod != null) {
+			prod.stopCfdpPduDelivery();
+		}
 	}
 	
 	/**

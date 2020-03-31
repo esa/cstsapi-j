@@ -1,9 +1,13 @@
 package esa.egos.csts.sim.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.oids.ObjectIdentifier;
+import esa.egos.csts.api.parameters.impl.FunctionalResourceParameter;
 import esa.egos.csts.api.procedures.IProcedure;
 import esa.egos.csts.api.procedures.cyclicreport.ICyclicReport;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
@@ -13,6 +17,9 @@ import esa.egos.csts.api.serviceinstance.IServiceInform;
 import esa.egos.csts.api.serviceinstance.IServiceInstance;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceIdentifier;
 import esa.egos.csts.api.serviceinstance.impl.ServiceInstanceIdentifier;
+import esa.egos.csts.api.types.Name;
+import esa.egos.csts.sim.impl.frm.FunctionalResourceParameterEx;
+import esa.egos.csts.sim.impl.frm.values.ICstsValue;
 
 /**
  * Base class for MD-CSTS service instance (SI)
@@ -29,6 +36,8 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
     /** CSTS SI IF*/
     protected IServiceInstance serviceInstance;
 
+    /** CSTS SI IF*/
+    protected K config;
 
 
     public MdCstsSi(ICstsApi api, K config) throws ApiException
@@ -38,6 +47,7 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
         System.out.println("MdCstsSi#MdCstsSi() begin");
 
         this.api = api;
+        this.config = config;
 
         IServiceInstanceIdentifier identifier = new ServiceInstanceIdentifier(config.getScId(),
                                                                               config.getFacilityId(),
@@ -65,7 +75,7 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
             if (pii.getType().getOid().equals(OIDs.cyclicReport))
             {
                 C cyclicReport = createCyclicReportProcedure();
-                addProcedure(cyclicReport, pii, config);                
+                addProcedure(cyclicReport, pii, config);
             }
             else if (pii.getType().getOid().equals(OIDs.informationQuery))
             {
@@ -79,7 +89,7 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
             }
             else
             {
-                System.err.println("ignore unsupported procedure " + pii.getType().getOid());                               
+                System.err.println("ignore unsupported procedure " + pii.getType().getOid());
             }
         }
     }
@@ -101,6 +111,54 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
     public void destroy() throws ApiException
     {
         this.api.destroyServiceInstance(this.serviceInstance);
+    }
+
+    public Map<Name, FunctionalResourceParameterEx<?>> getParameters()
+    {
+        Map<Name, FunctionalResourceParameterEx<?>> ret = new HashMap<Name, FunctionalResourceParameterEx<?>>();
+        this.serviceInstance.gatherParameters().stream().filter(p -> (p instanceof FunctionalResourceParameterEx))
+                .forEach(p -> ret.put(p.getName(), (FunctionalResourceParameterEx<?>) p));
+        return ret;
+    }
+
+    @SuppressWarnings("rawtypes")
+    public FunctionalResourceParameterEx<?> getParameter(Name name)
+    {
+        return (FunctionalResourceParameterEx) this.serviceInstance.gatherParameters().stream()
+                .filter(p -> (p.getName().equals(name) && p instanceof FunctionalResourceParameterEx)).findFirst()
+                .get();
+    }
+
+    public void setParameterValue(Name name, ICstsValue value) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InstantiationException
+    {
+        FunctionalResourceParameter parameter = getParameter(name);
+        if (parameter == null)
+        {
+            throw new NullPointerException("Parameter " + name + " is not available in MD collection");
+        }
+
+        if (!(parameter instanceof FunctionalResourceParameterEx<?>))
+        {
+            throw new UnsupportedOperationException("Parameter " + name + " is not an instance of FunctionalResourceParameterEx<?>");
+        }
+
+        ((FunctionalResourceParameterEx<?>) parameter).setCstsValue(value);
+    }
+
+    public ICstsValue getParameterValue(Name name) throws IllegalArgumentException, IllegalAccessException
+    {
+        FunctionalResourceParameter parameter = getParameter(name);
+        if (parameter == null)
+        {
+            throw new NullPointerException("Parameter " + name + " is not available in MD collection");
+        }
+
+        if (!(parameter instanceof FunctionalResourceParameterEx<?>))
+        {
+            throw new UnsupportedOperationException("Parameter " + name + " is not an instance of FunctionalResourceParameterEx<?>");
+        }
+
+        return ((FunctionalResourceParameterEx<?>) parameter).getCstsValue();
     }
 
 }
