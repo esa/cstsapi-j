@@ -26,6 +26,11 @@ public class CstsComplexValue extends CstsValue implements ICstsComplexValue
         return new CstsComplexValue(qualifier, values);
     }
 
+    public static CstsComplexValue of(String name, ParameterQualifier qualifier, ICstsValue... values)
+    {
+        return new CstsComplexValue(name, qualifier, values);
+    }
+
     private CstsComplexValue(ICstsValue... values)
     {
         super(ParameterQualifier.VALID);
@@ -35,6 +40,12 @@ public class CstsComplexValue extends CstsValue implements ICstsComplexValue
     private CstsComplexValue(String name, ICstsValue... values)
     {
         super(name, ParameterQualifier.VALID);
+        this.values = Arrays.asList(values);
+    }
+
+    private CstsComplexValue(String name, ParameterQualifier qualifier, ICstsValue... values)
+    {
+        super(name, qualifier);
         this.values = Arrays.asList(values);
     }
 

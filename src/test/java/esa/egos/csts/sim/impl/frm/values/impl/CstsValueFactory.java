@@ -2,6 +2,7 @@ package esa.egos.csts.sim.impl.frm.values.impl;
 
 import java.math.BigInteger;
 
+import esa.egos.csts.api.enumerations.ParameterQualifier;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.sim.impl.frm.values.ICstsBoolValue;
 import esa.egos.csts.sim.impl.frm.values.ICstsComplexValue;
@@ -42,7 +43,7 @@ public class CstsValueFactory implements ICstsValueFactory
     }
 
     @Override
-    public ICstsBoolValue createCstsBoolValue(String name, boolean value)
+    public ICstsBoolValue createCstsBoolValue(String name, ParameterQualifier qualifier, boolean value)
     {
         return CstsBoolValue.of(name, value);
     }
@@ -54,7 +55,7 @@ public class CstsValueFactory implements ICstsValueFactory
     }
 
     @Override
-    public ICstsIntValue createCstsIntValue(String name, int value)
+    public ICstsIntValue createCstsIntValue(String name, ParameterQualifier qualifier, int value)
     {
         return CstsIntValue.of(name, value);
     }
@@ -66,7 +67,7 @@ public class CstsValueFactory implements ICstsValueFactory
     }
 
     @Override
-    public ICstsIntValue createCstsIntValue(String name, BigInteger value)
+    public ICstsIntValue createCstsIntValue(String name, ParameterQualifier qualifier, BigInteger value)
     {
         return CstsIntValue.of(name, value);
     }
@@ -78,7 +79,7 @@ public class CstsValueFactory implements ICstsValueFactory
     }
 
     @Override
-    public ICstsOctetStringValue createCstsOctetStringValue(String name, byte[] value)
+    public ICstsOctetStringValue createCstsOctetStringValue(String name, ParameterQualifier qualifier, byte[] value)
     {
         return CstsOctetStringValue.of(name, value);
     }
@@ -90,7 +91,7 @@ public class CstsValueFactory implements ICstsValueFactory
     }
 
     @Override
-    public ICstsOidValue createCstsOidValue(String name, int[] value)
+    public ICstsOidValue createCstsOidValue(String name, ParameterQualifier qualifier, int[] value)
     {
         return CstsOidValue.of(name, value);
     }
@@ -102,7 +103,7 @@ public class CstsValueFactory implements ICstsValueFactory
     }
 
     @Override
-    public ICstsOidValue createCstsOidValue(String name, ObjectIdentifier value)
+    public ICstsOidValue createCstsOidValue(String name, ParameterQualifier qualifier, ObjectIdentifier value)
     {
         return CstsOidValue.of(name, value);
     }
@@ -114,7 +115,7 @@ public class CstsValueFactory implements ICstsValueFactory
     }
 
     @Override
-    public ICstsRealValue createCstsRealValue(String name, double value)
+    public ICstsRealValue createCstsRealValue(String name, ParameterQualifier qualifier, double value)
     {
         return CstsRealValue.of(name, value);
     }
@@ -126,7 +127,7 @@ public class CstsValueFactory implements ICstsValueFactory
     }
 
     @Override
-    public ICstsStringValue createCstsStringValue(String name, byte[] value)
+    public ICstsStringValue createCstsStringValue(String name, ParameterQualifier qualifier, byte[] value)
     {
         return CstsStringValue.of(name, value);
     }
@@ -138,7 +139,7 @@ public class CstsValueFactory implements ICstsValueFactory
     }
 
     @Override
-    public ICstsStringValue createCstsStringValue(String name, String value)
+    public ICstsStringValue createCstsStringValue(String name, ParameterQualifier qualifier, String value)
     {
         return CstsStringValue.of(name, value);
     }
@@ -147,6 +148,12 @@ public class CstsValueFactory implements ICstsValueFactory
     public ICstsComplexValue createCstsComplexValue(String name, ICstsValue... values)
     {
         return CstsComplexValue.of(name, values);
+    }
+
+    @Override
+    public ICstsComplexValue createCstsComplexValue(String name, ParameterQualifier qualifier, ICstsValue... values)
+    {
+        return CstsComplexValue.of(name, qualifier, values);
     }
 
     @Override

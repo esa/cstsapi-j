@@ -57,6 +57,9 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
     /** The instance of the BER class */
     private T berObject;
 
+    /** The parameter qualifier */
+    private ParameterQualifier qualifier;
+
     /** The BER name */
     private String berName;
 
@@ -71,6 +74,7 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
         super(identifier, functionalResourceName);
         this.berClass = berClass;
         this.berObject = this.berClass.newInstance();
+        this.qualifier = ParameterQualifier.UNDEFINED;
         this.berName = Utils.firstToLowerCase(this.berClass.getSimpleName());
         this.cstsValueFactory = cstsValueFactory;
         initValue();
@@ -93,6 +97,7 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
         ByteArrayInputStream is = new ByteArrayInputStream(embeddedData.getData());
         this.berObject = this.berClass.newInstance();
         this.berObject.decode(is);
+        this.qualifier = qualifiedParameter.getQualifiedValues().get(0).getQualifier();
     }
 
     @Override
@@ -107,15 +112,13 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
             byte[] data = os.getArray();
             EmbeddedData embeddedData = EmbeddedData.of(getOid(), data);
             ParameterValue parameterValue = new ParameterValue(embeddedData);
-
-            QualifiedValues qualifiedValues = new QualifiedValues(ParameterQualifier.VALID);
+            QualifiedValues qualifiedValues = new QualifiedValues(this.qualifier);
             qualifiedValues.getParameterValues().add(parameterValue);
-
             qualifiedParameter.getQualifiedValues().add(qualifiedValues);
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            e.printStackTrace(); // TODO use logger w/ an error message
         }
 
         return qualifiedParameter;
@@ -151,6 +154,7 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
         {
             throw new UnsupportedOperationException("Value " + value + " is not supported by parameter " + getName());
         }
+        this.qualifier = value.getQuality();
     }
 
     public synchronized ICstsValue getCstsValue() throws IllegalArgumentException, IllegalAccessException
@@ -191,42 +195,42 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
         {
             if (objValue instanceof BigInteger)
             {
-                ret = this.cstsValueFactory.createCstsIntValue(name, (BigInteger) objValue);
+                ret = this.cstsValueFactory.createCstsIntValue(name, this.qualifier, (BigInteger) objValue);
             }
         }
         else if(berObject instanceof BerBoolean)
         {
             if (objValue instanceof Boolean)
             {
-                ret = this.cstsValueFactory.createCstsBoolValue(name, (boolean) objValue);
+                ret = this.cstsValueFactory.createCstsBoolValue(name, this.qualifier, (boolean) objValue);
             }
         }
         else if(berObject instanceof BerVisibleString)
         {
             if (objValue instanceof byte[])
             {
-                ret = this.cstsValueFactory.createCstsStringValue(name, (byte[]) objValue);
+                ret = this.cstsValueFactory.createCstsStringValue(name, this.qualifier, (byte[]) objValue);
             }
         }
         else if(berObject instanceof BerOctetString)
         {
             if (objValue instanceof byte[])
             {
-                ret = this.cstsValueFactory.createCstsOctetStringValue(name, (byte[]) objValue);
+                ret = this.cstsValueFactory.createCstsOctetStringValue(name, this.qualifier, (byte[]) objValue);
             }
         }
         else if(berObject instanceof BerReal)
         {
             if (objValue instanceof Double)
             {
-                ret = this.cstsValueFactory.createCstsRealValue(name, (double) objValue);
+                ret = this.cstsValueFactory.createCstsRealValue(name, this.qualifier, (double) objValue);
             }
         }
         else if(berObject instanceof BerObjectIdentifier)
         {
             if (objValue instanceof int[])
             {
-                ret = this.cstsValueFactory.createCstsOidValue(name, (int[]) objValue);
+                ret = this.cstsValueFactory.createCstsOidValue(name, this.qualifier, (int[]) objValue);
             }
         }
 
@@ -271,14 +275,7 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
             }
         }
 
-        if (name != null)
-        {
-            ret = this.cstsValueFactory.createCstsComplexValue(name, values.toArray(new ICstsValue[values.size()]));
-        }
-        else
-        {
-            ret = this.cstsValueFactory.createCstsComplexValue(name, values.toArray(new ICstsValue[values.size()]));
-        }
+        ret = this.cstsValueFactory.createCstsComplexValue(name, values.toArray(new ICstsValue[values.size()]));
 
         return ret;
     }
