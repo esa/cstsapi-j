@@ -163,12 +163,37 @@ public class MdCollection
         return ret;
     }
 
+    public Name getEventName()
+    {
+        Name ret;
+        synchronized (this.events)
+        {
+            Event par = this.events.values().iterator().next();
+            ret = par.getName();
+        }
+
+        return ret;
+    }
+
     public ListOfParameters getEventNames()
     {
         ListOfParameters ret;
         synchronized (this.events)
         {
             ret = ListOfParameters.of(this.events.keySet().toArray(new Name[this.events.size()]));
+        }
+
+        return ret;
+    }
+
+    public ListOfParameters getEventLabelSet()
+    {
+        ListOfParameters ret;
+        synchronized (this.events)
+        {
+            List<Label> labels = new ArrayList<Label>(this.events.size());
+            this.events.values().forEach(par -> labels.add(par.getLabel()));
+            ret = ListOfParameters.of(labels.toArray(new Label[labels.size()]));
         }
 
         return ret;

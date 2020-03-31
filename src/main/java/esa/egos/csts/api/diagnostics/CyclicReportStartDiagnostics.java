@@ -52,9 +52,9 @@ public class CyclicReportStartDiagnostics {
 	 * @param diagnosticExtension
 	 *            the Cyclic Report START Diagnostic extension
 	 */
-	public CyclicReportStartDiagnostics(EmbeddedData diagnosticxtension) {
+	public CyclicReportStartDiagnostics(EmbeddedData diagnosticExtension) {
 		this.type = CyclicReportStartDiagnosticsType.EXTENDED;
-		diagnosticExtension = null;
+		this.diagnosticExtension = diagnosticExtension;
 	}
 
 	/**

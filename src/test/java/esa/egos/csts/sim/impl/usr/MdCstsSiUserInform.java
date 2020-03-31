@@ -1,5 +1,7 @@
 package esa.egos.csts.sim.impl.usr;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -8,11 +10,17 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 
+import b1.ccsds.csts.cyclic.report.pdus.CyclicReportStartDiagnosticExt;
+import esa.egos.csts.api.diagnostics.CyclicReportStartDiagnostics;
 import esa.egos.csts.api.diagnostics.DiagnosticType;
+import esa.egos.csts.api.diagnostics.StartDiagnostic;
+import esa.egos.csts.api.diagnostics.StartDiagnosticType;
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.enumerations.OperationResult;
 import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.main.ICstsApi;
+import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IBind;
 import esa.egos.csts.api.operations.IConfirmedOperation;
@@ -259,7 +267,28 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
 
         try
         {
-            onReturn(start, () -> { return start.getStartDiagnostic().getType().name();});
+            if (start.getResult() == OperationResult.NEGATIVE) {
+                onReturn(start, () -> {
+                    StartDiagnostic sd = start.getStartDiagnostic();
+                    if (sd.getType() == StartDiagnosticType.EXTENDED)
+                    {
+                        EmbeddedData ed = sd.getDiagnosticExtension();
+                        if (ed.getOid().equals(OIDs.crStartDiagExt)) {
+                            CyclicReportStartDiagnosticExt cyclicReportStartDiagnosticExt = new CyclicReportStartDiagnosticExt();
+                            try (ByteArrayInputStream is = new ByteArrayInputStream(ed.getData())) {
+                                cyclicReportStartDiagnosticExt.decode(is);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            return CyclicReportStartDiagnostics.decode(cyclicReportStartDiagnosticExt)
+                                    .getListOfParametersDiagnostics().toString();
+                        }
+                    }
+                    return start.getStartDiagnostic().getType().name();
+                });
+            } else {
+                onReturn(start, () -> { return start.getStartDiagnostic().getType().name();});
+            }
         }
         finally
         {
@@ -491,6 +520,11 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
         return getCount(this.notifiedEvents);
     }
 
+    public List<Name> getNotifiedEvents()
+    {
+        return this.notifiedEvents;
+    }
+
     public int getQueriedParameterCount()
     {
         return getCount(this.queriedParameters);
@@ -506,6 +540,11 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
         }
 
         return ret;
+    }
+    
+    public int getCyclicReportParametersCount()
+    {
+        return getCount(this.cyclicParameters);
     }
 
     public List<QualifiedParameter> getLastQueriedParameters()
