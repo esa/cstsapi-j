@@ -64,28 +64,30 @@ public abstract class MdCstsTestBase
     protected List<ProcedureInstanceIdentifier> iq_piids = Arrays.asList(this.piid_iq_secondary);
 
     // all procedure identifiers
-    protected List<ProcedureInstanceIdentifier> piids = Arrays.asList(this.piid_cr_prime, this.piid_iq_secondary, this.piid_n_secondary);
+    protected List<ProcedureInstanceIdentifier> piids = Arrays.asList(this.piid_cr_prime,
+                                                                      this.piid_iq_secondary,
+                                                                      this.piid_n_secondary);
 
     protected long minimumAllowedDeliveryCycle = 50;
 
     // create provider SI configuration
     protected MdCstsSiProviderConfig mdSiProviderConfig = new MdCstsSiProviderConfig(this.minimumAllowedDeliveryCycle,
-                                                                                   null,
-                                                                                   null,
-                                                                                   this.scId,
-                                                                                   this.facilityId,
-                                                                                   0,
-                                                                                   "CSTS_USER",
-                                                                                   "CSTS_PT1",
-                                                                                   this.piids);
+                                                                                     null,
+                                                                                     null,
+                                                                                     this.scId,
+                                                                                     this.facilityId,
+                                                                                     0,
+                                                                                     "CSTS_USER",
+                                                                                     "CSTS_PT1",
+                                                                                     this.piids);
 
     // create provider SI configuration
     protected MdCstsSiConfig mdSiUserConfig = new MdCstsSiConfig(this.scId,
-                                                               this.facilityId,
-                                                               0,
-                                                               "CSTS_PROVIDER",
-                                                               "CSTS_PT1",
-                                                               this.piids);
+                                                                 this.facilityId,
+                                                                 0,
+                                                                 "CSTS_PROVIDER",
+                                                                 "CSTS_PT1",
+                                                                 this.piids);
 
     // the default label list
     protected List<Label> defaultLabelList;
@@ -154,11 +156,6 @@ public abstract class MdCstsTestBase
         // create FR parameters and attach them to the provider SI
         System.out.println("Setting the initial values to MD collection");
 
-        this.mdCollection = createCollection();
-        initValues();
-
-        this.providerSi.setMdCollection(this.mdCollection);
-
         System.out.println("Set the initial values to MD collection");
 
         System.out.println("Creating user SI");
@@ -191,10 +188,6 @@ public abstract class MdCstsTestBase
 
         System.out.println("MdCstsTestBase#tearDown() end");
     }
-
-    protected abstract MdCollection createCollection() throws Exception;
-
-    protected abstract void initValues();
 
     protected abstract List<Label> createDefaultLabelList();
 }
