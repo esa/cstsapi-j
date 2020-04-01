@@ -13,6 +13,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 
 import b1.ccsds.csts.cyclic.report.pdus.CyclicReportStartDiagnosticExt;
+import b1.ccsds.csts.notification.pdus.NotificationStartDiagnosticExt;
 import esa.egos.csts.api.diagnostics.CyclicReportStartDiagnostics;
 import esa.egos.csts.api.diagnostics.DiagnosticType;
 import esa.egos.csts.api.diagnostics.StartDiagnostic;
@@ -285,6 +286,14 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
                             }
                             return CyclicReportStartDiagnostics.decode(cyclicReportStartDiagnosticExt)
                                     .getListOfParametersDiagnostics().toString();
+                        } else if (ed.getOid().equals(OIDs.nStartDiagExt)) {
+                            NotificationStartDiagnosticExt notificationStartDiagnosticExt = new NotificationStartDiagnosticExt();
+                            try (ByteArrayInputStream is = new ByteArrayInputStream(ed.getData())) {
+                                notificationStartDiagnosticExt.decode(is);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            return notificationStartDiagnosticExt.getCommon().toString();
                         }
                     }
                     return start.getStartDiagnostic().getType().name();
