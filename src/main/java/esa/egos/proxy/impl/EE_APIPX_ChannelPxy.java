@@ -110,7 +110,7 @@ public class EE_APIPX_ChannelPxy extends IEE_APIPX_LoggerAdapter implements ICha
             ISP1ProtocolAbortDiagnostics paDiag = mess.getPaOriginator();
             this.ieeChannelInform.rcvProtocolAbort(paDiag);
             this.ieeChannelInform = null;
-            this.eeAPIPXLink.disconnect();
+            //this.eeAPIPXLink.disconnect(); // CSTSAPI-22 The channel proxy must remain after a protocol abort (network error)
         }
         else if (dataType == MessId.mid_SuspendReceive.getCode())
         {

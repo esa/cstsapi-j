@@ -39,10 +39,17 @@
 			password="ffdf01449809e4e5e677818892" id="CSTS-USER"></remote_peer>
 	</remote_peers>
 	<local_logical_ports>
+	
 		<logical_port tcp_recv_buffer_size="4096" port_name="CSTS_PT1"
 			tcp_xmit_buffer_size="4096">
 			<port_data port_number="5018" ip_address="*" />
 		</logical_port>
+
+		<logical_port tcp_recv_buffer_size="4096" port_name="CSTS_PT2"
+			tcp_xmit_buffer_size="4096">
+			<port_data port_number="5019" ip_address="*" />
+		</logical_port>		
+		
 	</local_logical_ports>
 	<portlist default="ISP1"></portlist>
 </provider_config>

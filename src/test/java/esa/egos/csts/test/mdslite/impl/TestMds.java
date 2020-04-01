@@ -54,27 +54,36 @@ public class TestMds {
 	 */
 	@Before
 	public void init() throws ApiException {
-		File file = new File("src/test/resources/ProviderConfig1.xml");
-		String providerConfigName = file.getAbsolutePath();
-
-		file = new File("src/test/resources/UserConfig1.xml");
-		String userConfigName = file.getAbsolutePath();
-
-		file = new File("src/test/resources/log.properties");
-		System.setProperty("java.util.logging.config.file", file.getAbsolutePath());
+		initProviderApi();
+		initUserApi();
+	}
+	
+	private void initUserApi() throws ApiException {
+		File file = new File("src/test/resources/UserConfig1.xml");
+		String userConfigName = file.getAbsolutePath();		
 		
-		System.out.println("provider config: "  + providerConfigName);
 		System.out.println("user config: "  + userConfigName);
 		
-		providerApi = new CstsApi("Test Service Provider API", AppRole.PROVIDER);
-		providerApi.initialize(providerConfigName);
-		providerApi.start();
-
 		userApi = new CstsApi("Test Service User API", AppRole.USER);
 		userApi.initialize(userConfigName);
 		userApi.start();
 		
-		System.out.println("CSTS user and provider API started");
+		System.out.println("CSTS user API started");
+	}
+	
+	private void initProviderApi() throws ApiException {
+		File file = new File("src/test/resources/ProviderConfig1.xml");
+		String providerConfigName = file.getAbsolutePath();
+		
+		file = new File("src/test/resources/log.properties");
+		System.setProperty("java.util.logging.config.file", file.getAbsolutePath());	
+		
+		System.out.println("provider config: "  + providerConfigName);
+		
+		providerApi = new CstsApi("Test Service Provider API", AppRole.PROVIDER);
+		providerApi.initialize(providerConfigName);
+		providerApi.start();		
+		System.out.println("CSTS provider API started");
 	}
 
 	/**
@@ -226,6 +235,60 @@ public class TestMds {
 		}		
 	}
 
+	@Test
+	public void testProtocolAbort() {
+		try {
+			SiConfig mdSiProviderConfig = new SiConfig(ObjectIdentifier.of(1,3,112,4,7,0),
+											ObjectIdentifier.of(1,3,112,4,6,0),
+											0, 
+											"CSTS-USER", 
+											"CSTS_PT2");
+
+			SiConfig mdSiUserConfig = new SiConfig(ObjectIdentifier.of(1,3,112,4,7,0),
+					ObjectIdentifier.of(1,3,112,4,6,0),
+					0, 
+					"CSTS-PROVIDER", // TODO: test correct behavior (return code) for wrong peer identifier
+					"CSTS_PT2");
+			
+			ListOfParameters paramList = ListOfParameters.of("test-list-1");
+			
+			List<ListOfParameters> paramLists = new ArrayList<ListOfParameters>();
+			paramLists.add(paramList);
+			
+			MdSiProvider providerSi = new MdSiProvider(providerApi, mdSiProviderConfig, paramLists, labelList);
+			MdSiUser userSi = new MdSiUser(userApi, mdSiUserConfig, 1, paramLists);
+		
+			for(int testRun=1; testRun<3; testRun++) {
+				TCPForwardServer tcpForwarder = new TCPForwardServer(5020, 5019, "localhost");
+				
+				System.out.println("BIND " + testRun + "...");
+				verifyResult(userSi.bind(), "BIND");
+	
+				boolean onChange = true;
+				userSi.startCyclicReport(1000, onChange, 0);
+			
+				Thread.sleep(2000); // give some time to report on data
+	
+				System.out.println("Disconnect the tcp connection to get a protocol abort...");
+				tcpForwarder.stop(); 
+				
+				Thread.sleep(200); // give some time for the provider (user) to realize the disconnect
+				
+				Assert.assertTrue(providerSi.getApiServiceInstance().getStatus() == ServiceStatus.UNBOUND);
+			}
+			
+			
+			
+			providerSi.destroy();
+			
+			
+			
+		
+		} catch(Exception e) {
+			e.printStackTrace();
+		}		
+	}	
+	
 	@Test
 	public void testAbortByProvider() {
 		try {

@@ -138,7 +138,7 @@ public class TCPCommMng
             {
                 if (LOG.isLoggable(Level.FINE))
                 {
-                    LOG.log(Level.FINE, "Waiting for TML message on channel " + this.channel);
+                    LOG.log(Level.FINE, "Waiting for TML message of " + this.channel);
                 }
                 tmlMsg = this.channel.getTmlMsgFactory().decodeFrom(this.channel.getConnectedSock().getInputStream(),
                                                                     error);
@@ -148,8 +148,21 @@ public class TCPCommMng
                 ReceivingThread st = this.receivingThr;
                 if (!this.channel.isAboutToClose() && st != null && st.isRunning)
                 {
-                    LOG.log(Level.SEVERE, "Failure reading from the socket input stream", e);
+                	if(this.channel != null)
+                	{
+                		LOG.log(Level.SEVERE, "Failure reading from the socket input stream of " + this.channel.toString() + " " + e.getMessage());
+                	}
+                	else
+                	{
+                		LOG.log(Level.SEVERE, "Failure reading from the socket input stream: " + e.getMessage());
+                	}
                     String msg = "Failure reading from the socket input stream";
+                    
+                    if(this.channel != null)
+                    {
+                    	msg += " for " + this.channel.toString();
+                    }
+                    
                     // this.channel.logError(LogMsg.TMLTR_IOEVENT.getCode(),
                     // true, msg);
                     this.channel.tcpError(msg);

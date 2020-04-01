@@ -952,6 +952,19 @@ public abstract class Channel implements IChannelInitiate, ITimeoutProcessor
 	public void sendSLEPDUBlocking(byte[] data, boolean last) {
     	this.channelState.delSLEPDUReq(this.tmlMsgFactory.createPDUMsg(data), last);
 	}
+    
+    @Override
+    public String toString()
+    {
+    	if(this.connectedSock != null)
+    	{
+    		return "Channel " + getClass().getSimpleName() + " acting on socket " + connectedSock;
+    	}
+    	else
+    	{
+    		return "Channel " + getClass().getSimpleName();
+    	}
+    }
 }
 
     
