@@ -132,12 +132,18 @@ public class TransferData extends AbstractOperation implements ITransferData {
 	@Override
 	public String print(int i) {
 		StringBuilder sb = new StringBuilder(i);
-		String dataString = "<logged for csts.api.operations.level = FINEST>";
+		boolean dataAvailable = this.data != null || this.embeddedData != null;
+		String dataString = dataAvailable ? "<logged for csts.api.operations.level = FINEST>" : "";
 		
-		if(CSTS_LOG.CSTS_OP_LOGGER.isLoggable(Level.FINEST)) {
-			StringBuilder hexData = new StringBuilder(System.lineSeparator());
-			CSTS_LOG.dumpHex(data, data.length, hexData);
-			dataString = hexData.toString();
+		if(dataAvailable && CSTS_LOG.CSTS_OP_LOGGER.isLoggable(Level.FINEST)) {
+	        if (this.data != null) {
+                StringBuilder hexData = new StringBuilder(System.lineSeparator());
+                CSTS_LOG.dumpHex(this.data, this.data.length, hexData);
+                dataString = hexData.toString();
+	        }
+	        else {
+                dataString = this.embeddedData.toString();
+	        }
 		}
 
 		sb.append("\nOperation                      : TRANSFER-DATA").append('\n');
