@@ -73,4 +73,47 @@ public class CstsIntValue extends CstsSimpleValue<BigInteger> implements ICstsIn
     {
         return this.value.longValue();
     }
+    
+    @Override
+    public String toString()
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append("CstsIntValue [value=");
+        sb.append(this.getValue().toString());
+        sb.append(", name=");
+        sb.append(getName());
+        sb.append(", qualifier=");
+        sb.append(getQuality().toString());
+        sb.append(']');
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+		if (o == this)
+		{
+			return true;
+		}
+		if (!(o instanceof CstsIntValue))
+		{
+			return false;
+		}
+		CstsIntValue cstsIntValue = (CstsIntValue)o;
+		if (!super.equals(cstsIntValue))
+		{
+			return false;
+		}
+		return cstsIntValue.getValue().equals(getValue());
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 7;
+        hash = 31*hash + super.hashCode();
+        hash = 31*hash + getValue().hashCode();
+        return hash;
+    }
+
 }

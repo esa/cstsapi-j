@@ -2,6 +2,7 @@ package esa.egos.csts.sim.impl.frm.values.impl;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import esa.egos.csts.api.enumerations.ParameterQualifier;
 import esa.egos.csts.sim.impl.frm.values.ICstsComplexValue;
@@ -60,26 +61,43 @@ public class CstsComplexValue extends CstsValue implements ICstsComplexValue
         return this.values;
     }
 
+    @Override
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
-        sb.append("CstsComplexValue [");
-        sb.append(super.toString());
-        sb.append(", values=");
-        boolean first = true;
-        for (ICstsValue v : this.values)
-        {
-            if (!first)
-            {
-                sb.append(", ");
-            }
-            else
-            {
-                first = false;
-            }
-            sb.append(v.toString());
-        }
-        sb.append("]");
+        sb.append("CstsComplexValue [value=[");
+	    sb.append(this.values.stream().map(ICstsValue::toString).collect(Collectors.joining(",")));
+        sb.append("], name=");
+        sb.append(getName());
+        sb.append(", qualifier=");
+        sb.append(getQuality().toString());
+        sb.append(']');
         return sb.toString();
     }
+    
+    @Override
+    public boolean equals(Object o)
+    {
+		if (o == this)
+		{
+			return true;
+		}
+		if (!(o instanceof CstsComplexValue))
+		{
+			return false;
+		}
+		CstsComplexValue cstsComplexValue = (CstsComplexValue)o;
+		if (!super.equals(cstsComplexValue))
+		{
+			return false;
+		}
+		return this.values.equals(cstsComplexValue.getValues());
+    }
+    
+    @Override
+    public int hashCode()
+    {
+        return 31*super.hashCode() + this.values.hashCode();
+    }
+    
 }

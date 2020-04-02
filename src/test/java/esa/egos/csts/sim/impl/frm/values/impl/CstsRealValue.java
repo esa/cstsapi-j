@@ -38,4 +38,47 @@ public class CstsRealValue extends CstsSimpleValue<Double> implements ICstsRealV
         super(qualifier);
         this.value = value;
     }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append("CstsRealValue [value=");
+        sb.append(this.getValue().toString());
+        sb.append(", name=");
+        sb.append(getName());
+        sb.append(", qualifier=");
+        sb.append(getQuality().toString());
+        sb.append(']');
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+		if (o == this)
+		{
+			return true;
+		}
+		if (!(o instanceof CstsRealValue))
+		{
+			return false;
+		}
+		CstsRealValue cstsRealValue = (CstsRealValue)o;
+		if (!super.equals(cstsRealValue))
+		{
+			return false;
+		}
+		return cstsRealValue.getValue().equals(getValue());
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 7;
+        hash = 31*hash + super.hashCode();
+        hash = 31*hash + getValue().hashCode();
+        return hash;
+    }
+
 }

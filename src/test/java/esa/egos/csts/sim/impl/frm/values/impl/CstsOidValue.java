@@ -68,4 +68,53 @@ public class CstsOidValue extends CstsSimpleValue<int[]> implements ICstsOidValu
     {
         return ObjectIdentifier.of(this.value);
     }
+    
+    @Override
+    public String toString()
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append("CstsOidValue [value=[");
+        for (int i : this.value) {
+            sb.append(String.format("%d,", i));
+        }
+        if (this.value.length != 0)
+        {
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        sb.append("], name=");
+        sb.append(getName());
+        sb.append(", qualifier=");
+        sb.append(getQuality().toString());
+        sb.append(']');
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+		if (o == this)
+		{
+			return true;
+		}
+		if (!(o instanceof CstsOidValue))
+		{
+			return false;
+		}
+		CstsOidValue cstsOidValue = (CstsOidValue)o;
+		if (!super.equals(cstsOidValue))
+		{
+			return false;
+		}
+		return Arrays.equals(this.value, cstsOidValue.getValue());
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 7;
+        hash = 31*hash + super.hashCode();
+        hash = 31*hash + Arrays.hashCode(this.value);
+        return hash;
+    }
+
 }

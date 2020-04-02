@@ -40,6 +40,7 @@ public class CstsValue implements ICstsValue
         return this.quality;
     }
 
+    @Override
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
@@ -50,4 +51,37 @@ public class CstsValue implements ICstsValue
         sb.append("]");
         return sb.toString();
     }
+    
+    @Override
+    public boolean equals(Object o)
+    {
+		if (o == this)
+		{
+			return true;
+		}
+		if (!(o instanceof CstsValue))
+		{
+			return false;
+		}
+		CstsValue cstsValue = (CstsValue)o;
+		if (!this.name.equals(cstsValue.getName()))
+		{
+		    return false;
+		}
+		if (this.quality != cstsValue.getQuality())
+		{
+		    return false;
+		}
+		return true;
+    }
+    
+    @Override
+    public int hashCode()
+    {
+        int hash = 7;
+        hash = 31*hash + this.name.hashCode();
+        hash = 31*hash + this.quality.ordinal();
+        return hash;
+    }
+
 }

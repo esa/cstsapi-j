@@ -319,5 +319,68 @@ public class ListOfParameters {
 				+ functionalResourceName + ", procedureType=" + procedureType + ", procedureInstanceIdentifier=" + procedureInstanceIdentifier + ", parameterLabels="
 				+ parameterLabels + ", parameterNames=" + parameterNames + "]";
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
+		if (!(o instanceof ListOfParameters)) {
+			return false;
+		}
+		ListOfParameters listOfParameters = (ListOfParameters)o;
+		if (listOfParameters.getType() != this.type) {
+			return false;
+		}
+		switch (type) {
+		case EMPTY:
+		    return true;
+		case LIST_NAME:
+		    return this.listName.equals(listOfParameters.getListName());
+		case FUNCTIONAL_RESOURCE_TYPE:
+		    return this.functionalResourceType.equals(listOfParameters.getFunctionalResourceType());
+		case FUNCTIONAL_RESOURCE_NAME:
+			return this.functionalResourceName.equals(listOfParameters.getFunctionalResourceName());
+		case PROCEDURE_TYPE:
+			return this.procedureType.equals(listOfParameters.getProcedureType());
+		case PROCEDURE_INSTANCE_IDENTIFIER:
+			return this.procedureInstanceIdentifier.equals(listOfParameters.getProcedureInstanceIdentifier());
+		case LABELS_SET:
+		    return this.parameterLabels.equals(listOfParameters.getParameterLabels());
+		case NAMES_SET:
+		    return this.parameterNames.equals(listOfParameters.getParameterNames());
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+	    int hash = 7;
+		hash = 31*hash + this.type.ordinal();
+		switch (this.type) {
+		case LIST_NAME:
+            hash = 31*hash + this.listName.hashCode();
+            break;
+		case FUNCTIONAL_RESOURCE_TYPE:
+            hash = 31*hash + this.functionalResourceType.hashCode();
+            break;
+		case FUNCTIONAL_RESOURCE_NAME:
+            hash = 31*hash + this.functionalResourceName.hashCode();
+            break;
+		case PROCEDURE_TYPE:
+            hash = 31*hash + this.procedureType.hashCode();
+            break;
+		case PROCEDURE_INSTANCE_IDENTIFIER:
+            hash = 31*hash + this.procedureInstanceIdentifier.hashCode();
+            break;
+		case LABELS_SET:
+            hash = 31*hash + this.parameterLabels.hashCode();
+            break;
+		case NAMES_SET:
+            hash = 31*hash + this.parameterNames.hashCode();
+            break;
+		}
+	    return hash;
+	}
 
 }
