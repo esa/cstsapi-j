@@ -359,8 +359,10 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
                             this.queriedParameters.add(new ArrayList<QualifiedParameter>(get.getQualifiedParameters()));
                             for (QualifiedParameter qualifiedParameter : get.getQualifiedParameters())
                             {
-                                if (qualifiedParameter.getQualifiedValues().get(0).getParameterValues().get(0)
-                                        .getType() == ParameterType.EXTENDED)
+                                if (!qualifiedParameter.getQualifiedValues().isEmpty()
+                                    && !qualifiedParameter.getQualifiedValues().get(0).getParameterValues().isEmpty()
+                                    && qualifiedParameter.getQualifiedValues().get(0).getParameterValues().get(0)
+                                            .getType() == ParameterType.EXTENDED)
                                 {
                                     FunctionalResourceParameterEx<?> parameter = this.parameters
                                             .get(qualifiedParameter.getName());
@@ -435,8 +437,9 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
                 {
                     for (QualifiedParameter qualifiedParameter : params)
                     {
-                        if (qualifiedParameter.getQualifiedValues().get(0).getParameterValues().get(0)
-                                .getType() == ParameterType.EXTENDED)
+                        if (!qualifiedParameter.getQualifiedValues().isEmpty()
+                                && !qualifiedParameter.getQualifiedValues().get(0).getParameterValues().isEmpty()
+                                && qualifiedParameter.getQualifiedValues().get(0).getParameterValues().get(0).getType() == ParameterType.EXTENDED)
                         {
                             FunctionalResourceParameterEx<?> parameter = this.parameters
                                     .get(qualifiedParameter.getName());
