@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Creates the FR types class file
+ * Creates FR types class file
  */
-public class FrTypesClassBuilder
+public class FrWriter
 {
     private static final String INDENTATION = "    ";
 
@@ -24,7 +24,7 @@ public class FrTypesClassBuilder
     private int nestedClassDeepness;
 
 
-    public FrTypesClassBuilder()
+    public FrWriter()
     {
         this.fileLines = new ArrayList<>();
         this.className = null;

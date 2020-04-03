@@ -1,9 +1,6 @@
 package esa.egos.csts.sim.impl.frm;
 
-import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,7 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
-import com.beanit.jasn1.ber.types.BerObjectIdentifier;
 import com.beanit.jasn1.ber.types.BerType;
 
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
@@ -21,6 +17,7 @@ import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.oids.OidTree;
 import esa.egos.csts.api.types.Name;
+import esa.egos.csts.api.util.impl.PackageUtils;
 import esa.egos.csts.sim.impl.Utils;
 import esa.egos.csts.sim.impl.frm.values.ICstsValueFactory;
 import esa.egos.csts.sim.impl.frm.values.impl.CstsValueFactory;
@@ -38,11 +35,7 @@ public class FunctionalResourceMetadata
     /** The instance singleton lock */
     private static Object lock = new Object();
 
-    private static final String CLASS_FILE_SUFFIX = ".class";
-
     private static final String TYPE_SUFFIX = "Type";
-
-    private static final Class<?> OID_CONTAINER_CLASS = BerObjectIdentifier.class;
 
     private static final String FR_TYPES_CLASS_NAME = "Fr";
 
@@ -129,85 +122,14 @@ public class FunctionalResourceMetadata
         try
         {
             // collect all classes from JASN.1 generated package
-            List<Class<?>> classes = getLocalPackageClasses(packageName, false);
+            List<Class<?>> classes = PackageUtils.getPackageClasses(packageName, false);
 
             processClasses(classes);
-
-            // class -> ObjectIdentifier map
-            // buildClass2Oid(this.berClasses, oids);
         }
         catch (Exception e)
         {
             throw new Exception("Could not load FR metadata from " + packageName, e);
         }
-    }
-
-    private static int getDotCount(final String str)
-    {
-        return str.length() - str.replaceAll("[.]", "").length();
-    }
-
-    /**
-     * Get all classes from a package
-     * 
-     * @param packageName The package name
-     * @param alsoNestedClasses The nested classes are included
-     * @return the list of found classes in the package
-     * @throws ClassNotFoundException
-     */
-    public List<Class<?>> getLocalPackageClasses(String packageName,
-                                                 boolean alsoNestedClasses) throws ClassNotFoundException
-    {
-        List<Class<?>> ret = new ArrayList<Class<?>>();
-        File packageDirectory = new File(getClass().getClassLoader().getResource(packageName.replace('.', '/'))
-                .getFile());
-        if (packageDirectory.exists())
-        {
-            int packageNameSegmentCount = getDotCount(packageName);
-            for (String fileName : packageDirectory.list())
-            {
-                if (fileName.endsWith(CLASS_FILE_SUFFIX))
-                {
-                    Class<?> clazz = Class
-                            .forName(packageName + "."
-                                     + fileName.substring(0, fileName.length() - CLASS_FILE_SUFFIX.length()));
-                    if (!alsoNestedClasses)
-                    {
-                        if ((packageNameSegmentCount + 1) != getDotCount(clazz.getCanonicalName()))
-                        {
-                            // ignore nested classes
-                            continue;
-                        }
-                    }
-                    ret.add(clazz);
-                }
-            }
-        }
-
-        return ret;
-    }
-
-    /**
-     * Assess whether the class contains the OID definitions
-     * 
-     * @param clazz
-     * @return
-     */
-    private static boolean isOidDefinitionClass(Class<?> clazz)
-    {
-        return (clazz.getSimpleName().toLowerCase().contains("oid"));
-    }
-
-    /**
-     * Try to find OID definition class
-     * 
-     * @param classes The set of classes to search
-     * 
-     * @return the Optional w/ the OID definition class or empty if not found 
-     */
-    private static Optional<Class<?>> findOidDefinitionClass(List<Class<?>> classes)
-    {
-        return classes.stream().filter(clazz -> isOidDefinitionClass(clazz)).findFirst();
     }
 
     /**
@@ -237,16 +159,17 @@ public class FunctionalResourceMetadata
      * @param oidName The OID (JASN.1 generated class) name
      * @param oidArray The OID as an int array
      */
-    private void processOid(String oidName, int[] oidArray)
+    private boolean processOid(String oidName, int[] oidArray)
     {
+        boolean ret = false;
+
         this.oidName2oidArray.put(oidName, oidArray);
         this.oid2oidName.put(ObjectIdentifier.of(oidArray), oidName);
         String oidLabelName = removeSuffix(oidName, TYPE_SUFFIX);
         if (oidArray.length == OidTree.CROSS_FUNC_RES_BIT_LEN)
         {
             this.frOidName2oidArray.put(oidLabelName, oidArray);
-//            this.frTypesBuilder.addItem(oidLabelName, "OIDs.crossSupportFunctionalities",
-//                                        oidArray[OidTree.CROSS_FUNC_RES_BIT_POS]);
+            ret = true;
         }
         else if (oidArray.length == OidTree.PARAM_OR_EVENT_OR_DIRECT_BIT_LEN)
         {
@@ -254,55 +177,22 @@ public class FunctionalResourceMetadata
             {
             case OidTree.PARAM_BIT_VALUE:
                 this.frParameterOidName2oidArray.put(oidLabelName, oidArray);
-//                this.frParTypesBuilder.addItem(oidLabelName, "OIDs.crossSupportFunctionalities",
-//                                               OidTree.CROSS_FUNC_RES_BIT_POS, oidArray);
+                ret = true;
                 break;
             case OidTree.EVENT_BIT_VALUE:
                 this.frEventOidName2oidArray.put(oidLabelName, oidArray);
-//                this.frEvTypesBuilder.addItem(oidLabelName, "OIDs.crossSupportFunctionalities",
-//                                              OidTree.CROSS_FUNC_RES_BIT_POS, oidArray);
+                ret = true;
                 break;
             case OidTree.DIREC_BIT_VALUE:
                 this.frDirectiveOidName2oidArray.put(oidLabelName, oidArray);
+                ret = true;
                 break;
             default:
                 break;
             }
         }
 
-    }
-
-    /**
-     * Process all OID found in the OID definition class.
-     * 
-     * @param oidClass The OID definition class
-     * 
-     * @throws IllegalArgumentException
-     * @throws IllegalAccessException
-     */
-    private void processOids(Class<?> oidClass) throws IllegalArgumentException, IllegalAccessException
-    {
-//        this.frParTypesBuilder.addPrologue(this.getClass().getPackage().getName(), FR_PARAMETER_TYPES_CLASS_NAME);
-//        this.frEvTypesBuilder.addPrologue(this.getClass().getPackage().getName(), FR_EVENT_CLASS_NAME);
-        for (Field field : oidClass.getFields())
-        {
-            Class<?> clazz = field.getType();
-            if (Modifier.isStatic(field.getModifiers()) && OID_CONTAINER_CLASS.isAssignableFrom(clazz))
-            {
-                String fieldName = field.getName();
-                Object obj = field.get(null);
-                for (Field nestedField : obj.getClass().getFields())
-                {
-                    if (int[].class.isAssignableFrom(nestedField.getType()))
-                    {
-                        int[] oidArray = int[].class.cast(nestedField.get(obj));
-                        processOid(fieldName, oidArray);
-                    }
-                }
-            }
-        }
-//        this.frParTypesBuilder.addEpilogue();
-//        this.frEvTypesBuilder.addEpilogue();
+        return ret;
     }
 
     /**
@@ -378,13 +268,13 @@ public class FunctionalResourceMetadata
         collectBerClasses(classes);
 
         // find the OidVals class w/ OIDs definitions
-        Optional<Class<?>> opt = findOidDefinitionClass(this.nonBerClasses);
+        Optional<Class<?>> opt = OidTree.findOidDefinitionClass(this.nonBerClasses);
         if (!opt.isPresent())
         {
             throw new Exception("missing an OID class (e.g. OidValues) in the generated FR types package");
         }
 
-        processOids(opt.get());
+        OidTree.readOidValues(opt.get(), this::processOid);
 
         for (Entry<String, Class<?>> berClassEntry : this.berClasses.entrySet())
         {
@@ -536,7 +426,7 @@ public class FunctionalResourceMetadata
      */
     public void createFrTypesClassFile(String dir) throws IOException
     {
-        FrTypesClassBuilder frTypesBuilder = new FrTypesClassBuilder();
+        FrWriter frTypesBuilder = new FrWriter();
 
         frTypesBuilder.addPrologue(this.getClass().getPackage().getName(), FR_TYPES_CLASS_NAME);
 
