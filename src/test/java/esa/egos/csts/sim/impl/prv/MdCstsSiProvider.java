@@ -13,6 +13,7 @@ import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.parameters.IParameter;
+import esa.egos.csts.api.parameters.impl.FunctionalResourceParameterEx;
 import esa.egos.csts.api.parameters.impl.LabelLists;
 import esa.egos.csts.api.procedures.IProcedure;
 import esa.egos.csts.api.procedures.cyclicreport.CyclicReportProvider;
@@ -23,7 +24,6 @@ import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.LabelList;
 import esa.egos.csts.api.types.Name;
 import esa.egos.csts.sim.impl.MdCstsSi;
-import esa.egos.csts.sim.impl.frm.FunctionalResourceParameterEx;
 
 /**
  * MD-CSTS Provider service instance (SI) implementation for testing

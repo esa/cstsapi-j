@@ -1,18 +1,18 @@
-package esa.egos.csts.sim.impl.frm.values.impl;
+package esa.egos.csts.api.functionalresources.values.impl;
 
 import java.math.BigInteger;
 
 import esa.egos.csts.api.enumerations.ParameterQualifier;
+import esa.egos.csts.api.functionalresources.values.ICstsBoolValue;
+import esa.egos.csts.api.functionalresources.values.ICstsComplexValue;
+import esa.egos.csts.api.functionalresources.values.ICstsIntValue;
+import esa.egos.csts.api.functionalresources.values.ICstsOctetStringValue;
+import esa.egos.csts.api.functionalresources.values.ICstsOidValue;
+import esa.egos.csts.api.functionalresources.values.ICstsRealValue;
+import esa.egos.csts.api.functionalresources.values.ICstsStringValue;
+import esa.egos.csts.api.functionalresources.values.ICstsValue;
+import esa.egos.csts.api.functionalresources.values.ICstsValueFactory;
 import esa.egos.csts.api.oids.ObjectIdentifier;
-import esa.egos.csts.sim.impl.frm.values.ICstsBoolValue;
-import esa.egos.csts.sim.impl.frm.values.ICstsComplexValue;
-import esa.egos.csts.sim.impl.frm.values.ICstsIntValue;
-import esa.egos.csts.sim.impl.frm.values.ICstsOctetStringValue;
-import esa.egos.csts.sim.impl.frm.values.ICstsOidValue;
-import esa.egos.csts.sim.impl.frm.values.ICstsRealValue;
-import esa.egos.csts.sim.impl.frm.values.ICstsStringValue;
-import esa.egos.csts.sim.impl.frm.values.ICstsValue;
-import esa.egos.csts.sim.impl.frm.values.ICstsValueFactory;
 
 public class CstsValueFactory implements ICstsValueFactory
 {

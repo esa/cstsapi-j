@@ -1,9 +1,9 @@
-package esa.egos.csts.sim.impl.frm.values.impl;
+package esa.egos.csts.api.functionalresources.values.impl;
 
 import java.util.Arrays;
 
 import esa.egos.csts.api.enumerations.ParameterQualifier;
-import esa.egos.csts.sim.impl.frm.values.ICstsOctetStringValue;
+import esa.egos.csts.api.functionalresources.values.ICstsOctetStringValue;
 
 public class CstsOctetStringValue extends CstsSimpleValue<byte[]> implements ICstsOctetStringValue
 {

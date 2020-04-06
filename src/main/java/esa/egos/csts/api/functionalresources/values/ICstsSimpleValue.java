@@ -1,4 +1,4 @@
-package esa.egos.csts.sim.impl.frm.values;
+package esa.egos.csts.api.functionalresources.values;
 
 
 public interface ICstsSimpleValue<V> extends ICstsValue

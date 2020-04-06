@@ -1,9 +1,9 @@
-package esa.egos.csts.sim.impl.frm.values.impl;
+package esa.egos.csts.api.functionalresources.values.impl;
 
 import java.math.BigInteger;
 
 import esa.egos.csts.api.enumerations.ParameterQualifier;
-import esa.egos.csts.sim.impl.frm.values.ICstsIntValue;
+import esa.egos.csts.api.functionalresources.values.ICstsIntValue;
 
 public class CstsIntValue extends CstsSimpleValue<BigInteger> implements ICstsIntValue
 {

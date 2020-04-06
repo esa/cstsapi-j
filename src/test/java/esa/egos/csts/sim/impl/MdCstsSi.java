@@ -4,10 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.functionalresources.values.ICstsValue;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.parameters.impl.FunctionalResourceParameter;
+import esa.egos.csts.api.parameters.impl.FunctionalResourceParameterEx;
 import esa.egos.csts.api.procedures.IProcedure;
 import esa.egos.csts.api.procedures.cyclicreport.ICyclicReport;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
@@ -18,8 +20,6 @@ import esa.egos.csts.api.serviceinstance.IServiceInstance;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceIdentifier;
 import esa.egos.csts.api.serviceinstance.impl.ServiceInstanceIdentifier;
 import esa.egos.csts.api.types.Name;
-import esa.egos.csts.sim.impl.frm.FunctionalResourceParameterEx;
-import esa.egos.csts.sim.impl.frm.values.ICstsValue;
 
 /**
  * Base class for MD-CSTS service instance (SI)

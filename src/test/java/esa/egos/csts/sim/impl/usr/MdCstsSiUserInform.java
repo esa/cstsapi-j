@@ -23,6 +23,7 @@ import esa.egos.csts.api.enumerations.OperationResult;
 import esa.egos.csts.api.enumerations.ParameterType;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.extensions.EmbeddedData;
+import esa.egos.csts.api.functionalresources.FunctionalResourceMetadata;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
@@ -35,6 +36,7 @@ import esa.egos.csts.api.operations.IStart;
 import esa.egos.csts.api.operations.IStop;
 import esa.egos.csts.api.operations.ITransferData;
 import esa.egos.csts.api.operations.IUnbind;
+import esa.egos.csts.api.parameters.impl.FunctionalResourceParameterEx;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 import esa.egos.csts.api.procedures.cyclicreport.CyclicReportUser;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
@@ -43,9 +45,6 @@ import esa.egos.csts.api.procedures.notification.NotificationUser;
 import esa.egos.csts.api.types.Name;
 import esa.egos.csts.sim.impl.MdCstsSi;
 import esa.egos.csts.sim.impl.MdCstsSiConfig;
-import esa.egos.csts.sim.impl.Utils;
-import esa.egos.csts.sim.impl.frm.FunctionalResourceMetadata;
-import esa.egos.csts.sim.impl.frm.FunctionalResourceParameterEx;
 
 /**
  * MD-CSTS User service inform
@@ -422,7 +421,7 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
 
         if (transferData.getEmbeddedData().getData() != null)
         {
-            System.out.println(Utils.toHex(transferData.getEmbeddedData().getData()));
+            System.out.println(transferData.getEmbeddedData().getData());
         }
 
         List<QualifiedParameter> params = ((CyclicReportUser) this.serviceInstance.getProcedure(piid))

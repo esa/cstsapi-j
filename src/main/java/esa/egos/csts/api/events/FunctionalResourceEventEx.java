@@ -1,4 +1,4 @@
-package esa.egos.csts.sim.impl.frm;
+package esa.egos.csts.api.events;
 
 import java.io.ByteArrayInputStream;
 
@@ -7,8 +7,6 @@ import com.beanit.jasn1.ber.types.BerType;
 
 import esa.egos.csts.api.enumerations.EventValueType;
 import esa.egos.csts.api.enumerations.ParameterQualifier;
-import esa.egos.csts.api.events.Event;
-import esa.egos.csts.api.events.EventValue;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.oids.ObjectIdentifier;

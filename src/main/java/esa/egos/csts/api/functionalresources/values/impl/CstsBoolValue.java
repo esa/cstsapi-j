@@ -1,49 +1,49 @@
-package esa.egos.csts.sim.impl.frm.values.impl;
+package esa.egos.csts.api.functionalresources.values.impl;
 
 import esa.egos.csts.api.enumerations.ParameterQualifier;
-import esa.egos.csts.sim.impl.frm.values.ICstsRealValue;
+import esa.egos.csts.api.functionalresources.values.ICstsBoolValue;
 
-public class CstsRealValue extends CstsSimpleValue<Double> implements ICstsRealValue
+public class CstsBoolValue extends CstsSimpleValue<Boolean> implements ICstsBoolValue
 {
-    public static CstsRealValue of(double value)
+    public static CstsBoolValue of(boolean value)
     {
-        return new CstsRealValue(value);
+        return new CstsBoolValue(value);
     }
 
-    public static CstsRealValue of(String name, double value)
+    public static CstsBoolValue of(String name, boolean value)
     {
-        return new CstsRealValue(name, value);
+        return new CstsBoolValue(name, value);
     }
 
-    private CstsRealValue(double value)
+    private CstsBoolValue(boolean value)
     {
         super(ParameterQualifier.VALID);
         this.value = value;
     }
 
-    private CstsRealValue(String name, double value)
+    private CstsBoolValue(String name, boolean value)
     {
         super(name, ParameterQualifier.VALID);
         this.value = value;
     }
 
-    private CstsRealValue(double value, ParameterQualifier qualifier)
+    private CstsBoolValue(boolean value, ParameterQualifier qualifier)
     {
         super(qualifier);
         this.value = value;
     }
 
-    private CstsRealValue(String name, double value, ParameterQualifier qualifier)
+    private CstsBoolValue(String name, boolean value, ParameterQualifier qualifier)
     {
-        super(qualifier);
+        super(name, qualifier);
         this.value = value;
     }
-
+    
     @Override
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
-        sb.append("CstsRealValue [value=");
+        sb.append("CstsBoolValue [value=");
         sb.append(this.getValue().toString());
         sb.append(", name=");
         sb.append(getName());
@@ -60,16 +60,16 @@ public class CstsRealValue extends CstsSimpleValue<Double> implements ICstsRealV
 		{
 			return true;
 		}
-		if (!(o instanceof CstsRealValue))
+		if (!(o instanceof CstsBoolValue))
 		{
 			return false;
 		}
-		CstsRealValue cstsRealValue = (CstsRealValue)o;
-		if (!super.equals(cstsRealValue))
+		CstsBoolValue cstsBoolValue = (CstsBoolValue)o;
+		if (!super.equals(cstsBoolValue))
 		{
 			return false;
 		}
-		return cstsRealValue.getValue().equals(getValue());
+		return cstsBoolValue.getValue().equals(getValue());
     }
 
     @Override
@@ -77,7 +77,7 @@ public class CstsRealValue extends CstsSimpleValue<Double> implements ICstsRealV
     {
         int hash = 7;
         hash = 31*hash + super.hashCode();
-        hash = 31*hash + getValue().hashCode();
+        hash = 31*hash + (getValue().booleanValue() ? 1 : 0);
         return hash;
     }
 

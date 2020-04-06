@@ -1,4 +1,4 @@
-package esa.egos.csts.sim.impl.frm;
+package esa.egos.csts.api.functionalresources;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,15 +12,15 @@ import java.util.Optional;
 
 import com.beanit.jasn1.ber.types.BerType;
 
-import esa.egos.csts.api.functionalresources.FunctionalResourceName;
-import esa.egos.csts.api.functionalresources.FunctionalResourceType;
+import esa.egos.csts.api.events.FunctionalResourceEventEx;
+import esa.egos.csts.api.functionalresources.values.ICstsValueFactory;
+import esa.egos.csts.api.functionalresources.values.impl.CstsValueFactory;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.oids.OidTree;
+import esa.egos.csts.api.parameters.impl.FunctionalResourceParameterEx;
 import esa.egos.csts.api.types.Name;
+import esa.egos.csts.api.util.impl.CSTSUtils;
 import esa.egos.csts.api.util.impl.PackageUtils;
-import esa.egos.csts.sim.impl.Utils;
-import esa.egos.csts.sim.impl.frm.values.ICstsValueFactory;
-import esa.egos.csts.sim.impl.frm.values.impl.CstsValueFactory;
 import esa.egos.proxy.xml.OidConfig;
 import esa.egos.proxy.xml.Oid;
 
@@ -34,6 +34,8 @@ public class FunctionalResourceMetadata
 
     /** The instance singleton lock */
     private static Object lock = new Object();
+
+    private static final String  JAVA = "java";
 
     private static final String TYPE_SUFFIX = "Type";
 
@@ -233,7 +235,7 @@ public class FunctionalResourceMetadata
     {
         boolean ret = false;
 
-        String oidName = Utils.firstToLowerCase(berClassEntry.getKey());
+        String oidName = CSTSUtils.firstToLowerCase(berClassEntry.getKey());
         int[] oidArray = oidName2oidArray.get(oidName);
         if (oidArray != null)
         {
@@ -428,7 +430,9 @@ public class FunctionalResourceMetadata
     {
         FrWriter frTypesBuilder = new FrWriter();
 
-        frTypesBuilder.addPrologue(this.getClass().getPackage().getName(), FR_TYPES_CLASS_NAME);
+        String packageName = dir.substring(dir.indexOf(JAVA) + JAVA.length() + 1);
+        packageName = packageName.replace("/", ".");
+        frTypesBuilder.addPrologue(packageName, FR_TYPES_CLASS_NAME);
 
         // FRs
         for (Entry<String, int[]> frEntry : this.frOidName2oidArray.entrySet())
@@ -446,7 +450,7 @@ public class FunctionalResourceMetadata
             Map<ObjectIdentifier, Class<?>> oid2evClass = this.frOid2frEventOidAndClass.get(frOid);
             if ((oid2parClass != null && !oid2parClass.isEmpty()) || (oid2evClass != null && !oid2evClass.isEmpty()))
             {
-                frTypesBuilder.addNestedClass(Utils.firstToUpperCase(frEntry.getKey()));
+                frTypesBuilder.addNestedClass(CSTSUtils.firstToUpperCase(frEntry.getKey()));
 
                 if (oid2parClass != null)
                 {

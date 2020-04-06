@@ -8,14 +8,14 @@ import org.junit.Test;
 
 import esa.egos.csts.api.TestUtils;
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
+import esa.egos.csts.api.functionalresources.values.ICstsValue;
+import esa.egos.csts.api.functionalresources.values.impl.CstsComplexValue;
+import esa.egos.csts.api.functionalresources.values.impl.CstsIntValue;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.Name;
 import esa.egos.csts.sim.impl.frm.Fr;
-import esa.egos.csts.sim.impl.frm.values.ICstsValue;
-import esa.egos.csts.sim.impl.frm.values.impl.CstsComplexValue;
-import esa.egos.csts.sim.impl.frm.values.impl.CstsIntValue;
 import esa.egos.csts.sim.impl.prv.MdCollection;
 
 /**

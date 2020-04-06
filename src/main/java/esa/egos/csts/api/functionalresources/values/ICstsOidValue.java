@@ -1,4 +1,4 @@
-package esa.egos.csts.sim.impl.frm.values;
+package esa.egos.csts.api.functionalresources.values;
 
 import esa.egos.csts.api.oids.ObjectIdentifier;
 

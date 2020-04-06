@@ -1,12 +1,12 @@
-package esa.egos.csts.sim.impl.frm.values.impl;
+package esa.egos.csts.api.functionalresources.values.impl;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import esa.egos.csts.api.enumerations.ParameterQualifier;
-import esa.egos.csts.sim.impl.frm.values.ICstsComplexValue;
-import esa.egos.csts.sim.impl.frm.values.ICstsValue;
+import esa.egos.csts.api.functionalresources.values.ICstsComplexValue;
+import esa.egos.csts.api.functionalresources.values.ICstsValue;
 
 public class CstsComplexValue extends CstsValue implements ICstsComplexValue
 {

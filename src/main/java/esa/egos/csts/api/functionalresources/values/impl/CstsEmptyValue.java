@@ -1,4 +1,4 @@
-package esa.egos.csts.sim.impl.frm.values.impl;
+package esa.egos.csts.api.functionalresources.values.impl;
 
 import esa.egos.csts.api.enumerations.ParameterQualifier;
 

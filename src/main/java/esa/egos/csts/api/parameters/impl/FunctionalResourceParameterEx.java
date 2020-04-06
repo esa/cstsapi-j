@@ -1,4 +1,4 @@
-package esa.egos.csts.sim.impl.frm;
+package esa.egos.csts.api.parameters.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -7,6 +7,8 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,20 +25,22 @@ import esa.egos.csts.api.enumerations.ParameterQualifier;
 import esa.egos.csts.api.enumerations.ParameterType;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
+import esa.egos.csts.api.functionalresources.values.ICstsComplexValue;
+import esa.egos.csts.api.functionalresources.values.ICstsSimpleValue;
+import esa.egos.csts.api.functionalresources.values.ICstsValue;
+import esa.egos.csts.api.functionalresources.values.ICstsValueFactory;
 import esa.egos.csts.api.oids.ObjectIdentifier;
-import esa.egos.csts.api.parameters.impl.FunctionalResourceParameter;
-import esa.egos.csts.api.parameters.impl.ParameterValue;
-import esa.egos.csts.api.parameters.impl.QualifiedParameter;
-import esa.egos.csts.api.parameters.impl.QualifiedValues;
-import esa.egos.csts.sim.impl.Utils;
-import esa.egos.csts.sim.impl.frm.values.ICstsComplexValue;
-import esa.egos.csts.sim.impl.frm.values.ICstsSimpleValue;
-import esa.egos.csts.sim.impl.frm.values.ICstsValue;
-import esa.egos.csts.sim.impl.frm.values.ICstsValueFactory;
+import esa.egos.csts.api.util.impl.CSTSUtils;
 
+/**
+ * This class implements FR parameter with a value type based on jASN.1 generated class.
+ * It allows to set, encode, decode and get its value in the generic way via Java reflection.
+ */
 public class FunctionalResourceParameterEx<T extends BerType> extends FunctionalResourceParameter
 {
-
+    /** The logger */
+    private final static Logger LOG = Logger.getLogger(FunctionalResourceParameterEx.class.getName());
+ 
     private static final int INIT_STREAM_BUFF_SIZE = 12;
 
     private static final BigInteger INIT_INT_VALUE = BigInteger.valueOf(0);
@@ -66,6 +70,16 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
     /** The CSTS value factory */
     private ICstsValueFactory cstsValueFactory;
 
+    /**
+     * Constructor
+     * 
+     * @param identifier The parameter object identifier
+     * @param functionalResourceName The functional resource name
+     * @param berClass The jASN.1 generate class for the parameter value
+     * @param cstsValueFactory The external value factory
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     */
     public FunctionalResourceParameterEx(ObjectIdentifier identifier,
                                          FunctionalResourceName functionalResourceName,
                                          Class<T> berClass,
@@ -75,7 +89,7 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
         this.berClass = berClass;
         this.berObject = this.berClass.newInstance();
         this.qualifier = ParameterQualifier.UNDEFINED;
-        this.berName = Utils.firstToLowerCase(this.berClass.getSimpleName());
+        this.berName = CSTSUtils.firstToLowerCase(this.berClass.getSimpleName());
         this.cstsValueFactory = cstsValueFactory;
         initValue();
     }
@@ -118,7 +132,7 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
         }
         catch (Exception e)
         {
-            e.printStackTrace(); // TODO use logger w/ an error message
+            LOG.log(Level.SEVERE, "Failed to encode " + getName() + " to QualifiedParameter.", e);
         }
 
         return qualifiedParameter;
@@ -161,7 +175,7 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
     {
         ICstsValue ret;
 
-        String name = Utils.firstToLowerCase(this.berObject.getClass().getSimpleName());
+        String name = CSTSUtils.firstToLowerCase(this.berObject.getClass().getSimpleName());
         Optional<Field> optionalField = getValueField(this.berObject.getClass());
         if (optionalField.isPresent())
         {
@@ -295,11 +309,23 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
 
         try
         {
-//            System.out.println("Class: " + berClass.getSimpleName());
-//            System.out.println("Fields:");
-//            Stream.of(berClass.getFields()).forEach(f -> System.out.println(f.getName()));
-//            System.out.println("Declared fields:");
-//            Stream.of(berClass.getDeclaredFields()).forEach(f -> System.out.println(f.getName()));
+            LOG.finest(() -> {
+                StringBuilder sb = new StringBuilder(berClass.getName());
+                sb.append("\nAvailable fields:\n");
+                Stream.of(berClass.getFields()).forEach(f -> 
+                {
+                    sb.append(f.getName());
+                    sb.append('\n');
+                });
+                sb.append("Available declared fields:\n");
+                Stream.of(berClass.getDeclaredFields()).forEach(f -> 
+                {
+                    sb.append(f.getName());
+                    sb.append('\n');
+                });
+                return sb.toString();
+            });
+
             if (Stream.of(berClass.getFields()).filter(f -> f.getName().equals(name)).findAny().isPresent())
             {
                 ret = berClass.getField(name);
@@ -341,15 +367,16 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
     private void setSimpleValue(ICstsSimpleValue<?> value,
                                 BerType berObject,
                                 Class<?> berClass) throws NoSuchFieldException,
-                                                                   IllegalArgumentException,
-                                                                   IllegalAccessException
+                                                   IllegalArgumentException,
+                                                   IllegalAccessException
     {
         Field valueField = getValueField(berClass, "value");
 
         try
         {
             // pure simple value
-            System.out.println("Setting " + value + " to field " + valueField.getName() + " w/ type " + valueField.getType());
+            LOG.fine(() -> "Setting " + value + " to field " + valueField.getName() + " w/ type "
+                           + valueField.getType() + " for parameter " + getName());
             valueField.set(berObject, value.getValue());
         }
         catch (IllegalArgumentException e)
@@ -387,7 +414,7 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
                                                    + String.join(", ", sequence));
             }
 
-//            System.out.println("CHOICE in " + berClass.getSimpleName());
+            LOG.fine(() -> "Setting " + value + " to the " + berName + " choice");
         }
         else
         {
@@ -403,6 +430,8 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
                                                    + " does not contain all elements of the SEQUENCE: "
                                                    + String.join(", ", sequence));
             }
+
+            LOG.fine(() -> "Setting " + value + " to the " + berName + " sequence");
         }
 
         for (ICstsValue subValue : value.getValues())
@@ -433,6 +462,9 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
                                                         + getName());
             }
 
+            LOG.finest(() -> "Injecting intermediate " + subBerObject.getClass().getSimpleName() + " to "
+                             + berObject.getClass().getSimpleName() + " in parameter " + getName()
+                             + " on setComplexValue()");
             // inject an intermediate BER object
             valueField.set(berObject, subBerObject);
         }
@@ -543,7 +575,6 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
      */
     private void initSimpleValue(BerType berObject, Field valueField) throws IllegalArgumentException, IllegalAccessException
     {
-        //System.out.println("init " + valueField.getName());
         if (berObject instanceof BerInteger)
         {
             valueField.set(berObject, INIT_INT_VALUE);
@@ -568,6 +599,17 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
         {
             valueField.set(berObject, INIT_OID_VALUE);
         }
+        else
+        {
+            if (valueField != null)
+            {
+                LOG.warning(() -> "Unsupported BER type " + valueField.getType() + " on " + getName() + " initialization");
+            }
+            else
+            {
+                LOG.severe(() -> "The value field is null on " + getName() + " initialization");
+            }
+        }
     }
 
     /**
@@ -578,7 +620,9 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    private void initComplexValue(BerType berObject) throws IllegalArgumentException, IllegalAccessException, InstantiationException
+    private void initComplexValue(BerType berObject) throws IllegalArgumentException,
+                                                     IllegalAccessException,
+                                                     InstantiationException
     {
         boolean isChoice = isChoice(berObject.getClass());
 
@@ -587,7 +631,7 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
             valueField.setAccessible(true);
             if (BerType.class.isAssignableFrom(valueField.getType()))
             {
-//                System.out.println("init " + valueField.getName());
+                LOG.finest(() -> "Initialize value filed " + valueField.getType() + " in parameter " + getName());
                 BerType subBerObject = (BerType) valueField.getType().newInstance();
                 Optional<Field> optValueField = getValueField(subBerObject.getClass());
                 if (optValueField.isPresent())

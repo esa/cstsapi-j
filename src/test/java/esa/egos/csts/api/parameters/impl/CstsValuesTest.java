@@ -7,15 +7,15 @@ import java.math.BigInteger;
 import org.junit.Test;
 
 import esa.egos.csts.api.enumerations.ParameterQualifier;
+import esa.egos.csts.api.functionalresources.values.impl.CstsBoolValue;
+import esa.egos.csts.api.functionalresources.values.impl.CstsComplexValue;
+import esa.egos.csts.api.functionalresources.values.impl.CstsEmptyValue;
+import esa.egos.csts.api.functionalresources.values.impl.CstsIntValue;
+import esa.egos.csts.api.functionalresources.values.impl.CstsOctetStringValue;
+import esa.egos.csts.api.functionalresources.values.impl.CstsOidValue;
+import esa.egos.csts.api.functionalresources.values.impl.CstsRealValue;
+import esa.egos.csts.api.functionalresources.values.impl.CstsStringValue;
 import esa.egos.csts.api.oids.ObjectIdentifier;
-import esa.egos.csts.sim.impl.frm.values.impl.CstsBoolValue;
-import esa.egos.csts.sim.impl.frm.values.impl.CstsComplexValue;
-import esa.egos.csts.sim.impl.frm.values.impl.CstsEmptyValue;
-import esa.egos.csts.sim.impl.frm.values.impl.CstsIntValue;
-import esa.egos.csts.sim.impl.frm.values.impl.CstsOctetStringValue;
-import esa.egos.csts.sim.impl.frm.values.impl.CstsOidValue;
-import esa.egos.csts.sim.impl.frm.values.impl.CstsRealValue;
-import esa.egos.csts.sim.impl.frm.values.impl.CstsStringValue;
 
 /**
  * test equals() and hashCode() methods for CstsValues's types

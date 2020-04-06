@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 
 import esa.egos.csts.api.CstsTestWatcher;
-import esa.egos.csts.sim.impl.frm.FunctionalResourceMetadata;
+import esa.egos.csts.api.functionalresources.FunctionalResourceMetadata;
 import esa.egos.proxy.xml.OidConfig;
 
 public class FunctionalResourceMetadataTest

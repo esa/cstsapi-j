@@ -1,7 +1,7 @@
-package esa.egos.csts.sim.impl.frm.values.impl;
+package esa.egos.csts.api.functionalresources.values.impl;
 
 import esa.egos.csts.api.enumerations.ParameterQualifier;
-import esa.egos.csts.sim.impl.frm.values.ICstsSimpleValue;
+import esa.egos.csts.api.functionalresources.values.ICstsSimpleValue;
 
 public abstract class CstsSimpleValue<V> extends CstsValue implements ICstsSimpleValue<V>
 {

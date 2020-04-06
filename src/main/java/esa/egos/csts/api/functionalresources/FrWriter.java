@@ -1,4 +1,4 @@
-package esa.egos.csts.sim.impl.frm;
+package esa.egos.csts.api.functionalresources;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Creates FR types class file
+ * Creates FR types class file with FR parameters and FR events OIDs
  */
 public class FrWriter
 {
@@ -24,6 +24,9 @@ public class FrWriter
     private int nestedClassDeepness;
 
 
+    /**
+     * Constructor
+     */
     public FrWriter()
     {
         this.fileLines = new ArrayList<>();

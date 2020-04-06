@@ -1,10 +1,10 @@
-package esa.egos.csts.sim.impl.frm.values.impl;
+package esa.egos.csts.api.functionalresources.values.impl;
 
 import java.util.Arrays;
 
 import esa.egos.csts.api.enumerations.ParameterQualifier;
+import esa.egos.csts.api.functionalresources.values.ICstsOidValue;
 import esa.egos.csts.api.oids.ObjectIdentifier;
-import esa.egos.csts.sim.impl.frm.values.ICstsOidValue;
 
 public class CstsOidValue extends CstsSimpleValue<int[]> implements ICstsOidValue
 {
