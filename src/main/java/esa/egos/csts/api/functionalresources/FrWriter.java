@@ -152,8 +152,10 @@ public class FrWriter
     {
         StringBuilder sb = new StringBuilder(dir);
         sb.append("/");
-        sb.append(className);
+        sb.append(this.className);
         sb.append(".java");
-        Files.write(Paths.get(sb.toString()), this.fileLines, StandardCharsets.UTF_8);
+        String fileName = sb.toString();
+        Files.write(Paths.get(fileName), this.fileLines, StandardCharsets.UTF_8);
+        System.out.println("created file: " + fileName);
     }
 }

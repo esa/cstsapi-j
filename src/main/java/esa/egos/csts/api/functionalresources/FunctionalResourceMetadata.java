@@ -1,6 +1,8 @@
 package esa.egos.csts.api.functionalresources;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -8,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 import java.util.Optional;
 
 import com.beanit.jasn1.ber.types.BerType;
@@ -29,6 +32,9 @@ import esa.egos.proxy.xml.Oid;
  */
 public class FunctionalResourceMetadata
 {
+    /** The logger */
+    private static final Logger LOG = Logger.getLogger(FunctionalResourceMetadata.class.getName());
+
     /** The instance singleton */
     private static FunctionalResourceMetadata instance = null;
 
@@ -114,23 +120,93 @@ public class FunctionalResourceMetadata
     }
 
     /**
-     * Load FR meta data from the jASN compiler generated classes
+     * Load FR meta data from the jASN compiler generated binary classes
      * 
-     * @param packageName The package name containing the generated classes
+     * @param packageName The package name containing the generated binary classes
      * @throws Exception
      */
-    public synchronized void load(String packageName) throws Exception
+    public synchronized void loadFromBinaryClasses(String packageName) throws Exception
     {
         try
         {
             // collect all classes from JASN.1 generated package
+            LOG.info("looking for jASN.1 classes in package " + packageName);
             List<Class<?>> classes = PackageUtils.getPackageClasses(packageName, false);
+            LOG.info("num of jASN.1 classes: " + classes.size());
+            LOG.finest(() -> {
+                StringBuilder sb = new StringBuilder();
+                classes.stream().forEach(c -> {
+                    sb.append(c.getCanonicalName());
+                    sb.append('\n');
+                });
+                return sb.toString();
+            });
 
             processClasses(classes);
         }
         catch (Exception e)
         {
             throw new Exception("Could not load FR metadata from " + packageName, e);
+        }
+    }
+
+    /**
+     * Load FR meta data from the jASN compiler generated source classes
+     * 
+     * @param url The url where the source classes were generated
+     * @throws Exception
+     */
+    public synchronized void loadFromBinaryClasses(URL url) throws Exception
+    {
+        try
+        {
+            // collect all classes from JASN.1 generated package
+            LOG.info("looking for jASN.1 classes at " + url.getPath());
+            List<Class<?>> classes = PackageUtils.getClasses(url, false);
+            LOG.info("num of jASN.1 classes: " + classes.size());
+            LOG.finest(() -> {
+                StringBuilder sb = new StringBuilder();
+                classes.stream().forEach(c -> {
+                    sb.append(c.getCanonicalName());
+                    sb.append('\n');
+                });
+                return sb.toString();
+            });
+            processClasses(classes);
+        }
+        catch (Exception e)
+        {
+            throw new Exception("Could not load FR metadata from " + url, e);
+        }
+    }
+
+    /**
+     * Load FR meta data from the jASN compiler generated source classes
+     * 
+     * @param url The url where the source classes were generated
+     * @throws Exception
+     */
+    public synchronized void loadFromSourceClasses(URL url) throws Exception
+    {
+        try
+        {
+            // collect all classes from JASN.1 generated package
+            LOG.info("looking for jASN.1 classes at " + url.getPath());
+            List<Class<?>> classes = PackageUtils.getSourceClasses(url);
+            LOG.info("num of jASN.1 classes: " + classes.size());
+            LOG.finest(() -> {
+                StringBuilder sb = new StringBuilder();
+                classes.stream().forEach(c -> {
+                    sb.append(c.getCanonicalName());
+                    sb.append('\n');
+                });
+                return sb.toString();
+            });
+            processClasses(classes);
+        }
+        catch (Exception e)
+        {
+            throw new Exception("Could not load FR metadata from " + url, e);
         }
     }
 
@@ -391,9 +467,13 @@ public class FunctionalResourceMetadata
      * 
      * @param oids The map containing e.g an FR or an FR parameter label
      * @param oidConfigFile The output configuration file for the CSTS API
+     * @throws Exception 
      */
-    public void createOidConfiguration(String oidConfigFile)
+    public void createOidConfiguration(String oidConfigFile) throws Exception
     {
+        String oidConfigPath = oidConfigFile.substring(0, oidConfigFile.lastIndexOf("/"));
+        File directory = new File(oidConfigPath);
+        directory.mkdirs();
 
         OidConfig oidConfig = new OidConfig();
         ArrayList<Oid> oidLabelList = new ArrayList<>();
@@ -430,6 +510,7 @@ public class FunctionalResourceMetadata
     {
         FrWriter frTypesBuilder = new FrWriter();
 
+        new File(dir).mkdirs();
         String packageName = dir.substring(dir.indexOf(JAVA) + JAVA.length() + 1);
         packageName = packageName.replace("/", ".");
         frTypesBuilder.addPrologue(packageName, FR_TYPES_CLASS_NAME);
@@ -502,5 +583,106 @@ public class FunctionalResourceMetadata
     public void setCstsValueFactory(ICstsValueFactory cstsValueFactory)
     {
         this.cstsValueFactory = cstsValueFactory;
+    }
+
+    /**
+     * Creates the Fr class and/or the OidConfig.xml file 
+     * @param args The arguments:
+     *  -g <source package name with jASN.1 generated classes> mandatory argument 
+     *  -d <output directory for OidConfig.xml> optional argument
+     *  -f <output package for Fr class> optional argument
+     */
+    public static void main(String[] args) throws Exception 
+    {
+        try
+        {
+            boolean expectedSourcePath = false;
+            boolean expectedOutputOidConfigFile = false;
+            boolean expectedOutputFrDirectory = false;
+
+            URL classesUrl = null;
+            String outputOidConfigFileName = null;
+            String outputFrDirectoryName = null;
+
+            for (String arg : args)
+            {
+                LOG.fine("arg: " + arg);
+                if (arg == null)
+                {
+                    continue;
+                }
+
+                switch (arg)
+                {
+                case "-p":
+                    expectedSourcePath = true;
+                    break;
+                case "-c":
+                    expectedOutputOidConfigFile = true;
+                    break;
+                case "-f":
+                    expectedOutputFrDirectory = true;
+                    break;
+                default:
+                    if (expectedSourcePath)
+                    {
+                        classesUrl = new URL("file", null, arg);
+                    }
+                    else if (expectedOutputOidConfigFile)
+                    {
+                        outputOidConfigFileName = arg;
+                    }
+                    else if (expectedOutputFrDirectory)
+                    {
+                        outputFrDirectoryName = arg;
+                    }
+                    // reset previous option
+                    expectedSourcePath = false;
+                    expectedOutputOidConfigFile = false;
+                    expectedOutputFrDirectory = false;
+                    break;
+                }
+            }
+
+            LOG.fine("classesUrl: " + classesUrl);
+            LOG.fine("outputOidConfigFileName: " + outputOidConfigFileName);
+            LOG.fine("outputPackageName: " + outputFrDirectoryName);
+
+            if (classesUrl != null && (outputOidConfigFileName != null || outputFrDirectoryName != null))
+            {
+                // load FR meta data from jASN.1 compiler generated classes
+                FunctionalResourceMetadata.getInstance().loadFromBinaryClasses(classesUrl);
+
+                if (outputOidConfigFileName != null)
+                {
+                    // create the OidConfig.xml file in the output directory
+                    FunctionalResourceMetadata.getInstance().createOidConfiguration(outputOidConfigFileName);
+                }
+
+                if (outputFrDirectoryName != null)
+                {
+                    // create the Fr class in the output package
+                    FunctionalResourceMetadata.getInstance().createFrTypesClassFile(outputFrDirectoryName);
+                }
+            }
+            else
+            {
+                printOptions();
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+    private static void printOptions()
+    {
+        System.out.println("FR metadata arguments:");
+        System.out.println("======================");
+        System.out.println("-p <path to directory with jASN.1 generated classes>, mandatory argument");
+        System.out.println("-c <path file name where to generate the OID XML config file>, optional argument");
+        System.out.println("-f <output directory for the Fr class>, optional argument");
     }
 }

@@ -122,8 +122,9 @@ public class OidConfig {
 	 * 
 	 * @param obj
 	 *            An instance of this class
+	 * @throws Exception 
 	 */
-	public static void save(String pathFileName, Object obj) {
+	public static void save(String pathFileName, Object obj) throws Exception {
 		FileOutputStream fos = null;
 		try {
 			fos = new FileOutputStream(pathFileName);
@@ -133,7 +134,7 @@ public class OidConfig {
 
 			System.out.println("created file: " + pathFileName);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new Exception("Failed to create file " + pathFileName, e);
 		} finally {
 			if (fos != null) {
 				try {
@@ -150,8 +151,9 @@ public class OidConfig {
 	 * 
 	 * @param pathFileName
 	 *            The path file name
+	 * @throws Exception 
 	 */
-	public void save(String pathFileName) {
+	public void save(String pathFileName) throws Exception {
 		save(pathFileName, this);
 	}
 }

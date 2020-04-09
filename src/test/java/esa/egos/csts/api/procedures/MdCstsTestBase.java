@@ -142,7 +142,7 @@ public abstract class MdCstsTestBase
 
         System.out.println("Loading FR metadata");
 
-        FunctionalResourceMetadata.getInstance().load("frm.csts.functional.resource.types");
+        FunctionalResourceMetadata.getInstance().loadFromBinaryClasses("frm.csts.functional.resource.types");
 
         System.out.println("Loaded FR metadata");
 
