@@ -27,6 +27,7 @@ public class CstsValuesTest
     public void testEqualsHashCode()
     {
         // CstsIntValue
+        System.out.println("Checking CstsIntValue");
         CstsIntValue intValue = CstsIntValue.of(123L);
         CstsIntValue eqIntValue1 = CstsIntValue.of("value", 123L);
         CstsIntValue neqIntValue1 = CstsIntValue.of("my_string", 123L);
@@ -43,6 +44,7 @@ public class CstsValuesTest
         System.out.println(eqIntValue2.toString());
 
         // CstsBoolValue
+        System.out.println("Checking CstsBoolValue");
         CstsBoolValue boolValue = CstsBoolValue.of(true);
         CstsBoolValue eqBoolValue = CstsBoolValue.of("value", true);
         CstsBoolValue neqBoolValue = CstsBoolValue.of("value", false);
@@ -53,6 +55,7 @@ public class CstsValuesTest
         System.out.println(eqBoolValue.toString());
         
         // CstsEmptyValue
+        System.out.println("Checking CstsEmptyValue");
         CstsEmptyValue emptyValue = CstsEmptyValue.empty();
         CstsEmptyValue eqEmptyValue = CstsEmptyValue.empty();
         assertTrue(emptyValue.equals(eqEmptyValue));
@@ -60,6 +63,7 @@ public class CstsValuesTest
         System.out.println(emptyValue);
         
         // CstsComplexValue
+        System.out.println("Checking CstsComplexValue");
         CstsComplexValue complexValue = CstsComplexValue.of(intValue, boolValue, emptyValue);
         CstsComplexValue eqComplexValue = CstsComplexValue.of("value", ParameterQualifier.VALID, intValue, boolValue, emptyValue);
         CstsComplexValue neqComplexValue = CstsComplexValue.of(boolValue, intValue, emptyValue);
@@ -70,6 +74,7 @@ public class CstsValuesTest
         System.out.println(complexValue);
         
         // CstsOctetStringValue
+        System.out.println("Checking CstsOctetStringValue");
         CstsOctetStringValue octetStringValue = CstsOctetStringValue.of(new byte[] {1,2,3,4,5});
         CstsOctetStringValue eqOctetStringValue = CstsOctetStringValue.of("value", new byte[] {1,2,3,4,5});
         CstsOctetStringValue neqOctetStringValue = CstsOctetStringValue.of(new byte[] {});
@@ -80,6 +85,7 @@ public class CstsValuesTest
         System.out.println(octetStringValue);
         
         // CstsOidValue
+        System.out.println("Checking CstsOidValue");
         ObjectIdentifier oid = ObjectIdentifier.of(1,2,3,4);
         CstsOidValue oidValue = CstsOidValue.of(oid);
         CstsOidValue eqOidValue1 = CstsOidValue.of("value", oid);
@@ -97,6 +103,7 @@ public class CstsValuesTest
         System.out.println(eqOidValue2.toString());
         
         // CstsRealValue
+        System.out.println("Checking CstsRealValue");
         CstsRealValue realValue = CstsRealValue.of(1.2);
         CstsRealValue eqRealValue = CstsRealValue.of("value", 1.2);
         CstsRealValue neqRealValue = CstsRealValue.of("value", 1.3);
@@ -107,6 +114,7 @@ public class CstsValuesTest
         System.out.println(realValue.toString());
         
         // CstsStringValue
+        System.out.println("Checking CstsStringValue");
         CstsStringValue stringValue1 = CstsStringValue.of(new byte[] {1,2,3,4,5});
         CstsStringValue eqStringValue1 = CstsStringValue.of("value", new byte[] {1,2,3,4,5});
         CstsStringValue neqStringValue1 = CstsStringValue.of(new byte[] {});

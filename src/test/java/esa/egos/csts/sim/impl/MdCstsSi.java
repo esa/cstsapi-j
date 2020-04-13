@@ -1,9 +1,13 @@
 package esa.egos.csts.sim.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.functionalresources.FunctionalResourceName;
+import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.functionalresources.values.ICstsValue;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.oids.OIDs;
@@ -19,6 +23,7 @@ import esa.egos.csts.api.serviceinstance.IServiceInform;
 import esa.egos.csts.api.serviceinstance.IServiceInstance;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceIdentifier;
 import esa.egos.csts.api.serviceinstance.impl.ServiceInstanceIdentifier;
+import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.Name;
 
 /**
@@ -113,20 +118,54 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
         this.api.destroyServiceInstance(this.serviceInstance);
     }
 
-    public Map<Name, FunctionalResourceParameterEx<?>> getParameters()
+    // called by Provider (from set/getParameterValue, User calls MdCstsSiUserInform#getParameter())
+    public FunctionalResourceParameterEx<?> getParameter(Name name)
     {
-        Map<Name, FunctionalResourceParameterEx<?>> ret = new HashMap<Name, FunctionalResourceParameterEx<?>>();
-        this.serviceInstance.gatherParameters().stream().filter(p -> (p instanceof FunctionalResourceParameterEx))
-                .forEach(p -> ret.put(p.getName(), (FunctionalResourceParameterEx<?>) p));
+        return (FunctionalResourceParameterEx<?>) this.serviceInstance.gatherParameters().stream()
+                .filter(p -> (p.getName().equals(name) && p instanceof FunctionalResourceParameterEx))
+                .findFirst().get();
+    }
+
+    public List<FunctionalResourceParameterEx<?>> getParameters(Label label)
+    {
+        List<FunctionalResourceParameterEx<?>> ret = new ArrayList<FunctionalResourceParameterEx<?>>();
+        this.serviceInstance.gatherParameters().stream()
+                .filter(p -> (p.getLabel().equals(label) && p instanceof FunctionalResourceParameterEx))
+                .forEach(p -> ret.add((FunctionalResourceParameterEx<?>)p));
+        return ret;
+    }
+    
+    public List<FunctionalResourceParameterEx<?>> getParameters(FunctionalResourceName frn)
+    {
+        List<FunctionalResourceParameterEx<?>> ret = new ArrayList<FunctionalResourceParameterEx<?>>();
+        this.serviceInstance.gatherParameters().stream()
+                .filter(p -> (p instanceof FunctionalResourceParameterEx<?>
+                                && p.getName().getFunctionalResourceName().equals(frn)))
+                .forEach(p -> ret.add((FunctionalResourceParameterEx<?>)p));
         return ret;
     }
 
-    @SuppressWarnings("rawtypes")
-    public FunctionalResourceParameterEx<?> getParameter(Name name)
+    public Map<Integer, Map<Label, FunctionalResourceParameterEx<?>>> getParameters(FunctionalResourceType frt)
     {
-        return (FunctionalResourceParameterEx) this.serviceInstance.gatherParameters().stream()
-                .filter(p -> (p.getName().equals(name) && p instanceof FunctionalResourceParameterEx)).findFirst()
-                .get();
+        // return list of maps, each map contains parameters for specific instance number
+        Map<Integer, Map<Label, FunctionalResourceParameterEx<?>>> ret =
+                new HashMap<Integer, Map<Label, FunctionalResourceParameterEx<?>>>();
+
+        this.serviceInstance.gatherParameters().stream()
+                .filter(p -> (p instanceof FunctionalResourceParameterEx<?>
+                                && p.getName().getFunctionalResourceName().getType().equals(frt)))
+                // if instance number of this parameter is seen first -> add new map to ret
+                .peek(p -> {
+                    if (!ret.containsKey(Integer.valueOf(p.getName().getFunctionalResourceName().getInstanceNumber())))
+                    {
+                        ret.put(Integer.valueOf(p.getName().getFunctionalResourceName().getInstanceNumber()),
+                                new HashMap<Label, FunctionalResourceParameterEx<?>>());
+                    }})
+                // store parameter in proper map in ret list (index from instNums mapping)
+                .forEach(p -> ret.get(Integer.valueOf(p.getName().getFunctionalResourceName().getInstanceNumber()))
+                                 .put(p.getLabel(), (FunctionalResourceParameterEx<?>)p));
+
+        return ret;
     }
 
     public void setParameterValue(Name name, ICstsValue value) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InstantiationException
@@ -136,12 +175,6 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
         {
             throw new NullPointerException("Parameter " + name + " is not available in MD collection");
         }
-
-        if (!(parameter instanceof FunctionalResourceParameterEx<?>))
-        {
-            throw new UnsupportedOperationException("Parameter " + name + " is not an instance of FunctionalResourceParameterEx<?>");
-        }
-
         ((FunctionalResourceParameterEx<?>) parameter).setCstsValue(value);
     }
 
@@ -152,13 +185,81 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
         {
             throw new NullPointerException("Parameter " + name + " is not available in MD collection");
         }
-
-        if (!(parameter instanceof FunctionalResourceParameterEx<?>))
-        {
-            throw new UnsupportedOperationException("Parameter " + name + " is not an instance of FunctionalResourceParameterEx<?>");
-        }
-
         return ((FunctionalResourceParameterEx<?>) parameter).getCstsValue();
     }
+    
+    public void setParameterValue(Label label, ICstsValue value) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InstantiationException
+    {
+        List<FunctionalResourceParameterEx<?>> parameters = getParameters(label);
+        if (parameters.isEmpty())
+        {
+            throw new IllegalArgumentException("Label " + label + " is not available in MD collection");
+        }
+        for (FunctionalResourceParameterEx<?> parameter : parameters) {
+            parameter.setCstsValue(value);
+        }
+    }
 
+    public List<ICstsValue> getParameterValue(Label label) throws IllegalArgumentException, IllegalAccessException
+    {
+        List<FunctionalResourceParameterEx<?>> parameters = getParameters(label);
+        if (parameters.isEmpty())
+        {
+            throw new IllegalArgumentException("Label " + label + " is not available in MD collection");
+        }
+
+        List<ICstsValue> res = new ArrayList<>(parameters.size());
+        for (FunctionalResourceParameterEx<?> parameter : parameters) {
+            res.add(parameter.getCstsValue());
+        }
+        return res;
+    }
+
+    public void setParameterValue(FunctionalResourceName name, ICstsValue value) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InstantiationException
+    {
+        List<FunctionalResourceParameterEx<?>> parameters = getParameters(name);
+        if (parameters.isEmpty())
+        {
+            throw new IllegalArgumentException("Functional resource name " + name + " is not available in MD collection");
+        }
+        for (FunctionalResourceParameterEx<?> parameter : parameters) {
+            parameter.setCstsValue(value);
+        }
+    }
+
+    public Map<Name, ICstsValue> getParameterValues(FunctionalResourceName frn) throws IllegalArgumentException, IllegalAccessException
+    {
+        List<FunctionalResourceParameterEx<?>> parameters = getParameters(frn);
+        if (parameters.isEmpty())
+        {
+            throw new IllegalArgumentException("Functional resource name " + frn + " is not available in MD collection");
+        }
+
+        Map<Name, ICstsValue> res = new HashMap<Name, ICstsValue>(parameters.size());
+        for (FunctionalResourceParameterEx<?> parameter : parameters) {
+            res.put(parameter.getName(), parameter.getCstsValue());
+        }
+        return res;
+    }
+    
+    public Map<Integer, Map<Label, ICstsValue>> getParameterValues(FunctionalResourceType frt) throws IllegalArgumentException, IllegalAccessException
+    {
+        Map<Integer, Map<Label, FunctionalResourceParameterEx<?>>> parameters = getParameters(frt);
+        if (parameters.isEmpty())
+        {
+            throw new IllegalArgumentException("Functional resource type " + frt + " is not available in MD collection");
+        }
+        
+        Map<Integer, Map<Label, ICstsValue>> ret = new HashMap<Integer, Map<Label, ICstsValue>>(parameters.size());
+        for (Integer instNum : parameters.keySet())
+        {
+            Map<Label, ICstsValue> instParams = new HashMap<Label, ICstsValue>(parameters.get(instNum).size());
+            for (Map.Entry<Label, FunctionalResourceParameterEx<?>> parameter : parameters.get(instNum).entrySet()) {
+                instParams.put(parameter.getKey(), parameter.getValue().getCstsValue());
+            }
+            ret.put(instNum, instParams);
+        }
+        return ret;
+    }
+    
 }

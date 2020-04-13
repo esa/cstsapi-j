@@ -2,6 +2,7 @@ package esa.egos.csts.api.procedures;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.rules.TestRule;
@@ -10,6 +11,8 @@ import esa.egos.csts.api.enumerations.AppRole;
 import esa.egos.csts.api.enumerations.ProcedureRole;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.functionalresources.FunctionalResourceMetadata;
+import esa.egos.csts.api.functionalresources.values.ICstsValue;
+import esa.egos.csts.api.functionalresources.values.impl.CstsIntValue;
 import esa.egos.csts.api.main.CstsApi;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.oids.OIDs;
@@ -101,6 +104,31 @@ public abstract class MdCstsTestBase
     // the user SI
     protected MdCstsSiUser userSi;
 
+    protected static final List<TestParameter> testParameters = new LinkedList<TestParameter>();
+    
+    static class TestParameter
+    {
+        public final ObjectIdentifier oid;
+        public final String name;
+        public final ICstsValue initValue;
+        public final ICstsValue updatedValue;
+        
+        public TestParameter(ObjectIdentifier oid, String name, int initValue, int updatedValue)
+        {
+            this.oid = oid;
+            this.name = name;
+            this.initValue = CstsIntValue.of(name, initValue);
+            this.updatedValue = CstsIntValue.of(name, updatedValue);
+        }
+        public TestParameter(ObjectIdentifier oid, String name, ICstsValue initValue, ICstsValue updatedValue)
+        {
+            this.oid = oid;
+            this.name = name;
+            this.initValue = initValue;
+            this.updatedValue = updatedValue;
+        }
+
+    }
 
     @BeforeClass
     public static void setUpClass() throws ApiException
@@ -165,11 +193,9 @@ public abstract class MdCstsTestBase
 
         System.out.println("Created user SI");
 
-        System.out.println("Creating defualt label list");
+        System.out.println("Creating default label list");
 
         this.defaultLabelList = createDefaultLabelList();
-
-        System.out.println("Creating defualt label list");
 
         System.out.println("MdCstsTestBase#setUp() end");
     }

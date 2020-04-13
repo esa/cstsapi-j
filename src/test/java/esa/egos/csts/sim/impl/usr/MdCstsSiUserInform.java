@@ -24,6 +24,8 @@ import esa.egos.csts.api.enumerations.ParameterType;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.functionalresources.FunctionalResourceMetadata;
+import esa.egos.csts.api.functionalresources.FunctionalResourceName;
+import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
@@ -42,6 +44,7 @@ import esa.egos.csts.api.procedures.cyclicreport.CyclicReportUser;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.informationquery.InformationQueryUser;
 import esa.egos.csts.api.procedures.notification.NotificationUser;
+import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.Name;
 import esa.egos.csts.sim.impl.MdCstsSi;
 import esa.egos.csts.sim.impl.MdCstsSiConfig;
@@ -355,7 +358,7 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
                     {
                         synchronized (this.parameters)
                         {
-                            this.queriedParameters.add(new ArrayList<QualifiedParameter>(get.getQualifiedParameters()));
+                            this.queriedParameters.add(get.getQualifiedParameters());
                             for (QualifiedParameter qualifiedParameter : get.getQualifiedParameters())
                             {
                                 if (!qualifiedParameter.getQualifiedValues().isEmpty()
@@ -429,7 +432,7 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
 
         synchronized (this.cyclicParameters)
         {
-            this.cyclicParameters.add(new ArrayList<QualifiedParameter>(params));
+            this.cyclicParameters.add(params);
             try
             {
                 synchronized (this.parameters)
@@ -607,14 +610,56 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
     }
 
     // TODO clone the map
-    public Map<Name, FunctionalResourceParameterEx<?>> getParameters()
-    {
-        return this.parameters;
-    }
+    // called by User
+//    public Map<Name, FunctionalResourceParameterEx<?>> getParameters()
+//    {
+//        return this.parameters;
+//    }
 
     // TODO clone the parameter
+    // called by User
     public FunctionalResourceParameterEx<?> getParameter(Name name)
     {
         return this.parameters.get(name);
     }
+
+    public List<FunctionalResourceParameterEx<?>> getParameters(Label label)
+    {
+        List<FunctionalResourceParameterEx<?>> ret = new ArrayList<FunctionalResourceParameterEx<?>>();
+        this.parameters.values().stream()
+                .filter(p -> (p instanceof FunctionalResourceParameterEx) && p.getLabel().equals(label))
+                .forEach(p -> ret.add(p));
+        return ret;
+    }
+
+    public List<FunctionalResourceParameterEx<?>> getParameters(FunctionalResourceName frn)
+    {
+        List<FunctionalResourceParameterEx<?>> ret = new ArrayList<FunctionalResourceParameterEx<?>>(parameters.size());
+        this.parameters.values().stream()
+                .filter(p -> (p instanceof FunctionalResourceParameterEx && p.getName().getFunctionalResourceName().equals(frn)))
+                .forEach(p -> ret.add(p));
+        return ret;
+    }
+
+    public Map<Integer, Map<Label, FunctionalResourceParameterEx<?>>> getParameters(FunctionalResourceType frt)
+    {
+        Map<Integer, Map<Label, FunctionalResourceParameterEx<?>>> ret =
+                new HashMap<Integer, Map<Label, FunctionalResourceParameterEx<?>>>();
+        this.parameters.values().stream()
+                .filter(p -> (p instanceof FunctionalResourceParameterEx<?>
+                                && p.getName().getFunctionalResourceName().getType().equals(frt)))
+                // if instance number of this parameter is seen first -> add new map to ret
+                .peek(p -> {
+                    if (!ret.containsKey(Integer.valueOf(p.getName().getFunctionalResourceName().getInstanceNumber())))
+                    {
+                        ret.put(Integer.valueOf(p.getName().getFunctionalResourceName().getInstanceNumber()),
+                                new HashMap<Label, FunctionalResourceParameterEx<?>>());
+                    }})
+                // store parameter in proper map in ret list (index from instNums mapping)
+                .forEach(p -> ret.get(Integer.valueOf(p.getName().getFunctionalResourceName().getInstanceNumber()))
+                                 .put(p.getLabel(), (FunctionalResourceParameterEx<?>)p));
+
+        return ret;
+    }
+
 }

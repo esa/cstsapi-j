@@ -1,99 +1,130 @@
 package esa.egos.csts.api.procedures;
 
-import static org.junit.Assert.*;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import esa.egos.csts.api.functionalresources.FunctionalResourceName;
-import esa.egos.csts.api.functionalresources.values.ICstsValue;
+import esa.egos.csts.api.functionalresources.values.impl.CstsComplexValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsIntValue;
-import esa.egos.csts.api.parameters.impl.ListOfParameters;
-import esa.egos.csts.api.types.Name;
+import esa.egos.csts.api.types.Label;
 import esa.egos.csts.sim.impl.frm.Fr;
-import esa.egos.csts.api.TestUtils;
 
 /**
  * Test CSTS API information query procedure w/ Antenna parameters
  */
-public class InformationQueryAnntenaTest extends MdCstsAntennaTestBase
+public class InformationQueryAnntenaTest extends InformationQueryFrTestBase
 {
-    // TODO implement equals for all derived classes from ICstsValue for comparison of the provider and user values
 
-    /**
-     * Test information query procedure and its GET operation w/ NAME_SET
-     */
+    @BeforeClass
+    public static void setupClass()
+    {
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antPointingMode, "antPointingMode", 10, 30));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antTrackingRxMode, "antTrackingRxMode", 11, 44));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antTrackingRxInpLevel, "antTrackingRxInpLevel", 100, 110));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antTrackingRxNominalFreq, "antTrackingRxNominalFreq", 30000, 50000));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antTrackingRxFreqSearchRange, "antTrackingRxFreqSearchRange", 7000, 8000));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antCommandedElevation, "antCommandedElevation", -300, 5500));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antContrAzimuth, "antContrAzimuth", 200, -200));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antContrElevation, "antContrElevation", 100, 50));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antContrAzimuthRate, "antContrAzimuthRate", 8, 7));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antContrElevationRate, "antContrElevationRate", 90, 900));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antAzimuthResidual, "antAzimuthResidual", 35, 55));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antElevationResidual, "antElevationResidual", -3, 6));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antAccumulatedPrecipitation, "antAccumulatedPrecipitation", 1, 2));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antPrecipitationRate, "antPrecipitationRate", 100, 300));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antRelativeHumidity, "antRelativeHumidity", 80, 90));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antAmbientTemperature, "antAmbientTemperature", 10, 11));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antTrackingRxPredictMode, "antTrackingRxPredictMode", 3, 1));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antTrackingRxOrderOfLoop, "antTrackingRxOrderOfLoop", 0, 1));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antTrackingRxLockStat, "antTrackingRxLockStat", 0, 2));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antWindIntegrationTime, "antWindIntegrationTime", 100, 150));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antMeanWindSpeed, "antMeanWindSpeed", 20, 30));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antPeakWindSpeed, "antPeakWindSpeed", 30, 32));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antWindDirection, "antWindDirection", -200, -170));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antResourceStat, "antResourceStat", 1, 3));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antActualAzimuth, "antActualAzimuth", 10, 20));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antActualElevation, "antActualElevation", 13, 10));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antCommandedAzimuth, "antCommandedAzimuth", 18, -300));
+
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antElevationAberration, "antElevationAberration",
+                           CstsComplexValue.of("antElevationAberration", CstsIntValue.of("fwdBeamAberration", 10), CstsIntValue.of("rtnBeamAberration", 20)),
+                           CstsComplexValue.of("antElevationAberration", CstsIntValue.of("fwdBeamAberration", 11), CstsIntValue.of("rtnBeamAberration", 22))
+                           ));
+//        testParameters.add(new TestParameter(Fr.Antenna.parameter.antClosedLoopConfiguration, "antClosedLoopConfiguration",
+//                           CstsComplexValue.of("antClosedLoopConfiguration", CstsIntValue.of("conicalScan", 5)),
+//                           CstsComplexValue.of("antClosedLoopConfiguration", CstsIntValue.of("conicalScan", 50))
+//                           ));
+//        testParameters.add(new TestParameter(Fr.Antenna.parameter.antTrackingSignalPolarization, "antTrackingSignalPolarization"
+//                           CstsComplexValue.of("antTrackingSignalPolarization", CstsIntValue.of(200), CstsIntValue.of(5)),
+//                           CstsComplexValue.of("antTrackingSignalPolarization", CstsIntValue.of(300), CstsIntValue.of(55))
+//                           ));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antAzimuthAberration, "antAzimuthAberration",
+                           CstsComplexValue.of("antAzimuthAberration", CstsIntValue.of("fwdBeamAberration", -30), CstsIntValue.of("rtnBeamAberration", 20)),
+                           CstsComplexValue.of("antAzimuthAberration", CstsIntValue.of("fwdBeamAberration", 40), CstsIntValue.of("rtnBeamAberration", -20))
+                           ));
+//        testParameters.add(new TestParameter(Fr.Antenna.parameter.antTrackingRxLoopBwdth, "antTrackingRxLoopBwdth"
+//                           CstsComplexValue.of("antTrackingRxLoopBwdth", CstsIntValue.of(10), CstsComplexValue.of(CstsIntValue.of(101))),
+//                           CstsComplexValue.of("antTrackingRxLoopBwdth", CstsIntValue.of(15), CstsComplexValue.of(CstsIntValue.of(102)))
+//                           ));
+//        testParameters.add(new TestParameter(Fr.Antenna.parameter.antId, "antId"
+//                           CstsComplexValue.of("antId", CstsStringValue.of("antennaName", "antenna1"), CstsOidValue.of("antennaOid", new int[] {1,2,3})),
+//                           CstsComplexValue.of("antId", CstsStringValue.of("antennaName", "antenna2"), CstsOidValue.of("antennaOid", new int[] {2,3,4}))
+//                           ));
+    }
+    
+    @Override
+    protected List<Label> createDefaultLabelList()
+    {
+        List<Label> ret = new ArrayList<Label>(testParameters.size());
+        for (TestParameter testParameter : testParameters)
+        {
+            ret.add(Label.of(testParameter.oid, Fr.antenna));
+        }
+        return ret;
+    }
+    
     @Test
     public void testQueryInformationWithNameSet()
     {
-        try
-        {
-            // set FRs of Antenna 0 and Antenna 1
-            this.providerSi.setFunctionalResources(Fr.antenna, Fr.antenna);
+        super.testQueryInformationWithNameSet();
+    }
 
-            Name antActualAzimuthName = Name.of(Fr.Antenna.parameter.antActualAzimuth,
-                                                FunctionalResourceName.of(Fr.antenna, 0));
+    @Test
+    public void testQueryInformationWithLabelSet()
+    {
+        super.testQueryInformationWithLabelSet();
+    }
 
-            Name antActualElevationName = Name.of(Fr.Antenna.parameter.antActualElevation,
-                                                        FunctionalResourceName.of(Fr.antenna, 1));
+    @Test
+    public void testQueryInformationWithFunctionalResourceName()
+    {
+        super.testQueryInformationWithFunctionalResourceName();
+    }
+    
+    @Test
+    public void testQueryInformationWithFunctionalResourceType()
+    {
+        super.testQueryInformationWithFunctionalResourceType();
+    }
+    
+    @Test
+    public void testQueryInformationWithProcedureType()
+    {
+        super.testQueryInformationWithProcedureType();
+    }
 
-            this.providerSi.setParameterValue(antActualAzimuthName, CstsIntValue.of(100));
-            this.providerSi.setParameterValue(antActualElevationName, CstsIntValue.of(30));
+    @Test
+    public void testQueryInformationWithProcedureInstanceIdentifier()
+    {
+        super.testQueryInformationWithProcedureInstanceIdentifier();
+    }
 
-            System.out.println(this.providerSi.getParameterValue(antActualAzimuthName));
-            System.out.println(this.providerSi.getParameterValue(antActualElevationName));
-
-
-            System.out.println("BIND...");
-            TestUtils.verifyResult(this.userSi.bind(), "BIND");
-
-//            ListOfParameters listOfParameters = ListOfParameters.of(FunctionalResourceName.of(Fr.antenna, 0));
-            ListOfParameters listOfParameters = ListOfParameters.of(antActualAzimuthName, antActualElevationName);
-
-            System.out.println("QUERY-INFORMATION...");
-            TestUtils.verifyResult(this.userSi.queryInformation(this.piid_iq_secondary, listOfParameters),
-                    "QUERY-INFORMATION");
-
-
-            ICstsValue antActualAzimuthValue = this.userSi.getParameterValue(antActualAzimuthName);
-            ICstsValue antActualElevationValue = this.userSi.getParameterValue(antActualElevationName);
-
-            System.out.println(antActualAzimuthValue);
-            System.out.println(antActualElevationValue);
-
-
-            this.providerSi.setParameterValue(antActualAzimuthName, CstsIntValue.of(200));
-            this.providerSi.setParameterValue(antActualElevationName, CstsIntValue.of(50));
-
-            antActualAzimuthValue = this.userSi.getParameterValue(antActualAzimuthName);
-            antActualElevationValue = this.userSi.getParameterValue(antActualElevationName);
-
-            System.out.println(antActualAzimuthValue);
-            System.out.println(antActualElevationValue);
-
-            System.out.println("QUERY-INFORMATION...");
-            TestUtils.verifyResult(this.userSi.queryInformation(this.piid_iq_secondary, listOfParameters),
-                    "QUERY-INFORMATION");
-
-
-            antActualAzimuthValue = this.userSi.getParameterValue(antActualAzimuthName);
-            antActualElevationValue = this.userSi.getParameterValue(antActualElevationName);
-
-            System.out.println(antActualAzimuthValue);
-            System.out.println(antActualElevationValue);
-
-
-            System.out.println("UNBIND...");
-            TestUtils.verifyResult(this.userSi.unbind(), "UNBIND");
-
-            this.providerSi.destroy();
-            this.userSi.destroy();
-
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            fail(e.getMessage());
-        }
+    @Test
+    public void testQueryInformationWithEmpty()
+    {
+        super.testQueryInformationWithEmpty();
     }
 
 }

@@ -1,9 +1,7 @@
 package esa.egos.csts.sim.impl.prv;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import esa.egos.csts.api.events.IEvent;
 import esa.egos.csts.api.exceptions.ApiException;
@@ -13,7 +11,6 @@ import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.parameters.IParameter;
-import esa.egos.csts.api.parameters.impl.FunctionalResourceParameterEx;
 import esa.egos.csts.api.parameters.impl.LabelLists;
 import esa.egos.csts.api.procedures.IProcedure;
 import esa.egos.csts.api.procedures.cyclicreport.CyclicReportProvider;
@@ -22,7 +19,6 @@ import esa.egos.csts.api.procedures.informationquery.InformationQueryProvider;
 import esa.egos.csts.api.procedures.notification.NotificationProvider;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.LabelList;
-import esa.egos.csts.api.types.Name;
 import esa.egos.csts.sim.impl.MdCstsSi;
 
 /**
@@ -185,12 +181,4 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
         setMdCollection(MdCollection.createCollection(functionalResourceTypes));
     }
 
-
-    public Map<Name, FunctionalResourceParameterEx<?>> getParameters()
-    {
-        Map<Name, FunctionalResourceParameterEx<?>> ret = new HashMap<Name, FunctionalResourceParameterEx<?>>();
-        this.serviceInstance.gatherParameters().stream().filter(p -> (p instanceof FunctionalResourceParameterEx))
-                .forEach(p -> ret.put(p.getName(), (FunctionalResourceParameterEx<?>) p));
-        return ret;
-    }
 }
