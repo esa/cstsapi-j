@@ -6,6 +6,7 @@ import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.functionalresources.values.impl.CstsComplexValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsIntValue;
 import esa.egos.csts.api.types.Label;
@@ -74,6 +75,12 @@ public class InformationQueryAnntenaTest extends InformationQueryFrTestBase
 //                           ));
     }
     
+    @Override
+    protected FunctionalResourceType getFunctionalResource()
+    {
+        return Fr.antenna;
+    }
+
     @Override
     protected List<Label> createDefaultLabelList()
     {

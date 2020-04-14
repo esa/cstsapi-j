@@ -11,23 +11,25 @@ import java.util.Optional;
 import org.junit.Test;
 
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
+import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.functionalresources.values.ICstsValue;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.Name;
-import esa.egos.csts.sim.impl.frm.Fr;
 import esa.egos.csts.api.TestUtils;
 import esa.egos.csts.api.enumerations.CstsResult;
 
 /**
- * Test CSTS API information query procedure w/ Antenna parameters
+ * Test CSTS API information query procedure w/ Fr parameters
  */
 public abstract class InformationQueryFrTestBase extends MdCstsTestBase
 {
 
     protected abstract List<Label> createDefaultLabelList();
+    
+    protected abstract FunctionalResourceType getFunctionalResource();
     
     /**
      * Test information query procedure and its GET operation w/ NAME_SET
@@ -37,20 +39,20 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
     {
         try
         {
-            // set FRs of Antenna 0 and Antenna 1
-            this.providerSi.setFunctionalResources(Fr.antenna, Fr.antenna);
+            // set FRs of Fr 0 and Fr 1
+            this.providerSi.setFunctionalResources(getFunctionalResource(), getFunctionalResource());
 
-            // create array of names for antenna 0 and 1 and set parameters in provider
-            System.out.println("Create names for antenna 0 and 1 and set parameters in provider");
+            // create array of names for Fr 0 and 1 and set parameters in provider
+            System.out.println("Create names for Fr 0 and 1 and set parameters in provider");
             List<Name> names0 = new ArrayList<Name>(testParameters.size());
             List<Name> names1 = new ArrayList<Name>(testParameters.size());
             for (TestParameter testParameter : testParameters)
             {
-                Name name0 = Name.of(testParameter.oid, FunctionalResourceName.of(Fr.antenna, 0));
+                Name name0 = Name.of(testParameter.oid, FunctionalResourceName.of(getFunctionalResource(), 0));
                 this.providerSi.setParameterValue(name0, testParameter.initValue);
                 names0.add(name0);
 
-                Name name1 = Name.of(testParameter.oid, FunctionalResourceName.of(Fr.antenna, 1));
+                Name name1 = Name.of(testParameter.oid, FunctionalResourceName.of(getFunctionalResource(), 1));
                 this.providerSi.setParameterValue(name1, testParameter.initValue);
                 names1.add(name1);
             }
@@ -139,11 +141,11 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
     {
         try
         {
-            // set FRs of Antenna 0 and Antenna 1
-            this.providerSi.setFunctionalResources(Fr.antenna, Fr.antenna);
+            // set FRs of Fr 0 and Fr 1
+            this.providerSi.setFunctionalResources(getFunctionalResource(), getFunctionalResource());
 
-            // create array of Labels for both antenna and set parameters at provider
-            System.out.println("Create labels for both antenna and set parameters in provider");
+            // create array of Labels for both Fr and set parameters at provider
+            System.out.println("Create labels for both Fr and set parameters in provider");
             List<Label> labels = createDefaultLabelList();
             int index = 0;
             for (TestParameter testParameter : testParameters)
@@ -233,16 +235,16 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
     {
         try
         {
-            // set FRs of Antenna 0 and Antenna 1
-            this.providerSi.setFunctionalResources(Fr.antenna, Fr.antenna);
+            // set FRs of Fr 0 and Fr 1
+            this.providerSi.setFunctionalResources(getFunctionalResource(), getFunctionalResource());
 
-            // create functional resource names for antenna 0 and 1 and set parameters at provider
-            System.out.println("Create functional resource names for antenna 0 and 1 and set parameters in provider");
-            FunctionalResourceName frn0 = FunctionalResourceName.of(Fr.antenna, 0);
-            FunctionalResourceName frn1 = FunctionalResourceName.of(Fr.antenna, 1);
+            // create functional resource names for Fr 0 and 1 and set parameters at provider
+            System.out.println("Create functional resource names for Fr 0 and 1 and set parameters in provider");
+            FunctionalResourceName frn0 = FunctionalResourceName.of(getFunctionalResource(), 0);
+            FunctionalResourceName frn1 = FunctionalResourceName.of(getFunctionalResource(), 1);
             for (TestParameter testParameter : testParameters)
             {
-                this.providerSi.setParameterValue(Label.of(testParameter.oid, Fr.antenna), testParameter.initValue);
+                this.providerSi.setParameterValue(Label.of(testParameter.oid, getFunctionalResource()), testParameter.initValue);
             }
             
             // create lists of names of parameters set at provider
@@ -250,12 +252,12 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
             List<Name> names1 = new ArrayList<Name>(testParameters.size());
             for (TestParameter testParameter : testParameters)
             {
-                names0.add(Name.of(testParameter.oid, FunctionalResourceName.of(Fr.antenna, 0)));
-                names1.add(Name.of(testParameter.oid, FunctionalResourceName.of(Fr.antenna, 1)));
+                names0.add(Name.of(testParameter.oid, FunctionalResourceName.of(getFunctionalResource(), 0)));
+                names1.add(Name.of(testParameter.oid, FunctionalResourceName.of(getFunctionalResource(), 1)));
             }
 
-            // check values at provider for both antenna
-            System.out.println("Check values at provider for both antenna");
+            // check values at provider for both Fr
+            System.out.println("Check values at provider for both Fr");
             Map<Name, ICstsValue> providerValues0 = this.providerSi.getParameterValues(frn0);
             Map<Name, ICstsValue> providerValues1 = this.providerSi.getParameterValues(frn1);
             Iterator<Name> it0 = names0.iterator();
@@ -273,15 +275,15 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
             System.out.println("BIND...");
             TestUtils.verifyResult(this.userSi.bind(), "BIND");
 
-            System.out.println("Query parameters for antenna 0");
+            System.out.println("Query parameters for Fr 0");
             ListOfParameters listOfParameters0 = ListOfParameters.of(frn0);
 
             System.out.println("QUERY-INFORMATION...");
             TestUtils.verifyResult(this.userSi.queryInformation(this.piid_iq_secondary, listOfParameters0),
                     "QUERY-INFORMATION");
 
-            // check values at user for antenna 0
-            System.out.println("Check values at user for antenna 0");
+            // check values at user for Fr 0
+            System.out.println("Check values at user for Fr 0");
             Map<Name, ICstsValue> userValues = this.userSi.getParameterValues(frn0);
             it0 = names0.iterator();
             for (TestParameter testParameter : testParameters)
@@ -291,15 +293,15 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
                            userValues.get(name).equals(testParameter.initValue));
             }
 
-            System.out.println("Query parameters for antenna 1");
+            System.out.println("Query parameters for Fr 1");
             ListOfParameters listOfParameters1 = ListOfParameters.of(frn1);
 
             System.out.println("QUERY-INFORMATION...");
             TestUtils.verifyResult(this.userSi.queryInformation(this.piid_iq_secondary, listOfParameters1),
                     "QUERY-INFORMATION");
 
-            // check values at user for antenna 1
-            System.out.println("Check values at user for antenna 1");
+            // check values at user for Fr 1
+            System.out.println("Check values at user for Fr 1");
             userValues = this.userSi.getParameterValues(frn1);
             it1 = names1.iterator();
             for (TestParameter testParameter : testParameters)
@@ -313,17 +315,19 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
             System.out.println("Change values at provider");
             for (TestParameter testParameter : testParameters)
             {
-                this.providerSi.setParameterValue(Name.of(testParameter.oid, FunctionalResourceName.of(Fr.antenna, 0)), testParameter.updatedValue);
-                this.providerSi.setParameterValue(Name.of(testParameter.oid, FunctionalResourceName.of(Fr.antenna, 1)), testParameter.updatedValue);
+                this.providerSi.setParameterValue(Name.of(testParameter.oid, FunctionalResourceName.of(getFunctionalResource(), 0)),
+                                                  testParameter.updatedValue);
+                this.providerSi.setParameterValue(Name.of(testParameter.oid, FunctionalResourceName.of(getFunctionalResource(), 1)),
+                                                  testParameter.updatedValue);
             }
 
-            System.out.println("Query updated parameters for antenna 0");
+            System.out.println("Query updated parameters for Fr 0");
             System.out.println("QUERY-INFORMATION...");
             TestUtils.verifyResult(this.userSi.queryInformation(this.piid_iq_secondary, listOfParameters0),
                     "QUERY-INFORMATION");
 
-            // check values at user for antenna 0
-            System.out.println("Check values at user for antenna 0");
+            // check values at user for Fr 0
+            System.out.println("Check values at user for Fr 0");
             userValues = this.userSi.getParameterValues(frn0);
             it0 = names0.iterator();
             for (TestParameter testParameter : testParameters)
@@ -333,13 +337,13 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
                            userValues.get(name).equals(testParameter.updatedValue));
             }
 
-            System.out.println("Query updated parameters for antenna 1");
+            System.out.println("Query updated parameters for Fr 1");
             System.out.println("QUERY-INFORMATION...");
             TestUtils.verifyResult(this.userSi.queryInformation(this.piid_iq_secondary, listOfParameters1),
                     "QUERY-INFORMATION");
 
-            // check values at user for antenna 1
-            System.out.println("Check values at user for antenna 1");
+            // check values at user for Fr 1
+            System.out.println("Check values at user for Fr 1");
             userValues = this.userSi.getParameterValues(frn1);
             it1 = names1.iterator();
             for (TestParameter testParameter : testParameters)
@@ -370,11 +374,11 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
     {
         try
         {
-            // set FRs of Antenna 0 and Antenna 1
-            this.providerSi.setFunctionalResources(Fr.antenna, Fr.antenna);
+            // set FRs of Fr 0 and Fr 1
+            this.providerSi.setFunctionalResources(getFunctionalResource(), getFunctionalResource());
 
             // set parameters at provider and create lists of Labels of parameters set at provider
-            System.out.println("Set values of parameters in provider for both antenna");
+            System.out.println("Set values of parameters in provider for both Fr");
             List<Label> labels = createDefaultLabelList();
             int index = 0;
             for (TestParameter testParameter : testParameters)
@@ -382,10 +386,10 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
                 this.providerSi.setParameterValue(labels.get(index++), testParameter.initValue);
             }
 
-            // check values at provider for both antenna
-            System.out.println("Check values at provider for both antenna");
-            Map<Integer, Map<Label, ICstsValue>> providerValues = this.providerSi.getParameterValues(Fr.antenna);
-            assertTrue("provider: didn't get 2 sets of parameters for " + Fr.antenna, providerValues.size() == 2);
+            // check values at provider for both Fr
+            System.out.println("Check values at provider for both Fr");
+            Map<Integer, Map<Label, ICstsValue>> providerValues = this.providerSi.getParameterValues(getFunctionalResource());
+            assertTrue("provider: didn't get 2 sets of parameters for " + getFunctionalResource(), providerValues.size() == 2);
             Map<Label, ICstsValue> values0 = providerValues.get(Integer.valueOf(0));
             Map<Label, ICstsValue> values1 = providerValues.get(Integer.valueOf(1));
             Iterator<Label> it = labels.iterator();
@@ -403,17 +407,17 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
             System.out.println("BIND...");
             TestUtils.verifyResult(this.userSi.bind(), "BIND");
 
-            System.out.println("Query parameters for both antenna");
-            ListOfParameters listOfParameters = ListOfParameters.of(Fr.antenna);
+            System.out.println("Query parameters for both Fr");
+            ListOfParameters listOfParameters = ListOfParameters.of(getFunctionalResource());
 
             System.out.println("QUERY-INFORMATION...");
             TestUtils.verifyResult(this.userSi.queryInformation(this.piid_iq_secondary, listOfParameters),
                     "QUERY-INFORMATION");
 
-            // check values at user for both antenna
-            System.out.println("Check values at user for both antenna");
-            Map<Integer, Map<Label, ICstsValue>> userValues = this.userSi.getParameterValues(Fr.antenna);
-            assertTrue("user: didn't get 2 sets of parameters for " + Fr.antenna, userValues.size() == 2);
+            // check values at user for both Fr
+            System.out.println("Check values at user for both Fr");
+            Map<Integer, Map<Label, ICstsValue>> userValues = this.userSi.getParameterValues(getFunctionalResource());
+            assertTrue("user: didn't get 2 sets of parameters for " + getFunctionalResource(), userValues.size() == 2);
             values0 = userValues.get(Integer.valueOf(0));
             values1 = userValues.get(Integer.valueOf(1));
             it = labels.iterator();
@@ -432,18 +436,18 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
             System.out.println("Change values at provider");
             for (TestParameter testParameter : testParameters)
             {
-                this.providerSi.setParameterValue(Label.of(testParameter.oid, Fr.antenna), testParameter.updatedValue);
+                this.providerSi.setParameterValue(Label.of(testParameter.oid, getFunctionalResource()), testParameter.updatedValue);
             }
 
-            System.out.println("Query updated parameters for antenna 0");
+            System.out.println("Query updated parameters for Fr 0");
             System.out.println("QUERY-INFORMATION...");
             TestUtils.verifyResult(this.userSi.queryInformation(this.piid_iq_secondary, listOfParameters),
                     "QUERY-INFORMATION");
 
-            // check updated values at user for both antenna
-            System.out.println("Check updated values at user for both antenna");
-            userValues = this.userSi.getParameterValues(Fr.antenna);
-            assertTrue("user: didn't get 2 sets of parameters for " + Fr.antenna, userValues.size() == 2);
+            // check updated values at user for both Fr
+            System.out.println("Check updated values at user for both Fr");
+            userValues = this.userSi.getParameterValues(getFunctionalResource());
+            assertTrue("user: didn't get 2 sets of parameters for " + getFunctionalResource(), userValues.size() == 2);
             values0 = userValues.get(Integer.valueOf(0));
             values1 = userValues.get(Integer.valueOf(1));
             it = labels.iterator();
@@ -479,11 +483,11 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
     {
         try
         {
-            // set FRs of Antenna 0 and Antenna 1
-            this.providerSi.setFunctionalResources(Fr.antenna, Fr.antenna);
+            // set FRs of Fr 0 and Fr 1
+            this.providerSi.setFunctionalResources(getFunctionalResource(), getFunctionalResource());
 
-            // create array of Labels for both antenna and set parameters at provider
-            System.out.println("Create labels for both antenna and set parameters in provider");
+            // create array of Labels for both Fr and set parameters at provider
+            System.out.println("Create labels for both Fr and set parameters in provider");
             List<Label> labels = createDefaultLabelList();
 
             System.out.println("set the default label list to provider SI");
@@ -528,11 +532,11 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
     {
         try
         {
-            // set FRs of Antenna 0 and Antenna 1
-            this.providerSi.setFunctionalResources(Fr.antenna, Fr.antenna);
+            // set FRs of Fr 0 and Fr 1
+            this.providerSi.setFunctionalResources(getFunctionalResource(), getFunctionalResource());
 
-            // create array of Labels for both antenna and set parameters at provider
-            System.out.println("Create labels for both antenna and set parameters in provider");
+            // create array of Labels for both Fr and set parameters at provider
+            System.out.println("Create labels for both Fr and set parameters in provider");
             List<Label> labels = createDefaultLabelList();
 
             System.out.println("set the default label list to provider SI");
@@ -577,8 +581,8 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
     {
         try
         {
-            // set FRs of Antenna 0 and Antenna 1
-            this.providerSi.setFunctionalResources(Fr.antenna, Fr.antenna);
+            // set FRs of Fr 0 and Fr 1
+            this.providerSi.setFunctionalResources(getFunctionalResource(), getFunctionalResource());
 
             System.out.println("BIND...");
             TestUtils.verifyResult(this.userSi.bind(), "BIND");
