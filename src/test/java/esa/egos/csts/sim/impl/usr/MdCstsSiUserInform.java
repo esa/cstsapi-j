@@ -422,10 +422,10 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
         ProcedureInstanceIdentifier piid = transferData.getProcedureInstanceIdentifier();
         System.out.println(piid);
 
-        if (transferData.getEmbeddedData().getData() != null)
-        {
-            System.out.println(transferData.getEmbeddedData().getData());
-        }
+//        if (transferData.getEmbeddedData().getData() != null)
+//        {
+//            System.out.println(transferData.getEmbeddedData());
+//        }
 
         List<QualifiedParameter> params = ((CyclicReportUser) this.serviceInstance.getProcedure(piid))
                 .getQualifiedParameters();
@@ -610,34 +610,41 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
     }
 
     // TODO clone the map
-    // called by User
 //    public Map<Name, FunctionalResourceParameterEx<?>> getParameters()
 //    {
 //        return this.parameters;
 //    }
 
     // TODO clone the parameter
-    // called by User
     public FunctionalResourceParameterEx<?> getParameter(Name name)
     {
-        return this.parameters.get(name);
+        synchronized(this.parameters)
+        {
+            return this.parameters.get(name);
+        }
     }
 
     public List<FunctionalResourceParameterEx<?>> getParameters(Label label)
     {
         List<FunctionalResourceParameterEx<?>> ret = new ArrayList<FunctionalResourceParameterEx<?>>();
-        this.parameters.values().stream()
-                .filter(p -> (p instanceof FunctionalResourceParameterEx) && p.getLabel().equals(label))
-                .forEach(p -> ret.add(p));
+        synchronized(this.parameters)
+        {
+            this.parameters.values().stream()
+                    .filter(p -> (p instanceof FunctionalResourceParameterEx) && p.getLabel().equals(label))
+                    .forEach(p -> ret.add(p));
+        }
         return ret;
     }
 
     public List<FunctionalResourceParameterEx<?>> getParameters(FunctionalResourceName frn)
     {
         List<FunctionalResourceParameterEx<?>> ret = new ArrayList<FunctionalResourceParameterEx<?>>(parameters.size());
-        this.parameters.values().stream()
-                .filter(p -> (p instanceof FunctionalResourceParameterEx && p.getName().getFunctionalResourceName().equals(frn)))
-                .forEach(p -> ret.add(p));
+        synchronized(this.parameters)
+        {
+            this.parameters.values().stream()
+                    .filter(p -> (p instanceof FunctionalResourceParameterEx && p.getName().getFunctionalResourceName().equals(frn)))
+                    .forEach(p -> ret.add(p));
+        }
         return ret;
     }
 
@@ -645,19 +652,22 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
     {
         Map<Integer, Map<Label, FunctionalResourceParameterEx<?>>> ret =
                 new HashMap<Integer, Map<Label, FunctionalResourceParameterEx<?>>>();
-        this.parameters.values().stream()
-                .filter(p -> (p instanceof FunctionalResourceParameterEx<?>
-                                && p.getName().getFunctionalResourceName().getType().equals(frt)))
-                // if instance number of this parameter is seen first -> add new map to ret
-                .peek(p -> {
-                    if (!ret.containsKey(Integer.valueOf(p.getName().getFunctionalResourceName().getInstanceNumber())))
-                    {
-                        ret.put(Integer.valueOf(p.getName().getFunctionalResourceName().getInstanceNumber()),
-                                new HashMap<Label, FunctionalResourceParameterEx<?>>());
-                    }})
-                // store parameter in proper map in ret list (index from instNums mapping)
-                .forEach(p -> ret.get(Integer.valueOf(p.getName().getFunctionalResourceName().getInstanceNumber()))
-                                 .put(p.getLabel(), (FunctionalResourceParameterEx<?>)p));
+        synchronized(this.parameters)
+        {
+            this.parameters.values().stream()
+                    .filter(p -> (p instanceof FunctionalResourceParameterEx<?>
+                                    && p.getName().getFunctionalResourceName().getType().equals(frt)))
+                    // if instance number of this parameter is seen first -> add new map to ret
+                    .peek(p -> {
+                        if (!ret.containsKey(Integer.valueOf(p.getName().getFunctionalResourceName().getInstanceNumber())))
+                        {
+                            ret.put(Integer.valueOf(p.getName().getFunctionalResourceName().getInstanceNumber()),
+                                    new HashMap<Label, FunctionalResourceParameterEx<?>>());
+                        }})
+                    // store parameter in proper map in ret list (index from instNums mapping)
+                    .forEach(p -> ret.get(Integer.valueOf(p.getName().getFunctionalResourceName().getInstanceNumber()))
+                                     .put(p.getLabel(), (FunctionalResourceParameterEx<?>)p));
+        }
 
         return ret;
     }
