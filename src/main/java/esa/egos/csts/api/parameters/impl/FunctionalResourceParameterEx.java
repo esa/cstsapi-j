@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 import com.beanit.jasn1.ber.types.BerBoolean;
 import com.beanit.jasn1.ber.types.BerInteger;
+import com.beanit.jasn1.ber.types.BerNull;
 import com.beanit.jasn1.ber.types.BerObjectIdentifier;
 import com.beanit.jasn1.ber.types.BerOctetString;
 import com.beanit.jasn1.ber.types.BerReal;
@@ -262,6 +263,10 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
 
         for (Field valueField : berObject.getClass().getDeclaredFields())
         {
+            if (valueField.getType().equals(BerNull.class))
+            {
+                continue;
+            }
             valueField.setAccessible(true);
             Object object = valueField.get(berObject);
             if (object instanceof BerType)
@@ -404,7 +409,8 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
                                                                     IllegalAccessException, InstantiationException
     {
         List<String> sequence = null;
-        if (isChoice(berClass))
+        boolean isChoice = isChoice(berClass);
+        if (isChoice)
         {
             if (value.getValues().size() > 1)
             {
@@ -420,8 +426,10 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
         {
             // exclude common BER fields serialVersionUID, tag and code
             sequence = Stream.of(berClass.getDeclaredFields())
-                    .filter(f -> !f.getName().equals("tag") && !f.getName().equals("serialVersionUID")
-                                 && !f.getName().equals("code"))
+                    .filter(f -> !f.getName().equals("tag")
+                              && !f.getName().equals("serialVersionUID")
+                              && !f.getType().equals(BerNull.class)
+                              && !f.getName().equals("code"))
                     .map(f -> f.getName()).collect(Collectors.toList());
 
             if (value.getValues().size() != sequence.size())
@@ -433,7 +441,22 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
 
             LOG.fine(() -> "Setting " + value + " to the " + berName + " sequence");
         }
-
+        
+        // for choice - first set all BerType fields to null because they can be initialized and only one value from getValues() is set
+        if (isChoice)
+        {
+            for (Field valueField : berClass.getDeclaredFields())
+            {
+                Class<?> clazz = valueField.getType();
+                if (!(BerType.class.isAssignableFrom(clazz)))
+                {
+                    continue;
+                }
+                valueField.setAccessible(true);
+                valueField.set(berObject, null);
+            }
+        }
+        
         for (ICstsValue subValue : value.getValues())
         {
             Field valueField = getValueField(berClass, subValue.getName());

@@ -9,6 +9,7 @@ import org.junit.Test;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.functionalresources.values.impl.CstsComplexValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsIntValue;
+import esa.egos.csts.api.functionalresources.values.impl.CstsOidValue;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.sim.impl.frm.Fr;
 
@@ -53,26 +54,30 @@ public class InformationQueryAnntenaTest extends InformationQueryFrTestBase
                            CstsComplexValue.of("antElevationAberration", CstsIntValue.of("fwdBeamAberration", 10), CstsIntValue.of("rtnBeamAberration", 20)),
                            CstsComplexValue.of("antElevationAberration", CstsIntValue.of("fwdBeamAberration", 11), CstsIntValue.of("rtnBeamAberration", 22))
                            ));
-//        testParameters.add(new TestParameter(Fr.Antenna.parameter.antClosedLoopConfiguration, "antClosedLoopConfiguration",
-//                           CstsComplexValue.of("antClosedLoopConfiguration", CstsIntValue.of("conicalScan", 5)),
-//                           CstsComplexValue.of("antClosedLoopConfiguration", CstsIntValue.of("conicalScan", 50))
-//                           ));
-//        testParameters.add(new TestParameter(Fr.Antenna.parameter.antTrackingSignalPolarization, "antTrackingSignalPolarization"
-//                           CstsComplexValue.of("antTrackingSignalPolarization", CstsIntValue.of(200), CstsIntValue.of(5)),
-//                           CstsComplexValue.of("antTrackingSignalPolarization", CstsIntValue.of(300), CstsIntValue.of(55))
-//                           ));
-        testParameters.add(new TestParameter(Fr.Antenna.parameter.antAzimuthAberration, "antAzimuthAberration",
-                           CstsComplexValue.of("antAzimuthAberration", CstsIntValue.of("fwdBeamAberration", -30), CstsIntValue.of("rtnBeamAberration", 20)),
-                           CstsComplexValue.of("antAzimuthAberration", CstsIntValue.of("fwdBeamAberration", 40), CstsIntValue.of("rtnBeamAberration", -20))
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antClosedLoopConfiguration, "antClosedLoopConfiguration",
+                           CstsComplexValue.of("antClosedLoopConfiguration", CstsIntValue.of("conicalScan", 5)),
+                           CstsComplexValue.of("antClosedLoopConfiguration", CstsIntValue.of("conicalScan", 50))
                            ));
-//        testParameters.add(new TestParameter(Fr.Antenna.parameter.antTrackingRxLoopBwdth, "antTrackingRxLoopBwdth"
-//                           CstsComplexValue.of("antTrackingRxLoopBwdth", CstsIntValue.of(10), CstsComplexValue.of(CstsIntValue.of(101))),
-//                           CstsComplexValue.of("antTrackingRxLoopBwdth", CstsIntValue.of(15), CstsComplexValue.of(CstsIntValue.of(102)))
-//                           ));
-//        testParameters.add(new TestParameter(Fr.Antenna.parameter.antId, "antId"
-//                           CstsComplexValue.of("antId", CstsStringValue.of("antennaName", "antenna1"), CstsOidValue.of("antennaOid", new int[] {1,2,3})),
-//                           CstsComplexValue.of("antId", CstsStringValue.of("antennaName", "antenna2"), CstsOidValue.of("antennaOid", new int[] {2,3,4}))
-//                           ));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antTrackingSignalPolarization, "antTrackingSignalPolarization",
+                           CstsComplexValue.of("antTrackingSignalPolarization", CstsIntValue.of("autoHysteresis", 200)),
+                           CstsComplexValue.of("antTrackingSignalPolarization", CstsIntValue.of("autoHysteresis", 300))
+                           ));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antAzimuthAberration, "antAzimuthAberration",
+                           CstsComplexValue.of("antAzimuthAberration", CstsIntValue.of("fwdBeamAberration", -30),
+                                                                       CstsIntValue.of("rtnBeamAberration", 20)),
+                           CstsComplexValue.of("antAzimuthAberration", CstsIntValue.of("fwdBeamAberration", 40),
+                                                                       CstsIntValue.of("rtnBeamAberration", -20))
+                           ));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antTrackingRxLoopBwdth, "antTrackingRxLoopBwdth",
+                           CstsComplexValue.of("antTrackingRxLoopBwdth", CstsIntValue.of("trackingLoopBwdth", 10),
+                                                                         CstsComplexValue.of("loopBwdthChangeDuration", CstsIntValue.of("bwdthChangeDuration", 101))),
+                           CstsComplexValue.of("antTrackingRxLoopBwdth", CstsIntValue.of("trackingLoopBwdth", 15),
+                                                                         CstsComplexValue.of("loopBwdthChangeDuration", CstsIntValue.of("bwdthChangeDuration", 102)))
+                           ));
+        testParameters.add(new TestParameter(Fr.Antenna.parameter.antId, "antId",
+                           CstsComplexValue.of("antId", CstsOidValue.of("antennaOid", new int[] {1,2,3})),
+                           CstsComplexValue.of("antId", CstsOidValue.of("antennaOid", new int[] {2,3,4}))
+                           ));
     }
     
     @Override
