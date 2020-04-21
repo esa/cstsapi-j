@@ -326,6 +326,7 @@ public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliver
 
 	protected synchronized void generateQualifiedParameters() {
 
+	    this.qualifiedParameters.clear();
 		LabelLists labelLists = (LabelLists) getConfigurationParameter(OIDs.pCRnamedLabelLists);
 		List<IParameter> parameters = getServiceInstance().gatherParameters();
 		switch (listOfParameters.getType()) {
