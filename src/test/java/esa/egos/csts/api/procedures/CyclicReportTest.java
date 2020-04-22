@@ -111,13 +111,8 @@ public class CyclicReportTest
 
     private FunctionalResourceName antIdName = FunctionalResourceName.of(this.antIdType, 1);
 
-//    private FunctionalResourceIntegerParameter antActualAzimuth = new FunctionalResourceIntegerParameter(this.antIdId,
-//                                                                                                 this.antIdName);
     private Name nonExistentParameterName = Name.of(this.antIdId, this.antIdName);
 
-//    private Label nonExistentParameterLabel = Label.of(this.antIdId, this.antIdType);
-
-    
     @BeforeClass
     public static void setUpClass() throws ApiException
     {
@@ -304,17 +299,8 @@ public class CyclicReportTest
 
             TestUtils.verifyEquals(mdCollection.getQualifiedParameter(name), result_01.get(), "provider's", "user's");
 
-            System.out.println("STOP-CYCLIC-REPORT...");
-            TestUtils.verifyResult(userSi.stopCyclicReport(piid.getInstanceNumber()), "STOP-CYCLIC-REPORT");
-
             System.out.println("update provider's parameter value");
             mdCollection.updateIntegerParameter(mdCollection.getParameterNameSet().getParameterNames().get(0), 5);
-
-            System.out.println("again START-CYCLIC-REPORT ...");
-            TestUtils.verifyResult(userSi.startCyclicReport(piid.getInstanceNumber(),
-                                                            ListOfParameters.of(functionalResourceName),
-                                                            100),
-                                   "START-CYCLIC-REPORT");
 
             Thread.sleep(300); // wait for several cyclic reports
 
@@ -443,17 +429,8 @@ public class CyclicReportTest
 
             TestUtils.verifyEquals(mdCollection.getQualifiedParameter(name), result_01.get(), "provider's", "user's");
 
-            System.out.println("STOP-CYCLIC-REPORT...");
-            TestUtils.verifyResult(userSi.stopCyclicReport(piid.getInstanceNumber()), "STOP-CYCLIC-REPORT");
-
             System.out.println("update provider's parameter value");
             mdCollection.updateIntegerParameter(mdCollection.getParameterNameSet().getParameterNames().get(0), 10);
-
-            System.out.println("again START-CYCLIC-REPORT ...");
-            TestUtils.verifyResult(userSi.startCyclicReport(piid.getInstanceNumber(),
-                                                            mdCollection.getParameterNameSet(),
-                                                            100),
-                                   "START-CYCLIC-REPORT");
 
             Thread.sleep(300); // wait for several cyclic reports
 
@@ -585,17 +562,8 @@ public class CyclicReportTest
                 TestUtils.verifyEquals(mdCollection.getQualifiedParameter(name), result.get(), "provider's", "user's");
             }
 
-            System.out.println("STOP-CYCLIC-REPORT...");
-            TestUtils.verifyResult(userSi.stopCyclicReport(piid.getInstanceNumber()), "STOP-CYCLIC-REPORT");
-
             System.out.println("update provider's parameter value");
             mdCollection.updateIntegerParameter(mdCollection.getParameterNameSet().getParameterNames().get(0), 20);
-
-            System.out.println("again START-CYCLIC-REPORT...");
-            TestUtils.verifyResult(userSi.startCyclicReport(piid.getInstanceNumber(),
-                                                            mdCollection.getParameterNameSet(),
-                                                            100),
-                                   "START-CYCLIC-REPORT");
 
             Thread.sleep(300); // wait for several cyclic reports
 
@@ -839,7 +807,6 @@ public class CyclicReportTest
             List<QualifiedParameter> queriedParameters_01 = userSi.getLastCyclicParameters();
             assertFalse("did not get any parameters from provider", queriedParameters_01.isEmpty());
 
-//            System.out.println("Q1: " + queriedParameters_01.get(0).toString());
             System.out.println("Q1: " + queriedParameters_01.toString());
             assertTrue("did not get just one parameter from provider", queriedParameters_01.get(0)
                        .toString().contains("pCRnamedLabelLists"));

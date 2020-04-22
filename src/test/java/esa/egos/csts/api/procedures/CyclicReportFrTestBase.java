@@ -60,9 +60,9 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             int index = 0;
             for (TestParameter testParameter : testParameters)
             {
-                assertTrue("provider(antena=0): found incorrect value of " + testParameter.name,
+                assertTrue("provider(Fr=0): found incorrect value of " + testParameter.name,
                            this.providerSi.getParameterValue(names0.get(index)).equals(testParameter.initValue));
-                assertTrue("provider(antena=1): found incorrect value of " + testParameter.name,
+                assertTrue("provider(Fr=1): found incorrect value of " + testParameter.name,
                            this.providerSi.getParameterValue(names1.get(index)).equals(testParameter.initValue));
                 index++;
             }
@@ -87,15 +87,12 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             index = 0;
             for (TestParameter testParameter : testParameters)
             {
-                assertTrue("user(antena=0): found incorrect value of " + testParameter.name,
+                assertTrue("user(Fr=0): found incorrect value of " + testParameter.name,
                            this.userSi.getParameterValue(names0.get(index)).equals(testParameter.initValue));
-                assertTrue("user(antena=1): found incorrect value of " + testParameter.name,
+                assertTrue("user(Fr=1): found incorrect value of " + testParameter.name,
                            this.userSi.getParameterValue(names1.get(index)).equals(testParameter.initValue));
                 index++;
             }
-
-            System.out.println("STOP-CYCLIC-REPORT...");
-            TestUtils.verifyResult(userSi.stopCyclicReport(this.piid_cr_prime), "STOP-CYCLIC-REPORT");
 
             // update values at provider
             System.out.println("Update values at provider");
@@ -107,10 +104,6 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
                 index++;
             }
 
-            System.out.println("again START-CYCLIC-REPORT...");
-            TestUtils.verifyResult(userSi.startCyclicReport(this.piid_cr_prime, listOfParameters, 100),
-                                   "START-CYCLIC-REPORT");
-
             Thread.sleep(300); // wait for several cyclic reports
 
             // check updated values at user
@@ -118,9 +111,9 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             index = 0;
             for (TestParameter testParameter : testParameters)
             {
-                assertTrue("user(antena=0): found incorrect updated value of " + testParameter.name,
+                assertTrue("user(Fr=0): found incorrect updated value of " + testParameter.name,
                            this.userSi.getParameterValue(names0.get(index)).equals(testParameter.updatedValue));
-                assertTrue("user(antena=1): found incorrect updated value of " + testParameter.name,
+                assertTrue("user(Fr=1): found incorrect updated value of " + testParameter.name,
                            this.userSi.getParameterValue(names1.get(index)).equals(testParameter.updatedValue));
                 index++;
             }
@@ -168,9 +161,9 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             {
                 List<ICstsValue> providerValue = this.providerSi.getParameterValue(labels.get(index++));
                 assertTrue("provider: didn't get 2 values for " + testParameter.name, providerValue.size() == 2);
-                assertTrue("provider(antena=0): found incorrect value of " + testParameter.name,
+                assertTrue("provider(Fr=0): found incorrect value of " + testParameter.name,
                            providerValue.get(0).equals(testParameter.initValue));
-                assertTrue("provider(antena=1): found incorrect value of " + testParameter.name,
+                assertTrue("provider(Fr=1): found incorrect value of " + testParameter.name,
                            providerValue.get(1).equals(testParameter.initValue));
             }
 
@@ -192,14 +185,11 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             {
                 List<ICstsValue> userValue = this.userSi.getParameterValue(labels.get(index++));
                 assertTrue("user: didn't get 2 values for " + testParameter.name, userValue.size() == 2);
-                assertTrue("user(antena=0): found incorrect value of " + testParameter.name,
+                assertTrue("user(Fr=0): found incorrect value of " + testParameter.name,
                            userValue.get(0).equals(testParameter.initValue));
-                assertTrue("user(antena=1): found incorrect value of " + testParameter.name,
+                assertTrue("user(Fr=1): found incorrect value of " + testParameter.name,
                            userValue.get(1).equals(testParameter.initValue));
             }
-
-            System.out.println("STOP-CYCLIC-REPORT...");
-            TestUtils.verifyResult(userSi.stopCyclicReport(this.piid_cr_prime), "STOP-CYCLIC-REPORT");
 
             // change values at provider
             System.out.println("Change values at provider");
@@ -208,10 +198,6 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             {
                 this.providerSi.setParameterValue(labels.get(index++), testParameter.updatedValue);
             }
-
-            System.out.println("again START-CYCLIC-REPORT...");
-            TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_cr_prime, listOfParameters, 100),
-                    "START-CYCLIC-REPORT");
 
             Thread.sleep(300); // wait for several cyclic reports
 
@@ -222,9 +208,9 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             {
                 List<ICstsValue> userValue = this.userSi.getParameterValue(labels.get(index++));
                 assertTrue("user: didn't get 2 values for " + testParameter.name, userValue.size() == 2);
-                assertTrue("user(antena=0): fount incorrect value of " + testParameter.name,
+                assertTrue("user(Fr=0): fount incorrect value of " + testParameter.name,
                            userValue.get(0).equals(testParameter.updatedValue));
-                assertTrue("user(antena=1): found incorrect value of " + testParameter.name,
+                assertTrue("user(Fr=1): found incorrect value of " + testParameter.name,
                            userValue.get(1).equals(testParameter.updatedValue));
             }
 
@@ -282,10 +268,10 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             for (TestParameter testParameter : testParameters)
             {
                 Name name0 = it0.next();
-                assertTrue("provider(antena=0): found incorrect value of " + name0,
+                assertTrue("provider(Fr=0): found incorrect value of " + name0,
                            providerValues0.get(name0).equals(testParameter.initValue));
                 Name name1 = it1.next();
-                assertTrue("provider(antena=1): found incorrect value of " + name1,
+                assertTrue("provider(Fr=1): found incorrect value of " + name1,
                            providerValues1.get(name1).equals(testParameter.initValue));
             }
 
@@ -308,8 +294,28 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             for (TestParameter testParameter : testParameters)
             {
                 Name name = it0.next();
-                assertTrue("user(antena=0): found incorrect value of " + name,
+                assertTrue("user(Fr=0): found incorrect value of " + name,
                            userValues.get(name).equals(testParameter.initValue));
+            }
+
+            // change values at provider
+            System.out.println("Change values at provider");
+            for (TestParameter testParameter : testParameters)
+            {
+                this.providerSi.setParameterValue(Name.of(testParameter.oid, FunctionalResourceName.of(getFunctionalResource(), 0)), testParameter.updatedValue);
+            }
+
+            Thread.sleep(300); // wait for several cyclic reports
+
+            // check values at user for Fr 0
+            System.out.println("Check values at user for Fr 0");
+            userValues = this.userSi.getParameterValues(frn0);
+            it0 = names0.iterator();
+            for (TestParameter testParameter : testParameters)
+            {
+                Name name = it0.next();
+                assertTrue("user(Fr=0): found incorrect value of " + name,
+                           userValues.get(name).equals(testParameter.updatedValue));
             }
 
             System.out.println("STOP-CYCLIC-REPORT...");
@@ -331,46 +337,16 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             for (TestParameter testParameter : testParameters)
             {
                 Name name = it1.next();
-                assertTrue("user(antena=1): found incorrect value of " + name,
+                assertTrue("user(Fr=1): found incorrect value of " + name,
                            userValues.get(name).equals(testParameter.initValue));
             }
-
-            System.out.println("STOP-CYCLIC-REPORT...");
-            TestUtils.verifyResult(userSi.stopCyclicReport(this.piid_cr_prime), "STOP-CYCLIC-REPORT");
 
             // change values at provider
             System.out.println("Change values at provider");
             for (TestParameter testParameter : testParameters)
             {
-                this.providerSi.setParameterValue(Name.of(testParameter.oid, FunctionalResourceName.of(getFunctionalResource(), 0)), testParameter.updatedValue);
                 this.providerSi.setParameterValue(Name.of(testParameter.oid, FunctionalResourceName.of(getFunctionalResource(), 1)), testParameter.updatedValue);
             }
-
-            System.out.println("Query updated parameters for Fr 0");
-            System.out.println("START-CYCLIC-REPORT...");
-            TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_cr_prime, listOfParameters0, 100),
-                    "START-CYCLIC-REPORT");
-
-            Thread.sleep(300); // wait for several cyclic reports
-
-            // check values at user for Fr 0
-            System.out.println("Check values at user for Fr 0");
-            userValues = this.userSi.getParameterValues(frn0);
-            it0 = names0.iterator();
-            for (TestParameter testParameter : testParameters)
-            {
-                Name name = it0.next();
-                assertTrue("user(antena=0): found incorrect value of " + name,
-                           userValues.get(name).equals(testParameter.updatedValue));
-            }
-
-            System.out.println("STOP-CYCLIC-REPORT...");
-            TestUtils.verifyResult(userSi.stopCyclicReport(this.piid_cr_prime), "STOP-CYCLIC-REPORT");
-
-            System.out.println("Query updated parameters for Fr 1");
-            System.out.println("START-CYCLIC-REPORT...");
-            TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_cr_prime, listOfParameters1, 100),
-                    "START-CYCLIC-REPORT");
 
             Thread.sleep(300); // wait for several cyclic reports
 
@@ -381,7 +357,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             for (TestParameter testParameter : testParameters)
             {
                 Name name = it1.next();
-                assertTrue("user(antena=0): found incorrect value of " + name,
+                assertTrue("user(Fr=1): found incorrect value of " + name,
                            userValues.get(name).equals(testParameter.updatedValue));
             }
 
@@ -431,11 +407,11 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             for (TestParameter testParameter : testParameters)
             {
                 Label label = it.next();
-                assertTrue("provider(antena=0): value not found: " + label, values0.containsKey(label));
-                assertTrue("provider(antena=1): value not found: " + label, values1.containsKey(label));
-                assertTrue("provider(antena=0): found incorrect value of " + label,
+                assertTrue("provider(Fr=0): value not found: " + label, values0.containsKey(label));
+                assertTrue("provider(Fr=1): value not found: " + label, values1.containsKey(label));
+                assertTrue("provider(Fr=0): found incorrect value of " + label,
                            values0.get(label).equals(testParameter.initValue));
-                assertTrue("provider(antena=1): found incorrect value of " + label,
+                assertTrue("provider(Fr=1): found incorrect value of " + label,
                            values1.get(label).equals(testParameter.initValue));
             }
 
@@ -461,16 +437,13 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             for (TestParameter testParameter : testParameters)
             {
                 Label label = it.next();
-                assertTrue("user(antena=0): value not found: " + label, values0.containsKey(label));
-                assertTrue("user(antena=1): value not found: " + label, values1.containsKey(label));
-                assertTrue("user(antena=0): found incorrect value of " + label,
+                assertTrue("user(Fr=0): value not found: " + label, values0.containsKey(label));
+                assertTrue("user(Fr=1): value not found: " + label, values1.containsKey(label));
+                assertTrue("user(Fr=0): found incorrect value of " + label,
                            values0.get(label).equals(testParameter.initValue));
-                assertTrue("user(antena=1): found incorrect value of " + label,
+                assertTrue("user(Fr=1): found incorrect value of " + label,
                            values1.get(label).equals(testParameter.initValue));
             }
-
-            System.out.println("STOP-CYCLIC-REPORT...");
-            TestUtils.verifyResult(userSi.stopCyclicReport(this.piid_cr_prime), "STOP-CYCLIC-REPORT");
 
             // change values at provider
             System.out.println("Change values at provider");
@@ -480,12 +453,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             }
 
             System.out.println("Query updated parameters for Fr 0");
-            System.out.println("again START-CYCLIC-REPORT...");
-            TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_cr_prime, listOfParameters, 100),
-                    "START-CYCLIC-REPORT");
-
             Thread.sleep(300); // wait for several cyclic reports
-
 
             // check updated values at user for both Fr
             System.out.println("Check updated values at user for both Fr");
@@ -497,11 +465,11 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             for (TestParameter testParameter : testParameters)
             {
                 Label label = it.next();
-                assertTrue("user(antena=0): value not found: " + label, values0.containsKey(label));
-                assertTrue("user(antena=1): value not found: " + label, values1.containsKey(label));
-                assertTrue("user(antena=0): found incorrect value of " + label,
+                assertTrue("user(Fr=0): value not found: " + label, values0.containsKey(label));
+                assertTrue("user(Fr=1): value not found: " + label, values1.containsKey(label));
+                assertTrue("user(Fr=0): found incorrect value of " + label,
                            values0.get(label).equals(testParameter.updatedValue));
-                assertTrue("user(antena=1): found incorrect value of " + label,
+                assertTrue("user(Fr=1): found incorrect value of " + label,
                            values1.get(label).equals(testParameter.updatedValue));
             }
 
@@ -580,9 +548,9 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             {
                 List<ICstsValue> providerValue = this.providerSi.getParameterValue(labels.get(index++));
                 assertTrue("provider: didn't get 2 values for " + testParameter.name, providerValue.size() == 2);
-                assertTrue("provider(antena=0): found incorrect value of " + testParameter.name,
+                assertTrue("provider(Fr=0): found incorrect value of " + testParameter.name,
                            providerValue.get(0).equals(testParameter.initValue));
-                assertTrue("provider(antena=1): found incorrect value of " + testParameter.name,
+                assertTrue("provider(Fr=1): found incorrect value of " + testParameter.name,
                            providerValue.get(1).equals(testParameter.initValue));
             }
 
@@ -602,9 +570,9 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             {
                 List<ICstsValue> userValue = this.userSi.getParameterValue(labels.get(index++));
                 assertTrue("user: didn't get 2 values for " + testParameter.name, userValue.size() == 2);
-                assertTrue("user(antena=0): found incorrect value of " + testParameter.name,
+                assertTrue("user(Fr=0): found incorrect value of " + testParameter.name,
                            userValue.get(0).equals(testParameter.initValue));
-                assertTrue("user(antena=1): found incorrect value of " + testParameter.name,
+                assertTrue("user(Fr=1): found incorrect value of " + testParameter.name,
                            userValue.get(1).equals(testParameter.initValue));
             }
 

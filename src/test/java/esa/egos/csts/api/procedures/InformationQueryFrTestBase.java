@@ -13,6 +13,7 @@ import org.junit.Test;
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.functionalresources.values.ICstsValue;
+import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
@@ -31,6 +32,12 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
     
     protected abstract FunctionalResourceType getFunctionalResource();
     
+    // non existent parameter - parameter is not added into MD collection
+    private ObjectIdentifier antIdId = ObjectIdentifier.of(new int[] { 1, 3, 112, 4, 4, 2, 1, 1, 1, 1, 1 });
+    private FunctionalResourceType antIdType = FunctionalResourceType.of(this.antIdId);
+    private FunctionalResourceName antIdName = FunctionalResourceName.of(this.antIdType, 1);
+    private Name nonExistentParameterName = Name.of(this.antIdId, this.antIdName);
+
     /**
      * Test information query procedure and its GET operation w/ NAME_SET
      */
@@ -62,9 +69,9 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
             int index = 0;
             for (TestParameter testParameter : testParameters)
             {
-                assertTrue("provider(antena=0): found incorrect value of " + testParameter.name,
+                assertTrue("provider(Fr=0): found incorrect value of " + testParameter.name,
                            this.providerSi.getParameterValue(names0.get(index)).equals(testParameter.initValue));
-                assertTrue("provider(antena=1): found incorrect value of " + testParameter.name,
+                assertTrue("provider(Fr=1): found incorrect value of " + testParameter.name,
                            this.providerSi.getParameterValue(names1.get(index)).equals(testParameter.initValue));
                 index++;
             }
@@ -87,9 +94,9 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
             index = 0;
             for (TestParameter testParameter : testParameters)
             {
-                assertTrue("user(antena=0): found incorrect value of " + testParameter.name,
+                assertTrue("user(Fr=0): found incorrect value of " + testParameter.name,
                            this.userSi.getParameterValue(names0.get(index)).equals(testParameter.initValue));
-                assertTrue("user(antena=1): found incorrect value of " + testParameter.name,
+                assertTrue("user(Fr=1): found incorrect value of " + testParameter.name,
                            this.userSi.getParameterValue(names1.get(index)).equals(testParameter.initValue));
                 index++;
             }
@@ -113,9 +120,9 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
             index = 0;
             for (TestParameter testParameter : testParameters)
             {
-                assertTrue("user(antena=0): found incorrect updated value of " + testParameter.name,
+                assertTrue("user(Fr=0): found incorrect updated value of " + testParameter.name,
                            this.userSi.getParameterValue(names0.get(index)).equals(testParameter.updatedValue));
-                assertTrue("user(antena=1): found incorrect updated value of " + testParameter.name,
+                assertTrue("user(Fr=1): found incorrect updated value of " + testParameter.name,
                            this.userSi.getParameterValue(names1.get(index)).equals(testParameter.updatedValue));
                 index++;
             }
@@ -160,9 +167,9 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
             {
                 List<ICstsValue> providerValue = this.providerSi.getParameterValue(labels.get(index++));
                 assertTrue("provider: didn't get 2 values for " + testParameter.name, providerValue.size() == 2);
-                assertTrue("provider(antena=0): found incorrect value of " + testParameter.name,
+                assertTrue("provider(Fr=0): found incorrect value of " + testParameter.name,
                            providerValue.get(0).equals(testParameter.initValue));
-                assertTrue("provider(antena=1): found incorrect value of " + testParameter.name,
+                assertTrue("provider(Fr=1): found incorrect value of " + testParameter.name,
                            providerValue.get(1).equals(testParameter.initValue));
             }
 
@@ -183,9 +190,9 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
             {
                 List<ICstsValue> userValue = this.userSi.getParameterValue(labels.get(index++));
                 assertTrue("user: didn't get 2 values for " + testParameter.name, userValue.size() == 2);
-                assertTrue("user(antena=0): found incorrect value of " + testParameter.name,
+                assertTrue("user(Fr=0): found incorrect value of " + testParameter.name,
                            userValue.get(0).equals(testParameter.initValue));
-                assertTrue("user(antena=1): found incorrect value of " + testParameter.name,
+                assertTrue("user(Fr=1): found incorrect value of " + testParameter.name,
                            userValue.get(1).equals(testParameter.initValue));
             }
 
@@ -208,9 +215,9 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
             {
                 List<ICstsValue> userValue = this.userSi.getParameterValue(labels.get(index++));
                 assertTrue("user: didn't get 2 values for " + testParameter.name, userValue.size() == 2);
-                assertTrue("user(antena=0): fount incorrect value of " + testParameter.name,
+                assertTrue("user(Fr=0): fount incorrect value of " + testParameter.name,
                            userValue.get(0).equals(testParameter.updatedValue));
-                assertTrue("user(antena=1): found incorrect value of " + testParameter.name,
+                assertTrue("user(Fr=1): found incorrect value of " + testParameter.name,
                            userValue.get(1).equals(testParameter.updatedValue));
             }
 
@@ -265,10 +272,10 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
             for (TestParameter testParameter : testParameters)
             {
                 Name name0 = it0.next();
-                assertTrue("provider(antena=0): found incorrect value of " + name0,
+                assertTrue("provider(Fr=0): found incorrect value of " + name0,
                            providerValues0.get(name0).equals(testParameter.initValue));
                 Name name1 = it1.next();
-                assertTrue("provider(antena=1): found incorrect value of " + name1,
+                assertTrue("provider(Fr=1): found incorrect value of " + name1,
                            providerValues1.get(name1).equals(testParameter.initValue));
             }
 
@@ -289,7 +296,7 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
             for (TestParameter testParameter : testParameters)
             {
                 Name name = it0.next();
-                assertTrue("user(antena=0): found incorrect value of " + name,
+                assertTrue("user(Fr=0): found incorrect value of " + name,
                            userValues.get(name).equals(testParameter.initValue));
             }
 
@@ -307,7 +314,7 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
             for (TestParameter testParameter : testParameters)
             {
                 Name name = it1.next();
-                assertTrue("user(antena=1): found incorrect value of " + name,
+                assertTrue("user(Fr=1): found incorrect value of " + name,
                            userValues.get(name).equals(testParameter.initValue));
             }
 
@@ -333,7 +340,7 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
             for (TestParameter testParameter : testParameters)
             {
                 Name name = it0.next();
-                assertTrue("user(antena=0): found incorrect value of " + name,
+                assertTrue("user(Fr=0): found incorrect value of " + name,
                            userValues.get(name).equals(testParameter.updatedValue));
             }
 
@@ -349,7 +356,7 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
             for (TestParameter testParameter : testParameters)
             {
                 Name name = it1.next();
-                assertTrue("user(antena=0): found incorrect value of " + name,
+                assertTrue("user(Fr=0): found incorrect value of " + name,
                            userValues.get(name).equals(testParameter.updatedValue));
             }
 
@@ -396,11 +403,11 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
             for (TestParameter testParameter : testParameters)
             {
                 Label label = it.next();
-                assertTrue("provider(antena=0): value not found: " + label, values0.containsKey(label));
-                assertTrue("provider(antena=1): value not found: " + label, values1.containsKey(label));
-                assertTrue("provider(antena=0): found incorrect value of " + label,
+                assertTrue("provider(Fr=0): value not found: " + label, values0.containsKey(label));
+                assertTrue("provider(Fr=1): value not found: " + label, values1.containsKey(label));
+                assertTrue("provider(Fr=0): found incorrect value of " + label,
                            values0.get(label).equals(testParameter.initValue));
-                assertTrue("provider(antena=1): found incorrect value of " + label,
+                assertTrue("provider(Fr=1): found incorrect value of " + label,
                            values1.get(label).equals(testParameter.initValue));
             }
 
@@ -424,11 +431,11 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
             for (TestParameter testParameter : testParameters)
             {
                 Label label = it.next();
-                assertTrue("user(antena=0): value not found: " + label, values0.containsKey(label));
-                assertTrue("user(antena=1): value not found: " + label, values1.containsKey(label));
-                assertTrue("user(antena=0): found incorrect value of " + label,
+                assertTrue("user(Fr=0): value not found: " + label, values0.containsKey(label));
+                assertTrue("user(Fr=1): value not found: " + label, values1.containsKey(label));
+                assertTrue("user(Fr=0): found incorrect value of " + label,
                            values0.get(label).equals(testParameter.initValue));
-                assertTrue("user(antena=1): found incorrect value of " + label,
+                assertTrue("user(Fr=1): found incorrect value of " + label,
                            values1.get(label).equals(testParameter.initValue));
             }
 
@@ -454,11 +461,11 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
             for (TestParameter testParameter : testParameters)
             {
                 Label label = it.next();
-                assertTrue("user(antena=0): value not found: " + label, values0.containsKey(label));
-                assertTrue("user(antena=1): value not found: " + label, values1.containsKey(label));
-                assertTrue("user(antena=0): found incorrect value of " + label,
+                assertTrue("user(Fr=0): value not found: " + label, values0.containsKey(label));
+                assertTrue("user(Fr=1): value not found: " + label, values1.containsKey(label));
+                assertTrue("user(Fr=0): found incorrect value of " + label,
                            values0.get(label).equals(testParameter.updatedValue));
-                assertTrue("user(antena=1): found incorrect value of " + label,
+                assertTrue("user(Fr=1): found incorrect value of " + label,
                            values1.get(label).equals(testParameter.updatedValue));
             }
 
