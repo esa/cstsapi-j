@@ -29,6 +29,7 @@ EXPORTS 	acExtProcedureParam
 ,			startReturn
 ,			teExtProcedureParam;
 
+iso							OBJECT IDENTIFIER	::=	{1}
 css							OBJECT IDENTIFIER	::=	{iso 3 112 4 4}
 
 csts							OBJECT IDENTIFIER	::=	{css 1}
