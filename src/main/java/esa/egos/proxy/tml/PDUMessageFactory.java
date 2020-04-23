@@ -18,9 +18,17 @@ public class PDUMessageFactory implements ITMLMessageFactory
 
         // extract the body
         byte[] body = new byte[length];
-        if (is.read(body) == -1)
+        int bytesToRead = length;
+        int offset = 0;
+        while (bytesToRead > 0)
         {
-            return null;
+            int readBytes = is.read(body, offset, bytesToRead);
+            if (readBytes == -1)
+            {
+                return null;
+            }
+            bytesToRead -= readBytes;
+            offset += readBytes;
         }
         GenStrUtil.print("Read from socket: ", body);
 
@@ -29,7 +37,6 @@ public class PDUMessageFactory implements ITMLMessageFactory
         // create the pdu message
         return new PDUMessage(body);
     }
-
     public TMLMessage createPDUMessage(byte[] msgInBytes)
     {
         return new PDUMessage(msgInBytes);
