@@ -9,6 +9,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -22,7 +24,9 @@ import java.util.stream.Stream;
 public class OIDReader {
 
 	private static final Pattern PATTERN = Pattern.compile("\\w+\\s+OBJECT\\s+IDENTIFIER\\s+::=\\s+\\{[\\w\\s]+\\}");
-	
+
+	private static final Logger LOG = Logger.getLogger(OIDReader.class.getName());
+
 	/**
 	 * Generates a new Java class for the CSTS API and defines all Object Identifier
 	 * of the specified ASN.1 file in a hierarchical representation.
@@ -47,22 +51,25 @@ public class OIDReader {
 	 *             if an I/O error occurs reading from the stream or writing to or
 	 *             creating the file
 	 */
-	public static void generateHierarchical(String inputFilePath, String outputFilePath) throws IOException {
+	public static void generateHierarchical(String outputFilePath, String... inputFilePaths) throws IOException {
 
 		List<List<String>> tokens = new ArrayList<>();
 
-		String fileString = new String(Files.readAllBytes(Paths.get(inputFilePath)));
-		Matcher matcher = PATTERN.matcher(fileString);
+		for (String inputFilePath : inputFilePaths)
+		{
+		    String fileString = new String(Files.readAllBytes(Paths.get(inputFilePath)));
+		    Matcher matcher = PATTERN.matcher(fileString);
 
-		while (matcher.find()) {
-			tokens.add(
-					Arrays.asList(matcher.group()
-							.replaceAll("OBJECT", "")
-							.replaceAll("IDENTIFIER", "")
-							.replaceAll("::=", "")
-							.replaceAll("\\{", "")
-							.replaceAll("\\}", "")
-							.split("\\s+")));
+		    while (matcher.find()) {
+		        tokens.add(
+		                   Arrays.asList(matcher.group()
+		                                 .replaceAll("OBJECT", "")
+		                                 .replaceAll("IDENTIFIER", "")
+		                                 .replaceAll("::=", "")
+		                                 .replaceAll("\\{", "")
+		                                 .replaceAll("\\}", "")
+		                                 .split("\\s+")));
+		    }
 		}
 
 		StringBuilder sb = new StringBuilder();
@@ -174,5 +181,22 @@ public class OIDReader {
 
 		Files.write(Paths.get(outputFilePath), sb.toString().getBytes());
 	}
-
+    /**
+     * Creates the OIDs class based on the provided *.asn files
+     * @param args The arguments
+     */
+    public static void main(String[] args) throws Exception 
+    {
+        try
+        {
+            generateHierarchical("src/main/java/esa/egos/csts/api/oids/OIDs.java", 
+                                 "src/main/java/esa/egos/proxy/del/921x1r2[Draft_20160901]_ASN.1.ori.asn",
+                                 "src/main/resources/asn1/922.1-B-1.asn",
+                                 "src/main/resources/asn1/922.4-W-1.asn");
+        }
+        catch (Exception e)
+        {
+            LOG.log(Level.SEVERE, "Failed to create OIDs class based on the OBJECT IDENTIFIERs in the ASN.1 files", e);
+        }
+    }
 }
