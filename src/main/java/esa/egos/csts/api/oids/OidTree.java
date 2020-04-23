@@ -148,6 +148,11 @@ public class OidTree
             for (Field field : OIDs.class.getFields())
             {
                 int[] oidArray = ObjectIdentifier.class.cast(field.get(null)).toArray();
+                if (oidArray.length == 1)
+                {
+                    // ignore "iso" root node 
+                    continue;
+                }
                 addChildNode(oidArray, PARENT_NODES_MUST_EXIST, oidArray.length - 1, field.getName());
                 LOG.finest(() -> {
                     String ret = "";

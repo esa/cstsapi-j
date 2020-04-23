@@ -5,7 +5,8 @@ package esa.egos.csts.api.oids;
  */
 public class OIDs {
 
-	public static final ObjectIdentifier css = ObjectIdentifier.of(1, 3, 112, 4, 4);
+	public static final ObjectIdentifier iso = ObjectIdentifier.of(1);
+	public static final ObjectIdentifier css = ObjectIdentifier.of(iso, 3, 112, 4, 4);
 	public static final ObjectIdentifier csts = ObjectIdentifier.of(css, 1);
 	public static final ObjectIdentifier crossSupportResources = ObjectIdentifier.of(css, 2);
 	public static final ObjectIdentifier framework = ObjectIdentifier.of(csts, 1);
@@ -167,5 +168,28 @@ public class OIDs {
 	public static final ObjectIdentifier svcProductionStatusChangeVersion1 = ObjectIdentifier.of(svcProductionStatusChange, 1);
 	public static final ObjectIdentifier svcProductionConfigurationChange = ObjectIdentifier.of(svcEventsId, 2);
 	public static final ObjectIdentifier svcProductionConfigurationChangeVersion1 = ObjectIdentifier.of(svcProductionConfigurationChange, 1);
+	public static final ObjectIdentifier monitoredData = ObjectIdentifier.of(services, 1);
+	public static final ObjectIdentifier monitoredDataDerivedServices = ObjectIdentifier.of(monitoredData, 1);
+	public static final ObjectIdentifier monitoredDataExtendedServiceParameters = ObjectIdentifier.of(monitoredData, 2);
+	public static final ObjectIdentifier monitoredDataServiceProcedures = ObjectIdentifier.of(monitoredData, 3);
+	public static final ObjectIdentifier monitoredDataServiceModules = ObjectIdentifier.of(monitoredData, 4);
+	public static final ObjectIdentifier ocoCyclicReport = ObjectIdentifier.of(monitoredDataServiceProcedures, 1);
+	public static final ObjectIdentifier mdCstsProvider = ObjectIdentifier.of(crossSupportFunctionalities, 17);
+	public static final ObjectIdentifier mdCstsProviderParametersId = ObjectIdentifier.of(mdCstsProvider, 1);
+	public static final ObjectIdentifier mdCstsProviderEventsId = ObjectIdentifier.of(mdCstsProvider, 2);
+	public static final ObjectIdentifier mdCstsProviderDirectivesId = ObjectIdentifier.of(mdCstsProvider, 3);
+	public static final ObjectIdentifier onChangeOptCyclicReportStartInvocExt = ObjectIdentifier.of(monitoredDataExtendedServiceParameters, 1);
+	public static final ObjectIdentifier rtnCfdpPduService = ObjectIdentifier.of(services, 4);
+	public static final ObjectIdentifier rtnCfdpPduDerivedServices = ObjectIdentifier.of(rtnCfdpPduService, 1);
+	public static final ObjectIdentifier rtnCfdpPduExtendedServiceParameters = ObjectIdentifier.of(rtnCfdpPduService, 2);
+	public static final ObjectIdentifier rtnCfdpPduServiceProcedures = ObjectIdentifier.of(rtnCfdpPduService, 3);
+	public static final ObjectIdentifier rtnCfdpPduServiceModules = ObjectIdentifier.of(rtnCfdpPduService, 4);
+	public static final ObjectIdentifier rtnCfdpPduBuffDel = ObjectIdentifier.of(rtnCfdpPduServiceProcedures, 1);
+	public static final ObjectIdentifier rtnCfdpPduBuffDelExtendedOpsParam = ObjectIdentifier.of(rtnCfdpPduBuffDel, 1);
+	public static final ObjectIdentifier rtnCfdpPduBuffDelExtendedProcParam = ObjectIdentifier.of(rtnCfdpPduBuffDel, 2);
+	public static final ObjectIdentifier rtnCfdpPduBuffDelEventsId = ObjectIdentifier.of(rtnCfdpPduBuffDel, 3);
+	public static final ObjectIdentifier rtnCfdpPduBuffDelDirectivesId = ObjectIdentifier.of(rtnCfdpPduBuffDel, 4);
+	public static final ObjectIdentifier pCFDPPDcfdpPduOperationMode = ObjectIdentifier.of(rtnCfdpPduBuffDelExtendedOpsParam, 2);
+	public static final ObjectIdentifier pCFDPPDcfdpDestEntities = ObjectIdentifier.of(rtnCfdpPduBuffDelExtendedOpsParam, 3);
 
 }
