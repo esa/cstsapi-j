@@ -30,6 +30,7 @@ import esa.egos.csts.api.functionalresources.values.ICstsComplexValue;
 import esa.egos.csts.api.functionalresources.values.ICstsSimpleValue;
 import esa.egos.csts.api.functionalresources.values.ICstsValue;
 import esa.egos.csts.api.functionalresources.values.ICstsValueFactory;
+import esa.egos.csts.api.functionalresources.values.impl.CstsNullValue;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.util.impl.CSTSUtils;
 
@@ -263,17 +264,18 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
 
         for (Field valueField : berObject.getClass().getDeclaredFields())
         {
-            if (valueField.getType().equals(BerNull.class))
-            {
-                continue;
-            }
             valueField.setAccessible(true);
             Object object = valueField.get(berObject);
             if (object instanceof BerType)
             {
                 BerType subBerObject = (BerType) object;
                 Optional<Field> optValueField = getValueField(subBerObject.getClass());
-                if (optValueField.isPresent())
+                if (subBerObject instanceof BerNull)
+                {
+                    CstsNullValue value = CstsNullValue.of(valueField.getName());
+                    values.add(value);
+                }
+                else if (optValueField.isPresent())
                 {
                     // a simple value
                     ICstsValue value = getSimpleValue(valueField.getName(), subBerObject, optValueField.get());
@@ -471,7 +473,12 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
 
             BerType subBerObject = BerType.class.cast(clazz.newInstance());
 
-            if (subValue instanceof ICstsSimpleValue<?>)
+            // treat CstsNullValue individually
+            if (subValue instanceof CstsNullValue)
+            {
+                // subBerObject is now instance of BerNull class
+            }
+            else if (subValue instanceof ICstsSimpleValue<?>)
             {
                 setSimpleValue((ICstsSimpleValue<?>) subValue, subBerObject, clazz);
             }
