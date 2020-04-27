@@ -77,9 +77,9 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
     {
         for (ProcedureInstanceIdentifier pii : config.getProceduresIdentifiers())
         {
-            if (pii.getType().getOid().equals(OIDs.cyclicReport))
+            if (pii.getType().getOid().equals(OIDs.ocoCyclicReport))
             {
-                C cyclicReport = createCyclicReportProcedure();
+                C cyclicReport = createOnChangeCyclicReportProcedure();
                 addProcedure(cyclicReport, pii, config);
             }
             else if (pii.getType().getOid().equals(OIDs.informationQuery))
@@ -101,7 +101,7 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
 
     protected abstract I createInformationQueryProcedure() throws ApiException;
 
-    protected abstract C createCyclicReportProcedure() throws ApiException;
+    protected abstract C createOnChangeCyclicReportProcedure() throws ApiException;
 
     protected abstract N createNotificationProcedure() throws ApiException;
 
@@ -113,70 +113,23 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
         System.out.println("added procedure " + procedure.getProcedureInstanceIdentifier());
     }
 
+    protected ProcedureInstanceIdentifier getPrimeProcedureIdentifier()
+    {
+        return this.serviceInstance.getPrimeProcedure().getProcedureInstanceIdentifier();
+    }
+
     public void destroy() throws ApiException
     {
         this.api.destroyServiceInstance(this.serviceInstance);
     }
 
-    // called by Provider (from set/getParameterValue, User calls MdCstsSiUserInform#getParameter())
-    public FunctionalResourceParameterEx<?> getParameter(Name name)
-    {
-        return (FunctionalResourceParameterEx<?>) this.serviceInstance.gatherParameters().stream()
-                .filter(p -> (p.getName().equals(name) && p instanceof FunctionalResourceParameterEx))
-                .findFirst().get();
-    }
+    public abstract FunctionalResourceParameterEx<?> getParameter(Name name);
 
-    public List<FunctionalResourceParameterEx<?>> getParameters(Label label)
-    {
-        List<FunctionalResourceParameterEx<?>> ret = new ArrayList<FunctionalResourceParameterEx<?>>();
-        this.serviceInstance.gatherParameters().stream()
-                .filter(p -> (p.getLabel().equals(label) && p instanceof FunctionalResourceParameterEx))
-                .forEach(p -> ret.add((FunctionalResourceParameterEx<?>)p));
-        return ret;
-    }
-    
-    public List<FunctionalResourceParameterEx<?>> getParameters(FunctionalResourceName frn)
-    {
-        List<FunctionalResourceParameterEx<?>> ret = new ArrayList<FunctionalResourceParameterEx<?>>();
-        this.serviceInstance.gatherParameters().stream()
-                .filter(p -> (p instanceof FunctionalResourceParameterEx<?>
-                                && p.getName().getFunctionalResourceName().equals(frn)))
-                .forEach(p -> ret.add((FunctionalResourceParameterEx<?>)p));
-        return ret;
-    }
+    public abstract List<FunctionalResourceParameterEx<?>> getParameters(Label label);
 
-    public Map<Integer, Map<Label, FunctionalResourceParameterEx<?>>> getParameters(FunctionalResourceType frt)
-    {
-        // return list of maps, each map contains parameters for specific instance number
-        Map<Integer, Map<Label, FunctionalResourceParameterEx<?>>> ret =
-                new HashMap<Integer, Map<Label, FunctionalResourceParameterEx<?>>>();
+    public abstract List<FunctionalResourceParameterEx<?>> getParameters(FunctionalResourceName frn);
 
-        this.serviceInstance.gatherParameters().stream()
-                .filter(p -> (p instanceof FunctionalResourceParameterEx<?>
-                                && p.getName().getFunctionalResourceName().getType().equals(frt)))
-                // if instance number of this parameter is seen first -> add new map to ret
-                .peek(p -> {
-                    if (!ret.containsKey(Integer.valueOf(p.getName().getFunctionalResourceName().getInstanceNumber())))
-                    {
-                        ret.put(Integer.valueOf(p.getName().getFunctionalResourceName().getInstanceNumber()),
-                                new HashMap<Label, FunctionalResourceParameterEx<?>>());
-                    }})
-                // store parameter in proper map in ret list (index from instNums mapping)
-                .forEach(p -> ret.get(Integer.valueOf(p.getName().getFunctionalResourceName().getInstanceNumber()))
-                                 .put(p.getLabel(), (FunctionalResourceParameterEx<?>)p));
-
-        return ret;
-    }
-
-    public void setParameterValue(Name name, ICstsValue value) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InstantiationException
-    {
-        FunctionalResourceParameter parameter = getParameter(name);
-        if (parameter == null)
-        {
-            throw new NullPointerException("Parameter " + name + " is not available in MD collection");
-        }
-        ((FunctionalResourceParameterEx<?>) parameter).setCstsValue(value);
-    }
+    public abstract Map<Integer, Map<Label, FunctionalResourceParameterEx<?>>> getParameters(FunctionalResourceType frt);
 
     public ICstsValue getParameterValue(Name name) throws IllegalArgumentException, IllegalAccessException
     {
@@ -186,18 +139,6 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
             throw new NullPointerException("Parameter " + name + " is not available in MD collection");
         }
         return ((FunctionalResourceParameterEx<?>) parameter).getCstsValue();
-    }
-    
-    public void setParameterValue(Label label, ICstsValue value) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InstantiationException
-    {
-        List<FunctionalResourceParameterEx<?>> parameters = getParameters(label);
-        if (parameters.isEmpty())
-        {
-            throw new IllegalArgumentException("Label " + label + " is not available in MD collection");
-        }
-        for (FunctionalResourceParameterEx<?> parameter : parameters) {
-            parameter.setCstsValue(value);
-        }
     }
 
     public List<ICstsValue> getParameterValue(Label label) throws IllegalArgumentException, IllegalAccessException
@@ -215,18 +156,6 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
         return res;
     }
 
-    public void setParameterValue(FunctionalResourceName name, ICstsValue value) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InstantiationException
-    {
-        List<FunctionalResourceParameterEx<?>> parameters = getParameters(name);
-        if (parameters.isEmpty())
-        {
-            throw new IllegalArgumentException("Functional resource name " + name + " is not available in MD collection");
-        }
-        for (FunctionalResourceParameterEx<?> parameter : parameters) {
-            parameter.setCstsValue(value);
-        }
-    }
-
     public Map<Name, ICstsValue> getParameterValues(FunctionalResourceName frn) throws IllegalArgumentException, IllegalAccessException
     {
         List<FunctionalResourceParameterEx<?>> parameters = getParameters(frn);
@@ -241,7 +170,7 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
         }
         return res;
     }
-    
+
     public Map<Integer, Map<Label, ICstsValue>> getParameterValues(FunctionalResourceType frt) throws IllegalArgumentException, IllegalAccessException
     {
         Map<Integer, Map<Label, FunctionalResourceParameterEx<?>>> parameters = getParameters(frt);
@@ -261,5 +190,4 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
         }
         return ret;
     }
-    
 }

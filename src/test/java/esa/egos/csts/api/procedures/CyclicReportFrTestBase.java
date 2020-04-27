@@ -13,6 +13,7 @@ import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.functionalresources.values.ICstsValue;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
+import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.Name;
 import esa.egos.csts.api.TestUtils;
@@ -77,7 +78,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             ListOfParameters listOfParameters = ListOfParameters.of(namesList.toArray(new Name[] {}));
 
             System.out.println("START-CYCLIC-REPORT...");
-            TestUtils.verifyResult(userSi.startCyclicReport(this.piid_cr_prime, listOfParameters, 100),
+            TestUtils.verifyResult(userSi.startCyclicReport(this.piid_ocr_prime, listOfParameters, 100),
                                    "START-CYCLIC-REPORT");
 
             Thread.sleep(300); // wait for several cyclic reports
@@ -119,7 +120,179 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             }
 
             System.out.println("STOP-CYCLIC-REPORT...");
-            TestUtils.verifyResult(userSi.stopCyclicReport(this.piid_cr_prime), "STOP-CYCLIC-REPORT");
+            TestUtils.verifyResult(userSi.stopCyclicReport(this.piid_ocr_prime), "STOP-CYCLIC-REPORT");
+
+            System.out.println("UNBIND...");
+            TestUtils.verifyResult(this.userSi.unbind(), "UNBIND");
+
+            this.providerSi.destroy();
+            this.userSi.destroy();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
+
+    /**
+     * Test on change cyclic report procedure and its START, STOP and TRANSFER-DATA operations w/ NAME_SET
+     */
+    @Test
+    public void testOnChangeCyclicReportWithNameSet()
+    {
+        try
+        {
+            // set FRs of Fr 0 and Fr 1
+            this.providerSi.setFunctionalResources(getFunctionalResource(), getFunctionalResource());
+
+            // create array of names for Fr 0 and 1 and set parameters in provider
+            System.out.println("Create names for Fr 0 and 1 and set parameters in provider");
+            List<Name> names0 = new ArrayList<Name>(testParameters.size());
+            List<Name> names1 = new ArrayList<Name>(testParameters.size());
+            for (TestParameter testParameter : testParameters)
+            {
+                Name name0 = Name.of(testParameter.oid, FunctionalResourceName.of(getFunctionalResource(), 0));
+                this.providerSi.setParameterValue(name0, testParameter.initValue);
+                names0.add(name0);
+
+                Name name1 = Name.of(testParameter.oid, FunctionalResourceName.of(getFunctionalResource(), 1));
+                this.providerSi.setParameterValue(name1, testParameter.initValue);
+                names1.add(name1);
+            }
+
+            // check values at provider
+            System.out.println("Check values at provider");
+            int index = 0;
+            for (TestParameter testParameter : testParameters)
+            {
+                assertTrue("provider(Fr=0): found incorrect value of " + testParameter.name,
+                           this.providerSi.getParameterValue(names0.get(index)).equals(testParameter.initValue));
+                assertTrue("provider(Fr=1): found incorrect value of " + testParameter.name,
+                           this.providerSi.getParameterValue(names1.get(index)).equals(testParameter.initValue));
+                index++;
+            }
+
+            System.out.println("BIND...");
+            TestUtils.verifyResult(this.userSi.bind(), "BIND");
+
+            // create list of requested parameters
+            List<Name> namesList = new ArrayList<Name>(2*testParameters.size());
+            namesList.addAll(names0);
+            namesList.addAll(names1);
+            ListOfParameters listOfParameters = ListOfParameters.of(namesList.toArray(new Name[] {}));
+
+            boolean onChange_01 = true;
+            boolean onChange_02 = true;
+            boolean onChange_03 = false;
+
+            System.out.println("START-CYCLIC-REPORT " + this.piid_ocr_prime + "...");
+            TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_ocr_prime, listOfParameters, 300, onChange_01),
+                                   "START-CYCLIC-REPORT " + this.piid_ocr_prime);
+
+            System.out.println("START-CYCLIC-REPORT " + this.piid_ocr_secondary_01 + "...");
+            TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_ocr_secondary_01, listOfParameters, 300, onChange_02),
+                                   "START-CYCLIC-REPORT " + this.piid_ocr_secondary_01);
+
+            System.out.println("START-CYCLIC-REPORT " + this.piid_ocr_secondary_02 + "...");
+            TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_ocr_secondary_02, listOfParameters, 300, onChange_03),
+                                   "START-CYCLIC-REPORT " + this.piid_ocr_secondary_02);
+
+            Thread.sleep(1000); // wait for the initial complete
+
+            ProcedureInstanceIdentifier piids[] = new ProcedureInstanceIdentifier[] { this.piid_ocr_prime,
+                                                                                    this.piid_ocr_secondary_01,
+                                                                                    this.piid_ocr_secondary_02 };
+
+            // check values at user for all started procedures
+            System.out.println("Check values at user");
+            for (ProcedureInstanceIdentifier piid : piids)
+            {
+                for (index = 0; index < testParameters.size(); index++)
+                {
+                    TestParameter testParameter = testParameters.get(index);
+
+                    ICstsValue userValue0 = this.userSi.getParameterValue(piid, names0.get(index));
+                    assertTrue("user(Fr=0): found incorrect value of " + testParameter.name + ", expected "
+                            + testParameter.initValue + " but was " + userValue0 + " for " + piid,
+                               userValue0.equals(testParameter.initValue));
+
+                    ICstsValue userValue1 = this.userSi.getParameterValue(piid, names1.get(index));
+                    assertTrue("user(Fr=1): found incorrect value of " + testParameter.name + ", expected "
+                            + testParameter.initValue + " but was " + userValue1 + " for " + piid,
+                               userValue1.equals(testParameter.initValue));
+                }
+            }
+
+            Thread.sleep(1000); // wait for several cyclic reports
+
+            // verify that all user's procedures received all parameters updates for the first time no matter the onChange value
+            assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more than one report",
+                         2*testParameters.size(), this.userSi.getParameterUpdateCount(this.piid_ocr_prime));
+            assertEquals("procedure " + this.piid_ocr_secondary_01 + " started w/ onChange=true received more than one report",
+                         2*testParameters.size(), this.userSi.getParameterUpdateCount(this.piid_ocr_secondary_01));
+            assertTrue("procedure " + this.piid_ocr_secondary_02 + " started w/ onChange=true received more than one report",
+                       2*testParameters.size() < this.userSi.getParameterUpdateCount(this.piid_ocr_secondary_02));
+
+            // reset procedure's parameter counters
+            this.userSi.resetParameterUpdateCount(this.piid_ocr_prime);
+            this.userSi.resetParameterUpdateCount(this.piid_ocr_secondary_01);
+            this.userSi.resetParameterUpdateCount(this.piid_ocr_secondary_02);
+
+            // update just subset of parameters
+            int nFirst = 29;
+            int nLast = 32;
+            // update values at provider
+            System.out.println("Update values at provider");
+            for (index = nFirst; index <= nLast; index++)
+            {
+                this.providerSi.setParameterValue(names0.get(index), testParameters.get(index).updatedValue);
+                this.providerSi.setParameterValue(names1.get(index), testParameters.get(index).updatedValue);
+            }
+
+            Thread.sleep(1000); // wait for several cyclic reports
+
+            // check values at user for all started procedures
+            System.out.println("Check values at user");
+            for (ProcedureInstanceIdentifier piid : piids)
+            {
+                for (index = nFirst; index <= nLast; index++)
+                {
+                    TestParameter testParameter = testParameters.get(index);
+
+                    ICstsValue userValue0 = this.userSi.getParameterValue(piid, names0.get(index));
+                    assertTrue("user(Fr=0): found incorrect value of " + testParameter.name + ", expected "
+                            + testParameter.updatedValue + " but was " + userValue0 + " for " + piid,
+                               userValue0.equals(testParameter.updatedValue));
+
+                    ICstsValue userValue1 = this.userSi.getParameterValue(piid, names1.get(index));
+                    assertTrue("user(Fr=1): found incorrect value of " + testParameter.name + ", expected "
+                            + testParameter.updatedValue + " but was " + userValue1 + " for " + piid,
+                               userValue1.equals(testParameter.updatedValue));
+                }
+            }
+
+            Thread.sleep(300); // wait for several cyclic reports (onChange=false)
+
+            // verify that user's procedures received expected parameters updates depending on the onChange value
+            assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more than two reports",
+                         2*(nLast-nFirst+1), this.userSi.getParameterUpdateCount(this.piid_ocr_prime));
+            assertEquals("procedure " + this.piid_ocr_secondary_01 + " started w/ onChange=true received more than two reports",
+                         2*(nLast-nFirst+1), this.userSi.getParameterUpdateCount(this.piid_ocr_secondary_01));
+            assertTrue("procedure " + this.piid_ocr_secondary_02 + " started w/ onChange=true received more than one report",
+                         2*testParameters.size() < this.userSi.getParameterUpdateCount(this.piid_ocr_secondary_02));
+
+            System.out.println("STOP-CYCLIC-REPORT " + this.piid_ocr_prime + "...");
+            TestUtils.verifyResult(userSi.stopCyclicReport(this.piid_ocr_prime),
+                                   "STOP-CYCLIC-REPORT " + this.piid_ocr_prime + "...");
+            
+            System.out.println("STOP-CYCLIC-REPORT " + this.piid_ocr_secondary_01 + "...");
+            TestUtils.verifyResult(userSi.stopCyclicReport(this.piid_ocr_secondary_01),
+                                   "STOP-CYCLIC-REPORT " + this.piid_ocr_secondary_01 + "...");
+
+            System.out.println("STOP-CYCLIC-REPORT " + this.piid_ocr_secondary_02 + "...");
+            TestUtils.verifyResult(userSi.stopCyclicReport(this.piid_ocr_secondary_02),
+                                   "STOP-CYCLIC-REPORT " + this.piid_ocr_secondary_02 + "...");
 
             System.out.println("UNBIND...");
             TestUtils.verifyResult(this.userSi.unbind(), "UNBIND");
@@ -173,7 +346,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             ListOfParameters listOfParameters = ListOfParameters.of(labels.toArray(new Label[] {}));
 
             System.out.println("START-CYCLIC-REPORT...");
-            TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_cr_prime, listOfParameters, 100),
+            TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_ocr_prime, listOfParameters, 100),
                     "START-CYCLIC-REPORT");
 
             Thread.sleep(300); // wait for several cyclic reports
@@ -208,14 +381,16 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             {
                 List<ICstsValue> userValue = this.userSi.getParameterValue(labels.get(index++));
                 assertTrue("user: didn't get 2 values for " + testParameter.name, userValue.size() == 2);
-                assertTrue("user(Fr=0): fount incorrect value of " + testParameter.name,
+                assertTrue("user(Fr=0): found incorrect value of " + testParameter.name + ", expected "
+                        + testParameter.updatedValue + " but was " + userValue.get(0),
                            userValue.get(0).equals(testParameter.updatedValue));
-                assertTrue("user(Fr=1): found incorrect value of " + testParameter.name,
+                assertTrue("user(Fr=1): found incorrect value of " + testParameter.name + ", expected "
+                        + testParameter.updatedValue + " but was " + userValue.get(1),
                            userValue.get(1).equals(testParameter.updatedValue));
             }
 
             System.out.println("STOP-CYCLIC-REPORT...");
-            TestUtils.verifyResult(userSi.stopCyclicReport(this.piid_cr_prime), "STOP-CYCLIC-REPORT");
+            TestUtils.verifyResult(userSi.stopCyclicReport(this.piid_ocr_prime), "STOP-CYCLIC-REPORT");
 
             System.out.println("UNBIND...");
             TestUtils.verifyResult(this.userSi.unbind(), "UNBIND");
@@ -282,7 +457,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             ListOfParameters listOfParameters0 = ListOfParameters.of(frn0);
 
             System.out.println("START-CYCLIC-REPORT...");
-            TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_cr_prime, listOfParameters0, 100),
+            TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_ocr_prime, listOfParameters0, 100),
                     "START-CYCLIC-REPORT");
 
             Thread.sleep(300); // wait for several cyclic reports
@@ -319,13 +494,13 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             }
 
             System.out.println("STOP-CYCLIC-REPORT...");
-            TestUtils.verifyResult(userSi.stopCyclicReport(this.piid_cr_prime), "STOP-CYCLIC-REPORT");
+            TestUtils.verifyResult(userSi.stopCyclicReport(this.piid_ocr_prime), "STOP-CYCLIC-REPORT");
 
             System.out.println("Query parameters for Fr 1");
             ListOfParameters listOfParameters1 = ListOfParameters.of(frn1);
 
             System.out.println("START-CYCLIC-REPORT...");
-            TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_cr_prime, listOfParameters1, 100),
+            TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_ocr_prime, listOfParameters1, 100),
                     "START-CYCLIC-REPORT");
 
             Thread.sleep(300); // wait for several cyclic reports
@@ -362,7 +537,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             }
 
             System.out.println("STOP-CYCLIC-REPORT...");
-            TestUtils.verifyResult(userSi.stopCyclicReport(this.piid_cr_prime), "STOP-CYCLIC-REPORT");
+            TestUtils.verifyResult(userSi.stopCyclicReport(this.piid_ocr_prime), "STOP-CYCLIC-REPORT");
 
             System.out.println("UNBIND...");
             TestUtils.verifyResult(this.userSi.unbind(), "UNBIND");
@@ -422,7 +597,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             ListOfParameters listOfParameters = ListOfParameters.of(getFunctionalResource());
 
             System.out.println("START-CYCLIC-REPORT...");
-            TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_cr_prime, listOfParameters, 100),
+            TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_ocr_prime, listOfParameters, 100),
                     "START-CYCLIC-REPORT");
 
             Thread.sleep(300); // wait for several cyclic reports
@@ -474,7 +649,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             }
 
             System.out.println("STOP-CYCLIC-REPORT...");
-            TestUtils.verifyResult(userSi.stopCyclicReport(this.piid_cr_prime), "STOP-CYCLIC-REPORT");
+            TestUtils.verifyResult(userSi.stopCyclicReport(this.piid_ocr_prime), "STOP-CYCLIC-REPORT");
 
             System.out.println("UNBIND...");
             TestUtils.verifyResult(this.userSi.unbind(), "UNBIND");
@@ -504,21 +679,21 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             TestUtils.verifyResult(this.userSi.bind(), "BIND");
 
             System.out.println("START-CYCLIC-REPORT...");
-            TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_cr_prime, ListOfParameters.empty(), 100),
+            TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_ocr_prime, ListOfParameters.empty(), 100),
                     "START-CYCLIC-REPORT",
                     CstsResult.FAILURE);
 
             // verify that diagnostic contains that the Default list not defined
-            assertTrue("missing OID of the non-existent parameter in the GET operation diagnostic",
+            assertTrue("missing Default list not defined in the diagnostic",
                        userSi.getDiagnostic().contains("Default list not defined"));
 
-            System.out.println("DIAG: "+userSi.getDiagnostic());
+            System.out.println("DIAG: "+ this.userSi.getDiagnostic());
 
             Exception exc_01 = null;
             try
             {
                 System.out.println("try to set the default label list to bound provider SI");
-                providerSi.setDefaultLabelList(this.piid_cr_prime, defaultLabelList);
+                providerSi.setDefaultLabelList(this.piid_ocr_prime, defaultLabelList);
             }
             catch (ConfigurationParameterNotModifiableException e)
             {
@@ -531,7 +706,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             TestUtils.verifyResult(userSi.unbind(), "UNBIND");
 
             System.out.println("set the default label list to provider SI");
-            providerSi.setDefaultLabelList(this.piid_cr_prime, defaultLabelList);
+            providerSi.setDefaultLabelList(this.piid_ocr_prime, defaultLabelList);
 
             // create array of Labels for both Fr and set parameters at provider
             System.out.println("Create labels for both Fr and set parameters in provider");
@@ -558,7 +733,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             TestUtils.verifyResult(userSi.bind(), "BIND");
 
             System.out.println("again START-CYCLIC-REPORT...");
-            TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_cr_prime, ListOfParameters.empty(), 100),
+            TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_ocr_prime, ListOfParameters.empty(), 10000),
                     "START-CYCLIC-REPORT");
             
             Thread.sleep(300); // wait for several cyclic reports
@@ -577,7 +752,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             }
 
             System.out.println("STOP-CYCLIC-REPORT...");
-            TestUtils.verifyResult(userSi.stopCyclicReport(this.piid_cr_prime), "STOP-CYCLIC-REPORT");
+            TestUtils.verifyResult(userSi.stopCyclicReport(this.piid_ocr_prime), "STOP-CYCLIC-REPORT");
 
             System.out.println("UNBIND...");
             TestUtils.verifyResult(this.userSi.unbind(), "UNBIND");

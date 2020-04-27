@@ -910,7 +910,7 @@ public class InformationQueryTest
         try
         {
             // cyclic report procedure identifier
-            ProcedureInstanceIdentifier piid_01 = ProcedureInstanceIdentifier.of(ProcedureType.of(OIDs.cyclicReport),
+            ProcedureInstanceIdentifier piid_01 = ProcedureInstanceIdentifier.of(ProcedureType.of(OIDs.ocoCyclicReport),
                                                                                  ProcedureRole.PRIME,
                                                                                  0);
             // inform query procedure identifier

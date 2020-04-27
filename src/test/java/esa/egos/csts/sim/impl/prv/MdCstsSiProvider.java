@@ -1,16 +1,23 @@
 package esa.egos.csts.sim.impl.prv;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import esa.egos.csts.api.events.IEvent;
 import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
+import esa.egos.csts.api.functionalresources.values.ICstsValue;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.parameters.IParameter;
+import esa.egos.csts.api.parameters.impl.FunctionalResourceParameter;
+import esa.egos.csts.api.parameters.impl.FunctionalResourceParameterEx;
 import esa.egos.csts.api.parameters.impl.LabelLists;
 import esa.egos.csts.api.procedures.IProcedure;
 import esa.egos.csts.api.procedures.cyclicreport.CyclicReportProvider;
@@ -19,12 +26,14 @@ import esa.egos.csts.api.procedures.informationquery.InformationQueryProvider;
 import esa.egos.csts.api.procedures.notification.NotificationProvider;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.LabelList;
+import esa.egos.csts.api.types.Name;
+import esa.egos.csts.monitored.data.procedures.OnChangeCyclicReportProvider;
 import esa.egos.csts.sim.impl.MdCstsSi;
 
 /**
  * MD-CSTS Provider service instance (SI) implementation for testing
  */
-public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, InformationQueryProvider, CyclicReportProvider, NotificationProvider>
+public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, InformationQueryProvider, OnChangeCyclicReportProvider, NotificationProvider>
 {
 
     MdCollection mdCollection;
@@ -46,8 +55,8 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
     {
         super.addProcedure(procedure, pii, config);
 
-        if (procedure instanceof CyclicReportProvider) {
-        	configureProcedure(config, (CyclicReportProvider) procedure);
+        if (procedure instanceof OnChangeCyclicReportProvider) {
+        	configureProcedure(config, (OnChangeCyclicReportProvider) procedure);
         }
         else if (procedure instanceof InformationQueryProvider) {
         	configureProcedure(config, (InformationQueryProvider) procedure);
@@ -142,9 +151,9 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
     }
 
     @Override
-    protected CyclicReportProvider createCyclicReportProcedure() throws ApiException
+    protected OnChangeCyclicReportProvider createOnChangeCyclicReportProcedure() throws ApiException
     {
-        return this.serviceInstance.createProcedure(CyclicReportProvider.class);
+        return this.serviceInstance.createProcedure(OnChangeCyclicReportProvider.class);
     }
 
     @Override
@@ -181,4 +190,95 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
         setMdCollection(MdCollection.createCollection(functionalResourceTypes));
     }
 
+    public void setParameterValue(Name name, ICstsValue value) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InstantiationException
+    {
+        FunctionalResourceParameter parameter = getParameter(name);
+        if (parameter == null)
+        {
+            throw new NullPointerException("Parameter " + name + " is not available in MD collection");
+        }
+        ((FunctionalResourceParameterEx<?>) parameter).setCstsValue(value);
+    }
+
+    public void setParameterValue(Label label, ICstsValue value) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InstantiationException
+    {
+        List<FunctionalResourceParameterEx<?>> parameters = getParameters(label);
+        if (parameters.isEmpty())
+        {
+            throw new IllegalArgumentException("Label " + label + " is not available in MD collection");
+        }
+        for (FunctionalResourceParameterEx<?> parameter : parameters) {
+            parameter.setCstsValue(value);
+        }
+    }
+
+    public void setParameterValue(FunctionalResourceName frn, ICstsValue value) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InstantiationException
+    {
+        List<FunctionalResourceParameterEx<?>> parameters = getParameters(frn);
+        if (parameters.isEmpty())
+        {
+            throw new IllegalArgumentException("Functional resource name " + frn + " is not available in MD collection");
+        }
+
+        for (FunctionalResourceParameterEx<?> parameter : parameters)
+        {
+            parameter.setCstsValue(value);
+        }
+    }
+
+    public FunctionalResourceParameterEx<?> getParameter(Name name)
+    {
+        Optional<IParameter> op = this.serviceInstance.gatherParameters().stream()
+                .filter(p -> (p.getName().equals(name) && p instanceof FunctionalResourceParameterEx)).findFirst();
+
+        if (!op.isPresent())
+        {
+            throw new IllegalArgumentException("Parameter " + name + " is not availeble in "
+                                               + this.serviceInstance.getServiceInstanceIdentifier());
+        }
+
+        return (FunctionalResourceParameterEx<?>) op.get();
+    }
+
+    public List<FunctionalResourceParameterEx<?>> getParameters(Label label)
+    {
+        List<FunctionalResourceParameterEx<?>> ret = new ArrayList<FunctionalResourceParameterEx<?>>();
+        this.serviceInstance.gatherParameters().stream()
+                .filter(p -> (p.getLabel().equals(label) && p instanceof FunctionalResourceParameterEx))
+                .forEach(p -> ret.add((FunctionalResourceParameterEx<?>)p));
+        return ret;
+    }
+    
+    public List<FunctionalResourceParameterEx<?>> getParameters(FunctionalResourceName frn)
+    {
+        List<FunctionalResourceParameterEx<?>> ret = new ArrayList<FunctionalResourceParameterEx<?>>();
+        this.serviceInstance.gatherParameters().stream()
+                .filter(p -> (p instanceof FunctionalResourceParameterEx<?>
+                                && p.getName().getFunctionalResourceName().equals(frn)))
+                .forEach(p -> ret.add((FunctionalResourceParameterEx<?>)p));
+        return ret;
+    }
+
+    public Map<Integer, Map<Label, FunctionalResourceParameterEx<?>>> getParameters(FunctionalResourceType frt)
+    {
+        // return list of maps, each map contains parameters for specific instance number
+        Map<Integer, Map<Label, FunctionalResourceParameterEx<?>>> ret =
+                new HashMap<Integer, Map<Label, FunctionalResourceParameterEx<?>>>();
+
+        this.serviceInstance.gatherParameters().stream()
+                .filter(p -> (p instanceof FunctionalResourceParameterEx<?>
+                                && p.getName().getFunctionalResourceName().getType().equals(frt)))
+                // if instance number of this parameter is seen first -> add new map to ret
+                .peek(p -> {
+                    if (!ret.containsKey(Integer.valueOf(p.getName().getFunctionalResourceName().getInstanceNumber())))
+                    {
+                        ret.put(Integer.valueOf(p.getName().getFunctionalResourceName().getInstanceNumber()),
+                                new HashMap<Label, FunctionalResourceParameterEx<?>>());
+                    }})
+                // store parameter in proper map in ret list (index from instNums mapping)
+                .forEach(p -> ret.get(Integer.valueOf(p.getName().getFunctionalResourceName().getInstanceNumber()))
+                                 .put(p.getLabel(), (FunctionalResourceParameterEx<?>)p));
+
+        return ret;
+    }
 }

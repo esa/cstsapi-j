@@ -803,17 +803,17 @@ public abstract class AbstractProcedure implements IProcedureInternal {
         // only parameters and events are observed by procedures
         if (IConfigurationParameter.class.isInstance(o))
         {
-            LOGGER.info("The Configuration Parameter " + o + " has been updated.");
+            LOGGER.info(() -> "The Configuration Parameter " + o + " has been updated.");
             processConfigurationChange((IConfigurationParameter) o);
         }
         else if (IParameter.class.isInstance(o))
         {
-            LOGGER.fine("The Parameter " + o + " has been updated.");
+            LOGGER.fine(() -> "The Parameter " + o + " has been updated.");
             processParameterChange((IParameter) o);
         }
         else if (IEvent.class.isInstance(o))
         {
-            LOGGER.info("The Event " + o + " has been updated.");
+            LOGGER.info(() -> "The Event " + o + " has been updated.");
             processIncomingEvent((IEvent) o);
         }
     }

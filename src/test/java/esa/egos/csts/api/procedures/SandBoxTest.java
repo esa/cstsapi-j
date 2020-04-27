@@ -59,7 +59,7 @@ public class SandBoxTest extends MdCstsTestBase
                     "QUERY-INFORMATION");
 
 
-            ICstsValue ccsds401CarrierRcptModulationTypeValueUsr = this.userSi.getParameterValue(ccsds401CarrierRcptModulationTypeName);
+            ICstsValue ccsds401CarrierRcptModulationTypeValueUsr = this.userSi.getParameterValue(this.piid_iq_secondary, ccsds401CarrierRcptModulationTypeName);
             System.out.println(ccsds401CarrierRcptModulationTypeValueUsr);
 
             System.out.println("UNBIND...");

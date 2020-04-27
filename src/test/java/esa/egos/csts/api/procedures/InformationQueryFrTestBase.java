@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
@@ -37,6 +38,12 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
     private FunctionalResourceType antIdType = FunctionalResourceType.of(this.antIdId);
     private FunctionalResourceName antIdName = FunctionalResourceName.of(this.antIdType, 1);
     private Name nonExistentParameterName = Name.of(this.antIdId, this.antIdName);
+
+    @BeforeClass
+    public static void setUpClass() throws Exception
+    {
+        MdCstsTestBase.setUpClass();
+    }
 
     /**
      * Test information query procedure and its GET operation w/ NAME_SET
@@ -95,9 +102,9 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
             for (TestParameter testParameter : testParameters)
             {
                 assertTrue("user(Fr=0): found incorrect value of " + testParameter.name,
-                           this.userSi.getParameterValue(names0.get(index)).equals(testParameter.initValue));
+                           this.userSi.getParameterValue(this.piid_iq_secondary, names0.get(index)).equals(testParameter.initValue));
                 assertTrue("user(Fr=1): found incorrect value of " + testParameter.name,
-                           this.userSi.getParameterValue(names1.get(index)).equals(testParameter.initValue));
+                           this.userSi.getParameterValue(this.piid_iq_secondary, names1.get(index)).equals(testParameter.initValue));
                 index++;
             }
 
@@ -121,9 +128,9 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
             for (TestParameter testParameter : testParameters)
             {
                 assertTrue("user(Fr=0): found incorrect updated value of " + testParameter.name,
-                           this.userSi.getParameterValue(names0.get(index)).equals(testParameter.updatedValue));
+                           this.userSi.getParameterValue(this.piid_iq_secondary, names0.get(index)).equals(testParameter.updatedValue));
                 assertTrue("user(Fr=1): found incorrect updated value of " + testParameter.name,
-                           this.userSi.getParameterValue(names1.get(index)).equals(testParameter.updatedValue));
+                           this.userSi.getParameterValue(this.piid_iq_secondary, names1.get(index)).equals(testParameter.updatedValue));
                 index++;
             }
 
@@ -188,7 +195,7 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
             index = 0;
             for (TestParameter testParameter : testParameters)
             {
-                List<ICstsValue> userValue = this.userSi.getParameterValue(labels.get(index++));
+                List<ICstsValue> userValue = this.userSi.getParameterValue(this.piid_iq_secondary, labels.get(index++));
                 assertTrue("user: didn't get 2 values for " + testParameter.name, userValue.size() == 2);
                 assertTrue("user(Fr=0): found incorrect value of " + testParameter.name,
                            userValue.get(0).equals(testParameter.initValue));
@@ -213,7 +220,7 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
             index = 0;
             for (TestParameter testParameter : testParameters)
             {
-                List<ICstsValue> userValue = this.userSi.getParameterValue(labels.get(index++));
+                List<ICstsValue> userValue = this.userSi.getParameterValue(this.piid_iq_secondary, labels.get(index++));
                 assertTrue("user: didn't get 2 values for " + testParameter.name, userValue.size() == 2);
                 assertTrue("user(Fr=0): fount incorrect value of " + testParameter.name,
                            userValue.get(0).equals(testParameter.updatedValue));
@@ -291,7 +298,7 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
 
             // check values at user for Fr 0
             System.out.println("Check values at user for Fr 0");
-            Map<Name, ICstsValue> userValues = this.userSi.getParameterValues(frn0);
+            Map<Name, ICstsValue> userValues = this.userSi.getParameterValues(this.piid_iq_secondary, frn0);
             it0 = names0.iterator();
             for (TestParameter testParameter : testParameters)
             {
@@ -309,7 +316,7 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
 
             // check values at user for Fr 1
             System.out.println("Check values at user for Fr 1");
-            userValues = this.userSi.getParameterValues(frn1);
+            userValues = this.userSi.getParameterValues(this.piid_iq_secondary, frn1);
             it1 = names1.iterator();
             for (TestParameter testParameter : testParameters)
             {
@@ -335,7 +342,7 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
 
             // check values at user for Fr 0
             System.out.println("Check values at user for Fr 0");
-            userValues = this.userSi.getParameterValues(frn0);
+            userValues = this.userSi.getParameterValues(this.piid_iq_secondary, frn0);
             it0 = names0.iterator();
             for (TestParameter testParameter : testParameters)
             {
@@ -351,7 +358,7 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
 
             // check values at user for Fr 1
             System.out.println("Check values at user for Fr 1");
-            userValues = this.userSi.getParameterValues(frn1);
+            userValues = this.userSi.getParameterValues(this.piid_iq_secondary, frn1);
             it1 = names1.iterator();
             for (TestParameter testParameter : testParameters)
             {
@@ -423,7 +430,8 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
 
             // check values at user for both Fr
             System.out.println("Check values at user for both Fr");
-            Map<Integer, Map<Label, ICstsValue>> userValues = this.userSi.getParameterValues(getFunctionalResource());
+            Map<Integer, Map<Label, ICstsValue>> userValues =
+                    this.userSi.getParameterValues(this.piid_iq_secondary, getFunctionalResource());
             assertTrue("user: didn't get 2 sets of parameters for " + getFunctionalResource(), userValues.size() == 2);
             values0 = userValues.get(Integer.valueOf(0));
             values1 = userValues.get(Integer.valueOf(1));
@@ -453,7 +461,7 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
 
             // check updated values at user for both Fr
             System.out.println("Check updated values at user for both Fr");
-            userValues = this.userSi.getParameterValues(getFunctionalResource());
+            userValues = this.userSi.getParameterValues(this.piid_iq_secondary, getFunctionalResource());
             assertTrue("user: didn't get 2 sets of parameters for " + getFunctionalResource(), userValues.size() == 2);
             values0 = userValues.get(Integer.valueOf(0));
             values1 = userValues.get(Integer.valueOf(1));

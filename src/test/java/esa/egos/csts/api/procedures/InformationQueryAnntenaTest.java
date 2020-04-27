@@ -20,8 +20,10 @@ public class InformationQueryAnntenaTest extends InformationQueryFrTestBase
 {
 
     @BeforeClass
-    public static void setupClass()
+    public static void setupClass() throws Exception
     {
+        InformationQueryFrTestBase.setUpClass();
+
         testParameters.add(new TestParameter(Fr.Antenna.parameter.antPointingMode, "antPointingMode", 10, 30));
         testParameters.add(new TestParameter(Fr.Antenna.parameter.antTrackingRxMode, "antTrackingRxMode", 11, 44));
         testParameters.add(new TestParameter(Fr.Antenna.parameter.antTrackingRxInpLevel, "antTrackingRxInpLevel", 100, 110));

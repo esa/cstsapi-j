@@ -9,7 +9,6 @@ import org.junit.rules.TestRule;
 
 import esa.egos.csts.api.enumerations.AppRole;
 import esa.egos.csts.api.enumerations.ProcedureRole;
-import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.functionalresources.FunctionalResourceMetadata;
 import esa.egos.csts.api.functionalresources.values.ICstsValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsIntValue;
@@ -52,8 +51,14 @@ public abstract class MdCstsTestBase
     protected ObjectIdentifier facilityId = ObjectIdentifier.of(1, 3, 112, 4, 6, 0);
 
     // prime procedure identifier
-    protected ProcedureInstanceIdentifier piid_cr_prime = ProcedureInstanceIdentifier
-            .of(ProcedureType.of(OIDs.cyclicReport), ProcedureRole.PRIME, 0);
+    protected ProcedureInstanceIdentifier piid_ocr_prime = ProcedureInstanceIdentifier
+            .of(ProcedureType.of(OIDs.ocoCyclicReport), ProcedureRole.PRIME, 0);
+
+    protected ProcedureInstanceIdentifier piid_ocr_secondary_01 = ProcedureInstanceIdentifier
+            .of(ProcedureType.of(OIDs.ocoCyclicReport), ProcedureRole.SECONDARY, 1);
+
+    protected ProcedureInstanceIdentifier piid_ocr_secondary_02 = ProcedureInstanceIdentifier
+            .of(ProcedureType.of(OIDs.ocoCyclicReport), ProcedureRole.SECONDARY, 2);
 
     // secondary inform query procedure identifier
     protected ProcedureInstanceIdentifier piid_iq_secondary = ProcedureInstanceIdentifier
@@ -67,7 +72,9 @@ public abstract class MdCstsTestBase
     protected List<ProcedureInstanceIdentifier> iq_piids = Arrays.asList(this.piid_iq_secondary);
 
     // all procedure identifiers
-    protected List<ProcedureInstanceIdentifier> piids = Arrays.asList(this.piid_cr_prime,
+    protected List<ProcedureInstanceIdentifier> piids = Arrays.asList(this.piid_ocr_prime,
+                                                                      this.piid_ocr_secondary_01,
+                                                                      this.piid_ocr_secondary_02,
                                                                       this.piid_iq_secondary,
                                                                       this.piid_n_secondary);
 
@@ -131,9 +138,11 @@ public abstract class MdCstsTestBase
     }
 
     @BeforeClass
-    public static void setUpClass() throws ApiException
+    public static void setUpClass() throws Exception
     {
         TestBootstrap.initCs();
+        FunctionalResourceMetadata.getInstance().loadFromBinaryClasses("frm.csts.functional.resource.types");
+        testParameters.clear();
     }
 
     /**

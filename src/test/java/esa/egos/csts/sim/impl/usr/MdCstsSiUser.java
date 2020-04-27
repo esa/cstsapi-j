@@ -20,6 +20,7 @@ import esa.egos.csts.api.procedures.informationquery.InformationQueryUser;
 import esa.egos.csts.api.procedures.notification.NotificationUser;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceInternal;
 import esa.egos.csts.api.states.service.ServiceStatus;
+import esa.egos.csts.monitored.data.procedures.OnChangeCyclicReportUser;
 import esa.egos.csts.sim.impl.MdCstsSiConfig;
 
 /**
@@ -68,9 +69,9 @@ public class MdCstsSiUser extends MdCstsSiUserInform
      * @return CyclicReportUser
      */
     @Override
-    protected CyclicReportUser createCyclicReportProcedure() throws ApiException
+    protected OnChangeCyclicReportUser createOnChangeCyclicReportProcedure() throws ApiException
     {
-        return this.serviceInstance.createProcedure(CyclicReportUser.class);
+        return this.serviceInstance.createProcedure(OnChangeCyclicReportUser.class);
     }
 
     /**
@@ -187,18 +188,21 @@ public class MdCstsSiUser extends MdCstsSiUserInform
     }
 
     /**
-     * Start a cyclic report procedure
+     * Start an on change cyclic report procedure
      * 
      * @param piid The cyclic procedure procedure instance identifier
      * @param listOfParameters The list of requested functional resource
      *            parameters to be cyclically reported
      * @param deliveryCycle The delivery cycle in milliseconds
+     * @param onChange The on change flag, if true only changed parameters are in the report,
+     *  if false all parameters
      * @return The result of the START operation of the cyclic procedure procedure
      * @throws Exception
      */
     public CstsResult startCyclicReport(ProcedureInstanceIdentifier piid,
                                         ListOfParameters listOfParameters,
-                                        long deliveryCycle) throws Exception
+                                        long deliveryCycle,
+                                        boolean onChange) throws Exception
     {
         System.out.println("MdCstsSiUser#startCyclicReport() begin");
 
@@ -211,19 +215,20 @@ public class MdCstsSiUser extends MdCstsSiUserInform
             if (this.serviceInstance.getStatus() == ServiceStatus.BOUND)
             {
                 // get the cyclic report procedure from the instance number
-                CyclicReportUser cyclicReport = (CyclicReportUser) this.serviceInstance.getProcedure(piid);
-                if (!cyclicReport.isActive())
+                OnChangeCyclicReportUser onChangeCyclicReport = (OnChangeCyclicReportUser) this.serviceInstance.getProcedure(piid);
+                if (!onChangeCyclicReport.isActive())
                 {
                     // reset the operation result and diagnostic
                     resetOperationResult();
+                    resetCounter(piid, this.parameterUpdateCounters);
                     // initiate the start operation
-                    ret = cyclicReport.requestCyclicReport(deliveryCycle, listOfParameters);
+                    ret = onChangeCyclicReport.requestCyclicReport(deliveryCycle, onChange, listOfParameters);
                     if (ret == CstsResult.SUCCESS)
                     {
                         // invocation initiation succeeded, wait for the start
                         // operation return
-                        ret = waitForReturnOrAbort(cyclicReport,
-                                                   "cyclic report procedure (" + piid.getInstanceNumber()
+                        ret = waitForReturnOrAbort(onChangeCyclicReport,
+                                                   "on change cyclic report procedure (" + piid.getInstanceNumber()
                                                    + ") is still not active");
                     }
                 }
@@ -251,7 +256,60 @@ public class MdCstsSiUser extends MdCstsSiUserInform
     }
 
     /**
-     * Start a cyclic report procedure
+     * Start an on change cyclic report procedure
+     * 
+     * @param piid The cyclic procedure procedure instance identifier
+     * @param listOfParameters The list of requested functional resource
+     *            parameters to be cyclically reported
+     * @param deliveryCycle The delivery cycle in milliseconds
+     * @return The result of the START operation of the cyclic procedure procedure
+     * @throws Exception
+     */
+    public CstsResult startCyclicReport(ProcedureInstanceIdentifier piid,
+                                        ListOfParameters listOfParameters,
+                                        long deliveryCycle) throws Exception
+    {
+        System.out.println("MdCstsSiUser#startCyclicReport() begin");
+
+        CstsResult ret = startCyclicReport(piid, listOfParameters, deliveryCycle, false);
+
+        System.out.println("MdCstsSiUser#startCyclicReport() end");
+
+        return ret;
+    }
+
+    /**
+     * Start an on change cyclic report procedure
+     * 
+     * @param instanceNumber The cyclic procedure procedure instance number
+     * @param listOfParameters The list of requested functional resource
+     *            parameters to be cyclically reported
+     * @param deliveryCycle The delivery cycle in milliseconds
+     * @param onChange The on change flag, if true only changed parameters are in the report,
+     *  if false all parameters
+     * @return The result of the START operation of the cyclic procedure procedure
+     * @throws Exception
+     */
+    public CstsResult startCyclicReport(long instanceNumber,
+                                        ListOfParameters listOfParameters,
+                                        long deliveryCycle,
+                                        boolean onChange) throws Exception
+    {
+        System.out.println("MdCstsSiUser#startCyclicReport() begin");
+
+        OnChangeCyclicReportUser onChangeCyclicReport = getProcedure(OnChangeCyclicReportUser.class, instanceNumber);
+        CstsResult ret = startCyclicReport(onChangeCyclicReport.getProcedureInstanceIdentifier(),
+                                           listOfParameters,
+                                           deliveryCycle,
+                                           onChange);
+
+        System.out.println("MdCstsSiUser#startCyclicReport() end");
+
+        return ret;
+    }
+
+    /**
+     * Start an on change cyclic report procedure
      * 
      * @param instanceNumber The cyclic procedure procedure instance number
      * @param listOfParameters The list of requested functional resource
@@ -266,8 +324,8 @@ public class MdCstsSiUser extends MdCstsSiUserInform
     {
         System.out.println("MdCstsSiUser#startCyclicReport() begin");
 
-        CyclicReportUser cyclicReport = getProcedure(CyclicReportUser.class, instanceNumber);
-        CstsResult ret = startCyclicReport(cyclicReport.getProcedureInstanceIdentifier(), listOfParameters, deliveryCycle);
+        OnChangeCyclicReportUser onChangeCyclicReport = getProcedure(OnChangeCyclicReportUser.class, instanceNumber);
+        CstsResult ret = startCyclicReport(onChangeCyclicReport.getProcedureInstanceIdentifier(), listOfParameters, deliveryCycle);
 
         System.out.println("MdCstsSiUser#startCyclicReport() end");
 
@@ -275,7 +333,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
     }
 
     /**
-     * Stop a cyclic report procedure
+     * Stop an on change cyclic report procedure
      * 
      * @param piid The cyclic procedure instance identifier
      * @return The result of the STOP operation of the cyclic procedure procedure
@@ -334,7 +392,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
     }
 
     /**
-     * Stop a cyclic report procedure
+     * Stop an on change cyclic report procedure
      * 
      * @param instanceNumber The cyclic procedure instance number
      * @return The result of the STOP operation of the cyclic procedure procedure
@@ -344,7 +402,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
     {
         System.out.println("MdCstsSiUser#stopCyclicReport() begin");
 
-        CyclicReportUser cyclicReport = getProcedure(CyclicReportUser.class, instanceNumber);
+        CyclicReportUser cyclicReport = getProcedure(OnChangeCyclicReportUser.class, instanceNumber);
         CstsResult ret = stopCyclicReport(cyclicReport.getProcedureInstanceIdentifier());
 
         System.out.println("MdCstsSiUser#stopCyclicReport() end");
@@ -380,6 +438,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
                 {
                     // reset the operation result and diagnostic
                     resetOperationResult();
+                    resetCounter(piid, this.eventUpdateCounters);
                     // initiate the start operation
                     ret = notification.requestNotification(listOfEvents);
                     if (ret == CstsResult.SUCCESS)
@@ -626,9 +685,9 @@ public class MdCstsSiUser extends MdCstsSiUserInform
     {
         ProcedureType ret;
 
-        if (clazz.equals(CyclicReportUser.class))
+        if (clazz.equals(OnChangeCyclicReportUser.class))
         {
-            ret = ProcedureType.of(OIDs.cyclicReport);
+            ret = ProcedureType.of(OIDs.ocoCyclicReport);
         }
         else if (clazz.equals(InformationQueryUser.class))
         {
@@ -710,8 +769,8 @@ public class MdCstsSiUser extends MdCstsSiUserInform
 
         List<IProcedure> procedures = ((IServiceInstanceInternal) this.serviceInstance).getProcedures();
         for (IProcedure procedure : procedures) {
-            if (procedure instanceof CyclicReportUser) {
-                if (((CyclicReportUser) procedure).isActive()) {
+            if (procedure instanceof OnChangeCyclicReportUser) {
+                if (((OnChangeCyclicReportUser) procedure).isActive()) {
                     ret = true;
                     break;
                 }

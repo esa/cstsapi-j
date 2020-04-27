@@ -521,7 +521,7 @@ public class NotificationTest
         {
             // cyclic report procedure identifier
             ProcedureInstanceIdentifier piid_01 = ProcedureInstanceIdentifier
-                    .of(ProcedureType.of(OIDs.cyclicReport), ProcedureRole.PRIME, 0);
+                    .of(ProcedureType.of(OIDs.ocoCyclicReport), ProcedureRole.PRIME, 0);
 
             // notification procedure identifier
             ProcedureInstanceIdentifier piid_02 = ProcedureInstanceIdentifier

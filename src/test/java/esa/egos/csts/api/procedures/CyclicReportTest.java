@@ -64,12 +64,12 @@ public class CyclicReportTest
     private ObjectIdentifier facilityId = ObjectIdentifier.of(1, 3, 112, 4, 6, 0);
 
     // prime inform query procedure identifier
-    private ProcedureInstanceIdentifier piid = ProcedureInstanceIdentifier.of(ProcedureType.of(OIDs.cyclicReport),
+    private ProcedureInstanceIdentifier piid = ProcedureInstanceIdentifier.of(ProcedureType.of(OIDs.ocoCyclicReport),
                                                                               ProcedureRole.PRIME,
                                                                               0);
 
     // secondary inform query procedure identifier
-    private ProcedureInstanceIdentifier piid_secondary = ProcedureInstanceIdentifier.of(ProcedureType.of(OIDs.cyclicReport),
+    private ProcedureInstanceIdentifier piid_secondary = ProcedureInstanceIdentifier.of(ProcedureType.of(OIDs.ocoCyclicReport),
                                                                               ProcedureRole.SECONDARY,
                                                                               1);
     // all procedure identifiers
@@ -1020,7 +1020,7 @@ public class CyclicReportTest
         try
         {
             // cyclic report procedure identifier
-            ProcedureInstanceIdentifier piid_01 = ProcedureInstanceIdentifier.of(ProcedureType.of(OIDs.cyclicReport),
+            ProcedureInstanceIdentifier piid_01 = ProcedureInstanceIdentifier.of(ProcedureType.of(OIDs.ocoCyclicReport),
                                                                                  ProcedureRole.PRIME,
                                                                                  0);
             // inform query procedure identifier

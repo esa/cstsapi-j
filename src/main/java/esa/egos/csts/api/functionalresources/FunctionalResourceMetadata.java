@@ -719,7 +719,7 @@ public class FunctionalResourceMetadata
         }
         catch (Exception e)
         {
-            LOG.log(Level.WARNING, "Failed to convert the value of " + name + " to string", e);
+            // parameter is not available so it cannot be converted, ignore it
         }
 
         return ret;

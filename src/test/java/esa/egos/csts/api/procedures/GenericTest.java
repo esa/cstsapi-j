@@ -105,7 +105,7 @@ public class GenericTest
             ObjectIdentifier facilityId = ObjectIdentifier.of(1, 3, 112, 4, 6, 0);
 
             // cyclic report procedure identifier
-            ProcedureInstanceIdentifier piid = ProcedureInstanceIdentifier.of(ProcedureType.of(OIDs.cyclicReport),
+            ProcedureInstanceIdentifier piid = ProcedureInstanceIdentifier.of(ProcedureType.of(OIDs.ocoCyclicReport),
                                                                               ProcedureRole.PRIME,
                                                                               0);
 
@@ -180,7 +180,7 @@ public class GenericTest
             ObjectIdentifier facilityId = ObjectIdentifier.of(1, 3, 112, 4, 6, 0);
 
             // cyclic report procedure identifier
-            ProcedureInstanceIdentifier piid = ProcedureInstanceIdentifier.of(ProcedureType.of(OIDs.cyclicReport),
+            ProcedureInstanceIdentifier piid = ProcedureInstanceIdentifier.of(ProcedureType.of(OIDs.ocoCyclicReport),
                                                                               ProcedureRole.PRIME,
                                                                               0);
 
@@ -337,7 +337,7 @@ public class GenericTest
             ObjectIdentifier facilityId = ObjectIdentifier.of(1, 3, 112, 4, 6, 0);
 
             // cyclic report procedure identifier
-            ProcedureInstanceIdentifier piid = ProcedureInstanceIdentifier.of(ProcedureType.of(OIDs.cyclicReport),
+            ProcedureInstanceIdentifier piid = ProcedureInstanceIdentifier.of(ProcedureType.of(OIDs.ocoCyclicReport),
                                                                               ProcedureRole.PRIME,
                                                                               0);
 
