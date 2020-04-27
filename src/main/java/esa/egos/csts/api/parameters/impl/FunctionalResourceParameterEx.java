@@ -170,6 +170,10 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
             throw new UnsupportedOperationException("Value " + value + " is not supported by parameter " + getName());
         }
         this.qualifier = value.getQuality();
+
+        setChanged();
+        notifyObservers();
+        clearChanged();
     }
 
     public synchronized ICstsValue getCstsValue() throws IllegalArgumentException, IllegalAccessException

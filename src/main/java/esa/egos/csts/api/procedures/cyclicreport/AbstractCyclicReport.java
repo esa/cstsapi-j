@@ -55,7 +55,7 @@ public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliver
 	private ListOfParameters listOfParameters;
 	
 	// defined by Provider
-	private List<QualifiedParameter> qualifiedParameters;
+	protected List<QualifiedParameter> qualifiedParameters;
 	private CyclicReportStartDiagnostics startDiagnostic;
 	private long sequenceCounter;
 

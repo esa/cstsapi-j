@@ -51,6 +51,7 @@ import esa.egos.csts.api.operations.impl.Stop;
 import esa.egos.csts.api.operations.impl.TransferData;
 import esa.egos.csts.api.operations.impl.Unbind;
 import esa.egos.csts.api.parameters.IConfigurationParameter;
+import esa.egos.csts.api.parameters.IParameter;
 import esa.egos.csts.api.procedures.associationcontrol.IAssociationControl;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.serviceinstance.IServiceInstance;
@@ -776,6 +777,16 @@ public abstract class AbstractProcedure implements IProcedureInternal {
 		// do nothing on default
 	}
 
+    /**
+     * This methods gets called when a parameter of the procedure has
+     * been changed.
+     * 
+     * @param parameter the changed parameter
+     */
+    protected void processParameterChange(IParameter parameter) {
+        // do nothing on default
+    }
+
 	/**
 	 * This methods gets called when an event that is being observed by the
 	 * procedure has been fired.
@@ -786,16 +797,25 @@ public abstract class AbstractProcedure implements IProcedureInternal {
 		// do nothing on default
 	}
 
-	@Override
-	public synchronized final void update(Observable o, Object arg) {
-		// only parameters and events are observed by procedures
-		if (IConfigurationParameter.class.isInstance(o)) {
-			LOGGER.info("The Configuration Parameter " + o + " has been updated.");
-			processConfigurationChange((IConfigurationParameter) o);
-		} else if (IEvent.class.isInstance(o)) {
-			LOGGER.info("The Event " + o + " has been updated.");
-			processIncomingEvent((IEvent) o);
-		}
-	}
+    @Override
+    public synchronized final void update(Observable o, Object arg)
+    {
+        // only parameters and events are observed by procedures
+        if (IConfigurationParameter.class.isInstance(o))
+        {
+            LOGGER.info("The Configuration Parameter " + o + " has been updated.");
+            processConfigurationChange((IConfigurationParameter) o);
+        }
+        else if (IParameter.class.isInstance(o))
+        {
+            LOGGER.fine("The Parameter " + o + " has been updated.");
+            processParameterChange((IParameter) o);
+        }
+        else if (IEvent.class.isInstance(o))
+        {
+            LOGGER.info("The Event " + o + " has been updated.");
+            processIncomingEvent((IEvent) o);
+        }
+    }
 
 }
