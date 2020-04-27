@@ -686,9 +686,26 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
         StringBuilder sb = new StringBuilder();
         sb.append("FunctionalResourceParameterEx [");
         sb.append(super.toString());
-        sb.append(",\nberObject=");
+        sb.append(", berClass=");
+        sb.append(this.berClass);
+        sb.append(", berObject=");
         sb.append(this.berObject);
+        sb.append(", qualifier=");
+        sb.append(this.qualifier);
+        sb.append(", berName=");
+        sb.append(this.berName);
         sb.append("]");
         return sb.toString();
+    }
+
+    /**
+     * Convert FR parameter value to string
+     * @return String
+     */
+    public String valueToString()
+    {
+        StringBuilder sb = new StringBuilder(this.berName).append("(")
+                .append(getName().getFunctionalResourceName().getInstanceNumber()).append(")");
+        return sb.append(':').append(this.berObject.toString()).append('\n').toString();
     }
 }

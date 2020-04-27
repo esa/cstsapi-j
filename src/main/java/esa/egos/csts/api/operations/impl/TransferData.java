@@ -1,5 +1,7 @@
 package esa.egos.csts.api.operations.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.logging.Level;
 
@@ -8,12 +10,16 @@ import com.beanit.jasn1.ber.types.BerOctetString;
 import b1.ccsds.csts.common.operations.pdus.TransferDataInvocation;
 import b1.ccsds.csts.common.types.AbstractChoice;
 import b1.ccsds.csts.common.types.IntUnsigned;
+import b1.ccsds.csts.cyclic.report.pdus.CyclicReportTransferDataInvocDataRef;
 import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.extensions.Extension;
+import esa.egos.csts.api.functionalresources.FunctionalResourceMetadata;
+import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.operations.AbstractOperation;
 import esa.egos.csts.api.operations.ITransferData;
+import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 import esa.egos.csts.api.types.Time;
 import esa.egos.csts.api.util.CSTS_LOG;
 
@@ -130,34 +136,77 @@ public class TransferData extends AbstractOperation implements ITransferData {
 	 * @return String w/ CSTS Transfer-Data parameters
 	 */
 	@Override
-	public String print(int i) {
-		StringBuilder sb = new StringBuilder(i);
-		boolean dataAvailable = this.data != null || this.embeddedData != null;
-		String dataString = dataAvailable ? "<logged for csts.api.operations.level = FINEST>" : "";
-		
-		if(dataAvailable && CSTS_LOG.CSTS_OP_LOGGER.isLoggable(Level.FINEST)) {
-	        if (this.data != null) {
+    public String print(int i)
+    {
+        StringBuilder sb = new StringBuilder(i);
+        boolean dataAvailable = this.data != null || this.embeddedData != null;
+        String dataString = dataAvailable ? "<logged for csts.api.operations.level = FINEST>" : "";
+
+        if (dataAvailable && CSTS_LOG.CSTS_OP_LOGGER.isLoggable(Level.FINEST))
+        {
+            if (this.data != null)
+            {
                 StringBuilder hexData = new StringBuilder(System.lineSeparator());
                 CSTS_LOG.dumpHex(this.data, this.data.length, hexData);
                 dataString = hexData.toString();
-	        }
-	        else {
-                dataString = this.embeddedData.toString();
-	        }
-		}
+            }
+            else
+            {
+                dataString = print(this.embeddedData);
+            }
+        }
 
-		sb.append("\nOperation                      : TRANSFER-DATA").append('\n');
-		sb.append(super.print(i));
-		sb.append("Confirmed Operation            : ").append(this.isConfirmed()).append('\n');
-		sb.append("Operation Result               : positive\n");
-		sb.append("Diagnostic Type                : no diagnostics\n");
-		sb.append("Common Diagnostics             : invalid\n");
-		sb.append("Generation time                : ").append(this.generationTime.toInstant()).append('\n');
-		sb.append("Sequence counter               : ").append(this.sequenceCounter).append('\n');
-		sb.append("Data                           : ").append(dataString).append('\n');
+        sb.append("\nOperation                      : TRANSFER-DATA").append('\n');
+        sb.append(super.print(i));
+        sb.append("Confirmed Operation            : false\n");
+        sb.append("Generation time                : ").append(this.generationTime.toInstant()).append('\n');
+        sb.append("Sequence counter               : ").append(this.sequenceCounter).append('\n');
+        sb.append("Data                           : ").append(dataString).append('\n');
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
+
+    protected String print(EmbeddedData embeddedData)
+    {
+        String ret = "";
+        if (embeddedData.getOid().equals(OIDs.crTransferDataInvocDataRef))
+        {
+            StringBuilder sb = new StringBuilder("\n");
+            CyclicReportTransferDataInvocDataRef dataRefinement = new CyclicReportTransferDataInvocDataRef();
+            try (ByteArrayInputStream is = new ByteArrayInputStream(embeddedData.getData()))
+            {
+                dataRefinement.decode(is);
+                sb.append("Number of QualifiedParameter(s): ")
+                        .append(dataRefinement.getQualifiedParameters().getQualifiedParameter().size()).append('\n');
+                for (b1.ccsds.csts.common.types.QualifiedParameter param : dataRefinement.getQualifiedParameters()
+                        .getQualifiedParameter())
+                {
+                    QualifiedParameter qualifiedParameter = QualifiedParameter.decode(param);
+                    String value = FunctionalResourceMetadata.getInstance().toString(qualifiedParameter);
+                    if (value != null)
+                    {
+                        sb.append(value);
+                    }
+                    else
+                    {
+                        sb.append(qualifiedParameter.toString()).append('\n');
+                    }
+                }
+
+                ret = sb.toString();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+            ret = this.embeddedData.toString();
+        }
+
+        return ret;
+    }
 
 	@Override
 	public TransferDataInvocation encodeTransferDataInvocation() {

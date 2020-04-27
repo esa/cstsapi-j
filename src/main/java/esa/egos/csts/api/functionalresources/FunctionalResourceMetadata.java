@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Optional;
 
@@ -21,6 +22,7 @@ import esa.egos.csts.api.functionalresources.values.impl.CstsValueFactory;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.oids.OidTree;
 import esa.egos.csts.api.parameters.impl.FunctionalResourceParameterEx;
+import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 import esa.egos.csts.api.types.Name;
 import esa.egos.csts.api.util.impl.CSTSUtils;
 import esa.egos.csts.api.util.impl.PackageUtils;
@@ -37,6 +39,9 @@ public class FunctionalResourceMetadata
 
     /** The instance singleton */
     private static FunctionalResourceMetadata instance = null;
+
+    /** The parameter cache */
+    private static Map<Name, FunctionalResourceParameterEx<?>> parameterCache = new HashMap<Name, FunctionalResourceParameterEx<?>>();
 
     /** The instance singleton lock */
     private static Object lock = new Object();
@@ -672,7 +677,7 @@ public class FunctionalResourceMetadata
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            LOG.log(Level.SEVERE, "Failed to create the OidConfig and/or FR class", e);
             System.exit(1);
         }
     }
@@ -684,5 +689,39 @@ public class FunctionalResourceMetadata
         System.out.println("-p <path to directory with jASN.1 generated classes>, mandatory argument");
         System.out.println("-c <path file name where to generate the OID XML config file>, optional argument");
         System.out.println("-f <output directory for the Fr class>, optional argument");
+    }
+
+    public static ObjectIdentifier getFrOid(ObjectIdentifier oid)
+    {
+        return ObjectIdentifier.of(Arrays.copyOf(oid.toArray(), OidTree.CROSS_FUNC_RES_BIT_LEN));
+    }
+
+    /**
+     * Convert FR parameter stored in a qualified parameter value to string
+     * @param qualifiedParameter The qualified parameter w/ extended type
+     * @return String
+     */
+    public String toString(QualifiedParameter qualifiedParameter)
+    {
+        String ret = null;
+
+        Name name = qualifiedParameter.getName();
+        try
+        {
+            FunctionalResourceParameterEx<?> frPar = parameterCache.get(name);
+            if (frPar == null)
+            {
+                frPar = createParameter(qualifiedParameter.getName());
+                parameterCache.put(name, frPar);
+            }
+            frPar.setValue(qualifiedParameter);
+            ret = frPar.valueToString();
+        }
+        catch (Exception e)
+        {
+            LOG.log(Level.WARNING, "Failed to convert the value of " + name + " to string", e);
+        }
+
+        return ret;
     }
 }
