@@ -30,6 +30,7 @@ import esa.egos.csts.api.functionalresources.values.ICstsComplexValue;
 import esa.egos.csts.api.functionalresources.values.ICstsSimpleValue;
 import esa.egos.csts.api.functionalresources.values.ICstsValue;
 import esa.egos.csts.api.functionalresources.values.ICstsValueFactory;
+import esa.egos.csts.api.functionalresources.values.impl.CstsNullValue;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.util.impl.CSTSUtils;
 
@@ -265,37 +266,45 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
 
         List<ICstsValue> values = new ArrayList<ICstsValue>();
 
-        for (Field valueField : berObject.getClass().getDeclaredFields())
+        Class<?> cls = berObject.getClass();
+        boolean found = false;
+        while (cls != null && !found)
         {
-            if (valueField.getType().equals(BerNull.class))
+            for (Field valueField : cls.getDeclaredFields())
             {
-                continue;
-            }
-            valueField.setAccessible(true);
-            Object object = valueField.get(berObject);
-            if (object instanceof BerType)
-            {
-                BerType subBerObject = (BerType) object;
-                Optional<Field> optValueField = getValueField(subBerObject.getClass());
-                if (optValueField.isPresent())
+                valueField.setAccessible(true);
+                Object object = valueField.get(berObject);
+                if (object instanceof BerType)
                 {
-                    // a simple value
-                    ICstsValue value = getSimpleValue(valueField.getName(), subBerObject, optValueField.get());
-                    values.add(value);
-                }
-                else
-                {
-                    // a complex value
-                    ICstsValue value = getComplexValue(valueField.getName(), subBerObject);
-                    values.add(value);
-                }
+                    BerType subBerObject = (BerType) object;
+                    Optional<Field> optValueField = getValueField(subBerObject.getClass());
+                    if (subBerObject instanceof BerNull)
+                    {
+                        CstsNullValue value = CstsNullValue.of(valueField.getName());
+                        values.add(value);
+                    }
+                    else if (optValueField.isPresent())
+                    {
+                        // a simple value
+                        ICstsValue value = getSimpleValue(valueField.getName(), subBerObject, optValueField.get());
+                        values.add(value);
+                    }
+                    else
+                    {
+                        // a complex value
+                        ICstsValue value = getComplexValue(valueField.getName(), subBerObject);
+                        values.add(value);
+                    }
 
-                if (isChoice)
-                {
-                    // there is only one element in a CHOICE
-                    break;
+                    if (isChoice)
+                    {
+                        // there is only one element in a CHOICE
+                        found = true;
+                        break;
+                    }
                 }
             }
+            cls = cls.getSuperclass();
         }
 
         ret = this.cstsValueFactory.createCstsComplexValue(name, values.toArray(new ICstsValue[values.size()]));
@@ -316,18 +325,20 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
     {
         Field ret = null;
 
-        try
+        Class<?> cls = berClass;
+        while (cls != null)
         {
+            Class<?> fcls = cls;
             LOG.finest(() -> {
-                StringBuilder sb = new StringBuilder(berClass.getName());
+                StringBuilder sb = new StringBuilder(fcls.getName());
                 sb.append("\nAvailable fields:\n");
-                Stream.of(berClass.getFields()).forEach(f -> 
+                Stream.of(fcls.getFields()).forEach(f -> 
                 {
                     sb.append(f.getName());
                     sb.append('\n');
                 });
                 sb.append("Available declared fields:\n");
-                Stream.of(berClass.getDeclaredFields()).forEach(f -> 
+                Stream.of(fcls.getDeclaredFields()).forEach(f -> 
                 {
                     sb.append(f.getName());
                     sb.append('\n');
@@ -335,16 +346,24 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
                 return sb.toString();
             });
 
-            if (Stream.of(berClass.getFields()).filter(f -> f.getName().equals(name)).findAny().isPresent())
+            if (Stream.of(fcls.getFields()).filter(f -> f.getName().equals(name)).findAny().isPresent())
             {
-                ret = berClass.getField(name);
+                ret = fcls.getField(name);
             }
             else
             {
-                ret = berClass.getDeclaredField(name);
+                try
+                {
+                    ret = fcls.getDeclaredField(name);
+                    break;
+                }
+                catch (NoSuchFieldException e)
+                {
+                }
             }
+            cls = fcls.getSuperclass();
         }
-        catch (NoSuchFieldException e)
+        if (ret == null)
         {
             throw new NoSuchFieldException("Parameter " + getName() + " has not value filed /w name " + name);
         }
@@ -412,13 +431,12 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
                                                                     IllegalArgumentException,
                                                                     IllegalAccessException, InstantiationException
     {
-        List<String> sequence = null;
         boolean isChoice = isChoice(berClass);
         if (isChoice)
         {
             if (value.getValues().size() > 1)
             {
-                sequence = Stream.of(this.berClass.getFields()).map(f -> f.getName()).collect(Collectors.toList());
+                List<String> sequence = Stream.of(this.berClass.getFields()).map(f -> f.getName()).collect(Collectors.toList());
                 throw new IllegalArgumentException("Parameter " + getName() + " value is a CHOICE, but " + value
                                                    + " contains more than one element. Provide only one of "
                                                    + String.join(", ", sequence));
@@ -429,12 +447,18 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
         else
         {
             // exclude common BER fields serialVersionUID, tag and code
-            sequence = Stream.of(berClass.getDeclaredFields())
-                    .filter(f -> !f.getName().equals("tag")
-                              && !f.getName().equals("serialVersionUID")
-                              && !f.getType().equals(BerNull.class)
-                              && !f.getName().equals("code"))
-                    .map(f -> f.getName()).collect(Collectors.toList());
+            Class<?> cls = berClass;
+            List<String> sequence = new ArrayList<String>();
+            while (cls != null)
+            {
+                sequence.addAll(Stream.of(cls.getDeclaredFields())
+                        .filter(f -> !f.getName().equals("tag")
+                                  && !f.getName().equals("serialVersionUID")
+                                  && !f.getName().equals("code")
+                                  && !f.getType().equals(BerNull.class))
+                        .map(f -> f.getName()).collect(Collectors.toList()));
+                cls = cls.getSuperclass();
+            }
 
             if (value.getValues().size() != sequence.size())
             {
@@ -475,7 +499,12 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
 
             BerType subBerObject = BerType.class.cast(clazz.newInstance());
 
-            if (subValue instanceof ICstsSimpleValue<?>)
+            // treat CstsNullValue individually
+            if (subValue instanceof CstsNullValue)
+            {
+                // subBerObject is now instance of BerNull class
+            }
+            else if (subValue instanceof ICstsSimpleValue<?>)
             {
                 setSimpleValue((ICstsSimpleValue<?>) subValue, subBerObject, clazz);
             }

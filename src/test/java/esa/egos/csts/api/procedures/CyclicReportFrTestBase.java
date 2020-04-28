@@ -240,8 +240,9 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             this.userSi.resetParameterUpdateCount(this.piid_ocr_secondary_02);
 
             // update just subset of parameters
-            int nFirst = 29;
-            int nLast = 32;
+            int nParams = testParameters.size();
+            int nFirst = nParams - nParams / 5;
+            int nLast = nParams - 1;
             // update values at provider
             System.out.println("Update values at provider");
             for (index = nFirst; index <= nLast; index++)

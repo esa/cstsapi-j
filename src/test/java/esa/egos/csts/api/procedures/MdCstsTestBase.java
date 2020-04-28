@@ -127,10 +127,10 @@ public abstract class MdCstsTestBase
             this.initValue = CstsIntValue.of(name, initValue);
             this.updatedValue = CstsIntValue.of(name, updatedValue);
         }
-        public TestParameter(ObjectIdentifier oid, String name, ICstsValue initValue, ICstsValue updatedValue)
+        public TestParameter(ObjectIdentifier oid, ICstsValue initValue, ICstsValue updatedValue)
         {
             this.oid = oid;
-            this.name = name;
+            this.name = initValue.getName();
             this.initValue = initValue;
             this.updatedValue = updatedValue;
         }
