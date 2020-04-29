@@ -18,7 +18,7 @@ import frm.csts.functional.resource.types.AntActualAzimuth;
 import frm.csts.functional.resource.types.OidValues;
 
 public class DemoAntAzimuthParameter {
-	private static final ObjectIdentifier antAzimuthOid = ObjectIdentifier.of(OidValues.antActualAzimuthType.value);
+	private static final ObjectIdentifier antAzimuthOid = ObjectIdentifier.of(OidValues.antActualAzimuthParamOid.value);
 	
 	/**
 	 * Demonstrates encoding of an FR parameter into a QualifiedValue
@@ -26,7 +26,7 @@ public class DemoAntAzimuthParameter {
 	 * @return
 	 */
 	public static QualifiedParameter encodeAzimut(long value) {
-		ObjectIdentifier antFrOid = ObjectIdentifier.of(OidValues.antennaType.value);
+		ObjectIdentifier antFrOid = ObjectIdentifier.of(OidValues.antennaFrOid.value);
 		FunctionalResourceType antFrType = FunctionalResourceType.of(antFrOid);
 		FunctionalResourceName antFrInstance = FunctionalResourceName.of(antFrType, 0 /*FR instance number*/);
 		Name antennaAzimuthParamName = Name.of(antAzimuthOid, antFrInstance);
@@ -58,7 +58,7 @@ public class DemoAntAzimuthParameter {
 	 */
 	public static long decodeAzimut(EmbeddedData embeddedData) {
 		long azimutValue = -1;
-		ObjectIdentifier antAzimuthOid = ObjectIdentifier.of(OidValues.antActualAzimuthType.value);
+		ObjectIdentifier antAzimuthOid = ObjectIdentifier.of(OidValues.antActualAzimuthParamOid.value);
 		if(embeddedData.getOid().equals(antAzimuthOid) == true) {
 			try (ByteArrayInputStream is = new ByteArrayInputStream(embeddedData.getData())) {
 				AntActualAzimuth az = new AntActualAzimuth();

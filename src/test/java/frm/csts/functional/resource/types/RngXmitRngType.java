@@ -653,7 +653,7 @@ public class RngXmitRngType implements BerType, Serializable {
 					private static final long serialVersionUID = 1L;
 
 					public byte[] code = null;
-					public static class Iis2 implements BerType, Serializable {
+					public static class IIs2 implements BerType, Serializable {
 
 						private static final long serialVersionUID = 1L;
 
@@ -663,10 +663,10 @@ public class RngXmitRngType implements BerType, Serializable {
 						private BerInteger i = null;
 						private BerInteger k = null;
 						
-						public Iis2() {
+						public IIs2() {
 						}
 
-						public Iis2(byte[] code) {
+						public IIs2(byte[] code) {
 							this.code = code;
 						}
 
@@ -804,7 +804,7 @@ public class RngXmitRngType implements BerType, Serializable {
 
 					}
 
-					public static class Kis6 implements BerType, Serializable {
+					public static class KIs6 implements BerType, Serializable {
 
 						private static final long serialVersionUID = 1L;
 
@@ -814,10 +814,10 @@ public class RngXmitRngType implements BerType, Serializable {
 						private BerInteger i = null;
 						private BerInteger k = null;
 						
-						public Kis6() {
+						public KIs6() {
 						}
 
-						public Kis6(byte[] code) {
+						public KIs6(byte[] code) {
 							this.code = code;
 						}
 
@@ -955,8 +955,8 @@ public class RngXmitRngType implements BerType, Serializable {
 
 					}
 
-					private Iis2 iis2 = null;
-					private Kis6 kis6 = null;
+					private IIs2 iIs2 = null;
+					private KIs6 kIs6 = null;
 					
 					public Ccsds() {
 					}
@@ -965,20 +965,20 @@ public class RngXmitRngType implements BerType, Serializable {
 						this.code = code;
 					}
 
-					public void setIis2(Iis2 iis2) {
-						this.iis2 = iis2;
+					public void setIIs2(IIs2 iIs2) {
+						this.iIs2 = iIs2;
 					}
 
-					public Iis2 getIis2() {
-						return iis2;
+					public IIs2 getIIs2() {
+						return iIs2;
 					}
 
-					public void setKis6(Kis6 kis6) {
-						this.kis6 = kis6;
+					public void setKIs6(KIs6 kIs6) {
+						this.kIs6 = kIs6;
 					}
 
-					public Kis6 getKis6() {
-						return kis6;
+					public KIs6 getKIs6() {
+						return kIs6;
 					}
 
 					public int encode(OutputStream reverseOS) throws IOException {
@@ -991,16 +991,16 @@ public class RngXmitRngType implements BerType, Serializable {
 						}
 
 						int codeLength = 0;
-						if (kis6 != null) {
-							codeLength += kis6.encode(reverseOS, false);
+						if (kIs6 != null) {
+							codeLength += kIs6.encode(reverseOS, false);
 							// write tag: CONTEXT_CLASS, CONSTRUCTED, 1
 							reverseOS.write(0xA1);
 							codeLength += 1;
 							return codeLength;
 						}
 						
-						if (iis2 != null) {
-							codeLength += iis2.encode(reverseOS, false);
+						if (iIs2 != null) {
+							codeLength += iIs2.encode(reverseOS, false);
 							// write tag: CONTEXT_CLASS, CONSTRUCTED, 0
 							reverseOS.write(0xA0);
 							codeLength += 1;
@@ -1025,14 +1025,14 @@ public class RngXmitRngType implements BerType, Serializable {
 						}
 
 						if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 0)) {
-							iis2 = new Iis2();
-							codeLength += iis2.decode(is, false);
+							iIs2 = new IIs2();
+							codeLength += iIs2.decode(is, false);
 							return codeLength;
 						}
 
 						if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 1)) {
-							kis6 = new Kis6();
-							codeLength += kis6.decode(is, false);
+							kIs6 = new KIs6();
+							codeLength += kIs6.decode(is, false);
 							return codeLength;
 						}
 
@@ -1057,15 +1057,15 @@ public class RngXmitRngType implements BerType, Serializable {
 
 					public void appendAsString(StringBuilder sb, int indentLevel) {
 
-						if (iis2 != null) {
-							sb.append("iis2: ");
-							iis2.appendAsString(sb, indentLevel + 1);
+						if (iIs2 != null) {
+							sb.append("iIs2: ");
+							iIs2.appendAsString(sb, indentLevel + 1);
 							return;
 						}
 
-						if (kis6 != null) {
-							sb.append("kis6: ");
-							kis6.appendAsString(sb, indentLevel + 1);
+						if (kIs6 != null) {
+							sb.append("kIs6: ");
+							kIs6.appendAsString(sb, indentLevel + 1);
 							return;
 						}
 

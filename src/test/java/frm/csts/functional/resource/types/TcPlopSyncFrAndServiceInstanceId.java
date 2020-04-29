@@ -23,11 +23,134 @@ public class TcPlopSyncFrAndServiceInstanceId implements BerType, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	public static class ServiceInstanceId implements BerType, Serializable {
+
+		private static final long serialVersionUID = 1L;
+
+		public byte[] code = null;
+		private SleSvcInstanceId sleServiceInstanceId = null;
+		private CstsSvcInstanceId cstsServiceInstanceId = null;
+		
+		public ServiceInstanceId() {
+		}
+
+		public ServiceInstanceId(byte[] code) {
+			this.code = code;
+		}
+
+		public void setSleServiceInstanceId(SleSvcInstanceId sleServiceInstanceId) {
+			this.sleServiceInstanceId = sleServiceInstanceId;
+		}
+
+		public SleSvcInstanceId getSleServiceInstanceId() {
+			return sleServiceInstanceId;
+		}
+
+		public void setCstsServiceInstanceId(CstsSvcInstanceId cstsServiceInstanceId) {
+			this.cstsServiceInstanceId = cstsServiceInstanceId;
+		}
+
+		public CstsSvcInstanceId getCstsServiceInstanceId() {
+			return cstsServiceInstanceId;
+		}
+
+		public int encode(OutputStream reverseOS) throws IOException {
+
+			if (code != null) {
+				for (int i = code.length - 1; i >= 0; i--) {
+					reverseOS.write(code[i]);
+				}
+				return code.length;
+			}
+
+			int codeLength = 0;
+			if (cstsServiceInstanceId != null) {
+				codeLength += cstsServiceInstanceId.encode(reverseOS, false);
+				// write tag: CONTEXT_CLASS, CONSTRUCTED, 1
+				reverseOS.write(0xA1);
+				codeLength += 1;
+				return codeLength;
+			}
+			
+			if (sleServiceInstanceId != null) {
+				codeLength += sleServiceInstanceId.encode(reverseOS, false);
+				// write tag: CONTEXT_CLASS, PRIMITIVE, 0
+				reverseOS.write(0x80);
+				codeLength += 1;
+				return codeLength;
+			}
+			
+			throw new IOException("Error encoding CHOICE: No element of CHOICE was selected.");
+		}
+
+		public int decode(InputStream is) throws IOException {
+			return decode(is, null);
+		}
+
+		public int decode(InputStream is, BerTag berTag) throws IOException {
+
+			int codeLength = 0;
+			BerTag passedTag = berTag;
+
+			if (berTag == null) {
+				berTag = new BerTag();
+				codeLength += berTag.decode(is);
+			}
+
+			if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 0)) {
+				sleServiceInstanceId = new SleSvcInstanceId();
+				codeLength += sleServiceInstanceId.decode(is, false);
+				return codeLength;
+			}
+
+			if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 1)) {
+				cstsServiceInstanceId = new CstsSvcInstanceId();
+				codeLength += cstsServiceInstanceId.decode(is, false);
+				return codeLength;
+			}
+
+			if (passedTag != null) {
+				return 0;
+			}
+
+			throw new IOException("Error decoding CHOICE: Tag " + berTag + " matched to no item.");
+		}
+
+		public void encodeAndSave(int encodingSizeGuess) throws IOException {
+			ReverseByteArrayOutputStream reverseOS = new ReverseByteArrayOutputStream(encodingSizeGuess);
+			encode(reverseOS);
+			code = reverseOS.getArray();
+		}
+
+		public String toString() {
+			StringBuilder sb = new StringBuilder();
+			appendAsString(sb, 0);
+			return sb.toString();
+		}
+
+		public void appendAsString(StringBuilder sb, int indentLevel) {
+
+			if (sleServiceInstanceId != null) {
+				sb.append("sleServiceInstanceId: ").append(sleServiceInstanceId);
+				return;
+			}
+
+			if (cstsServiceInstanceId != null) {
+				sb.append("cstsServiceInstanceId: ");
+				cstsServiceInstanceId.appendAsString(sb, indentLevel + 1);
+				return;
+			}
+
+			sb.append("<none>");
+		}
+
+	}
+
 	public static final BerTag tag = new BerTag(BerTag.UNIVERSAL_CLASS, BerTag.CONSTRUCTED, 16);
 
 	public byte[] code = null;
 	private BerInteger functResourceInstanceNumber = null;
-	private ServiceInstanceId parameterValue = null;
+	private ServiceInstanceId serviceInstanceId = null;
 	
 	public TcPlopSyncFrAndServiceInstanceId() {
 	}
@@ -44,12 +167,12 @@ public class TcPlopSyncFrAndServiceInstanceId implements BerType, Serializable {
 		return functResourceInstanceNumber;
 	}
 
-	public void setParameterValue(ServiceInstanceId parameterValue) {
-		this.parameterValue = parameterValue;
+	public void setServiceInstanceId(ServiceInstanceId serviceInstanceId) {
+		this.serviceInstanceId = serviceInstanceId;
 	}
 
-	public ServiceInstanceId getParameterValue() {
-		return parameterValue;
+	public ServiceInstanceId getServiceInstanceId() {
+		return serviceInstanceId;
 	}
 
 	public int encode(OutputStream reverseOS) throws IOException {
@@ -69,7 +192,7 @@ public class TcPlopSyncFrAndServiceInstanceId implements BerType, Serializable {
 		}
 
 		int codeLength = 0;
-		codeLength += parameterValue.encode(reverseOS);
+		codeLength += serviceInstanceId.encode(reverseOS);
 		
 		codeLength += functResourceInstanceNumber.encode(reverseOS, true);
 		
@@ -112,8 +235,8 @@ public class TcPlopSyncFrAndServiceInstanceId implements BerType, Serializable {
 			throw new IOException("Tag does not match the mandatory sequence element tag.");
 		}
 		
-		parameterValue = new ServiceInstanceId();
-		subCodeLength += parameterValue.decode(is, berTag);
+		serviceInstanceId = new ServiceInstanceId();
+		subCodeLength += serviceInstanceId.decode(is, berTag);
 		if (subCodeLength == totalLength) {
 			return codeLength;
 		}
@@ -152,12 +275,12 @@ public class TcPlopSyncFrAndServiceInstanceId implements BerType, Serializable {
 		for (int i = 0; i < indentLevel + 1; i++) {
 			sb.append("\t");
 		}
-		if (parameterValue != null) {
-			sb.append("parameterValue: ");
-			parameterValue.appendAsString(sb, indentLevel + 1);
+		if (serviceInstanceId != null) {
+			sb.append("serviceInstanceId: ");
+			serviceInstanceId.appendAsString(sb, indentLevel + 1);
 		}
 		else {
-			sb.append("parameterValue: <empty-required-field>");
+			sb.append("serviceInstanceId: <empty-required-field>");
 		}
 		
 		sb.append("\n");

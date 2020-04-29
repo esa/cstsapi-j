@@ -19,7 +19,7 @@ import com.beanit.jasn1.ber.types.*;
 import com.beanit.jasn1.ber.types.string.*;
 
 
-public class RcfResponderPortId extends BerVisibleString {
+public class RcfResponderPortId extends ResponderPortId {
 
 	private static final long serialVersionUID = 1L;
 
