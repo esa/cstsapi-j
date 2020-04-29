@@ -50,6 +50,12 @@ public class FunctionalResourceMetadata
 
     private static final String TYPE_SUFFIX = "Type";
 
+    private static final String FR_OID_SUFFIX = "FrOid";
+
+    private static final String FR_PAR_OID_SUFFIX = "ParamOid";
+
+    private static final String FR_EV_OID_SUFFIX = "EventOid";
+
     private static final String FR_TYPES_CLASS_NAME = "Fr";
 
     /** The BER classes map */
@@ -85,6 +91,12 @@ public class FunctionalResourceMetadata
     /** CSTS value factory */
     private ICstsValueFactory cstsValueFactory;
 
+    private enum Type
+    {
+        PARAMETER,
+        EVENT,
+        DIRECTIVE
+    }
 
     /**
      * C-tor
@@ -301,6 +313,16 @@ public class FunctionalResourceMetadata
         }
     }
 
+    private static String getParamOidNameFromBerClassName(String name)
+    {
+        return CSTSUtils.firstToLowerCase(name) + FR_PAR_OID_SUFFIX;
+    }
+
+    private static String getEventOidNameFromBerClassName(String name)
+    {
+        return CSTSUtils.firstToLowerCase(name) + FR_EV_OID_SUFFIX;
+    }
+
     /**
      * Identifies whether the BER class is FR parameter or FR event
      * 
@@ -312,11 +334,26 @@ public class FunctionalResourceMetadata
      */
     private static boolean processBerClass(Entry<String, Class<?>> berClassEntry,
                                            Map<String, int[]> oidName2oidArray,
-                                           Map<ObjectIdentifier, Map<ObjectIdentifier, Class<?>>> oid2oid2class)
+                                           Map<ObjectIdentifier, Map<ObjectIdentifier, Class<?>>> oid2oid2class,
+                                           Type type)
     {
         boolean ret = false;
 
-        String oidName = CSTSUtils.firstToLowerCase(berClassEntry.getKey());
+        String oidName;
+        switch (type)
+        {
+        case PARAMETER:
+            oidName = getParamOidNameFromBerClassName(berClassEntry.getKey());
+            break;
+        case EVENT:
+            oidName = getEventOidNameFromBerClassName(berClassEntry.getKey());
+            break;
+        case DIRECTIVE:
+        default:
+            oidName = "";
+            break;
+        }
+
         int[] oidArray = oidName2oidArray.get(oidName);
         if (oidArray != null)
         {
@@ -362,10 +399,10 @@ public class FunctionalResourceMetadata
         for (Entry<String, Class<?>> berClassEntry : this.berClasses.entrySet())
         {
             // try to process the BER class as an FR parameter
-            if (!processBerClass(berClassEntry, this.frParameterOidName2oidArray, this.frOid2frParameterOidAndClass))
+            if (!processBerClass(berClassEntry, this.frParameterOidName2oidArray, this.frOid2frParameterOidAndClass, Type.PARAMETER))
             {
                 // try to process the BER class as an FR event
-                processBerClass(berClassEntry, this.frEventOidName2oidArray, this.frOid2frEventOidAndClass);
+                processBerClass(berClassEntry, this.frEventOidName2oidArray, this.frOid2frEventOidAndClass, Type.EVENT);
             }
         }
     }
@@ -505,6 +542,12 @@ public class FunctionalResourceMetadata
         oidConfig.save(oidConfigFile);
     }
 
+    private String makeFrTypeName(String frOid, boolean firstUpperCase)
+    {
+        return (firstUpperCase)? CSTSUtils.firstToUpperCase(removeSuffix(frOid, FR_OID_SUFFIX)):
+            CSTSUtils.firstToLowerCase(removeSuffix(frOid, FR_OID_SUFFIX));
+    }
+
     /**
      * Create the FR types class files from collected OIDs
      * 
@@ -523,7 +566,7 @@ public class FunctionalResourceMetadata
         // FRs
         for (Entry<String, int[]> frEntry : this.frOidName2oidArray.entrySet())
         {
-            frTypesBuilder.addItem(frEntry.getKey(),
+            frTypesBuilder.addItem(makeFrTypeName(frEntry.getKey(), false),
                                    "OIDs.crossSupportFunctionalities",
                                    frEntry.getValue()[OidTree.CROSS_FUNC_RES_BIT_POS]);
         }
@@ -536,7 +579,7 @@ public class FunctionalResourceMetadata
             Map<ObjectIdentifier, Class<?>> oid2evClass = this.frOid2frEventOidAndClass.get(frOid);
             if ((oid2parClass != null && !oid2parClass.isEmpty()) || (oid2evClass != null && !oid2evClass.isEmpty()))
             {
-                frTypesBuilder.addNestedClass(CSTSUtils.firstToUpperCase(frEntry.getKey()));
+                frTypesBuilder.addNestedClass(makeFrTypeName(frEntry.getKey(), true));
 
                 if (oid2parClass != null)
                 {
