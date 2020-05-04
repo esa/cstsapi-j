@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.functionalresources.values.impl.CstsComplexValue;
@@ -15,9 +14,9 @@ import esa.egos.csts.api.types.Label;
 import esa.egos.csts.sim.impl.frm.Fr;
 
 /**
- * Test CSTS API information query procedure w/ TcPlopSyncAndChnlEncode parameters
+ * Test CSTS API information query procedure w/ TcPlopSyncAndChnlEncodeFrOid parameters
  */
-public class InformationQueryTcPlopSyncAndChnlEncodeTest extends InformationQueryFrTestBase
+public class CyclicReportTcPlopSyncAndChnlEncodeTest extends CyclicReportFrTestBase
 {
 
     @Override
@@ -29,7 +28,7 @@ public class InformationQueryTcPlopSyncAndChnlEncodeTest extends InformationQuer
     @BeforeClass
     public static void setupClass() throws Exception
     {
-        InformationQueryFrTestBase.setUpClass();
+        CyclicReportFrTestBase.setUpClass();
         
         testParameters.add(new TestParameter(Fr.TcPlopSyncAndChnlEncode.parameter.tcPlopSyncMaxCltuLengthParamOid,
                                              "tcPlopSyncMaxCltuLength", 10, 30));
@@ -113,46 +112,4 @@ public class InformationQueryTcPlopSyncAndChnlEncodeTest extends InformationQuer
         return ret;
     }
     
-    @Test
-    public void testQueryInformationWithNameSet()
-    {
-        super.testQueryInformationWithNameSet();
-    }
-
-    @Test
-    public void testQueryInformationWithLabelSet()
-    {
-        super.testQueryInformationWithLabelSet();
-    }
-
-    @Test
-    public void testQueryInformationWithFunctionalResourceName()
-    {
-        super.testQueryInformationWithFunctionalResourceName();
-    }
-    
-    @Test
-    public void testQueryInformationWithFunctionalResourceType()
-    {
-        super.testQueryInformationWithFunctionalResourceType();
-    }
-    
-    @Test
-    public void testQueryInformationWithProcedureType()
-    {
-        super.testQueryInformationWithProcedureType();
-    }
-
-    @Test
-    public void testQueryInformationWithProcedureInstanceIdentifier()
-    {
-        super.testQueryInformationWithProcedureInstanceIdentifier();
-    }
-
-    @Test
-    public void testQueryInformationWithEmpty()
-    {
-        super.testQueryInformationWithEmpty();
-    }
-
 }

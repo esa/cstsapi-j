@@ -3,6 +3,8 @@ package esa.egos.csts.api.parameters.impl;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -260,21 +262,42 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
     private ICstsValue getComplexValue(String name, BerType berObject) throws IllegalArgumentException,
                                                                        IllegalAccessException
     {
-        ICstsValue ret = this.cstsValueFactory.createEmptyValue();
-
         boolean isChoice = isChoice(berObject.getClass());
 
         List<ICstsValue> values = new ArrayList<ICstsValue>();
 
+        boolean found = false; // one item of choice was found
+        // iterate through all superclasses
         Class<?> cls = berObject.getClass();
-        boolean found = false;
         while (cls != null && !found)
         {
             for (Field valueField : cls.getDeclaredFields())
             {
                 valueField.setAccessible(true);
                 Object object = valueField.get(berObject);
-                if (object instanceof BerType)
+
+                // field is list: List<? extends BerType> seqOf
+                if (object instanceof List && valueField.getName().equals("seqOf"))
+                {
+                    List<?> list = (List<?>) object;
+                    // find generic type (must be BerType)
+                    ParameterizedType listType = (ParameterizedType)valueField.getGenericType();
+                    Class<?> clazz = (Class<?>)listType.getActualTypeArguments()[0];
+                    if (BerType.class.isAssignableFrom(clazz))
+                    {
+                        for (Object listObject : list)
+                        {
+                            Optional<Field> optValueField = getValueField(listObject.getClass());
+                            if (optValueField.isPresent())
+                            {
+                                // a simple value
+                                ICstsValue value = getSimpleValue("seqOf", (BerType)listObject, optValueField.get());
+                                values.add(value);
+                            }
+                        }
+                    }
+                }
+                else if (object instanceof BerType)
                 {
                     BerType subBerObject = (BerType) object;
                     Optional<Field> optValueField = getValueField(subBerObject.getClass());
@@ -307,7 +330,7 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
             cls = cls.getSuperclass();
         }
 
-        ret = this.cstsValueFactory.createCstsComplexValue(name, values.toArray(new ICstsValue[values.size()]));
+        ICstsValue ret = this.cstsValueFactory.createCstsComplexValue(name, values.toArray(new ICstsValue[values.size()]));
 
         return ret;
     }
@@ -459,8 +482,11 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
                         .map(f -> f.getName()).collect(Collectors.toList()));
                 cls = cls.getSuperclass();
             }
+            
+            long seqOfValsCnt = value.getValues().stream().filter(v -> v.getName().equals("seqOf")).count();
+            int seqOfFrCnt = sequence.contains("seqOf") ? 1 : 0;
 
-            if (value.getValues().size() != sequence.size())
+            if ((value.getValues().size() - seqOfValsCnt) != (sequence.size() - seqOfFrCnt))
             {
                 throw new IllegalArgumentException("Parameter " + getName() + " value is a SEQUENCE, but " + value
                                                    + " does not contain all elements of the SEQUENCE: "
@@ -470,7 +496,7 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
             LOG.fine(() -> "Setting " + value + " to the " + berName + " sequence");
         }
         
-        // for choice - first set all BerType fields to null because they can be initialized and only one value from getValues() is set
+        // for choice - first set all BerType fields to null to unselect previous value
         if (isChoice)
         {
             for (Field valueField : berClass.getDeclaredFields())
@@ -490,6 +516,21 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
             Field valueField = getValueField(berClass, subValue.getName());
 
             Class<?> clazz = valueField.getType();
+            
+            // process seqOf field
+            boolean toList = false;
+            if (subValue.getName().equals("seqOf"))
+            {
+                // clazz should be class of List<BerType>
+                if (clazz != List.class)
+                {
+                    throw new IllegalArgumentException("Parameter " + getName() + ": field 'seqOf' is not List");
+                }
+                toList = true;
+                ParameterizedType listType = (ParameterizedType)valueField.getGenericType();
+                clazz = (Class<?>)listType.getActualTypeArguments()[0];
+            }
+
             if (!(BerType.class.isAssignableFrom(clazz)))
             {
                 throw new IllegalArgumentException("Parameter " + getName() + " value filed " + value
@@ -522,7 +563,25 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
                              + berObject.getClass().getSimpleName() + " in parameter " + getName()
                              + " on setComplexValue()");
             // inject an intermediate BER object
-            valueField.set(berObject, subBerObject);
+            if (toList)
+            {
+                try
+                {
+                    String getName = subBerObject.getClass().toString();
+                    String methodName = "get"+getName.substring(getName.lastIndexOf('.')+1);
+                    Method method = berClass.getMethod(methodName);
+                    List<BerType> list = (List<BerType>)method.invoke(berObject);
+                    list.add(subBerObject);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+            else
+            {
+                valueField.set(berObject, subBerObject);
+            }
         }
     }
 
