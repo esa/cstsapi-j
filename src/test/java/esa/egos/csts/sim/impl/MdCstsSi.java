@@ -190,4 +190,9 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
         }
         return ret;
     }
+
+    public boolean isBound() {
+        return this.serviceInstance.isBound();
+    }
+
 }

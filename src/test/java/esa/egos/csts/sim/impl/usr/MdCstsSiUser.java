@@ -785,7 +785,4 @@ public class MdCstsSiUser extends MdCstsSiUserInform
         return ret;
     }
 
-    public boolean isBound() {
-        return this.serviceInstance.isBound();
-    }
 }

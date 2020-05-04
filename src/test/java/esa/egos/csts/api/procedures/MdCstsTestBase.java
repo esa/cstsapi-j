@@ -1,5 +1,7 @@
 package esa.egos.csts.api.procedures;
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -219,6 +221,28 @@ public abstract class MdCstsTestBase
 
         this.providerApi.stop();
         this.userApi.stop();
+        if (this.userSi.isBound())
+        {
+            try
+            {
+                this.userSi.destroy();
+            }
+            catch (Exception e)
+            {
+                System.out.println("MdCstsTestBase#tearDown() userSi exception: " + e.toString());
+            }
+        }
+        if (this.providerSi.isBound())
+        {
+            try
+            {
+                this.providerSi.destroy();
+            }
+            catch (Exception e)
+            {
+                System.out.println("MdCstsTestBase#tearDown() providerSi exception: " + e.toString());
+            }
+        }
         System.out.println("CSTS user and provider API stopped");
 
         System.out.println("MdCstsTestBase#tearDown() end");
