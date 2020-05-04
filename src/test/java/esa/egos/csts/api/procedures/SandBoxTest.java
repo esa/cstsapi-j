@@ -32,35 +32,36 @@ public class SandBoxTest extends MdCstsTestBase
             this.providerSi.setFunctionalResources(Fr.ccsds401SpaceLinkCarrierRcpt);
 
             // create FR parameter name
-            Name ccsds401CarrierRcptModulationTypeName = Name.of(Fr.Ccsds401SpaceLinkCarrierRcpt.parameter.ccsds401CarrierRcptModulationType,
+            Name ccsds401CarrierRcptTrackingLoopBwdthTypeName = Name.of(Fr.Ccsds401SpaceLinkCarrierRcpt.parameter.ccsds401CarrierRcptTrackingLoopBwdthParamOid,
                                 FunctionalResourceName.of(Fr.ccsds401SpaceLinkCarrierRcpt, 0));
 
             // create FR parameter value
-            CstsComplexValue symbolRate = CstsComplexValue.of("symbolRate", CstsIntValue.of("ccsdsSubcarrierFrequencySymbolRateRatio", 1));
-            CstsIntValue subcarrierWaveform = CstsIntValue.of("subcarrierWaveform", 2);
-            CstsIntValue modulationIndexTelemetry = CstsIntValue.of("modulationIndexTelemetry", 3);
-            CstsIntValue pcmFormat = CstsIntValue.of("pcmFormat", 4);
-            CstsComplexValue subcarrier = CstsComplexValue.of("subcarrier", symbolRate, subcarrierWaveform, modulationIndexTelemetry, pcmFormat);
-            CstsComplexValue ccsds401CarrierRcptModulationTypeValuePrv = CstsComplexValue.of("ccsds401CarrierRcptModulationType", subcarrier);
+            CstsComplexValue ccsds401CarrierRcptTrackingLoopBwdthValuePrv =
+                CstsComplexValue.of("ccsds401CarrierRcptTrackingLoopBwdth",
+                    CstsIntValue.of("trackingLoopBwdth", 400),
+                    CstsComplexValue.of("loopBwdthChangeDuration",
+                        CstsIntValue.of("bwdthChangeDuration", 30)
+                    )
+                );
 
-            System.out.println(ccsds401CarrierRcptModulationTypeValuePrv);
+            System.out.println(ccsds401CarrierRcptTrackingLoopBwdthValuePrv);
 
             // set the value to the provider SI
-            this.providerSi.setParameterValue(ccsds401CarrierRcptModulationTypeName, ccsds401CarrierRcptModulationTypeValuePrv);
+            this.providerSi.setParameterValue(ccsds401CarrierRcptTrackingLoopBwdthTypeName, ccsds401CarrierRcptTrackingLoopBwdthValuePrv);
 
 
             System.out.println("BIND...");
             TestUtils.verifyResult(this.userSi.bind(), "BIND");
 
-            ListOfParameters listOfParameters = ListOfParameters.of(ccsds401CarrierRcptModulationTypeName);
+            ListOfParameters listOfParameters = ListOfParameters.of(ccsds401CarrierRcptTrackingLoopBwdthTypeName);
 
             System.out.println("QUERY-INFORMATION...");
             TestUtils.verifyResult(this.userSi.queryInformation(this.piid_iq_secondary, listOfParameters),
                     "QUERY-INFORMATION");
 
 
-            ICstsValue ccsds401CarrierRcptModulationTypeValueUsr = this.userSi.getParameterValue(this.piid_iq_secondary, ccsds401CarrierRcptModulationTypeName);
-            System.out.println(ccsds401CarrierRcptModulationTypeValueUsr);
+            ICstsValue ccsds401CarrierRcptTrackingLoopBwdthValueUsr = this.userSi.getParameterValue(this.piid_iq_secondary, ccsds401CarrierRcptTrackingLoopBwdthTypeName);
+            System.out.println(ccsds401CarrierRcptTrackingLoopBwdthValueUsr);
 
             System.out.println("UNBIND...");
             TestUtils.verifyResult(this.userSi.unbind(), "UNBIND");
@@ -88,20 +89,21 @@ public class SandBoxTest extends MdCstsTestBase
         MdCollection mdCollection = MdCollection.createCollection(Fr.ccsds401SpaceLinkCarrierRcpt);
 
         // create a value
-        CstsComplexValue symbolRate = CstsComplexValue.of("symbolRate", CstsIntValue.of("ccsdsSubcarrierFrequencySymbolRateRatio", 1));
-        CstsIntValue subcarrierWaveform = CstsIntValue.of("subcarrierWaveform", 2);
-        CstsIntValue modulationIndexTelemetry = CstsIntValue.of("modulationIndexTelemetry", 3);
-        CstsIntValue pcmFormat = CstsIntValue.of("pcmFormat", 4);
-        CstsComplexValue subcarrier = CstsComplexValue.of("subcarrier", symbolRate, subcarrierWaveform, modulationIndexTelemetry, pcmFormat);
-        CstsComplexValue ccsds401CarrierRcptModulationType = CstsComplexValue.of("ccsds401CarrierRcptModulationType", subcarrier);
+        CstsComplexValue ccsds401CarrierRcptTrackingLoopBwdthType =
+            CstsComplexValue.of("ccsds401CarrierRcptTrackingLoopBwdth",
+                CstsIntValue.of("trackingLoopBwdth", 400),
+                CstsComplexValue.of("loopBwdthChangeDuration",
+                    CstsIntValue.of("bwdthChangeDuration", 30)
+                )
+            );
 
-        System.out.println(ccsds401CarrierRcptModulationType);
+        System.out.println(ccsds401CarrierRcptTrackingLoopBwdthType);
 
         // set the value to the parameter in MD collection
-        ObjectIdentifier oid = Fr.Ccsds401SpaceLinkCarrierRcpt.parameter.ccsds401CarrierRcptModulationType;
+        ObjectIdentifier oid = Fr.Ccsds401SpaceLinkCarrierRcpt.parameter.ccsds401CarrierRcptTrackingLoopBwdthParamOid;
         FunctionalResourceName frn = FunctionalResourceName.of(Fr.ccsds401SpaceLinkCarrierRcpt, 0);
         Name name = Name.of(oid, frn);
-        mdCollection.setParameterValue(name, ccsds401CarrierRcptModulationType);
+        mdCollection.setParameterValue(name, ccsds401CarrierRcptTrackingLoopBwdthType);
 
         System.out.println(mdCollection.getParameter(name));
 
@@ -115,15 +117,15 @@ public class SandBoxTest extends MdCstsTestBase
     {
         MdCollection mdCollection = MdCollection.createCollection(Fr.antenna);
 
-        mdCollection.setParameterValue(Name.of(Fr.Antenna.parameter.antAccumulatedPrecipitation,
+        mdCollection.setParameterValue(Name.of(Fr.Antenna.parameter.antAccumulatedPrecipitationParamOid,
                                       FunctionalResourceName.of(Fr.antenna, 0)),
                               CstsIntValue.of(1));
 
-        mdCollection.setParameterValue(Name.of(Fr.Antenna.parameter.antActualAzimuth, FunctionalResourceName.of(Fr.antenna, 0)),
+        mdCollection.setParameterValue(Name.of(Fr.Antenna.parameter.antActualAzimuthParamOid, FunctionalResourceName.of(Fr.antenna, 0)),
                               CstsIntValue.of(2));
 
         mdCollection
-                .setParameterValue(Name.of(Fr.Antenna.parameter.antActualElevation, FunctionalResourceName.of(Fr.antenna, 0)),
+                .setParameterValue(Name.of(Fr.Antenna.parameter.antActualElevationParamOid, FunctionalResourceName.of(Fr.antenna, 0)),
                           CstsIntValue.of(3));
     }
 

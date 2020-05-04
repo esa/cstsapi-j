@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.functionalresources.values.impl.CstsComplexValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsIntValue;
-import esa.egos.csts.api.functionalresources.values.impl.CstsNullValue;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.sim.impl.frm.Fr;
 
@@ -26,50 +24,52 @@ public class CyclicReportRngXmitTest extends CyclicReportFrTestBase
     }
 
     @BeforeClass
-    public static void setupClass()
+    public static void setupClass() throws Exception
     {
-        testParameters.add(new TestParameter(Fr.RngXmit.parameter.rngXmitPnChipRate, "rngXmitPnChipRate", 10, 30));
+        CyclicReportFrTestBase.setUpClass();
+        
+        testParameters.add(new TestParameter(Fr.RngXmit.parameter.rngXmitPnChipRateParamOid, "rngXmitPnChipRate", 10, 30));
 
-        testParameters.add(new TestParameter(Fr.RngXmit.parameter.rngXmitResourceStat, "rngXmitResourceStat", 0, 1));
+        testParameters.add(new TestParameter(Fr.RngXmit.parameter.rngXmitResourceStatParamOid, "rngXmitResourceStat", 0, 1));
 
-        testParameters.add(new TestParameter(Fr.RngXmit.parameter.rngXmitRngType,
-            CstsComplexValue.of("rngXmitRngType",
-                CstsIntValue.of("dopplerCompensation", 10),
-                CstsComplexValue.of("rngType",
-                    CstsComplexValue.of("toneCode",
-                        CstsIntValue.of("toneFreq", 1000),
-                        CstsIntValue.of("rngCodeLength", 101),
-                        CstsComplexValue.of("codeComponentAndToneXmitDuration",
-                            CstsIntValue.of("codeComponent", 3),
-                            CstsComplexValue.of("toneOnly",
-                                CstsIntValue.of("maxToneOnlyDuratiom", 20)
-                            )
-                        )
-                    )
-                )
-            ),
-            CstsComplexValue.of("rngXmitRngType",
-                CstsIntValue.of("dopplerCompensation", 30),
-                CstsComplexValue.of("rngType",
-                    CstsComplexValue.of("pseudoNoise",
-                        CstsComplexValue.of("chipRate",
-                            CstsComplexValue.of("ccsds",
-                                CstsComplexValue.of("iis2",
-                                    CstsIntValue.of("i", 1),
-                                    CstsIntValue.of("k", 2)
-                                )
-                            )
-                        ),
-                        CstsIntValue.of("codeType", 20),
-                        CstsComplexValue.of("modulationSense",
-                            CstsNullValue.of("nonCcsds")
-                        )
-                    )
-                )
-            )
-        ));
+//        testParameters.add(new TestParameter(Fr.RngXmit.parameter.rngXmitRngTypeParamOid,
+//            CstsComplexValue.of("rngXmitRngType",
+//                CstsIntValue.of("dopplerCompensation", 10),
+//                CstsComplexValue.of("rngType",
+//                    CstsComplexValue.of("toneCode",
+//                        CstsIntValue.of("toneFreq", 1000),
+//                        CstsIntValue.of("rngCodeLength", 101),
+//                        CstsComplexValue.of("codeComponentAndToneXmitDuration",
+//                            CstsIntValue.of("codeComponent", 3),
+//                            CstsComplexValue.of("toneOnly",
+//                                CstsIntValue.of("maxToneOnlyDuratiom", 20)
+//                            )
+//                        )
+//                    )
+//                )
+//            ),
+//            CstsComplexValue.of("rngXmitRngType",
+//                CstsIntValue.of("dopplerCompensation", 30),
+//                CstsComplexValue.of("rngType",
+//                    CstsComplexValue.of("pseudoNoise",
+//                        CstsComplexValue.of("chipRate",
+//                            CstsComplexValue.of("ccsds",
+//                                CstsComplexValue.of("iis2",
+//                                    CstsIntValue.of("i", 1),
+//                                    CstsIntValue.of("k", 2)
+//                                )
+//                            )
+//                        ),
+//                        CstsIntValue.of("codeType", 20),
+//                        CstsComplexValue.of("modulationSense",
+//                            CstsNullValue.of("nonCcsds")
+//                        )
+//                    )
+//                )
+//            )
+//        ));
 
-        testParameters.add(new TestParameter(Fr.RngXmit.parameter.rngXmitMod,
+        testParameters.add(new TestParameter(Fr.RngXmit.parameter.rngXmitModParamOid,
             CstsComplexValue.of("rngXmitMod",
                 CstsComplexValue.of("enabled",
                     CstsComplexValue.of("calibrating",
@@ -104,40 +104,4 @@ public class CyclicReportRngXmitTest extends CyclicReportFrTestBase
         return ret;
     }
     
-    @Test
-    public void testCyclicReportWithNameSet()
-    {
-        super.testCyclicReportWithNameSet();
-    }
-
-    @Test
-    public void testCyclicReportWithLabelSet()
-    {
-        super.testCyclicReportWithLabelSet();
-    }
-
-    @Test
-    public void testCyclicReportWithFunctionalResourceName()
-    {
-        super.testCyclicReportWithFunctionalResourceName();
-    }
-    
-    @Test
-    public void testCyclicReportWithFunctionalResourceType()
-    {
-        super.testCyclicReportWithFunctionalResourceType();
-    }
-    
-    @Test
-    public void testCyclicReportWithEmpty()
-    {
-        super.testCyclicReportWithEmpty();
-    }
-
-    @Test
-    public void testOnChangeCyclicReportWithNameSet()
-    {
-        super.testOnChangeCyclicReportWithNameSet();
-    }
-
 }
