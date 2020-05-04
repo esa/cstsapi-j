@@ -266,17 +266,17 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
 
         List<ICstsValue> values = new ArrayList<ICstsValue>();
 
-        boolean found = false; // one item of choice was found
+        boolean choiceItemFound = false;
         // iterate through all superclasses
         Class<?> cls = berObject.getClass();
-        while (cls != null && !found)
+        while (cls != null && !choiceItemFound)
         {
             for (Field valueField : cls.getDeclaredFields())
             {
                 valueField.setAccessible(true);
                 Object object = valueField.get(berObject);
 
-                // field is list: List<? extends BerType> seqOf
+                // field is List<? extends BerType> seqOf
                 if (object instanceof List && valueField.getName().equals("seqOf"))
                 {
                     List<?> list = (List<?>) object;
@@ -293,6 +293,18 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
                                 // a simple value
                                 ICstsValue value = getSimpleValue("seqOf", (BerType)listObject, optValueField.get());
                                 values.add(value);
+                            }
+                            else
+                            {
+                                // a complex value
+                                String listClass = clazz.getName();
+                                String className = listClass.substring(listClass.lastIndexOf('$')+1);
+
+                                ICstsValue value = getComplexValue(className, (BerType)listObject);
+                                
+                                ICstsValue listItem = this.cstsValueFactory.createCstsComplexValue("seqOf", value);
+                                
+                                values.add(listItem);
                             }
                         }
                     }
@@ -322,7 +334,7 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
                     if (isChoice)
                     {
                         // there is only one element in a CHOICE
-                        found = true;
+                        choiceItemFound = true;
                         break;
                     }
                 }
@@ -511,6 +523,7 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
             }
         }
         
+        boolean firstToList = true;
         for (ICstsValue subValue : value.getValues())
         {
             Field valueField = getValueField(berClass, subValue.getName());
@@ -519,16 +532,44 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
             
             // process seqOf field
             boolean toList = false;
+            Method listGetterMethod = null;
             if (subValue.getName().equals("seqOf"))
             {
-                // clazz should be class of List<BerType>
+                // clazz should be List<BerType>
                 if (clazz != List.class)
                 {
                     throw new IllegalArgumentException("Parameter " + getName() + ": field 'seqOf' is not List");
                 }
                 toList = true;
+                // get generic type of list
                 ParameterizedType listType = (ParameterizedType)valueField.getGenericType();
                 clazz = (Class<?>)listType.getActualTypeArguments()[0];
+                
+                String listGetterName = clazz.getName();
+                String methodName = "get";
+                if (subValue instanceof ICstsComplexValue)
+                {
+                    Optional<ICstsValue> res = ((ICstsComplexValue) subValue).getValues().stream()
+                                                .filter(v -> (v instanceof ICstsComplexValue)).findFirst();
+                    if (!res.isPresent())
+                    {
+                        throw new IllegalArgumentException("Parameter " + getName() + " doesn't contain ICstsComplexValue");
+                    }
+                    subValue = res.get();
+                    methodName += listGetterName.substring(listGetterName.lastIndexOf('$')+1);
+                }
+                else
+                {
+                    methodName += listGetterName.substring(listGetterName.lastIndexOf('.')+1);
+                }
+                try
+                {
+                    listGetterMethod = berClass.getMethod(methodName);
+                }
+                catch (NoSuchMethodException e)
+                {
+                    throw new IllegalArgumentException("Parameter " + getName() + ": cannot find list getter: " + listGetterName);
+                }
             }
 
             if (!(BerType.class.isAssignableFrom(clazz)))
@@ -567,15 +608,19 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
             {
                 try
                 {
-                    String getName = subBerObject.getClass().toString();
-                    String methodName = "get"+getName.substring(getName.lastIndexOf('.')+1);
-                    Method method = berClass.getMethod(methodName);
-                    List<BerType> list = (List<BerType>)method.invoke(berObject);
+                    @SuppressWarnings("unchecked")
+                    List<BerType> list = (List<BerType>)listGetterMethod.invoke(berObject);
+                    if (firstToList)
+                    {
+                        list.clear();
+                        firstToList = false;
+                    }
                     list.add(subBerObject);
                 }
                 catch (Exception e)
                 {
-                    e.printStackTrace();
+                    throw new UnsupportedOperationException("Cannot get list for " + value + " in parameter "
+                                                            + getName());
                 }
             }
             else
