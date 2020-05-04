@@ -10,103 +10,175 @@ import java.util.NoSuchElementException;
 /**
  * Maps an OID bit to OID bit label.
  */
-public class OidNode {
-	private static final boolean PRINT_UNKNOWN_NODE = true;
-	private static final String DOT = ".";
-	private int oidBit;
-	private String oidBitLabel;
-	private Map<Integer, OidNode> childNodes = new HashMap<Integer, OidNode>();
+public class OidNode
+{
+    private static final boolean PRINT_UNKNOWN_NODE = true;
 
-	public OidNode(int oidBit) {
-		this.oidBit = oidBit;
-	}
+    private static final String DOT = ".";
 
-	public OidNode(int oidBit, String oidBitLabel) {
-		this.oidBit = oidBit;
-		this.oidBitLabel = oidBitLabel;
-	}
+    private int oidBit;
 
-	public int getOidBit() {
-		return this.oidBit;
-	}
+    private String oidBitLabel;
 
-	public String getOidBitLable() {
-		return this.oidBitLabel;
-	}
+    private Map<Integer, OidNode> childNodes = new HashMap<Integer, OidNode>();
 
-	public void setOidBitLable(String oidBitLabel) {
-		this.oidBitLabel = oidBitLabel;
-	}
 
-	public String toString() {
-		return "OidNode [oidBit=" + this.oidBit + ", oidBitLabel=" + this.oidBitLabel + "]";
-	}
+    public OidNode(int oidBit)
+    {
+        this.oidBit = oidBit;
+    }
 
-	public OidNode getChildNode(int oidBit) {
-		return this.childNodes.get(oidBit);
-	}
+    public OidNode(int oidBit, String oidBitLabel)
+    {
+        this.oidBit = oidBit;
+        this.oidBitLabel = oidBitLabel;
+    }
 
-	public List<OidNode> getChildNodes() {
-		List<OidNode> children = new LinkedList<OidNode>();
-		for (int oidBit : this.childNodes.keySet()) {
-			children.add(this.childNodes.get(oidBit));
-		}
-		return children;
-	}
+    public int getOidBit()
+    {
+        return this.oidBit;
+    }
 
-	public void addChildNode(int oidBit) {
-		this.childNodes.put(new Integer(oidBit), new OidNode(oidBit));
-	}
+    public String getOidBitLable()
+    {
+        return this.oidBitLabel;
+    }
 
-	public OidNode addChildNode(int oidBit, String oidBitString) {
-		OidNode childNode = new OidNode(oidBit, oidBitString);
-		this.childNodes.put(new Integer(oidBit), childNode);
-		return childNode;
-	}
+    public void setOidBitLable(String oidBitLabel)
+    {
+        this.oidBitLabel = oidBitLabel;
+    }
 
-	private static void printUnknown(StringBuilder s, int bit) {
-		s.append("unknown(");
-		s.append(bit);
-		s.append(")");
-	}
+    public String toString()
+    {
+        return "OidNode [oidBit=" + this.oidBit + ", oidBitLabel=" + this.oidBitLabel + "]";
+    }
 
-	private static void throwOnUnknown(int[] oidArray, int bitPos, String parent) {
-		StringBuilder s = new StringBuilder(Arrays.toString(oidArray));
-		s.append(", bit=");
-		s.append(oidArray[bitPos]);
-		s.append(", at pos=");
-		s.append(bitPos);
-		s.append(", in parent ");
-		s.append(parent);
-		throw new NoSuchElementException(s.toString());
-	}
+    public OidNode getChildNode(int oidBit)
+    {
+        return this.childNodes.get(oidBit);
+    }
 
-	public void print(StringBuilder s, int[] oidArray, int bitPos) {
-		if (this.oidBit == oidArray[bitPos]) {
-			s.append(this.oidBitLabel);
-			s.append("(");
-			s.append(this.oidBit);
-			s.append(")");
-			int childOidBit = bitPos + 1;
-			if (childOidBit < oidArray.length) {
-				s.append(DOT);
-				OidNode node = getChildNode(oidArray[childOidBit]);
-				if (node != null) {
-					node.print(s, oidArray, childOidBit);
-				} else {
-					if (PRINT_UNKNOWN_NODE) {
-						printUnknown(s, oidArray[childOidBit]);
-					} else {
-						throwOnUnknown(oidArray, childOidBit, s.toString());
-					}
-				}
-			}
-		} else {
-			if (PRINT_UNKNOWN_NODE) {
-				printUnknown(s, oidArray[this.oidBit]);
-			} else {
-				throwOnUnknown(oidArray, this.oidBit, s.toString());
-			}
-		}
-	}
+    public List<OidNode> getChildNodes()
+    {
+        List<OidNode> children = new LinkedList<OidNode>();
+        for (int oidBit : this.childNodes.keySet())
+        {
+            children.add(this.childNodes.get(oidBit));
+        }
+        return children;
+    }
+
+    public void addChildNode(int oidBit)
+    {
+        this.childNodes.put(new Integer(oidBit), new OidNode(oidBit));
+    }
+
+    public OidNode addChildNode(int oidBit, String oidBitString)
+    {
+        OidNode childNode = new OidNode(oidBit, oidBitString);
+        this.childNodes.put(new Integer(oidBit), childNode);
+        return childNode;
+    }
+
+    private static void printUnknown(StringBuilder s, int bit)
+    {
+        s.append("unknown(");
+        s.append(bit);
+        s.append(")");
+    }
+
+    private static void printCompactUnknown(StringBuilder s, int bit)
+    {
+        s.append("unknown");
+    }
+
+    private static void throwOnUnknown(int[] oidArray, int bitPos, String parent)
+    {
+        StringBuilder s = new StringBuilder(Arrays.toString(oidArray));
+        s.append(", bit=");
+        s.append(oidArray[bitPos]);
+        s.append(", at pos=");
+        s.append(bitPos);
+        s.append(", in parent ");
+        s.append(parent);
+        throw new NoSuchElementException(s.toString());
+    }
+
+    public void print(StringBuilder s, int[] oidArray, int bitPos)
+    {
+        if (this.oidBit == oidArray[bitPos])
+        {
+            s.append(this.oidBitLabel);
+            s.append("(");
+            s.append(this.oidBit);
+            s.append(")");
+            int childOidBit = bitPos + 1;
+            if (childOidBit < oidArray.length)
+            {
+                s.append(DOT);
+                OidNode node = getChildNode(oidArray[childOidBit]);
+                if (node != null)
+                {
+                    node.print(s, oidArray, childOidBit);
+                }
+                else
+                {
+                    if (PRINT_UNKNOWN_NODE)
+                    {
+                        printUnknown(s, oidArray[childOidBit]);
+                    }
+                    else
+                    {
+                        throwOnUnknown(oidArray, childOidBit, s.toString());
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (PRINT_UNKNOWN_NODE)
+            {
+                printUnknown(s, oidArray[this.oidBit]);
+            }
+            else
+            {
+                throwOnUnknown(oidArray, this.oidBit, s.toString());
+            }
+        }
+    }
+
+    public void printCompact(StringBuilder s, int[] oidArray, int bitPos)
+    {
+        if (this.oidBit == oidArray[bitPos])
+        {
+            if (bitPos == oidArray.length - 1)
+            {
+                s.append(this.oidBitLabel);
+            }
+            else
+            {
+                int childOidBit = bitPos + 1;
+                if (childOidBit < oidArray.length)
+                {
+                    OidNode node = getChildNode(oidArray[childOidBit]);
+                    if (node != null)
+                    {
+                        node.printCompact(s, oidArray, childOidBit);
+                    }
+                    else
+                    {
+                        if (PRINT_UNKNOWN_NODE)
+                        {
+                            printCompactUnknown(s, oidArray[childOidBit]);
+                        }
+                        else
+                        {
+                            throwOnUnknown(oidArray, childOidBit, s.toString());
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

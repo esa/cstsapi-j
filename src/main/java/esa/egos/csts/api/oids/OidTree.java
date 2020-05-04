@@ -88,6 +88,8 @@ public class OidTree
     /** The length of the parameter, event or directive bit integer array */
     public static final int PARAM_OR_EVENT_OR_DIRECT_BIT_LEN = PARAM_OR_EVENT_OR_DIRECT_QUALIFIER_BIT_POS + 1;
 
+    private static final boolean COMPACT_MODE = false;
+
     /** The OID tree singlton */
     private static OidTree instance;
 
@@ -469,7 +471,14 @@ public class OidTree
     public String print(int[] oidArray)
     {
         StringBuilder sb = new StringBuilder();
-        this.rootNode.print(sb, oidArray, 0);
+        if (COMPACT_MODE)
+        {
+            this.rootNode.printCompact(sb, oidArray, 0);
+        }
+        else
+        {
+            this.rootNode.print(sb, oidArray, 0);
+        }
         return sb.toString();
     }
 
