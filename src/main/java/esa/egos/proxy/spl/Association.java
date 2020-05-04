@@ -566,12 +566,14 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 			if (this.srvProxyInform != null) {
 				long seqc = this.sequenceCounter++;
 				this.objMutex.unlock();
+				this.innerLock.unlock();
 				try {
 					this.srvProxyInform.informOpInvoke(poperation, seqc);
 				} catch (ApiException e) {
 					return Result.E_FAIL;
 				} finally {
-					this.objMutex.lock();
+				    this.innerLock.lock();
+				    this.objMutex.lock();
 				}
 			}
 		} else if (this.state == AssocState.sleAST_bindPending || this.state == AssocState.sleAST_remoteUnbindPending) {
@@ -607,6 +609,7 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 						LOG.fine("seqCount : " + seqc + "   " + poperation.toString());
 					}
 					this.objMutex.unlock();
+					this.innerLock.unlock();
 					try {
 						if (pConfOp.isAcknowledged()) {
 							IAcknowledgedOperation ackOp = (IAcknowledgedOperation) pConfOp;
@@ -622,7 +625,8 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 						LOG.log(Level.FINE, "CstsApiException ", e);
 						return Result.E_FAIL;
 					} finally {
-						this.objMutex.lock();
+					    this.innerLock.lock();
+					    this.objMutex.lock();
 					}
 				}
 			}
