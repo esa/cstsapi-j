@@ -511,15 +511,20 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
         // for choice - first set all BerType fields to null to unselect previous value
         if (isChoice)
         {
-            for (Field valueField : berClass.getDeclaredFields())
+            Class<?> cls = berClass;
+            while (cls != null)
             {
-                Class<?> clazz = valueField.getType();
-                if (!(BerType.class.isAssignableFrom(clazz)))
+                for (Field valueField : cls.getDeclaredFields())
                 {
-                    continue;
+                    Class<?> clazz = valueField.getType();
+                    if (!(BerType.class.isAssignableFrom(clazz)))
+                    {
+                        continue;
+                    }
+                    valueField.setAccessible(true);
+                    valueField.set(berObject, null);
                 }
-                valueField.setAccessible(true);
-                valueField.set(berObject, null);
+                cls = cls.getSuperclass();
             }
         }
         
