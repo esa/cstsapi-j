@@ -9,7 +9,6 @@ import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.functionalresources.values.impl.CstsComplexValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsIntValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsStringValue;
-import esa.egos.csts.api.procedures.MdCstsTestBase.TestParameter;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.sim.impl.frm.Fr;
 
@@ -33,28 +32,22 @@ public class CyclicReportCcsds401SpaceLinkCarrierXmitTest extends CyclicReportFr
         				CstsIntValue.of("rngInp",50))
         		));
         testParameters.add(new TestParameter(Fr.Ccsds401SpaceLinkCarrierXmit.parameter.ccsds401CarrierXmitTcPriorityParamOid, "ccsds401CarrierXmitTcPriority", 30000, 50000));
-//        testParameters.add(new TestParameter(Fr.Ccsds401SpaceLinkCarrierXmit.parameter.ccsds401CarrierXmitSweepProfileParamOid,
-//		CstsComplexValue.of("ccsds401CarrierXmitSweepProfile", CstsIntValue.of("startfreq", 22),
-//				CstsComplexValue.of("sweepLegs",
-//						CstsComplexValue.of("seqOf",
-//							CstsComplexValue.of("SEQUENCE",
-//        						CstsIntValue.of("dwellTime", 1),
-//        						CstsIntValue.of("sweepTime", 2),
-//        						CstsIntValue.of("endFreq", 3)
-//					))
-//					)
-//		),
-//		CstsComplexValue.of("ccsds401CarrierXmitSweepProfile", CstsIntValue.of("startfreq", 22),
-//				CstsComplexValue.of("sweepLegs",
-//						CstsComplexValue.of("seqOf",
-//        					CstsComplexValue.of("SEQUENCE",
-//        						CstsIntValue.of("dwellTime", 1),
-//        						CstsIntValue.of("sweepTime", 2),
-//        						CstsIntValue.of("endFreq", 3)
-//    					))
-//						)
-//		)
-//		));
+        testParameters.add(new TestParameter(Fr.Ccsds401SpaceLinkCarrierXmit.parameter.ccsds401CarrierXmitSweepProfileParamOid,
+			CstsComplexValue.of("ccsds401CarrierXmitSweepProfile", 
+					CstsIntValue.of("startfreq", 22),
+					CstsComplexValue.of("sweepLegs",
+						CstsComplexValue.of("seqOf", CstsComplexValue.of("SEQUENCE", CstsIntValue.of("dwellTime", 1), CstsIntValue.of("sweepRate", 2), CstsIntValue.of("endFreq", 3))),
+						CstsComplexValue.of("seqOf", CstsComplexValue.of("SEQUENCE", CstsIntValue.of("dwellTime", 1), CstsIntValue.of("sweepRate", 2), CstsIntValue.of("endFreq", 3))),
+						CstsComplexValue.of("seqOf", CstsComplexValue.of("SEQUENCE", CstsIntValue.of("dwellTime", 1), CstsIntValue.of("sweepRate", 2), CstsIntValue.of("endFreq", 3)))
+			)),
+			CstsComplexValue.of("ccsds401CarrierXmitSweepProfile", 
+					CstsIntValue.of("startfreq", 22),
+					CstsComplexValue.of("sweepLegs",
+						CstsComplexValue.of("seqOf", CstsComplexValue.of("SEQUENCE", CstsIntValue.of("dwellTime", 1), CstsIntValue.of("sweepRate", 2), CstsIntValue.of("endFreq", 3))),
+						CstsComplexValue.of("seqOf", CstsComplexValue.of("SEQUENCE", CstsIntValue.of("dwellTime", 1), CstsIntValue.of("sweepRate", 2), CstsIntValue.of("endFreq", 3))),
+						CstsComplexValue.of("seqOf", CstsComplexValue.of("SEQUENCE", CstsIntValue.of("dwellTime", 1), CstsIntValue.of("sweepRate", 2), CstsIntValue.of("endFreq", 3)))
+			))
+		));
         testParameters.add(new TestParameter(Fr.Ccsds401SpaceLinkCarrierXmit.parameter.ccsds401CarrierXmitModParamOid, "ccsds401CarrierXmitMod", 30000, 50000));
         testParameters.add(new TestParameter(Fr.Ccsds401SpaceLinkCarrierXmit.parameter.ccsds401CarrierXmitSubcarrierFreqParamOid, "ccsds401CarrierXmitSubcarrierFreq", 30000, 50000));
         testParameters.add(new TestParameter(Fr.Ccsds401SpaceLinkCarrierXmit.parameter.ccsds401CarrierXmitSubcarrierModParamOid, "ccsds401CarrierXmitSubcarrierMod", 30000, 50000));
