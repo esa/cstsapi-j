@@ -14,7 +14,6 @@ import org.junit.Test;
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.functionalresources.values.ICstsValue;
-import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
@@ -29,16 +28,13 @@ import esa.egos.csts.api.enumerations.CstsResult;
 public abstract class InformationQueryFrTestBase extends MdCstsTestBase
 {
 
-    protected abstract List<Label> createDefaultLabelList();
-    
     protected abstract FunctionalResourceType getFunctionalResource();
     
-    // non existent parameter - parameter is not added into MD collection
-    private ObjectIdentifier antIdId = ObjectIdentifier.of(new int[] { 1, 3, 112, 4, 4, 2, 1, 1, 1, 1, 1 });
-    private FunctionalResourceType antIdType = FunctionalResourceType.of(this.antIdId);
-    private FunctionalResourceName antIdName = FunctionalResourceName.of(this.antIdType, 1);
-    private Name nonExistentParameterName = Name.of(this.antIdId, this.antIdName);
-
+    protected List<Label> createDefaultLabelList()
+    {
+        return null;
+    }
+    
     @BeforeClass
     public static void setUpClass() throws Exception
     {

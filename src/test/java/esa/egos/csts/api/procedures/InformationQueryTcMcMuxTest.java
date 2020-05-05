@@ -23,9 +23,6 @@ public class InformationQueryTcMcMuxTest extends InformationQueryFrTestBase
         return Fr.tcMcMux;
     }
 
-    /*
-    tcMcMuxResourceStat
-    */
     @BeforeClass
     public static void setupClass() throws Exception
     {
