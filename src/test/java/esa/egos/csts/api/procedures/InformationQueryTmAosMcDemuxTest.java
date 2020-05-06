@@ -13,7 +13,7 @@ import esa.egos.csts.api.types.Label;
 import esa.egos.csts.sim.impl.frm.Fr;
 
 /**
- * Test CSTS API information query procedure w/ Antenna parameters
+ * Test CSTS API information query procedure w/ TmAosMcDemux parameters
  */
 public class InformationQueryTmAosMcDemuxTest extends InformationQueryFrTestBase
 {
@@ -31,15 +31,33 @@ public class InformationQueryTmAosMcDemuxTest extends InformationQueryFrTestBase
         testParameters.add(new TestParameter(Fr.TmAosMcDemux.parameter.tmAosMcDemuxMcIdsParamOid, 
         		CstsComplexValue.of("tmAosMcDemuxMcIds",
 	        		CstsComplexValue.of("tmFrames",
-    					CstsComplexValue.of("seqOf", CstsComplexValue.of("SEQUENCE", CstsIntValue.of("tfvn",47), CstsIntValue.of("scid",50))),
-						CstsComplexValue.of("seqOf", CstsComplexValue.of("SEQUENCE", CstsIntValue.of("tfvn",47), CstsIntValue.of("scid",50))),
-    					CstsComplexValue.of("seqOf", CstsComplexValue.of("SEQUENCE", CstsIntValue.of("tfvn",47), CstsIntValue.of("scid",50)))
+    					CstsComplexValue.of("seqOf", 
+    							CstsComplexValue.of("SEQUENCE", 
+    									CstsIntValue.of("tfvn",47), 
+    									CstsIntValue.of("scid",50))),
+						CstsComplexValue.of("seqOf", 
+								CstsComplexValue.of("SEQUENCE", 
+										CstsIntValue.of("tfvn",47), 
+										CstsIntValue.of("scid",50))),
+    					CstsComplexValue.of("seqOf", 
+    							CstsComplexValue.of("SEQUENCE", 
+    									CstsIntValue.of("tfvn",47), 
+    									CstsIntValue.of("scid",50)))
     			)),
         		CstsComplexValue.of("tmAosMcDemuxMcIds",
         			CstsComplexValue.of("aosFrames",
-						CstsComplexValue.of("seqOf", CstsComplexValue.of("SEQUENCE", CstsIntValue.of("tfvn",47), CstsIntValue.of("scid",50))),
-						CstsComplexValue.of("seqOf", CstsComplexValue.of("SEQUENCE", CstsIntValue.of("tfvn",47), CstsIntValue.of("scid",50))),
-    					CstsComplexValue.of("seqOf", CstsComplexValue.of("SEQUENCE", CstsIntValue.of("tfvn",47), CstsIntValue.of("scid",50)))
+						CstsComplexValue.of("seqOf", 
+								CstsComplexValue.of("SEQUENCE", 
+										CstsIntValue.of("tfvn",47), 
+										CstsIntValue.of("scid",50))),
+						CstsComplexValue.of("seqOf", 
+								CstsComplexValue.of("SEQUENCE", 
+										CstsIntValue.of("tfvn",47), 
+										CstsIntValue.of("scid",50))),
+    					CstsComplexValue.of("seqOf", 
+    							CstsComplexValue.of("SEQUENCE", 
+    									CstsIntValue.of("tfvn",47), 
+    									CstsIntValue.of("scid",50)))
         		))));        		
         testParameters.add(new TestParameter(Fr.TmAosMcDemux.parameter.tmAosMcDemuxClcwExtractionParamOid,
         		CstsComplexValue.of("tmAosMcDemuxClcwExtraction",
