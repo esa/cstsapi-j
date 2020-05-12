@@ -84,7 +84,7 @@ public class InformationQueryAnntenaTest extends InformationQueryFrTestBase
                                                                          CstsComplexValue.of("loopBwdthChangeDuration", CstsIntValue.of("bwdthChangeDuration", 102)))
                            ));
         testParameters.add(new TestParameter(Fr.Antenna.parameter.antIdParamOid,
-                           CstsComplexValue.of("antId", CstsOidValue.of("antennaOid", new int[] {1,2,3})),
+                           CstsComplexValue.of("antId", CstsOidValue.of("antennaOid", new int[] {2,3,4})),
                            CstsComplexValue.of("antId", CstsOidValue.of("antennaOid", new int[] {2,3,4}))
                            ));
     }
