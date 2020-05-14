@@ -297,8 +297,7 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
                             else
                             {
                                 // a complex value
-                                String listClass = clazz.getName();
-                                String className = listClass.substring(listClass.lastIndexOf('$')+1);
+                                String className = clazz.getSimpleName();
 
                                 ICstsValue value = getComplexValue(className, (BerType)listObject);
                                 
@@ -537,7 +536,6 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
             
             // process seqOf field
             boolean toList = false;
-            Method listGetterMethod = null;
             if (subValue.getName().equals("seqOf"))
             {
                 // clazz should be List<BerType>
@@ -550,8 +548,6 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
                 ParameterizedType listType = (ParameterizedType)valueField.getGenericType();
                 clazz = (Class<?>)listType.getActualTypeArguments()[0];
                 
-                String listGetterName = clazz.getName();
-                String methodName = "get";
                 if (subValue instanceof ICstsComplexValue)
                 {
                     Optional<ICstsValue> res = ((ICstsComplexValue) subValue).getValues().stream()
@@ -561,19 +557,6 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
                         throw new IllegalArgumentException("Parameter " + getName() + " doesn't contain ICstsComplexValue");
                     }
                     subValue = res.get();
-                    methodName += listGetterName.substring(listGetterName.lastIndexOf('$')+1);
-                }
-                else
-                {
-                    methodName += listGetterName.substring(listGetterName.lastIndexOf('.')+1);
-                }
-                try
-                {
-                    listGetterMethod = berClass.getMethod(methodName);
-                }
-                catch (NoSuchMethodException e)
-                {
-                    throw new IllegalArgumentException("Parameter " + getName() + ": cannot find list getter: " + listGetterName);
                 }
             }
 
@@ -611,8 +594,10 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
             // inject an intermediate BER object
             if (toList)
             {
+                String listGetterName = "get" + clazz.getSimpleName();
                 try
                 {
+                    Method listGetterMethod = berClass.getMethod(listGetterName);
                     @SuppressWarnings("unchecked")
                     List<BerType> list = (List<BerType>)listGetterMethod.invoke(berObject);
                     if (firstToList)
@@ -621,6 +606,10 @@ public class FunctionalResourceParameterEx<T extends BerType> extends Functional
                         firstToList = false;
                     }
                     list.add(subBerObject);
+                }
+                catch (NoSuchMethodException e)
+                {
+                    throw new IllegalArgumentException("Parameter " + getName() + ": cannot find list getter: " + listGetterName);
                 }
                 catch (Exception e)
                 {
