@@ -605,6 +605,34 @@ EXPORTS
 ,	 	 cfdpSendEntityFrOid
 ,	 	 cfdpRcvEntityFrOid
 ,	 	 tdmSegmentGenFrOid
+,	 	 TdmSegGenResourceStat
+,	 	 tdmSegGenResourceStatParamOid
+,	 	 TdmSegGenCarrierPowerPathTable
+,	 	 tdmSegGenCarrierPowerPathTableParamOid
+,	 	 TdmSegGenPcOverN0PathTable
+,	 	 tdmSegGenPcOverN0PathTableParamOid
+,	 	 TdmSegGenPrOverNoPathTable
+,	 	 tdmSegGenPrOverNoPathTableParamOid
+,	 	 TdmSegGenDoppInstPathTable
+,	 	 tdmSegGenDoppInstPathTableParamOid
+,	 	 TdmSegGenDoppIntegPathTable
+,	 	 tdmSegGenDoppIntegPathTableParamOid
+,	 	 TdmSegGenRangePathTable
+,	 	 tdmSegGenRangePathTableParamOid
+,	 	 TdmSeqGenRcvFreqPathTable
+,	 	 tdmSeqGenRcvFreqPathTableParamOid
+,	 	 TdmSegGenXmitFreqPathTable
+,	 	 tdmSegGenXmitFreqPathTableParamOid
+,	 	 TdmSegGenXmitFreqRatePathTable
+,	 	 tdmSegGenXmitFreqRatePathTableParamOid
+,	 	 TdmSegGenAntAnglesPathTable
+,	 	 tdmSegGenAntAnglesPathTableParamOid
+,	 	 tdmSegGenResourceStatChangeEventOid
+,	 	 TdmSegGenResourceStatChangeValue
+,	 	 tdmSegGenResourceStatChangeValueValueOid
+,	 	 tdmSegGenSetContrParamsDirectiveOid
+,	 	 TdmSegGenContrParamIdsAndValues
+,	 	 tdmSegGenContrParamIdsAndValuesQualifierOid
 ,	 	 nonValRmDataCollectionFrOid
 ,	 	 ddorRawDataCollectionFrOid
 ,	 	 openLoopRxFormatterFrOid
@@ -635,6 +663,18 @@ EXPORTS
 ,	 	 OfflineFrameBufferContrParamIdsAndValues
 ,	 	 offlineFrameBufferContrParamIdsAndValuesQualifierOid
 ,	 	 tdmRcrdBufferFrOid
+,	 	 TdmRcrdBufferResourceStat
+,	 	 tdmRcrdBufferResourceStatParamOid
+,	 	 TdmRcrdBufferMaxStorageAlloc
+,	 	 tdmRcrdBufferMaxStorageAllocParamOid
+,	 	 TdmRcrdBufferRetentionPolicy
+,	 	 tdmRcrdBufferRetentionPolicyParamOid
+,	 	 tdmRcrdBufferResourceStatChangeEventOid
+,	 	 TdmRcrdBufferResourceStatChangeValue
+,	 	 tdmRcrdBufferResourceStatChangeValueValueOid
+,	 	 tdmRcrdBufferSetContrParamsDirectiveOid
+,	 	 TdmRcrdBufferContrParamIdsAndValues
+,	 	 tdmRcrdBufferContrParamIdsAndValuesQualifierOid
 ,	 	 nonValRmDataStoreFrOid
 ,	 	 valRmDataStoreFrOid
 ,	 	 ddorRawDataStoreFrOid
@@ -916,6 +956,18 @@ EXPORTS
 ,	 	 tdResponderIdParamOid
 ,	 	 TdResponderPortId
 ,	 	 tdResponderPortIdParamOid
+,	 	 TdSvcUserRespTimer
+,	 	 tdSvcUserRespTimerParamOid
+,	 	 TdDeliveryMode
+,	 	 tdDeliveryModeParamOid
+,	 	 TdReturnBufferSize
+,	 	 tdReturnBufferSizeParamOid
+,	 	 TdDeliveryLatencyLimit
+,	 	 tdDeliveryLatencyLimitParamOid
+,	 	 TdNamedLabelLists
+,	 	 tdNamedLabelListsParamOid
+,	 	 TdPathList
+,	 	 tdPathListParamOid
 ,	 	 tdProdStatChangeEventOid
 ,	 	 TdProdStatChangeEventValue
 ,	 	 tdProdStatChangeEventValueValueOid
@@ -1355,6 +1407,63 @@ UslpVcMuxMc         	 ::= SEQUENCE
 {
 	 tfvn                	 BIT STRING ('1100'B)
 ,	 scid                	 INTEGER  (0 .. 65535)
+}
+
+-- ITU fequency bands
+FreqBands           	 ::= ENUMERATED
+{
+	 hf                  	 	 (0)
+,	 vhf                 	 	 (1)
+,	 uhf                 	 	 (2)
+,	 l                   	 	 (3)
+,	 s-ne                	 	 (4)
+,	 s-ds                	 	 (5)
+,	 c                   	 	 (6)
+,	 x-ne                	 	 (7)
+,	 x-ds                	 	 (8)
+,	 ku                  	 	 (9)
+,	 k                   	 	 (10)
+,	 ka-ne               	 	 (11)
+,	 ka-ds               	 	 (12)
+,	 ka-s                	 	 (13)
+,	 v                   	 	 (14)
+,	 w                   	 	 (15)
+,	 mm                  	 	 (16)
+,	 o1                  	 	 (17)
+,	 o2                  	 	 (18)
+}
+
+-- The Functional Resource Name.
+FrName              	 ::= SEQUENCE
+{
+
+	 -- The Object Identifier for the FR type.
+	 frType              	 OBJECT IDENTIFIER
+,
+	 -- The FR Instance Numbe of the FR instance.
+	 frin                	 LongIntPos
+}
+
+-- This type contains the elements that are common to all TDM path table records.
+TdmPathTableCommonElements	 ::= SEQUENCE
+{
+
+	 -- The identifier of the path record in the TDM path table
+	 trackingDataPathId  	 VisibleString
+,
+	 -- The aperture name that populates the PARTICIPANT_1 field of the generated TDM segment.
+	 apertureName        	 VisibleString
+,
+	 -- The space user node name that populates the PARTICIPANT_2 field of the generated
+	 --  TDM segments.
+	 spaceUserNodeName   	 VisibleString
+,
+	 -- Specifies the period (in seconds) at which the TDM segments are to be generated.
+	 reportingPeriod     	 INTEGER  (1 .. 65536)
+,
+	 -- The FR Name of the FR that provides the tracking data measurements reported by the
+	 --  TDM path.
+	 frName              	 FrName
 }
 
 
@@ -4329,7 +4438,7 @@ FlfSyncEncCodingSelection	 ::= CHOICE
 
 
 
--- This event notifies any change of the flfSyncResourceStat parameter.
+-- This event notifies any change of the flfSyncEncResourceStat parameter.
 flfSyncEncResourceStatChangeEventOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 30200 2 1 1 }
 
 
@@ -4361,7 +4470,7 @@ flfSyncEncDataUnitProcessingCompletedValueValueOid	 OBJECT IDENTIFIER ::= { 1 3 
 FlfSyncEncDataUnitProcessingCompletedValue	 ::= DataUnitProcessingCompletedEventValue
 
 
--- This directive permits setting of the controllable parameters of the flfSyncChannelEncodingAndOidGen
+-- This directive permits setting of the controllable parameters of the flfSyncChnlEncodeAndOidGen
 --  FR type.  
 flfSyncEncSetContrParamsDirectiveOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 30200 3 1 1 }
 
@@ -4515,8 +4624,8 @@ FlfSyncDecFrameSyncLockStat	 ::= ENUMERATED
 -- - 'no': the frame synchronizer locked on the ASM
 --  with the pattern in positive logic and therefore does not invert the symbol stream.
 -- As
---  long as flfSyncFrameSyncLockStat ≠ 'locked', this parameter shall be flagged as
---  unavailable.
+--  long as flfSyncDecFrameSyncLockStat ≠ 'locked', this parameter shall be flagged
+--  as unavailable.
 flfSyncDecSymbolInversionParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 30300 1 5 1 1 }
 
 FlfSyncDecSymbolInversion	 ::= ENUMERATED
@@ -4541,7 +4650,7 @@ FlfSyncDecFrameErrorRate	 ::= REAL (0 .. 1)
 
 -- This parameter reports the number of bits in the frame corrected by means of the
 --  RS trailer. The number of bits that can be corrected depends on the coding and the
---  interleaving depth. If flfSyncDecode is neither 'reedSolomon' nor 'concatenated',
+--  interleaving depth. If flfSyncDecDecode is neither 'reedSolomon' nor 'concatenated',
 --  this parameter shall be flagged as 'undefined'.
 flfSyncDecNumberOfRsErrorsCorrectedParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 30300 1 7 1 1 }
 
@@ -4609,7 +4718,7 @@ FlfSyncDecDerandomization	 ::= ENUMERATED
 -- 
 -- Note: The length and pattern
 --  of the ASM is implicitly specified by the decoding that is to be applied except
---  if for parameter flfSyncAsmConfig the nonCcsds asmPattern choice is selected..
+--  if for parameter flfSyncDecAsmConfig the nonCcsds asmPattern choice is selected..
 flfSyncDecDecodeParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 30300 1 11 1 1 }
 
 FlfSyncDecDecode    	 ::= SEQUENCE
@@ -4906,7 +5015,7 @@ FlfSyncDecDecodeQualityIndications	 ::= SEQUENCE
 
 
 
--- This event notifies any change of the flfSyncResourceStat parameter and the value
+-- This event notifies any change of the flfSyncDecResourceStat parameter and the value
 --  of flfSyncResourceStat that applies since the event has occurred.
 flfSyncDecResourceStatChangeEventOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 30300 2 1 1 }
 
@@ -4920,7 +5029,7 @@ flfSyncDecResourceStatChangeEventValueValueOid	 OBJECT IDENTIFIER ::= { 1 3 112 
 FlfSyncDecResourceStatChangeEventValue	 ::= FlfSyncDecResourceStat
 
 
--- This event notifies any change of flfSyncFrameSyncLockStat and the value of flfSyncFrameSyncLockStat
+-- This event notifies any change of flfSyncDecFrameSyncLockStat and the value of flfSyncDecFrameSyncLockStat
 --  that applies since the event has occurred. 
 flfSyncDecFrameSyncLockStatChangeEventOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 30300 2 2 1 }
 
@@ -6946,10 +7055,281 @@ cfdpRcvEntityFrOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 999100 }
 
 
 
--- To be defined.
+-- TdmSegmentGen performs the production functions associated with collecting: angle
+--  measurements from the antenna; receive frequency, carrier power, carrier power to
+--  noise spectral density, and Doppler measurements from the return space link; range
+--  and ranging power to noise spectral density measurements from the received space
+--  links; and transmit frequency and transmit frequency rate from the transmitted space
+--  link in order to generate Tracking Data Message (TDM) segments containing those
+--  measurements.
 tdmSegmentGenFrOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 60100 }
 
 
+
+
+-- This enumerated parameter reports the TdmSegmentGen resource status and can take
+--  on four values:
+--    - 'configured': the associated equipment has been configured
+--  to ingest tracking data measurements and produce TDM atomic segments
+--     - 'operational':
+--  the associated equipment is ingesting tracking data measurements and produce TDM
+--  atomic segments;
+--     - 'interrupted': a failure has been detected;
+--     - 'halted':
+--  the associated equipment has been taken out of service.
+tdmSegGenResourceStatParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 60100 1 1 1 1 }
+
+TdmSegGenResourceStat	 ::= ResponderPortId
+
+
+-- This complex-valued parameter configures and reports the set of Carrier Power tracking
+--  data paths for which Carrier Power Atomic Segments are to be generated during the
+--  execution of the Service Package.
+tdmSegGenCarrierPowerPathTableParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 60100 1 2 1 1 }
+
+TdmSegGenCarrierPowerPathTable	 ::= SEQUENCE  OF	 SEQUENCE
+	 {
+
+	 	 -- trackingDataPathId, apertureName, spaceUserNodeName,reportingPeriod, and frName
+	 	 pathTableCommonElements	 TdmPathTableCommonElements
+,
+	 	 -- The frequency band of the carrier received from the Space user Node.
+	 	 rcvFreqBand         	 FreqBands
+	 }
+
+
+
+-- This complex-valued parameter configures and reports the set of Pc/No tracking data
+--  paths for which Pc/No Atomic Segments are to be generated during the execution of
+--  the Service Package.
+tdmSegGenPcOverN0PathTableParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 60100 1 3 1 1 }
+
+TdmSegGenPcOverN0PathTable	 ::= SEQUENCE  OF	 SEQUENCE
+	 {
+
+	 	 -- trackingDataPathId, apertureName, spaceUserNodeName,reportingPeriod, and frName
+	 	 pathTableCommonElements	 TdmPathTableCommonElements
+,
+	 	 -- The frequency band of the carrier received from the Space user Node.
+	 	 rcvFreqBand         	 FreqBands
+	 }
+
+
+
+-- This complex-valued parameter configures and reports the set of Pr/No tracking data
+--  paths for which Pr/No Atomic Segments are to be generated during the execution of
+--  the Service Package
+tdmSegGenPrOverNoPathTableParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 60100 1 4 1 1 }
+
+TdmSegGenPrOverNoPathTable	 ::= SEQUENCE  OF	 SEQUENCE
+	 {
+
+	 	 -- trackingDataPathId, apertureName, spaceUserNodeName,reportingPeriod, and frName
+	 	 pathTableCommonElements	 TdmPathTableCommonElements
+,
+	 	 -- The frequency band of the carrier received from the Space user Node.
+	 	 rcvFreqBand         	 FreqBands
+	 }
+
+
+
+-- This complex-valued parameter configures and reports the set of Doppler (instantaneous)
+--  tracking data paths for which Doppler (instantaneous) Atomic Segments are to be
+--  generated during the execution of the Service Package.
+tdmSegGenDoppInstPathTableParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 60100 1 5 1 1 }
+
+TdmSegGenDoppInstPathTable	 ::= SEQUENCE  OF	 SEQUENCE
+	 {
+
+	 	 -- trackingDataPathId, apertureName, spaceUserNodeName,reportingPeriod, and frName
+	 	 pathTableCommonElements	 TdmPathTableCommonElements
+,
+	 	 -- The name of the receiving aperture, which that populates the PARTICIPANT_3 field
+	 	 --  of the generated TDM segment. Used only if three-way Doppler measurements are taken
+	 	 --  with both transmitting and receiving apertures at the same ESLT.
+	 	 threeWayRcvAperture 	 VisibleString OPTIONAL
+,
+	 	 -- The frequency band of the carrier signal received from the Space User Node
+	 	 rcvFreqBand         	 LabelListSetV1
+,
+	 	 -- The frequency band of the  carrier signal transmitted to the Space User Node. Not
+	 	 --  used for 1-way Doppler.
+	 	 xmitFreqBand        	 LabelListSetV1 OPTIONAL
+	 }
+
+
+
+-- This complex-valued parameter configures and reports the set of Doppler (integrated)
+--  tracking data paths for which Doppler (integrated) Atomic Segments are to be generated
+--  during the execution of the Service Package.
+tdmSegGenDoppIntegPathTableParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 60100 1 6 1 1 }
+
+TdmSegGenDoppIntegPathTable	 ::= SEQUENCE  OF	 SEQUENCE
+	 {
+
+	 	 -- trackingDataPathId, apertureName, spaceUserNodeName,reportingPeriod, and frName
+	 	 pathTableCommonElements	 TdmPathTableCommonElements
+,
+	 	 -- The name of the receiving aperture, which populates the PARTICIPANT_3 field of the
+	 	 --  generated TDM segment. Used only if three-way Doppler measurements are taken with
+	 	 --  both transmitting and receiving apertures at the same ESLT.
+	 	 threeWayRcvAperture 	 VisibleString OPTIONAL
+,
+	 	 -- The frequency band of the carrier signal received from the Space User Node.
+	 	 rcvFreqBand         	 FreqBands
+,
+	 	 -- The frequency band of the  carrier signal transmitted to the Space User Node. Not
+	 	 --  used for 1-way Doppler.
+	 	 xmitFreqBand        	 FreqBands OPTIONAL
+,
+	 	 -- The interval over which the Doppler measurements are to be integrated, in seconds.
+	 	 integrationInterval 	 ShortIntUnsigned
+,
+	 	 -- The integration reference specifies whether the timetag represents the start, middle,
+	 	 --  or end of the integration period.
+	 	 integrationRef      	 ENUMERATED
+	 	 {
+	 	 	 start               	 	 (0)
+	 	 ,	 middle              	 	 (1)
+	 	 ,	 end                 	 	 (2)
+	 	 }
+
+	 }
+
+
+
+-- This complex-valued parameter configures and reports the set of Range tracking data
+--  paths for which Range Atomic Segments are to be generated during the execution of
+--  the Service Package.
+tdmSegGenRangePathTableParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 60100 1 7 1 1 }
+
+TdmSegGenRangePathTable	 ::= SEQUENCE  OF	 SEQUENCE
+	 {
+
+	 	 -- trackingDataPathId, apertureName, spaceUserNodeName,reportingPeriod, and frName
+	 	 pathTableCommonElements	 TdmPathTableCommonElements
+,
+	 	 -- The name of the receiving aperture, which populates the PARTICIPANT_3 field of the
+	 	 --  generated TDM segment. Used only if three-way Doppler measurements are taken with
+	 	 --  both transmitting and receiving apertures at the same ESLT.
+	 	 threeWayRcvAperture 	 VisibleString
+,
+	 	 -- The frequency band of the carrier signal received from the Space User Node.
+	 	 rcvFreqBand         	 LabelListSetV1
+,
+	 	 -- The frequency band of the  carrier signal transmitted to the Space User Node.
+	 	 xmitFreqBand        	 LabelListSetV1
+,	 	 rangeUnits          	 ENUMERATED
+	 	 {
+	 	 	 km                  	 	 (0)
+	 	 ,	 seconds             	 	 (1)
+	 	 }
+
+,
+	 	 -- The interval over which the Range measurements are to be integrated, in seconds.
+	 	 integrationInterval 	 ShortIntPos
+,
+	 	 -- he integration reference specifies whether the timetag represents the start, middle,
+	 	 --  or end of the integration period.
+	 	 integrationRef      	 ENUMERATED
+	 	 {
+	 	 	 start               	 	 (0)
+	 	 ,	 middle              	 	 (1)
+	 	 ,	 end                 	 	 (2)
+	 	 }
+
+	 }
+
+
+
+-- This complex-valued parameter configures and reports the set of Receive Frequency
+--  tracking data paths for which Receive Frequency Atomic Segments are to be generated
+--  during the execution of the Service Package.
+tdmSeqGenRcvFreqPathTableParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 60100 1 8 1 1 }
+
+TdmSeqGenRcvFreqPathTable	 ::= SEQUENCE  OF	 SEQUENCE
+	 {
+
+	 	 -- trackingDataPathId, apertureName, spaceUserNodeName,reportingPeriod, and frName
+	 	 pathTableCommonElements	 TdmPathTableCommonElements
+,
+	 	 -- The frequency band of the carrier signal received from the Space User Node.
+	 	 rcvFreqBand         	 FreqBands
+	 }
+
+
+
+-- This complex-valued parameter configures and reports the set of Transmit Frequency
+--  tracking data paths for which Transmit Frequency Atomic Segments are to be generated
+--  during the execution of the Service Package.
+tdmSegGenXmitFreqPathTableParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 60100 1 9 1 1 }
+
+TdmSegGenXmitFreqPathTable	 ::= SEQUENCE  OF	 SEQUENCE
+	 {
+
+	 	 -- trackingDataPathId, apertureName, spaceUserNodeName,reportingPeriod, and frName
+	 	 pathTableCommonElements	 TdmPathTableCommonElements
+,
+	 	 -- The frequency band of the  carrier signal transmitted to the Space User Node.
+	 	 xmitFreqBand        	 FreqBands
+	 }
+
+
+
+-- This complex-valued parameter configures and reports the set of Transmit Frequency
+--  Rate tracking data paths for which Transmit Frequency Rate Atomic Segments are to
+--  be generated during the execution of the Service Package.
+tdmSegGenXmitFreqRatePathTableParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 60100 1 10 1 1 }
+
+TdmSegGenXmitFreqRatePathTable	 ::= SEQUENCE  OF	 SEQUENCE
+	 {
+
+	 	 -- trackingDataPathId, apertureName, spaceUserNodeName,reportingPeriod, and frName
+	 	 pathTableCommonElements	 TdmPathTableCommonElements
+,
+	 	 -- The frequency band of the  carrier signal transmitted to the Space User Node.
+	 	 xmitFreqBand        	 FreqBands
+	 }
+
+
+
+-- This complex-valued parameter configures and reports the set of Antenna Angles tracking
+--  data paths for which Antenna Angles Atomic Segments are to be generated during the
+--  execution of the Service Package.
+tdmSegGenAntAnglesPathTableParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 60100 1 11 1 1 }
+
+-- trackingDataPathId, apertureName, spaceUserNodeName,reportingPeriod, and frName
+TdmSegGenAntAnglesPathTable	 ::= TdmPathTableCommonElements
+
+
+-- This event notifies any change of the tdmSegGenResourceStat parameter.
+tdmSegGenResourceStatChangeEventOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 60100 2 1 1 }
+
+
+
+
+-- The event value reports the tdmSegGenResourceStat value that applies since the notified
+--  tdmSegGenResourceStatChange event occurred.
+tdmSegGenResourceStatChangeValueValueOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 60100 2 1 1 1 }
+
+TdmSegGenResourceStatChangeValue	 ::= TdmSegGenResourceStat
+
+
+-- This directive permits setting of the controllable parameters of the TdmSegmentGen
+--  FR type. 
+tdmSegGenSetContrParamsDirectiveOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 60100 3 1 1 }
+
+
+
+
+-- The directive qualifier specifies the FR instance the directive shall act on and
+--  contains a set of parameter identifier and parameter value pairs. To be valid, the
+--  parameter identifier must reference a controllable parameter of the TdmSegmentGen
+--  FR and the parameter value must be of the same type as the parameter value that
+--  shall be set.
+tdmSegGenContrParamIdsAndValuesQualifierOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 60100 3 1 1 1 }
+
+TdmSegGenContrParamIdsAndValues	 ::= DirectiveQualifier
 
 
 -- To be defined.
@@ -7129,18 +7509,104 @@ offlineFrameBufferSetContrParamsDirectiveOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 
 
 -- The directive qualifier specifies the FR instance the directive shall act on and
 --  contains a set of parameter identifier and parameter value pairs. To be valid, the
---  parameter identifier must reference a controllable parameter of the Offline Frame
---  Buffer FR and the parameter value must be of the same type as the parameter value
---  that shall be set. 
+--  parameter identifier must reference a controllable parameter of the OfflineFrameBuffer
+--  FR and the parameter value must be of the same type as the parameter value that
+--  shall be set. 
 offlineFrameBufferContrParamIdsAndValuesQualifierOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 70100 3 1 1 1 }
 
 OfflineFrameBufferContrParamIdsAndValues	 ::= DirectiveQualifier
 
 
--- TBS
+-- The TDM Recording Buffer is a repository of tracking data segments that are subsequently
+--  retrieved by Tracking Data CSTS Provider instances operating in the complete data
+--  transfer mode. 
+-- 
+-- The TDM Recording Buffer FR corresponds to the Recording Buffer
+--  production entity defined in annex F3 of the Cross Suppport Transfer Service - Tracking
+--  Data Service Recommended Standard.
+-- 
+-- An instance of TdmRcrdBuffer records all TDM
+--  Atomic Segments generated by the TsnSegGen FR instance with which it is associated.
+--  A TdmRcrdBuffer instance makes available all TDM Atomic Segments that it retains
+--  to any TdCstsProvider FR instance with which it is associated.
 tdmRcrdBufferFrOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 70200 }
 
 
+
+
+-- This enumerated parameter reports the TdmRcrdBuffer FR resource status and can take
+--  on four values:
+-- -  - 'configured': the associated resource has been configured
+-- 
+--     - 'operational': the associated resource is active;
+--     - 'interrupted': a failure
+--  has been detected;
+--     - 'halted': the associated resource has been taken out of
+--  service.
+-- 
+-- NOTE - Because it is an offline data storage FR, the resource status
+--  of the TdmRcrdBuffer FR is independent of any Service Package that it may be included
+--  in. 
+tdmRcrdBufferResourceStatParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 70200 1 1 1 1 }
+
+TdmRcrdBufferResourceStat	 ::= ResourceStat
+
+
+-- This parameter configures and reports the maximum storage (in megabytes) allocated
+--  to the FR instance for all TDM Atomic Segment types.
+tdmRcrdBufferMaxStorageAllocParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 70200 1 2 1 1 }
+
+TdmRcrdBufferMaxStorageAlloc	 ::= LongIntUnsigned
+
+
+-- This parameter configures and reports the retention policy by which TDM Atomic Segments
+--  are discarded when the allocated maximum storage is reached. The valid values are:
+-- -	‘fifo’
+--  - The oldest TDM Segments are discarded first, regardless of the tracking data paths
+--  associated with the Segments; 
+-- -	‘balanced fifo: The TDM Segments are discarded
+--  equally across all tracking data paths for which the recording buffer is holding
+--  Segments. The discarding continues until the remaining Segments fit within the allocated
+--  storage space.
+-- 
+tdmRcrdBufferRetentionPolicyParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 70200 1 3 1 1 }
+
+TdmRcrdBufferRetentionPolicy	 ::= ENUMERATED
+{
+	 fifo                	 	 (0)
+,	 balancedFifo        	 	 (1)
+}
+
+
+
+-- This event notifies any change of the tdmRcrdBufferResourceStat parameter.
+tdmRcrdBufferResourceStatChangeEventOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 70200 2 1 1 }
+
+
+
+
+-- The event value reports the tdmRcrdBufferResourceStat value that applies since the
+--  notified tdmRcrdBufferResourceStatChange event occurred.
+tdmRcrdBufferResourceStatChangeValueValueOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 70200 2 1 1 1 }
+
+TdmRcrdBufferResourceStatChangeValue	 ::= TdmRcrdBufferResourceStat
+
+
+-- This directive permits setting of the controllable parameters of the TdmRcrdBuffer
+--  FR type. 
+tdmRcrdBufferSetContrParamsDirectiveOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 70200 3 1 1 }
+
+
+
+
+-- The directive qualifier specifies the FR instance the directive shall act on and
+--  contains a set of parameter identifier and parameter value pairs. To be valid, the
+--  parameter identifier must reference a controllable parameter of the TdmRcrdBuffer
+--  FR and the parameter value must be of the same type as the parameter value that
+--  shall be set. 
+tdmRcrdBufferContrParamIdsAndValuesQualifierOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 70200 3 1 1 1 }
+
+TdmRcrdBufferContrParamIdsAndValues	 ::= DirectiveQualifier
 
 
 -- none
@@ -9203,36 +9669,89 @@ TdProdStat          	 ::= ProdStatV1
 
 -- This parameter configures and reports the identifier of the given service instance.
 --  
-tdSvcInstanceIdParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80600 1 2 1 1 }
+tdSvcInstanceIdParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80700 1 2 1 1 }
 
 TdSvcInstanceId     	 ::= CstsSvcInstanceId
 
-tdSvcInstanceStateParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80600 1 3 1 1 }
+tdSvcInstanceStateParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80700 1 3 1 1 }
 
 TdSvcInstanceState  	 ::= StatefulCstsInstanceState
 
-tdInitiatorIdParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80600 1 4 1 1 }
+tdInitiatorIdParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80700 1 4 1 1 }
 
 TdInitiatorId       	 ::= AuthorityIdentifier
 
-tdResponderIdParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80600 1 5 1 1 }
+tdResponderIdParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80700 1 5 1 1 }
 
 TdResponderId       	 ::= AuthorityIdentifier
 
-tdResponderPortIdParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80600 1 6 1 1 }
+tdResponderPortIdParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80700 1 6 1 1 }
 
 TdResponderPortId   	 ::= ResponderPortId
 
 
+-- This parameter configures and reports the time (in seconds) that the service user
+--  should wait before invoking a PEER-ABORT when a return has not been received in
+--  response to a BIND or UNBIND invocation.
+tdSvcUserRespTimerParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80700 1 7 1 1 }
+
+TdSvcUserRespTimer  	 ::= SvcUserRespTimer
+
+
+-- This parameter configures and reports the data delivery mode of the Buffered Tracking
+--  Data Message Delivery procedure instance. See "Cross Support Transfer Service -
+--  Tracking Data Service", CCSDS 922.2.
+tdDeliveryModeParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80700 1 8 1 1 }
+
+TdDeliveryMode      	 ::= ENUMERATED
+{
+	 realtime            	 	 (0)
+,	 complete            	 	 (1)
+}
+
+
+
+-- This parameter configures and reports the return buffer size (in TRANSFER-DATA and/or
+--  NOTIFY invocations) to be used by the Buffered Tracking Data Message Delivery procedure
+--  instance. See "Cross Support Transfer Service - Tracking Data Service", CCSDS 922.2.
+tdReturnBufferSizeParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80700 1 9 1 1 }
+
+TdReturnBufferSize  	 ::= LongIntPos
+
+
+-- This parameter configures and reports the delivery latency limit (in seconds) to
+--  be used by the Buffered Tracking Data Message Delivery procedure instance. See "Cross
+--  Support Transfer Service - Tracking Data Service", CCSDS 922.2.
+tdDeliveryLatencyLimitParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80700 1 10 1 1 }
+
+TdDeliveryLatencyLimit	 ::= ShortIntPos
+
+
+-- This parameter configures and reports the set of named label lists to be used by
+--  the Information Query procedure instance. See "Cross Support Transfer Service -
+--  Tracking Data Service", CCSDS 922.2.
+tdNamedLabelListsParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80700 1 11 1 1 }
+
+-- the values of the paramOrEventId components are constrained to be parameter identifiers
+TdNamedLabelLists   	 ::= LabelListSetV1
+
+
+-- This parameter configures and reports the list of trackingDataPathIds for which this
+--  TD service instance will report the TDM Atomic Segments. See the TdmSegmentGen FR.
+tdPathListParamOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80700 1 12 1 1 }
+
+TdPathList          	 ::= SEQUENCE  OF	 VisibleString
+
+
 -- This event notifies any change of the rocfProdStat parameter. 
-tdProdStatChangeEventOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80600 2 1 1 }
+tdProdStatChangeEventOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80700 2 1 1 }
 
 
 
 
 -- The event value reports the tdProdStat value that applies since the notified tdProdStatChange
 --  event occurred.
-tdProdStatChangeEventValueValueOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80600 2 1 1 1 }
+tdProdStatChangeEventValueValueOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80700 2 1 1 1 }
 
 TdProdStatChangeEventValue	 ::= TdProdStat
 
@@ -9243,20 +9762,20 @@ TdProdStatChangeEventValue	 ::= TdProdStat
 -- 
 -- This event carries no additional information.
 -- 
-tdProdConfigurationChangeEventOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80600 2 2 1 }
+tdProdConfigurationChangeEventOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80700 2 2 1 }
 
 
 
 
 -- The event-value of this event is 'empty'.
-tdProdConfigurationChangeEventValueValueOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80600 2 2 1 1 }
+tdProdConfigurationChangeEventValueValueOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80700 2 2 1 1 }
 
 TdProdConfigurationChangeEventValue	 ::= ProdConfigurationChangeEventValue
 
 
 -- This directive permits setting of the controllable parameters of the TdCstsProvider
 --  FR type. 
-tdSetContrParamsDirectiveOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80600 3 1 1 }
+tdSetContrParamsDirectiveOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80700 3 1 1 }
 
 
 
@@ -9266,7 +9785,7 @@ tdSetContrParamsDirectiveOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80600 3 1 
 --  parameter identifier must reference a controllable parameter of the TdCstsProvider
 --  FR and the parameter value must be of the same type as the parameter value that
 --  shall be set.
-tdContrParamIdsAndValuesQualifierOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80600 3 1 1 1 }
+tdContrParamIdsAndValuesQualifierOid	 OBJECT IDENTIFIER ::= { 1 3 112 4 4 2 1 80700 3 1 1 1 }
 
 TdContrParamIdsAndValues	 ::= DirectiveQualifier
 
