@@ -112,7 +112,9 @@ public abstract class MdCstsTestBase
     protected MdCstsSiUser userSi;
 
     protected static final List<TestParameter> testParameters = new LinkedList<TestParameter>();
-    
+
+    protected static final List<TestParameter> testEvents = new LinkedList<TestParameter>();
+
     static class TestParameter
     {
         public final ObjectIdentifier oid;
@@ -135,6 +137,21 @@ public abstract class MdCstsTestBase
             this.updatedValue = updatedValue;
         }
 
+        @Override
+        public String toString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.append("TestParameter [oid=");
+            sb.append(this.oid);
+            sb.append(", name=");
+            sb.append(this.name);
+            sb.append(", initValue=");
+            sb.append(this.initValue);
+            sb.append(", updatedValue=");
+            sb.append(this.updatedValue);
+            sb.append("]");
+            return sb.toString();
+        }
     }
 
     @BeforeClass

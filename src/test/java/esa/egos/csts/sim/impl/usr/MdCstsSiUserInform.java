@@ -19,9 +19,11 @@ import esa.egos.csts.api.diagnostics.DiagnosticType;
 import esa.egos.csts.api.diagnostics.StartDiagnostic;
 import esa.egos.csts.api.diagnostics.StartDiagnosticType;
 import esa.egos.csts.api.enumerations.CstsResult;
+import esa.egos.csts.api.enumerations.EventValueType;
 import esa.egos.csts.api.enumerations.OperationResult;
 import esa.egos.csts.api.enumerations.ParameterType;
-import esa.egos.csts.api.events.FunctionalResourceEventEx;
+import esa.egos.csts.api.events.EventValue;
+import esa.egos.csts.api.events.impl.FunctionalResourceEvent;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.functionalresources.FunctionalResourceMetadata;
@@ -101,7 +103,7 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
     private Map<ProcedureInstanceIdentifier, Map<Name, FunctionalResourceParameterEx<?>>> parameters;
 
     /** FR parameters received from procedures */
-    private Map<ProcedureInstanceIdentifier, Map<Name, FunctionalResourceEventEx<?>>> events;
+    private Map<ProcedureInstanceIdentifier, Map<Name, FunctionalResourceEvent<?>>> events;
 
     /** Number of the received parameter updates by a procedure */
     protected Map<ProcedureInstanceIdentifier, Integer> parameterUpdateCounters;
@@ -131,7 +133,7 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
         this.notifiedEvents = new ArrayList<Name>();
 
         this.parameters = new HashMap<ProcedureInstanceIdentifier, Map<Name, FunctionalResourceParameterEx<?>>>();
-        this.events = new HashMap<ProcedureInstanceIdentifier, Map<Name, FunctionalResourceEventEx<?>>>();
+        this.events = new HashMap<ProcedureInstanceIdentifier, Map<Name, FunctionalResourceEvent<?>>>();
         this.parameterUpdateCounters = new HashMap<ProcedureInstanceIdentifier, Integer>();
         this.eventUpdateCounters = new HashMap<ProcedureInstanceIdentifier, Integer>();
         for (ProcedureInstanceIdentifier piid : config.getProceduresIdentifiers())
@@ -143,7 +145,7 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
             }
             else if (piid.getType().equals(ProcedureType.of(OIDs.notification)))
             {
-                this.events.put(piid, new HashMap<Name, FunctionalResourceEventEx<?>>());
+                this.events.put(piid, new HashMap<Name, FunctionalResourceEvent<?>>());
             }
         }
 
@@ -624,7 +626,9 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
     {
         System.out.println("MdCstsSiUserInform#onNotify() begin");
 
+        ProcedureInstanceIdentifier piid = notify.getProcedureInstanceIdentifier();
         Name eventName = notify.getEventName();
+
         if (eventName != null)
         {
             System.out.println(eventName);
@@ -633,6 +637,35 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
             {
                 this.notifiedEvents.add(Name.of(eventName.getOid(), eventName.getFunctionalResourceName()));
             }
+        }
+
+        try
+        {
+            synchronized (this.events)
+            {
+                incrementCounter(piid, this.eventUpdateCounters, 1);
+                Map<Name, FunctionalResourceEvent<?>> procedureEvents = this.events.get(piid);
+
+                EventValue eventValue = notify.getEventValue();
+                if (eventValue.getType() == EventValueType.EXTENDED)
+                {
+                    FunctionalResourceEvent<?> event = procedureEvents.get(eventName);
+                    if (event == null)
+                    {
+                        event = FunctionalResourceMetadata.getInstance().createEvent(eventName);
+                        procedureEvents.put(eventName, event);
+                    }
+                    event.setValue(eventValue);
+                }
+                else
+                {
+                    System.out.println("Received and event w/ usuppoerted EventValueType " + eventValue.getType());
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
         }
 
         System.out.println("MdCstsSiUserInform#onNotify() end");
@@ -774,9 +807,27 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
         return ret;
     }
 
+    /**
+     * Get procedure's FR events
+     * 
+     * @param piid The procedure identifier
+     * 
+     * @return The map of the procedure's FR events
+     */
+    protected Map<Name, FunctionalResourceEvent<?>> getProcedureEvents(ProcedureInstanceIdentifier piid)
+    {
+        Map<Name, FunctionalResourceEvent<?>> ret = this.events.get(piid);
+        if (ret == null)
+        {
+            throw new IllegalArgumentException(piid + " is not supported by " + this.serviceInstance.getServiceInstanceIdentifier());
+        }
+
+        return ret;
+    }
+
     // TODO clone the returned instances of FunctionalResourceParameterEx<?> from methods below
     /**
-     * Get parameter from a procedure
+     * Get a parameter from a procedure
      * 
      * @param piid The procedure identifier
      * @param name FR parameter name
@@ -800,6 +851,30 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
     }
 
     /**
+     * Get an event from a procedure
+     * 
+     * @param piid The procedure identifier
+     * @param name FR event name
+     * 
+     * @return the list of FR parameters
+     */
+    public FunctionalResourceEvent<?> getEvent(ProcedureInstanceIdentifier piid, Name name)
+    {
+        FunctionalResourceEvent<?> ret;
+        synchronized (this.parameters)
+        {
+            ret = getProcedureEvents(piid).get(name);
+            if (ret == null)
+            {
+                throw new IllegalArgumentException("FR event " + name + " has not been received by procedure "
+                                                   + piid);
+            }
+        }
+
+        return ret;
+    }
+
+    /**
      * Get parameter from the prime procedure
      * 
      * @param name FR parameter name
@@ -810,6 +885,19 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
     public FunctionalResourceParameterEx<?> getParameter(Name name)
     {
         return getParameter(getPrimeProcedureIdentifier(), name);
+    }
+
+    /**
+     * Get event from the prime procedure
+     * 
+     * @param name FR event name
+     * 
+     * @return FR event
+     */
+    @Override
+    public FunctionalResourceEvent<?> getEvent(Name name)
+    {
+        return getEvent(getPrimeProcedureIdentifier(), name);
     }
 
     /**

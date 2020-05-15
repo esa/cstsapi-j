@@ -16,7 +16,7 @@ import java.util.Optional;
 
 import com.beanit.jasn1.ber.types.BerType;
 
-import esa.egos.csts.api.events.FunctionalResourceEventEx;
+import esa.egos.csts.api.events.impl.FunctionalResourceEvent;
 import esa.egos.csts.api.functionalresources.values.ICstsValueFactory;
 import esa.egos.csts.api.functionalresources.values.impl.CstsValueFactory;
 import esa.egos.csts.api.oids.ObjectIdentifier;
@@ -46,7 +46,7 @@ public class FunctionalResourceMetadata
     /** The instance singleton lock */
     private static Object lock = new Object();
 
-    private static final String  JAVA = "java";
+    private static final String JAVA = "java";
 
     private static final String TYPE_SUFFIX = "Type";
 
@@ -54,7 +54,7 @@ public class FunctionalResourceMetadata
 
     private static final String FR_PAR_OID_SUFFIX = "ParamOid";
 
-    private static final String FR_EV_OID_SUFFIX = "EventOid";
+    private static final String FR_EV_OID_SUFFIX = "ValueOid";
 
     private static final String FR_TYPES_CLASS_NAME = "Fr";
 
@@ -91,12 +91,12 @@ public class FunctionalResourceMetadata
     /** CSTS value factory */
     private ICstsValueFactory cstsValueFactory;
 
+
     private enum Type
     {
-        PARAMETER,
-        EVENT,
-        DIRECTIVE
+     PARAMETER, EVENT, DIRECTIVE
     }
+
 
     /**
      * C-tor
@@ -118,6 +118,7 @@ public class FunctionalResourceMetadata
 
     /**
      * Get the singleton instance
+     * 
      * @return The instance
      */
     public static FunctionalResourceMetadata getInstance()
@@ -139,7 +140,8 @@ public class FunctionalResourceMetadata
     /**
      * Load FR meta data from the jASN compiler generated binary classes
      * 
-     * @param packageName The package name containing the generated binary classes
+     * @param packageName The package name containing the generated binary
+     *            classes
      * @throws Exception
      */
     public synchronized void loadFromBinaryClasses(String packageName) throws Exception
@@ -232,7 +234,6 @@ public class FunctionalResourceMetadata
      * 
      * @param str The string w/ a suffix
      * @param suffix The suffix
-     * 
      * @return the string w/o the suffix
      */
     private static String removeSuffix(String str, String suffix)
@@ -247,9 +248,9 @@ public class FunctionalResourceMetadata
     }
 
     /**
-     * Process a single OID found in the OID definition class.
-     * The method collects FR, FR parameter, FR event and FR directives
-     * OID names and their integer arrays
+     * Process a single OID found in the OID definition class. The method
+     * collects FR, FR parameter, FR event and FR directives OID names and their
+     * integer arrays
      * 
      * @param oidName The OID (JASN.1 generated class) name
      * @param oidArray The OID as an int array
@@ -327,7 +328,7 @@ public class FunctionalResourceMetadata
      * Identifies whether the BER class is FR parameter or FR event
      * 
      * @param berClassEntry The BER class name (key) and BE class (value)
-     * @param name 
+     * @param name
      * @param oidName2oidArray
      * @param oid2oid2class
      * @return
@@ -378,7 +379,8 @@ public class FunctionalResourceMetadata
     }
 
     /**
-     * Find OIDs and bind BER classes with their OIDs and keep them in dedicated maps
+     * Find OIDs and bind BER classes with their OIDs and keep them in dedicated
+     * maps
      * 
      * @param classes The BER classes
      * @throws Exception
@@ -396,10 +398,19 @@ public class FunctionalResourceMetadata
 
         OidTree.readOidValues(opt.get(), this::processOid);
 
+        LOG.info(() -> {
+            StringBuilder sb = new StringBuilder("Found jASN.1 classes:\n");
+            this.berClasses.values().forEach(bc -> sb.append(bc.getSimpleName()).append('\n'));
+            return sb.toString();
+        });
+
         for (Entry<String, Class<?>> berClassEntry : this.berClasses.entrySet())
         {
             // try to process the BER class as an FR parameter
-            if (!processBerClass(berClassEntry, this.frParameterOidName2oidArray, this.frOid2frParameterOidAndClass, Type.PARAMETER))
+            if (!processBerClass(berClassEntry,
+                                 this.frParameterOidName2oidArray,
+                                 this.frOid2frParameterOidAndClass,
+                                 Type.PARAMETER))
             {
                 // try to process the BER class as an FR event
                 processBerClass(berClassEntry, this.frEventOidName2oidArray, this.frOid2frEventOidAndClass, Type.EVENT);
@@ -408,18 +419,16 @@ public class FunctionalResourceMetadata
     }
 
     /**
-     * Create instances of {@IParameter} for provided
-     * {@FunctionalResourceType} and its instance number
+     * Create instances of {@IParameter} for provided {@Name}
      * 
-     * @param frType The {@FunctionalResourceType}
-     * @param instanceNumber The instance number
-     * @return the list of all FR parameters
+     * @param name The parameter name
+     * @return the FR parameter
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public FunctionalResourceParameterEx<?> createParameter(Name name) throws InstantiationException,
-                                                                                       IllegalAccessException
+                                                                       IllegalAccessException
     {
         FunctionalResourceType frType = name.getFunctionalResourceName().getType();
         Map<ObjectIdentifier, Class<?>> oid2Class = this.frOid2frParameterOidAndClass.get(frType.getOid());
@@ -438,6 +447,36 @@ public class FunctionalResourceMetadata
                                                  name.getFunctionalResourceName(),
                                                  berClass,
                                                  this.cstsValueFactory);
+    }
+
+    /**
+     * Create instances of {@IEvent} for provided {@Name}
+     * 
+     * @param name The parameter name
+     * @return FR event
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public FunctionalResourceEvent<?> createEvent(Name name) throws InstantiationException, IllegalAccessException
+    {
+        FunctionalResourceType frType = name.getFunctionalResourceName().getType();
+        Map<ObjectIdentifier, Class<?>> oid2Class = this.frOid2frEventOidAndClass.get(frType.getOid());
+        if (oid2Class == null)
+        {
+            throw new IllegalArgumentException(frType + " is not supported");
+        }
+
+        Class<?> berClass = oid2Class.get(name.getOid());
+        if (berClass == null)
+        {
+            throw new IllegalArgumentException(name + " is not supported");
+        }
+
+        return new FunctionalResourceEvent(name.getOid(),
+                                           name.getFunctionalResourceName(),
+                                           berClass,
+                                           this.cstsValueFactory);
     }
 
     /**
@@ -483,21 +522,22 @@ public class FunctionalResourceMetadata
      * @throws IllegalAccessException
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public List<FunctionalResourceEventEx<?>> createEvents(FunctionalResourceType frType,
-                                                           int instanceNumber) throws InstantiationException,
-                                                                               IllegalAccessException
+    public List<FunctionalResourceEvent<?>> createEvents(FunctionalResourceType frType,
+                                                         int instanceNumber) throws InstantiationException,
+                                                                             IllegalAccessException
     {
-        List<FunctionalResourceEventEx<?>> ret = new ArrayList<>();
+        List<FunctionalResourceEvent<?>> ret = new ArrayList<>();
         Map<ObjectIdentifier, Class<?>> oid2Class = this.frOid2frEventOidAndClass.get(frType.getOid());
         if (oid2Class != null)
         {
             for (Entry<ObjectIdentifier, Class<?>> e : oid2Class.entrySet())
             {
                 FunctionalResourceName frName = FunctionalResourceName.of(frType, instanceNumber);
-                FunctionalResourceEventEx<?> parameter = new FunctionalResourceEventEx(e.getKey(),
-                                                                                       frName,
-                                                                                       e.getValue());
-                ret.add(parameter);
+                FunctionalResourceEvent<?> event = new FunctionalResourceEvent(e.getKey(),
+                                                                               frName,
+                                                                               e.getValue(),
+                                                                               this.cstsValueFactory);
+                ret.add(event);
             }
         }
         return ret;
@@ -509,7 +549,7 @@ public class FunctionalResourceMetadata
      * 
      * @param oids The map containing e.g an FR or an FR parameter label
      * @param oidConfigFile The output configuration file for the CSTS API
-     * @throws Exception 
+     * @throws Exception
      */
     public void createOidConfiguration(String oidConfigFile) throws Exception
     {
@@ -544,8 +584,8 @@ public class FunctionalResourceMetadata
 
     private String makeFrTypeName(String frOid, boolean firstUpperCase)
     {
-        return (firstUpperCase)? CSTSUtils.firstToUpperCase(removeSuffix(frOid, FR_OID_SUFFIX)):
-            CSTSUtils.firstToLowerCase(removeSuffix(frOid, FR_OID_SUFFIX));
+        return (firstUpperCase) ? CSTSUtils.firstToUpperCase(removeSuffix(frOid, FR_OID_SUFFIX))
+                                : CSTSUtils.firstToLowerCase(removeSuffix(frOid, FR_OID_SUFFIX));
     }
 
     /**
@@ -624,8 +664,9 @@ public class FunctionalResourceMetadata
     }
 
     /**
-     * Change CSTS value factory 
-     * NOTE: It must be invoked prior to creation of FR parameters or event
+     * Change CSTS value factory NOTE: It must be invoked prior to creation of
+     * FR parameters or event
+     * 
      * @param cstsValueFactory
      */
     public void setCstsValueFactory(ICstsValueFactory cstsValueFactory)
@@ -634,13 +675,14 @@ public class FunctionalResourceMetadata
     }
 
     /**
-     * Creates the Fr class and/or the OidConfig.xml file 
-     * @param args The arguments:
-     *  -g <source package name with jASN.1 generated classes> mandatory argument 
-     *  -d <output directory for OidConfig.xml> optional argument
-     *  -f <output package for Fr class> optional argument
+     * Creates the Fr class and/or the OidConfig.xml file
+     * 
+     * @param args The arguments: -g <source package name with jASN.1 generated
+     *            classes> mandatory argument -d <output directory for
+     *            OidConfig.xml> optional argument -f <output package for Fr
+     *            class> optional argument
      */
-    public static void main(String[] args) throws Exception 
+    public static void main(String[] args) throws Exception
     {
         try
         {
@@ -741,6 +783,7 @@ public class FunctionalResourceMetadata
 
     /**
      * Convert FR parameter stored in a qualified parameter value to string
+     * 
      * @param qualifiedParameter The qualified parameter w/ extended type
      * @return String
      */

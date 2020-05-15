@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import esa.egos.csts.api.events.Event;
-import esa.egos.csts.api.events.FunctionalResourceEventEx;
+import esa.egos.csts.api.events.impl.FunctionalResourceEvent;
 import esa.egos.csts.api.functionalresources.FunctionalResourceMetadata;
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
@@ -84,7 +84,7 @@ public class MdCollection
 
             // create FR's events
             // e.g. for FR Antenna: antEventTrackingRxLockStat, antWindSpeedCriticality and etc 
-            List<FunctionalResourceEventEx<?>> frEvents =
+            List<FunctionalResourceEvent<?>> frEvents =
                     FunctionalResourceMetadata.getInstance().createEvents(frType, instanceNumber);
 
             // add FR's parameters to the MD collection

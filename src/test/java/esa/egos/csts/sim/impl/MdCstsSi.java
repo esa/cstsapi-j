@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import esa.egos.csts.api.events.impl.FunctionalResourceEvent;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
@@ -125,6 +126,8 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
 
     public abstract FunctionalResourceParameterEx<?> getParameter(Name name);
 
+    public abstract FunctionalResourceEvent<?> getEvent(Name name);
+
     public abstract List<FunctionalResourceParameterEx<?>> getParameters(Label label);
 
     public abstract List<FunctionalResourceParameterEx<?>> getParameters(FunctionalResourceName frn);
@@ -133,12 +136,22 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
 
     public ICstsValue getParameterValue(Name name) throws IllegalArgumentException, IllegalAccessException
     {
-        FunctionalResourceParameter parameter = getParameter(name);
+        FunctionalResourceParameterEx<?> parameter = getParameter(name);
         if (parameter == null)
         {
             throw new NullPointerException("Parameter " + name + " is not available in MD collection");
         }
-        return ((FunctionalResourceParameterEx<?>) parameter).getCstsValue();
+        return parameter.getCstsValue();
+    }
+
+    public ICstsValue getEventValue(Name name) throws IllegalArgumentException, IllegalAccessException
+    {
+        FunctionalResourceEvent<?> event = getEvent(name);
+        if (event == null)
+        {
+            throw new NullPointerException("Event " + name + " is not available in MD collection");
+        }
+        return event.getCstsValue();
     }
 
     public List<ICstsValue> getParameterValue(Label label) throws IllegalArgumentException, IllegalAccessException

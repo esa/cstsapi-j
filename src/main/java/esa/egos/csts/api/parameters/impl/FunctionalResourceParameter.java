@@ -6,83 +6,135 @@ import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.parameters.AbstractParameter;
 
-public abstract class FunctionalResourceParameter extends AbstractParameter {
+public abstract class FunctionalResourceParameter extends AbstractParameter
+{
 
-	private String classifier;
-	private String authorizingEntitiy;
-	private LocalDateTime creationDate;
-	private boolean deprecated;
-	private boolean configured;
-	private String semanticDefinition;
-	private double value;
-	private String unit;
+    private String classifier;
 
-	public FunctionalResourceParameter(ObjectIdentifier identifier, FunctionalResourceName functionalResourceName) {
-		super(identifier, functionalResourceName);
-	}
-	
-	public String getClassifier() {
-		return classifier;
-	}
+    private String authorizingEntitiy;
 
-	public void setClassifier(String classifier) {
-		this.classifier = classifier;
-	}
+    private LocalDateTime creationDate;
 
-	public String getAuthorizingEntitiy() {
-		return authorizingEntitiy;
-	}
+    private boolean deprecated;
 
-	public void setAuthorizingEntitiy(String authorizingEntitiy) {
-		this.authorizingEntitiy = authorizingEntitiy;
-	}
+    private boolean configured;
 
-	public LocalDateTime getCreationDate() {
-		return creationDate;
-	}
+    private String semanticDefinition;
 
-	public void setCreationDate(LocalDateTime creationDate) {
-		this.creationDate = creationDate;
-	}
+    private double value;
 
-	public boolean isDeprecated() {
-		return deprecated;
-	}
+    private String unit;
 
-	public void setDeprecated(boolean deprecated) {
-		this.deprecated = deprecated;
-	}
 
-	public boolean isConfigured() {
-		return configured;
-	}
+    public FunctionalResourceParameter(ObjectIdentifier identifier, FunctionalResourceName functionalResourceName)
+    {
+        super(identifier, functionalResourceName);
+    }
 
-	public void setConfigured(boolean configured) {
-		this.configured = configured;
-	}
+    public String getClassifier()
+    {
+        return classifier;
+    }
 
-	public String getSemanticDefinition() {
-		return semanticDefinition;
-	}
+    public void setClassifier(String classifier)
+    {
+        this.classifier = classifier;
+    }
 
-	public void setSemanticDefinition(String semanticDefinition) {
-		this.semanticDefinition = semanticDefinition;
-	}
+    public String getAuthorizingEntitiy()
+    {
+        return authorizingEntitiy;
+    }
 
-	public double getValue() {
-		return value;
-	}
+    public void setAuthorizingEntitiy(String authorizingEntitiy)
+    {
+        this.authorizingEntitiy = authorizingEntitiy;
+    }
 
-	public void setValue(double value) {
-		this.value = value;
-	}
+    public LocalDateTime getCreationDate()
+    {
+        return creationDate;
+    }
 
-	public String getUnit() {
-		return unit;
-	}
+    public void setCreationDate(LocalDateTime creationDate)
+    {
+        this.creationDate = creationDate;
+    }
 
-	public void setUnit(String unit) {
-		this.unit = unit;
-	}
+    public boolean isDeprecated()
+    {
+        return deprecated;
+    }
+
+    public void setDeprecated(boolean deprecated)
+    {
+        this.deprecated = deprecated;
+    }
+
+    public boolean isConfigured()
+    {
+        return configured;
+    }
+
+    public void setConfigured(boolean configured)
+    {
+        this.configured = configured;
+    }
+
+    public String getSemanticDefinition()
+    {
+        return semanticDefinition;
+    }
+
+    public void setSemanticDefinition(String semanticDefinition)
+    {
+        this.semanticDefinition = semanticDefinition;
+    }
+
+    public double getValue()
+    {
+        return value;
+    }
+
+    public void setValue(double value)
+    {
+        this.value = value;
+    }
+
+    public String getUnit()
+    {
+        return unit;
+    }
+
+    public void setUnit(String unit)
+    {
+        this.unit = unit;
+    }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append("FunctionalResourceParameter [");
+        sb.append(super.toString());
+        sb.append(", classifier=");
+        sb.append(this.classifier);
+        sb.append(", authorizingEntitiy=");
+        sb.append(this.authorizingEntitiy);
+        sb.append(", creationDate=");
+        sb.append(this.creationDate);
+        sb.append(", deprecated=");
+        sb.append(this.deprecated);
+        sb.append(", configured=");
+        sb.append(this.configured);
+        sb.append(", semanticDefinition=");
+        sb.append(this.semanticDefinition);
+        sb.append(", value=");
+        sb.append(this.value);
+        sb.append(", unit=");
+        sb.append(this.unit);
+        sb.append("]");
+        return sb.toString();
+    }
 
 }

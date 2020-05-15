@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import esa.egos.csts.api.events.IEvent;
+import esa.egos.csts.api.events.impl.FunctionalResourceEvent;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
@@ -16,7 +17,6 @@ import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.parameters.IParameter;
-import esa.egos.csts.api.parameters.impl.FunctionalResourceParameter;
 import esa.egos.csts.api.parameters.impl.FunctionalResourceParameterEx;
 import esa.egos.csts.api.parameters.impl.LabelLists;
 import esa.egos.csts.api.procedures.IProcedure;
@@ -192,12 +192,22 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
 
     public void setParameterValue(Name name, ICstsValue value) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InstantiationException
     {
-        FunctionalResourceParameter parameter = getParameter(name);
+        FunctionalResourceParameterEx<?> parameter = getParameter(name);
         if (parameter == null)
         {
             throw new NullPointerException("Parameter " + name + " is not available in MD collection");
         }
-        ((FunctionalResourceParameterEx<?>) parameter).setCstsValue(value);
+        parameter.setCstsValue(value);
+    }
+
+    public void setEventValue(Name name, ICstsValue value) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InstantiationException
+    {
+        FunctionalResourceEvent<?> event = getEvent(name);
+        if (event == null)
+        {
+            throw new NullPointerException("Event " + name + " is not available in MD collection");
+        }
+        event.setCstsValue(value);
     }
 
     public void setParameterValue(Label label, ICstsValue value) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InstantiationException
@@ -238,6 +248,20 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
         }
 
         return (FunctionalResourceParameterEx<?>) op.get();
+    }
+
+    public FunctionalResourceEvent<?> getEvent(Name name)
+    {
+        Optional<IEvent> op = this.serviceInstance.gatherEvents().stream()
+                .filter(e -> (e.getName().equals(name) && e instanceof FunctionalResourceEvent)).findFirst();
+
+        if (!op.isPresent())
+        {
+            throw new IllegalArgumentException("Event " + name + " is not availeble in "
+                                               + this.serviceInstance.getServiceInstanceIdentifier());
+        }
+
+        return (FunctionalResourceEvent<?>) op.get();
     }
 
     public List<FunctionalResourceParameterEx<?>> getParameters(Label label)
