@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
+import com.beanit.jasn1.ber.types.BerBitString;
 import com.beanit.jasn1.ber.types.BerBoolean;
 import com.beanit.jasn1.ber.types.BerInteger;
 import com.beanit.jasn1.ber.types.BerNull;
@@ -61,6 +62,8 @@ public class FunctionalResourceValue<T extends BerType>
     private static final double INIT_REAL_VALUE = 0.0;
 
     private static final int[] INIT_OID_VALUE = new int[0];
+    
+    private static final byte[] INIT_BIT_STR_VALUE = new byte[0];
 
     /** The generated BER class */
     private final Class<T> berClass;
@@ -316,6 +319,17 @@ public class FunctionalResourceValue<T extends BerType>
                 ret = this.cstsValueFactory.createCstsOidValue(name, this.qualifier, (int[]) objValue);
             }
         }
+        else if(berObject instanceof BerBitString)
+        {
+            if (objValue instanceof byte[])
+            {
+                ret = this.cstsValueFactory.createCstsBitStringValue(name, (byte[]) objValue);
+            }
+        }
+        else if(berObject instanceof BerNull)
+        {
+            ret = this.cstsValueFactory.createCstsNullValue(name);
+        }    
 
         return ret;
     }
@@ -502,6 +516,13 @@ public class FunctionalResourceValue<T extends BerType>
             LOG.fine(() -> "Setting " + value + " to field " + valueField.getName() + " w/ type "
                            + valueField.getType() + " for parameter " + this.name);
             valueField.set(berObject, value.getValue());
+
+            // not very nice solution for BerBitString (it has 2 fields instead of one (value) which both must be set):
+            if (berObject instanceof BerBitString)
+            {
+                Field valueField2 = getValueField(berClass, "numBits");
+                valueField2.set(berObject, ((byte[])value.getValue()).length * 8);
+            }
         }
         catch (IllegalArgumentException e)
         {
@@ -836,6 +857,10 @@ public class FunctionalResourceValue<T extends BerType>
         else if (berObject instanceof BerObjectIdentifier)
         {
             valueField.set(berObject, INIT_OID_VALUE);
+        }
+        else if (berObject instanceof BerBitString)
+        {
+            valueField.set(berObject, INIT_BIT_STR_VALUE);
         }
         else
         {

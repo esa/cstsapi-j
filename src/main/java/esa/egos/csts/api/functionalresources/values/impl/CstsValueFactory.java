@@ -3,6 +3,7 @@ package esa.egos.csts.api.functionalresources.values.impl;
 import java.math.BigInteger;
 
 import esa.egos.csts.api.enumerations.ParameterQualifier;
+import esa.egos.csts.api.functionalresources.values.ICstsBitStringValue;
 import esa.egos.csts.api.functionalresources.values.ICstsBoolValue;
 import esa.egos.csts.api.functionalresources.values.ICstsComplexValue;
 import esa.egos.csts.api.functionalresources.values.ICstsIntValue;
@@ -145,6 +146,30 @@ public class CstsValueFactory implements ICstsValueFactory
     }
 
     @Override
+    public ICstsBitStringValue createCstsBitStringValue(byte[] value)
+    {
+        return CstsBitStringValue.of(value);
+    }
+
+    @Override
+    public ICstsBitStringValue createCstsBitStringValue(String name, byte[] value)
+    {
+        return CstsBitStringValue.of(name, value);
+    }
+
+    @Override
+    public ICstsBitStringValue createCstsBitStringValue(boolean[] bits)
+    {
+        return CstsBitStringValue.of(bits);
+    }
+
+    @Override
+    public ICstsBitStringValue createCstsBitStringValue(String name, boolean[] bits)
+    {
+        return CstsBitStringValue.of(name, bits);
+    }
+
+    @Override
     public ICstsComplexValue createCstsComplexValue(String name, ICstsValue... values)
     {
         return CstsComplexValue.of(name, values);
@@ -154,6 +179,18 @@ public class CstsValueFactory implements ICstsValueFactory
     public ICstsComplexValue createCstsComplexValue(String name, ParameterQualifier qualifier, ICstsValue... values)
     {
         return CstsComplexValue.of(name, qualifier, values);
+    }
+    
+    @Override
+    public CstsNullValue createCstsNullValue(String name)
+    {
+        return CstsNullValue.of(name);
+    }
+
+    @Override
+    public CstsNullValue createCstsNullValue(String name, ParameterQualifier qualifier)
+    {
+        return CstsNullValue.of(name, qualifier);
     }
 
     @Override

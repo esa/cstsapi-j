@@ -3,6 +3,7 @@ package esa.egos.csts.api.functionalresources.values;
 import java.math.BigInteger;
 
 import esa.egos.csts.api.enumerations.ParameterQualifier;
+import esa.egos.csts.api.functionalresources.values.impl.CstsNullValue;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 
 public interface ICstsValueFactory
@@ -42,6 +43,18 @@ public interface ICstsValueFactory
     ICstsStringValue createCstsStringValue(String value);
 
     ICstsStringValue createCstsStringValue(String name, ParameterQualifier qualifier, String value);
+    
+    ICstsBitStringValue createCstsBitStringValue(byte[] value);
+
+    ICstsBitStringValue createCstsBitStringValue(String name, byte[] value);
+
+    ICstsBitStringValue createCstsBitStringValue(boolean[] bits);
+
+    ICstsBitStringValue createCstsBitStringValue(String name, boolean[] bits);
+
+    CstsNullValue createCstsNullValue(String name);
+
+    CstsNullValue createCstsNullValue(String name, ParameterQualifier qualifier);
 
     ICstsComplexValue createCstsComplexValue(String name, ICstsValue... values);
 
