@@ -28,7 +28,7 @@ public class NotificationCcsds401SpaceLinkCarrierXmitTest extends NotificationFr
     @BeforeClass
     public static void setupClass() throws Exception
     {
-        CyclicReportFrTestBase.setUpClass();
+    	NotificationFrTestBase.setUpClass();
         testParameters.add(new TestParameter(Fr.Ccsds401SpaceLinkCarrierXmit.parameter.ccsds401CarrierXmitSymbolRateParamOid, "ccsds401CarrierXmitSymbolRate", 10, 30));
         testParameters.add(new TestParameter(Fr.Ccsds401SpaceLinkCarrierXmit.parameter.ccsds401CarrierXmitModInpStatParamOid,
         		CstsComplexValue.of("ccsds401CarrierXmitModInpStat",
