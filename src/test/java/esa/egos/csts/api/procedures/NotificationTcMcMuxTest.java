@@ -4,6 +4,7 @@ package esa.egos.csts.api.procedures;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.functionalresources.values.impl.CstsComplexValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsIntValue;
+import esa.egos.csts.api.procedures.MdCstsTestBase.TestParameter;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.sim.impl.frm.Fr;
 
@@ -28,27 +29,9 @@ public class NotificationTcMcMuxTest extends NotificationFrTestBase
     public static void setupClass() throws Exception
     {
     	NotificationFrTestBase.setUpClass();
-        testParameters.add(new TestParameter(Fr.TcMcMux.parameter.tcMcMuxPresenceOfFecParamOid, "tcMcMuxPresenceOfFec", 10, 20));
-        testParameters.add(new TestParameter(Fr.TcMcMux.parameter.tcMcMuxMaxNumberOfFramesPerCltuParamOid, "tcMcMuxMaxNumberOfFramesPerCltu", 100, 200));
-        testParameters.add(new TestParameter(Fr.TcMcMux.parameter.tcMcMuxMaxFrameLengthParamOid, "tcMcMuxMaxFrameLength", 150, 250));
-        testParameters.add(new TestParameter(Fr.TcMcMux.parameter.tcMcMuxResourceStatParamOid, "tcMcMuxResourceStat", 15, 25));
-
-        testParameters.add(new TestParameter(Fr.TcMcMux.parameter.tcMcMuxContrParamOid,
-            CstsComplexValue.of("tcMcMuxContr",
-                CstsComplexValue.of("absolutePriority",
-                    CstsIntValue.of("seqOf", 10),
-                    CstsIntValue.of("seqOf", 11),
-                    CstsIntValue.of("seqOf", 12)
-                )
-            ),
-            CstsComplexValue.of("tcMcMuxContr",
-                CstsComplexValue.of("pollingVector",
-                    CstsIntValue.of("seqOf", 20),
-                    CstsIntValue.of("seqOf", 21),
-                    CstsIntValue.of("seqOf", 22)
-                )
-            )
-        ));
+ 
+        testEvents.add(new TestParameter(Fr.TcMcMux.event.tcMcMuxResourceStatChangeEventValueValueOid, "tcMcMuxResourceStatChangeEventValue", 0, 1));
+    	
     }
 
     @Override
