@@ -160,6 +160,7 @@ public abstract class MdCstsTestBase
         TestBootstrap.initCs();
         FunctionalResourceMetadata.getInstance().loadFromBinaryClasses("frm.csts.functional.resource.types");
         testParameters.clear();
+        testEvents.clear();
     }
 
     /**

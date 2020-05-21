@@ -27,7 +27,7 @@ public class CyclicReportRocfTsProviderTest extends CyclicReportFrTestBase
     @BeforeClass
     public static void setupClass() throws Exception
     {
-        InformationQueryFrTestBase.setUpClass();
+    	CyclicReportFrTestBase.setUpClass();
         
         testParameters.add(new TestParameter(Fr.RocfTsProvider.parameter.rocfTransferBufferSizeParamOid, "rocfTransferBufferSize", 1000, 2000));
         testParameters.add(new TestParameter(Fr.RocfTsProvider.parameter.rocfRtnTimeoutPeriodParamOid, "rocfRtnTimeoutPeriod", 100, 200));

@@ -32,10 +32,11 @@ public class NotificationFspTsProviderTest extends NotificationFrTestBase
     public static void setupClass() throws Exception
     {
     	NotificationFrTestBase.setUpClass();
-
-//        testEvents.add(new TestParameter(Fr.FspTsProvider.event.fspProdConfigurationChangeEventValueValueOid, "fspProdConfigurationChangeEventValue", 0, 1));
-        testEvents.add(new TestParameter(Fr.FspTsProvider.event.fspProdStatChangeEventValueValueOid, "fspProdStatChangeEventValue", 0, 1));
-        
+    	testEvents.add(new TestParameter(Fr.FspTsProvider.event.fspProdStatChangeEventValueValueOid, "fspProdStatChangeEventValue", 0, 1));
+//        testEvents.add(new TestParameter(Fr.FspTsProvider.event.fspProdConfigurationChangeEventValueValueOid,
+//        		CstsNullValue.of("fspProdConfigurationChangeEventValue"), 
+//        		CstsNullValue.of("fspProdConfigurationChangeEventValue")
+//        		));
     }
 
     @Override

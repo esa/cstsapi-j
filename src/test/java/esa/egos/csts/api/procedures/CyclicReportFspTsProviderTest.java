@@ -11,6 +11,7 @@ import esa.egos.csts.api.functionalresources.values.impl.CstsIntValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsNullValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsOctetStringValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsStringValue;
+import esa.egos.csts.api.procedures.MdCstsTestBase.TestParameter;
 //import esa.egos.csts.api.functionalresources.values.impl.CstsNullValue;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.sim.impl.frm.Fr;
@@ -38,6 +39,7 @@ public class CyclicReportFspTsProviderTest extends CyclicReportFrTestBase
         testParameters.add(new TestParameter(Fr.FspTsProvider.parameter.fspDirectiveInvocationOnlineParamOid, "fspDirectiveInvocationOnline", 1, 2));
         testParameters.add(new TestParameter(Fr.FspTsProvider.parameter.fspPermittedTransmissionModeParamOid, "fspPermittedTransmissionMode", 2, 3));
         testParameters.add(new TestParameter(Fr.FspTsProvider.parameter.fspBitLockRequiredParamOid, "fspBitLockRequired", 3, 4));
+        testParameters.add(new TestParameter(Fr.FspTsProvider.parameter.fspDirectiveInvocationParamOid, "fspDirectiveInvocation", 3, 4));
         testParameters.add(new TestParameter(Fr.FspTsProvider.parameter.fspDeliveryModeParamOid, "fspDeliveryMode", 5, 6));
         testParameters.add(new TestParameter(Fr.FspTsProvider.parameter.fspRfAvailableRequiredParamOid, "fspRfAvailableRequired", 6, 7));
         testParameters.add(new TestParameter(Fr.FspTsProvider.parameter.fspRtnTimeoutPeriodParamOid, "fspRtnTimeoutPeriod", 12, 17));

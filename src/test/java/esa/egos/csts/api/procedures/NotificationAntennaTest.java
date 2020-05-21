@@ -24,7 +24,7 @@ public class NotificationAntennaTest extends NotificationFrTestBase
     @BeforeClass
     public static void setupClass() throws Exception
     {
-        CyclicReportFrTestBase.setUpClass();
+    	NotificationFrTestBase.setUpClass();
 
         testEvents.add(new TestParameter(Fr.Antenna.event.antResourceStatChangeEventValueValueOid, "antResourceStatChangeEventValue", 0, 1));
         testEvents.add(new TestParameter(Fr.Antenna.event.antTrackingRxLockStatChangeEventValueValueOid, "antTrackingRxLockStatChangeEventValue", 0, 1));
