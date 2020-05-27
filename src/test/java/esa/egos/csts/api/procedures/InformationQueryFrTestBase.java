@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -32,7 +33,7 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
     
     protected List<Label> createDefaultLabelList()
     {
-        return null;
+        return MdCstsTestBase.testParameters.stream().map(tp -> Label.of(tp.oid, getFunctionalResource())).collect(Collectors.toList());
     }
     
     @BeforeClass
@@ -168,12 +169,12 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
             index = 0;
             for (TestParameter testParameter : testParameters)
             {
-                List<ICstsValue> providerValue = this.providerSi.getParameterValue(labels.get(index++));
+                Map<Long, ICstsValue> providerValue = this.providerSi.getParameterValues(labels.get(index++));
                 assertTrue("provider: didn't get 2 values for " + testParameter.name, providerValue.size() == 2);
                 assertTrue("provider(Fr=0): found incorrect value of " + testParameter.name,
-                           providerValue.get(0).equals(testParameter.initValue));
+                           providerValue.get(Long.valueOf(0)).equals(testParameter.initValue));
                 assertTrue("provider(Fr=1): found incorrect value of " + testParameter.name,
-                           providerValue.get(1).equals(testParameter.initValue));
+                           providerValue.get(Long.valueOf(1)).equals(testParameter.initValue));
             }
 
             System.out.println("BIND...");
@@ -191,12 +192,12 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
             index = 0;
             for (TestParameter testParameter : testParameters)
             {
-                List<ICstsValue> userValue = this.userSi.getParameterValue(this.piid_iq_secondary, labels.get(index++));
+                Map<Long, ICstsValue> userValue = this.userSi.getParameterValues(this.piid_iq_secondary, labels.get(index++));
                 assertTrue("user: didn't get 2 values for " + testParameter.name, userValue.size() == 2);
                 assertTrue("user(Fr=0): found incorrect value of " + testParameter.name,
-                           userValue.get(0).equals(testParameter.initValue));
+                           userValue.get(Long.valueOf(0)).equals(testParameter.initValue));
                 assertTrue("user(Fr=1): found incorrect value of " + testParameter.name,
-                           userValue.get(1).equals(testParameter.initValue));
+                           userValue.get(Long.valueOf(1)).equals(testParameter.initValue));
             }
 
             // change values at provider
@@ -216,12 +217,12 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
             index = 0;
             for (TestParameter testParameter : testParameters)
             {
-                List<ICstsValue> userValue = this.userSi.getParameterValue(this.piid_iq_secondary, labels.get(index++));
+                Map<Long, ICstsValue> userValue = this.userSi.getParameterValues(this.piid_iq_secondary, labels.get(index++));
                 assertTrue("user: didn't get 2 values for " + testParameter.name, userValue.size() == 2);
                 assertTrue("user(Fr=0): fount incorrect value of " + testParameter.name,
-                           userValue.get(0).equals(testParameter.updatedValue));
+                           userValue.get(Long.valueOf(0)).equals(testParameter.updatedValue));
                 assertTrue("user(Fr=1): found incorrect value of " + testParameter.name,
-                           userValue.get(1).equals(testParameter.updatedValue));
+                           userValue.get(Long.valueOf(1)).equals(testParameter.updatedValue));
             }
 
             System.out.println("UNBIND...");
@@ -398,10 +399,10 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
 
             // check values at provider for both Fr
             System.out.println("Check values at provider for both Fr");
-            Map<Integer, Map<Label, ICstsValue>> providerValues = this.providerSi.getParameterValues(getFunctionalResource());
+            Map<Long, Map<Label, ICstsValue>> providerValues = this.providerSi.getParameterValues(getFunctionalResource());
             assertTrue("provider: didn't get 2 sets of parameters for " + getFunctionalResource(), providerValues.size() == 2);
-            Map<Label, ICstsValue> values0 = providerValues.get(Integer.valueOf(0));
-            Map<Label, ICstsValue> values1 = providerValues.get(Integer.valueOf(1));
+            Map<Label, ICstsValue> values0 = providerValues.get(Long.valueOf(0));
+            Map<Label, ICstsValue> values1 = providerValues.get(Long.valueOf(1));
             Iterator<Label> it = labels.iterator();
             for (TestParameter testParameter : testParameters)
             {
@@ -426,11 +427,11 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
 
             // check values at user for both Fr
             System.out.println("Check values at user for both Fr");
-            Map<Integer, Map<Label, ICstsValue>> userValues =
+            Map<Long, Map<Label, ICstsValue>> userValues =
                     this.userSi.getParameterValues(this.piid_iq_secondary, getFunctionalResource());
             assertTrue("user: didn't get 2 sets of parameters for " + getFunctionalResource(), userValues.size() == 2);
-            values0 = userValues.get(Integer.valueOf(0));
-            values1 = userValues.get(Integer.valueOf(1));
+            values0 = userValues.get(Long.valueOf(0));
+            values1 = userValues.get(Long.valueOf(1));
             it = labels.iterator();
             for (TestParameter testParameter : testParameters)
             {
@@ -459,8 +460,8 @@ public abstract class InformationQueryFrTestBase extends MdCstsTestBase
             System.out.println("Check updated values at user for both Fr");
             userValues = this.userSi.getParameterValues(this.piid_iq_secondary, getFunctionalResource());
             assertTrue("user: didn't get 2 sets of parameters for " + getFunctionalResource(), userValues.size() == 2);
-            values0 = userValues.get(Integer.valueOf(0));
-            values1 = userValues.get(Integer.valueOf(1));
+            values0 = userValues.get(Long.valueOf(0));
+            values1 = userValues.get(Long.valueOf(1));
             it = labels.iterator();
             for (TestParameter testParameter : testParameters)
             {

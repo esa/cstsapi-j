@@ -1,15 +1,13 @@
 package esa.egos.csts.api.procedures;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.BeforeClass;
 
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.functionalresources.values.impl.CstsComplexValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsIntValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsNullValue;
-import esa.egos.csts.api.types.Label;
+import esa.egos.csts.api.functionalresources.values.impl.CstsOctetStringValue;
+import esa.egos.csts.api.functionalresources.values.impl.CstsStringValue;
 import esa.egos.csts.sim.impl.frm.Fr;
 
 /**
@@ -36,7 +34,24 @@ public class CyclicReportRocfTsProviderTest extends CyclicReportFrTestBase
         testParameters.add(new TestParameter(Fr.RocfTsProvider.parameter.rocfRequestedUpdateModeParamOid, "rocfRequestedUpdateMode", 1, 2));
         testParameters.add(new TestParameter(Fr.RocfTsProvider.parameter.rocfNumberOfOcfsDeliveredParamOid, "rocfNumberOfOcfsDelivered", 150, 200));
         testParameters.add(new TestParameter(Fr.RocfTsProvider.parameter.rocfProdStatParamOid, "rocfProdStat", 1, 2));
+        testParameters.add(new TestParameter(Fr.RocfTsProvider.parameter.rocfSvcInstanceStateParamOid, "rocfSvcInstanceState", 0, 2));
 
+        testParameters.add(new TestParameter(Fr.RocfTsProvider.parameter.rocfResponderPortIdParamOid,
+            CstsStringValue.of("rocfResponderPortId", "portid1"),
+            CstsStringValue.of("rocfResponderPortId", "portid2")
+        ));
+        testParameters.add(new TestParameter(Fr.RocfTsProvider.parameter.rocfSvcInstanceIdParamOid,
+            CstsOctetStringValue.of("rocfSvcInstanceId", new byte[] { 1, 2, 3 }),
+            CstsOctetStringValue.of("rocfSvcInstanceId", new byte[] { 10, 20, 30, 1 })
+        ));
+        testParameters.add(new TestParameter(Fr.RocfTsProvider.parameter.rocfInitiatorIdParamOid,
+            CstsStringValue.of("rocfInitiatorId", "initid1"),
+            CstsStringValue.of("rocfInitiatorId", "initiator")
+        ));
+        testParameters.add(new TestParameter(Fr.RocfTsProvider.parameter.rocfResponderIdParamOid,
+            CstsStringValue.of("rocfResponderId", "respid1"),
+            CstsStringValue.of("rocfResponderId", "responder")
+        ));
         testParameters.add(new TestParameter(Fr.RocfTsProvider.parameter.rocfPermittedGvcidSetParamOid,
             CstsComplexValue.of("rocfPermittedGvcidSet",
                 CstsComplexValue.of("tm",
@@ -95,8 +110,8 @@ public class CyclicReportRocfTsProviderTest extends CyclicReportFrTestBase
         testParameters.add(new TestParameter(Fr.RocfTsProvider.parameter.rocfRequestedGvcidParamOid,
             CstsComplexValue.of("rocfRequestedGvcid",
                 CstsComplexValue.of("tm",
-                    CstsIntValue.of("tfvn", 1),
-                    CstsIntValue.of("scid", 2),
+                    CstsIntValue.of("tfvn", 11),
+                    CstsIntValue.of("scid", 22),
                     CstsComplexValue.of("vcid",
                         CstsNullValue.of("masterChannel")
                     )
@@ -104,10 +119,10 @@ public class CyclicReportRocfTsProviderTest extends CyclicReportFrTestBase
             ),
             CstsComplexValue.of("rocfRequestedGvcid",
                 CstsComplexValue.of("aos",
-                    CstsIntValue.of("tfvn", 10),
-                    CstsIntValue.of("scid", 20),
+                    CstsIntValue.of("tfvn", 101),
+                    CstsIntValue.of("scid", 202),
                     CstsComplexValue.of("vcid",
-                        CstsIntValue.of("virtualChannel", 3)
+                        CstsIntValue.of("virtualChannel", 4)
                     )
                 )
             )
@@ -162,8 +177,8 @@ public class CyclicReportRocfTsProviderTest extends CyclicReportFrTestBase
                 )
             ),
             CstsComplexValue.of("rocfRequestedTcVcid",
-                CstsIntValue.of("tfvn", 10),
-                CstsIntValue.of("scid", 20),
+                CstsIntValue.of("tfvn", 1),
+                CstsIntValue.of("scid", 2),
                 CstsComplexValue.of("vcid",
                     CstsIntValue.of("vcid", 5)
                 )
@@ -177,21 +192,9 @@ public class CyclicReportRocfTsProviderTest extends CyclicReportFrTestBase
             ),
             CstsComplexValue.of("rocfPermittedUpdateMode",
                 CstsIntValue.of("seqOf", 4),
-                CstsIntValue.of("seqOf", 5),
-                CstsIntValue.of("seqOf", 2)
+                CstsIntValue.of("seqOf", 5)
             )
         ));
-    }
-    
-    @Override
-    protected List<Label> createDefaultLabelList()
-    {
-        List<Label> ret = new ArrayList<Label>(testParameters.size());
-        for (TestParameter testParameter : testParameters)
-        {
-            ret.add(Label.of(testParameter.oid, getFunctionalResource()));
-        }
-        return ret;
     }
     
 }

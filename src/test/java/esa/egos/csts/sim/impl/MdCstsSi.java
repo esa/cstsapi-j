@@ -1,10 +1,10 @@
 package esa.egos.csts.sim.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import esa.egos.csts.api.enumerations.ProcedureRole;
 import esa.egos.csts.api.events.impl.FunctionalResourceEvent;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
@@ -13,11 +13,11 @@ import esa.egos.csts.api.functionalresources.values.ICstsValue;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.oids.ObjectIdentifier;
-import esa.egos.csts.api.parameters.impl.FunctionalResourceParameter;
 import esa.egos.csts.api.parameters.impl.FunctionalResourceParameterEx;
 import esa.egos.csts.api.procedures.IProcedure;
 import esa.egos.csts.api.procedures.cyclicreport.ICyclicReport;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
+import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.procedures.informationquery.IInformationQuery;
 import esa.egos.csts.api.procedures.notification.INotification;
 import esa.egos.csts.api.serviceinstance.IServiceInform;
@@ -125,36 +125,34 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
     }
 
     public abstract FunctionalResourceParameterEx<?> getParameter(Name name);
-
     public abstract FunctionalResourceEvent<?> getEvent(Name name);
-
     public abstract List<FunctionalResourceParameterEx<?>> getParameters(Label label);
-
     public abstract List<FunctionalResourceParameterEx<?>> getParameters(FunctionalResourceName frn);
+    public abstract List<FunctionalResourceParameterEx<?>> getParameters(FunctionalResourceType frt);
+    public abstract List<FunctionalResourceParameterEx<?>> getParameters(ProcedureInstanceIdentifier piid);
+    public abstract List<FunctionalResourceParameterEx<?>> getParameters(ProcedureType procTyp);
 
-    public abstract Map<Integer, Map<Label, FunctionalResourceParameterEx<?>>> getParameters(FunctionalResourceType frt);
-
-    public ICstsValue getParameterValue(Name name) throws IllegalArgumentException, IllegalAccessException
+    public ICstsValue getParameterValue(Name name) throws IllegalAccessException
     {
         FunctionalResourceParameterEx<?> parameter = getParameter(name);
         if (parameter == null)
         {
-            throw new NullPointerException("Parameter " + name + " is not available in MD collection");
+            throw new IllegalArgumentException("Parameter " + name + " is not available in MD collection");
         }
         return parameter.getCstsValue();
     }
 
-    public ICstsValue getEventValue(Name name) throws IllegalArgumentException, IllegalAccessException
+    public ICstsValue getEventValue(Name name) throws IllegalAccessException
     {
         FunctionalResourceEvent<?> event = getEvent(name);
         if (event == null)
         {
-            throw new NullPointerException("Event " + name + " is not available in MD collection");
+            throw new IllegalArgumentException("Event " + name + " is not available in MD collection");
         }
         return event.getCstsValue();
     }
 
-    public List<ICstsValue> getParameterValue(Label label) throws IllegalArgumentException, IllegalAccessException
+    public Map<Long, ICstsValue> getParameterValues(Label label) throws IllegalAccessException
     {
         List<FunctionalResourceParameterEx<?>> parameters = getParameters(label);
         if (parameters.isEmpty())
@@ -162,14 +160,15 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
             throw new IllegalArgumentException("Label " + label + " is not available in MD collection");
         }
 
-        List<ICstsValue> res = new ArrayList<>(parameters.size());
-        for (FunctionalResourceParameterEx<?> parameter : parameters) {
-            res.add(parameter.getCstsValue());
+        Map<Long, ICstsValue> res = new HashMap<Long, ICstsValue>();
+        for (FunctionalResourceParameterEx<?> p : parameters)
+        {
+            res.put(Long.valueOf(p.getName().getFunctionalResourceName().getInstanceNumber()), p.getCstsValue());
         }
         return res;
     }
 
-    public Map<Name, ICstsValue> getParameterValues(FunctionalResourceName frn) throws IllegalArgumentException, IllegalAccessException
+    public Map<Name, ICstsValue> getParameterValues(FunctionalResourceName frn) throws IllegalAccessException
     {
         List<FunctionalResourceParameterEx<?>> parameters = getParameters(frn);
         if (parameters.isEmpty())
@@ -178,28 +177,91 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
         }
 
         Map<Name, ICstsValue> res = new HashMap<Name, ICstsValue>(parameters.size());
-        for (FunctionalResourceParameterEx<?> parameter : parameters) {
-            res.put(parameter.getName(), parameter.getCstsValue());
+        for (FunctionalResourceParameterEx<?> p : parameters) {
+            res.put(p.getName(), p.getCstsValue());
         }
         return res;
     }
 
-    public Map<Integer, Map<Label, ICstsValue>> getParameterValues(FunctionalResourceType frt) throws IllegalArgumentException, IllegalAccessException
+    public Map<Long, Map<Label, ICstsValue>> getParameterValues(FunctionalResourceType frt) throws IllegalAccessException
     {
-        Map<Integer, Map<Label, FunctionalResourceParameterEx<?>>> parameters = getParameters(frt);
+        List<FunctionalResourceParameterEx<?>> parameters = getParameters(frt);
         if (parameters.isEmpty())
         {
             throw new IllegalArgumentException("Functional resource type " + frt + " is not available in MD collection");
         }
         
-        Map<Integer, Map<Label, ICstsValue>> ret = new HashMap<Integer, Map<Label, ICstsValue>>(parameters.size());
-        for (Integer instNum : parameters.keySet())
+        Map<Long, Map<Label, ICstsValue>> ret = new HashMap<Long, Map<Label, ICstsValue>>();
+        for (FunctionalResourceParameterEx<?> p : parameters)
         {
-            Map<Label, ICstsValue> instParams = new HashMap<Label, ICstsValue>(parameters.get(instNum).size());
-            for (Map.Entry<Label, FunctionalResourceParameterEx<?>> parameter : parameters.get(instNum).entrySet()) {
-                instParams.put(parameter.getKey(), parameter.getValue().getCstsValue());
+            Long instNum = Long.valueOf(p.getName().getFunctionalResourceName().getInstanceNumber());
+            Map<Label, ICstsValue> instPars;
+            if (ret.containsKey(instNum))
+            {
+                instPars = ret.get(instNum);
             }
-            ret.put(instNum, instParams);
+            else
+            {
+                instPars = new HashMap<Label, ICstsValue>();
+                ret.put(instNum, instPars);
+            }
+            instPars.put(p.getLabel(), p.getCstsValue());
+        }
+        return ret;
+    }
+
+    public Map<Name, ICstsValue> getParameterValues(ProcedureInstanceIdentifier piid) throws IllegalAccessException
+    {
+        List<FunctionalResourceParameterEx<?>> parameters = getParameters(piid);
+        if (parameters.isEmpty())
+        {
+            throw new IllegalArgumentException("Procedure instance identifier " + piid + " is not available in MD collection");
+        }
+        
+        Map<Name, ICstsValue> ret = new HashMap<Name, ICstsValue>(parameters.size());
+        for (FunctionalResourceParameterEx<?> p : parameters) {
+            ret.put(p.getName(), p.getCstsValue());
+        }
+        return ret;
+    }
+
+    public Map<ProcedureRole, Map<Long, Map<Label, ICstsValue>>> getParameterValues(ProcedureType procTyp) throws IllegalAccessException
+    {
+        List<FunctionalResourceParameterEx<?>> parameters = getParameters(procTyp);
+        if (parameters.isEmpty())
+        {
+            throw new IllegalArgumentException("Procedure type " + procTyp + " is not available in MD collection");
+        }
+
+        Map<ProcedureRole, Map<Long, Map<Label, ICstsValue>>> ret = new HashMap<ProcedureRole, Map<Long, Map<Label, ICstsValue>>>();
+        for (FunctionalResourceParameterEx<?> p : parameters)
+        {
+            ProcedureInstanceIdentifier piid = p.getName().getProcedureInstanceIdentifier();
+
+            ProcedureRole procedureRole = piid.getRole();
+            Map<Long, Map<Label, ICstsValue>> roleMap;
+            if (ret.containsKey(procedureRole))
+            {
+                roleMap = ret.get(procedureRole);
+            }
+            else
+            {
+                roleMap = new HashMap<Long, Map<Label, ICstsValue>>();
+                ret.put(procedureRole, roleMap);
+            }
+
+            Long instNum = Long.valueOf(piid.getInstanceNumber());
+            Map<Label, ICstsValue> instMap;
+            if (roleMap.containsKey(instNum))
+            {
+                instMap = roleMap.get(instNum);
+            }
+            else
+            {
+                instMap = new HashMap<Label, ICstsValue>();
+                roleMap.put(instNum, instMap);
+            }
+            instMap.put(p.getLabel(), p.getCstsValue());
         }
         return ret;
     }

@@ -1,15 +1,11 @@
 package esa.egos.csts.api.procedures;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.BeforeClass;
 
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.functionalresources.values.impl.CstsComplexValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsIntValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsOidValue;
-import esa.egos.csts.api.types.Label;
 import esa.egos.csts.sim.impl.frm.Fr;
 
 /**
@@ -84,19 +80,8 @@ public class CyclicReportAnntenaTest extends CyclicReportFrTestBase
                            ));
         testParameters.add(new TestParameter(Fr.Antenna.parameter.antIdParamOid,
                            CstsComplexValue.of("antId", CstsOidValue.of("antennaOid", new int[] {2,3,4})),
-                           CstsComplexValue.of("antId", CstsOidValue.of("antennaOid", new int[] {2,3,4}))
+                           CstsComplexValue.of("antId", CstsOidValue.of("antennaOid", new int[] {2,3,4,20}))
                            ));
     }
     
-    @Override
-    protected List<Label> createDefaultLabelList()
-    {
-        List<Label> ret = new ArrayList<Label>(testParameters.size());
-        for (TestParameter testParameter : testParameters)
-        {
-            ret.add(Label.of(testParameter.oid, getFunctionalResource()));
-        }
-        return ret;
-    }
-
 }

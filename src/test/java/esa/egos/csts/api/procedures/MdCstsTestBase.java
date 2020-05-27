@@ -241,6 +241,7 @@ public abstract class MdCstsTestBase
         {
             try
             {
+                System.out.println("userSi#destroy()");
                 this.userSi.destroy();
             }
             catch (Exception e)
@@ -252,6 +253,7 @@ public abstract class MdCstsTestBase
         {
             try
             {
+                System.out.println("providerSi#destroy()");
                 this.providerSi.destroy();
             }
             catch (Exception e)

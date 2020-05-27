@@ -1,16 +1,11 @@
 package esa.egos.csts.api.procedures;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.functionalresources.values.impl.CstsComplexValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsIntValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsOidValue;
-import esa.egos.csts.api.types.Label;
 import esa.egos.csts.sim.impl.frm.Fr;
 
 /**
@@ -60,86 +55,63 @@ public class InformationQueryAnntenaTest extends InformationQueryFrTestBase
         testParameters.add(new TestParameter(Fr.Antenna.parameter.antAtmosphericPressureParamOid, "antAtmosphericPressure", 1000, 2000));
 
         testParameters.add(new TestParameter(Fr.Antenna.parameter.antElevationAberrationParamOid,
-                           CstsComplexValue.of("antElevationAberration", CstsIntValue.of("fwdBeamAberration", 10), CstsIntValue.of("rtnBeamAberration", 20)),
-                           CstsComplexValue.of("antElevationAberration", CstsIntValue.of("fwdBeamAberration", 11), CstsIntValue.of("rtnBeamAberration", 22))
-                           ));
+            CstsComplexValue.of("antElevationAberration",
+                CstsIntValue.of("fwdBeamAberration", 10),
+                CstsIntValue.of("rtnBeamAberration", 20)
+            ),
+            CstsComplexValue.of("antElevationAberration",
+                CstsIntValue.of("fwdBeamAberration", 11),
+                CstsIntValue.of("rtnBeamAberration", 22)
+            )
+        ));
         testParameters.add(new TestParameter(Fr.Antenna.parameter.antClosedLoopConfigurationParamOid,
-                           CstsComplexValue.of("antClosedLoopConfiguration", CstsIntValue.of("conicalScan", 5)),
-                           CstsComplexValue.of("antClosedLoopConfiguration", CstsIntValue.of("conicalScan", 50))
-                           ));
+            CstsComplexValue.of("antClosedLoopConfiguration",
+                CstsIntValue.of("conicalScan", 5)
+            ),
+            CstsComplexValue.of("antClosedLoopConfiguration",
+                CstsIntValue.of("conicalScan", 50)
+            )
+        ));
         testParameters.add(new TestParameter(Fr.Antenna.parameter.antTrackingSignalPolarizationParamOid,
-                           CstsComplexValue.of("antTrackingSignalPolarization", CstsIntValue.of("autoHysteresis", 200)),
-                           CstsComplexValue.of("antTrackingSignalPolarization", CstsIntValue.of("autoHysteresis", 300))
-                           ));
+            CstsComplexValue.of("antTrackingSignalPolarization",
+                CstsIntValue.of("autoHysteresis", 200)
+            ),
+            CstsComplexValue.of("antTrackingSignalPolarization",
+                CstsIntValue.of("autoHysteresis", 300)
+            )
+        ));
         testParameters.add(new TestParameter(Fr.Antenna.parameter.antAzimuthAberrationParamOid,
-                           CstsComplexValue.of("antAzimuthAberration", CstsIntValue.of("fwdBeamAberration", -30),
-                                                                       CstsIntValue.of("rtnBeamAberration", 20)),
-                           CstsComplexValue.of("antAzimuthAberration", CstsIntValue.of("fwdBeamAberration", 40),
-                                                                       CstsIntValue.of("rtnBeamAberration", -20))
-                           ));
+            CstsComplexValue.of("antAzimuthAberration",
+                CstsIntValue.of("fwdBeamAberration", -30),
+                CstsIntValue.of("rtnBeamAberration", 20)
+            ),
+            CstsComplexValue.of("antAzimuthAberration",
+                CstsIntValue.of("fwdBeamAberration", 40),
+                CstsIntValue.of("rtnBeamAberration", -20)
+            )
+        ));
         testParameters.add(new TestParameter(Fr.Antenna.parameter.antTrackingRxLoopBwdthParamOid,
-                           CstsComplexValue.of("antTrackingRxLoopBwdth", CstsIntValue.of("trackingLoopBwdth", 10),
-                                                                         CstsComplexValue.of("loopBwdthChangeDuration", CstsIntValue.of("bwdthChangeDuration", 101))),
-                           CstsComplexValue.of("antTrackingRxLoopBwdth", CstsIntValue.of("trackingLoopBwdth", 15),
-                                                                         CstsComplexValue.of("loopBwdthChangeDuration", CstsIntValue.of("bwdthChangeDuration", 102)))
-                           ));
+            CstsComplexValue.of("antTrackingRxLoopBwdth",
+                CstsIntValue.of("trackingLoopBwdth", 10),
+                CstsComplexValue.of("loopBwdthChangeDuration",
+                    CstsIntValue.of("bwdthChangeDuration", 101)
+                )
+            ),
+            CstsComplexValue.of("antTrackingRxLoopBwdth",
+                CstsIntValue.of("trackingLoopBwdth", 15),
+                CstsComplexValue.of("loopBwdthChangeDuration",
+                    CstsIntValue.of("bwdthChangeDuration", 102)
+                )
+            )
+        ));
         testParameters.add(new TestParameter(Fr.Antenna.parameter.antIdParamOid,
-                           CstsComplexValue.of("antId", CstsOidValue.of("antennaOid", new int[] {2,3,4})),
-                           CstsComplexValue.of("antId", CstsOidValue.of("antennaOid", new int[] {2,3,4}))
-                           ));
+            CstsComplexValue.of("antId",
+                CstsOidValue.of("antennaOid", new int[] {2,3,4,20})
+            ),
+            CstsComplexValue.of("antId",
+                CstsOidValue.of("antennaOid", new int[] {2,3,4})
+            )
+        ));
     }
 
-    @Override
-    protected List<Label> createDefaultLabelList()
-    {
-        List<Label> ret = new ArrayList<Label>(testParameters.size());
-        for (TestParameter testParameter : testParameters)
-        {
-            ret.add(Label.of(testParameter.oid, getFunctionalResource()));
-        }
-        return ret;
-    }
-    
-    @Test
-    public void testQueryInformationWithNameSet()
-    {
-        super.testQueryInformationWithNameSet();
-    }
-
-    @Test
-    public void testQueryInformationWithLabelSet()
-    {
-        super.testQueryInformationWithLabelSet();
-    }
-
-    @Test
-    public void testQueryInformationWithFunctionalResourceName()
-    {
-        super.testQueryInformationWithFunctionalResourceName();
-    }
-    
-    @Test
-    public void testQueryInformationWithFunctionalResourceType()
-    {
-        super.testQueryInformationWithFunctionalResourceType();
-    }
-    
-    @Test
-    public void testQueryInformationWithProcedureType()
-    {
-        super.testQueryInformationWithProcedureType();
-    }
-
-    @Test
-    public void testQueryInformationWithProcedureInstanceIdentifier()
-    {
-        super.testQueryInformationWithProcedureInstanceIdentifier();
-    }
-
-    @Test
-    public void testQueryInformationWithEmpty()
-    {
-        super.testQueryInformationWithEmpty();
-    }
-    
 }

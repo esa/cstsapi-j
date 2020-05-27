@@ -66,15 +66,9 @@ public class CstsStringValue extends CstsSimpleValue<byte[]> implements ICstsStr
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
-        sb.append("CstsStringValue [value=[");
-        for (byte b : this.value) {
-            sb.append(String.format("%02X,", b));
-        }
-        if (this.value.length != 0)
-        {
-            sb.deleteCharAt(sb.length() - 1);
-        }
-        sb.append("], name=");
+        sb.append("CstsStringValue [value=");
+        sb.append(getStringValue());
+        sb.append(", name=");
         sb.append(getName());
         sb.append(", qualifier=");
         sb.append(getQuality().toString());
