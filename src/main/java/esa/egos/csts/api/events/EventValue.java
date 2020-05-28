@@ -137,4 +137,16 @@ public class EventValue {
 		return eventValue;
 	}
 
+	@Override
+	public String toString()
+	{
+	    String ret = "EventValue [type="+this.type.toString()+", qualifiedValues=[";
+	    if (this.qualifiedValues != null)
+	    {
+            ret += this.qualifiedValues.toString();
+	    }
+	    ret += "]]";
+	    return ret;
+	}
+	
 }

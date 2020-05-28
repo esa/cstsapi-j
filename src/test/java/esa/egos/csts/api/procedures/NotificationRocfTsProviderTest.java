@@ -1,12 +1,8 @@
 package esa.egos.csts.api.procedures;
 
-
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
-import esa.egos.csts.api.types.Label;
+import esa.egos.csts.api.functionalresources.values.impl.CstsNullValue;
 import esa.egos.csts.sim.impl.frm.Fr;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.BeforeClass;
 
@@ -28,18 +24,10 @@ public class NotificationRocfTsProviderTest extends NotificationFrTestBase
     	NotificationFrTestBase.setUpClass();
 
         testEvents.add(new TestParameter(Fr.RocfTsProvider.event.rocfProdStatChangeEventValueValueOid, "rocfProdStatChangeEventValue", 0, 1));
-//        testEvents.add(new TestParameter(Fr.RafTsProvider.event.rocfProdConfigurationChangeEventValueValueOid, "rocfProdConfigurationChangeEventValue", 0, 1));
-    }
-
-    @Override
-    protected List<Label> createDefaultLabelList()
-    {
-        List<Label> ret = new ArrayList<Label>(testEvents.size());
-        for (TestParameter testParameter : testEvents)
-        {
-            ret.add(Label.of(testParameter.oid, getFunctionalResource()));
-        }
-        return ret;
+        testEvents.add(new TestParameter(Fr.RocfTsProvider.event.rocfProdConfigurationChangeEventValueValueOid,
+            CstsNullValue.of("rocfProdConfigurationChangeEventValue"),
+            CstsNullValue.of("rocfProdConfigurationChangeEventValue")
+        ));
     }
 
 }

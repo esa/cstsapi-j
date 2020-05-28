@@ -5,13 +5,8 @@ import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.functionalresources.values.impl.CstsComplexValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsIntValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsOctetStringValue;
-import esa.egos.csts.api.functionalresources.values.impl.CstsOidValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsStringValue;
-import esa.egos.csts.api.types.Label;
 import esa.egos.csts.sim.impl.frm.Fr;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.BeforeClass;
 
@@ -142,17 +137,6 @@ public class NotificationCfdpEntityTest extends NotificationFrTestBase
         				CstsOctetStringValue.of("transactionId", new byte[] {2,3,4}),
         				CstsIntValue.of("conditionCode", 48))
         		));      
-    }
-
-    @Override
-    protected List<Label> createDefaultLabelList()
-    {
-        List<Label> ret = new ArrayList<Label>(testEvents.size());
-        for (TestParameter testParameter : testEvents)
-        {
-            ret.add(Label.of(testParameter.oid, getFunctionalResource()));
-        }
-        return ret;
     }
 
 }

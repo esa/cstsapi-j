@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 
@@ -22,9 +23,12 @@ import esa.egos.csts.api.events.impl.FunctionalResourceEvent;
 public abstract class NotificationFrTestBase extends MdCstsTestBase
 {
 
-    protected abstract List<Label> createDefaultLabelList();
-
     protected abstract FunctionalResourceType getFunctionalResource();
+
+    protected List<Label> createDefaultLabelList()
+    {
+        return MdCstsTestBase.testParameters.stream().map(tp -> Label.of(tp.oid, getFunctionalResource())).collect(Collectors.toList());
+    }
 
     /**
      * Test the notification procedure and its START NOTIFY and STOP operations w/ NAME_SET

@@ -248,6 +248,12 @@ public class FunctionalResourceValue<T extends BerType>
         ICstsValue ret;
 
         String name = CSTSUtils.firstToLowerCase(this.berObject.getClass().getSimpleName());
+        // treat CstsNullValue separately
+        if (this.berObject instanceof BerNull)
+        {
+            return this.cstsValueFactory.createCstsNullValue(name);
+        }
+
         Optional<Field> optionalField = getValueField(this.berObject.getClass());
         if (optionalField.isPresent())
         {
@@ -508,6 +514,11 @@ public class FunctionalResourceValue<T extends BerType>
                                                    IllegalArgumentException,
                                                    IllegalAccessException
     {
+        if (berObject instanceof BerNull)
+        {
+            return;
+        }
+
         Field valueField = getValueField(berClass, "value");
 
         try
