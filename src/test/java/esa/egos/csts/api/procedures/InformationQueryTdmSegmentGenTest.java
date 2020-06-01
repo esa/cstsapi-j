@@ -17,7 +17,7 @@ import esa.egos.csts.sim.impl.frm.Fr;
 /**
  * Test CSTS API information query procedure w/ TdmSegmentGen parameters
  */
-public class InformationTdmSegmentGenTest extends InformationQueryFrTestBase
+public class InformationQueryTdmSegmentGenTest extends InformationQueryFrTestBase
 {
 
     @Override
