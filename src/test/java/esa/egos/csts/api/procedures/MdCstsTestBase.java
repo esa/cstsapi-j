@@ -158,7 +158,7 @@ public abstract class MdCstsTestBase
     public static void setUpClass() throws Exception
     {
         TestBootstrap.initCs();
-        FunctionalResourceMetadata.getInstance().loadFromBinaryClasses("frm.csts.functional.resource.types");
+        //FunctionalResourceMetadata.getInstance().loadFromBinaryClasses("frm.csts.functional.resource.types");
         testParameters.clear();
         testEvents.clear();
     }

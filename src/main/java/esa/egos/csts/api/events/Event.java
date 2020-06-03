@@ -109,5 +109,19 @@ public class Event extends Observable implements IEvent {
 		setChanged();
 		notifyObservers();
 	}
+	
+	@Override
+	public String toString() {
+	    StringBuilder sb = new StringBuilder("Event [label=");
+	    sb.append(this.label.toString());
+	    sb.append(", name=");
+	    sb.append(this.name.toString());
+	    sb.append(", value=");
+	    sb.append(this.value.toString());
+	    sb.append(", time=");
+	    sb.append(this.time.toString());
+	    sb.append("]");
+	    return sb.toString();
+	}
 
 }

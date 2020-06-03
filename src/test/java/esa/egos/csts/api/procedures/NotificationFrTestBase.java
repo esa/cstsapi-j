@@ -27,7 +27,7 @@ public abstract class NotificationFrTestBase extends MdCstsTestBase
 
     protected List<Label> createDefaultLabelList()
     {
-        return MdCstsTestBase.testParameters.stream().map(tp -> Label.of(tp.oid, getFunctionalResource())).collect(Collectors.toList());
+        return MdCstsTestBase.testEvents.stream().map(tp -> Label.of(tp.oid, getFunctionalResource())).collect(Collectors.toList());
     }
 
     /**

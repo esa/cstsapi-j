@@ -7,8 +7,12 @@ import com.beanit.jasn1.ber.types.BerNull;
 
 import b1.ccsds.csts.common.types.SequenceOfQualifiedValues;
 import esa.egos.csts.api.enumerations.EventValueType;
+import esa.egos.csts.api.events.impl.FunctionalResourceEvent;
 import esa.egos.csts.api.extensions.EmbeddedData;
+import esa.egos.csts.api.functionalresources.FunctionalResourceMetadata;
+import esa.egos.csts.api.parameters.impl.ParameterValue;
 import esa.egos.csts.api.parameters.impl.QualifiedValues;
+import esa.egos.csts.api.types.Name;
 
 /**
  * This class represents the CCSDS EventValue type.
@@ -147,6 +151,37 @@ public class EventValue {
 	    }
 	    ret += "]]";
 	    return ret;
+	}
+	
+	public String toFormattedString(Name name)
+	{
+        StringBuilder sb = new StringBuilder("\n");
+		switch (type) {
+		case QUALIFIED_VALUES:
+            sb.append("Number of QualifiedValues: ")
+                    .append(this.qualifiedValues.size()).append('\n');
+			for (QualifiedValues qualifiedValue : this.qualifiedValues) {
+			    for (ParameterValue parameterValue : qualifiedValue.getParameterValues())
+			    {
+                    sb.append(parameterValue.toString());
+			    }
+			}
+			break;
+		case EMPTY:
+			break;
+		case EXTENDED:
+		    try
+		    {
+		        FunctionalResourceEvent<?> fre = FunctionalResourceMetadata.getInstance().createEvent(name);
+		        sb.append(fre.valueToString());
+		    }
+		    catch(IllegalAccessException | InstantiationException e)
+		    {
+                e.printStackTrace();
+		    }
+			break;
+		}
+        return sb.toString();
 	}
 	
 }

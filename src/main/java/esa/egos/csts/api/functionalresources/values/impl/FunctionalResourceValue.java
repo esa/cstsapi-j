@@ -148,7 +148,10 @@ public class FunctionalResourceValue<T extends BerType>
         ByteArrayInputStream is = new ByteArrayInputStream(embeddedData.getData());
         this.berObject = this.berClass.newInstance();
         this.berObject.decode(is);
-        this.qualifier = value.getQualifiedValues().get(0).getQualifier();
+        if (value.getQualifiedValues() != null)
+        {
+            this.qualifier = value.getQualifiedValues().get(0).getQualifier();
+        }
     }
 
     /**

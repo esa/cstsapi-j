@@ -29,81 +29,35 @@ public class InformationQueryFlfUslpVcMuxTest extends InformationQueryFrTestBase
     public static void setupClass() throws Exception
     {
         InformationQueryFrTestBase.setUpClass();
+
         testParameters.add(new TestParameter(Fr.FlfUslpVcMux.parameter.flfUslpVcMuxContrParamOid, 
-        		CstsComplexValue.of("flfUslpVcMuxContr",
-        				CstsComplexValue.of("absolutePriority",
-	        				CstsIntValue.of("seqOf", 49),
-	        				CstsIntValue.of("seqOf", 74),
-	        				CstsIntValue.of("seqOf", 92))),
-        		CstsComplexValue.of("flfUslpVcMuxContr",
-        				CstsComplexValue.of("absolutePriority",
-	        				CstsIntValue.of("seqOf", 49),
-	        				CstsIntValue.of("seqOf", 74),
-	        				CstsIntValue.of("seqOf", 92)))
-        		));
+            CstsComplexValue.of("flfUslpVcMuxContr",
+                CstsComplexValue.of("absolutePriority",
+                    CstsIntValue.of("seqOf", 49),
+                    CstsIntValue.of("seqOf", 92)
+                )
+            ),
+            CstsComplexValue.of("flfUslpVcMuxContr",
+                CstsComplexValue.of("absolutePriority",
+                    CstsIntValue.of("seqOf", 40),
+                    CstsIntValue.of("seqOf", 74),
+                    CstsIntValue.of("seqOf", 75),
+                    CstsIntValue.of("seqOf", 91)
+                )
+            )
+        ));
         testParameters.add(new TestParameter(Fr.FlfUslpVcMux.parameter.flfUslpVcMuxMcParamOid,
-        		CstsComplexValue.of("flfUslpVcMuxMc", 
-        				CstsBitStringValue.of("tfvn", new byte[] {2,3,4}),
-        				CstsIntValue.of("scid", 71)),
-        		CstsComplexValue.of("flfUslpVcMuxMc", 
-        				CstsBitStringValue.of("tfvn", new byte[] {2,3,4}),
-        				CstsIntValue.of("scid", 71))
-        		));
+            CstsComplexValue.of("flfUslpVcMuxMc", 
+                CstsBitStringValue.of("tfvn", new byte[] {2,3,4}),
+                CstsIntValue.of("scid", 71)
+            ),
+            CstsComplexValue.of("flfUslpVcMuxMc", 
+                CstsBitStringValue.of("tfvn", new byte[] {2,3,4,5,6}),
+                CstsIntValue.of("scid", 70)
+            )
+        ));
         testParameters.add(new TestParameter(Fr.FlfUslpVcMux.parameter.flfUslpVcMuxResourceStatParamOid, "flfUslpVcMuxResourceStat", 25, 50));
 
     }
 
-    @Override
-    protected List<Label> createDefaultLabelList()
-    {
-        List<Label> ret = new ArrayList<Label>(testParameters.size());
-        for (TestParameter testParameter : testParameters)
-        {
-            ret.add(Label.of(testParameter.oid, getFunctionalResource()));
-        }
-        return ret;
-    }
-    
-    @Test
-    public void testQueryInformationWithNameSet()
-    {
-        super.testQueryInformationWithNameSet();
-    }
-
-    @Test
-    public void testQueryInformationWithLabelSet()
-    {
-        super.testQueryInformationWithLabelSet();
-    }
-
-    @Test
-    public void testQueryInformationWithFunctionalResourceName()
-    {
-        super.testQueryInformationWithFunctionalResourceName();
-    }
-    
-    @Test
-    public void testQueryInformationWithFunctionalResourceType()
-    {
-        super.testQueryInformationWithFunctionalResourceType();
-    }
-    
-    @Test
-    public void testQueryInformationWithProcedureType()
-    {
-        super.testQueryInformationWithProcedureType();
-    }
-
-    @Test
-    public void testQueryInformationWithProcedureInstanceIdentifier()
-    {
-        super.testQueryInformationWithProcedureInstanceIdentifier();
-    }
-
-    @Test
-    public void testQueryInformationWithEmpty()
-    {
-        super.testQueryInformationWithEmpty();
-    }
-    
 }

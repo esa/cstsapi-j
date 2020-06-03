@@ -113,10 +113,12 @@ public class Notify extends AbstractOperation implements INotify {
 		sb.append("Common Diagnostics             : Invalid\n");
 		sb.append("Event time                     : ").append(this.eventTime.toInstant()).append('\n');
 		sb.append("Event name                     : ").append(this.eventName.toString()).append('\n');
-		sb.append("Event value                    : ").append(this.eventValue.getType()).append('\n');
+		sb.append("Event type                     : ").append(this.eventValue.getType()).append('\n');
+		sb.append("Event value                    : ").append(this.eventValue.toFormattedString(this.eventName)).append('\n');
 
-		return sb.toString();	}
-
+		return sb.toString();
+	}
+	
 	@Override
 	public NotifyInvocation encodeNotifyInvocation() {
 		NotifyInvocation notifyInvocation = new NotifyInvocation();
