@@ -12,6 +12,10 @@ public interface ICstsValueFactory
 
     ICstsBoolValue createCstsBoolValue(String name, ParameterQualifier qualifier, boolean value);
 
+    ICstsEnumValue createCstsEnumValue(String name, int value, String valueName);
+
+    ICstsEnumValue createCstsEnumValue(String name, ParameterQualifier qualifier, int value, String valueName);
+
     ICstsIntValue createCstsIntValue(int value);
 
     ICstsIntValue createCstsIntValue(String name, ParameterQualifier qualifier, int value);

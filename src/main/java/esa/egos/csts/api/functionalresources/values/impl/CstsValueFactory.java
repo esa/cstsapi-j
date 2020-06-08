@@ -6,6 +6,7 @@ import esa.egos.csts.api.enumerations.ParameterQualifier;
 import esa.egos.csts.api.functionalresources.values.ICstsBitStringValue;
 import esa.egos.csts.api.functionalresources.values.ICstsBoolValue;
 import esa.egos.csts.api.functionalresources.values.ICstsComplexValue;
+import esa.egos.csts.api.functionalresources.values.ICstsEnumValue;
 import esa.egos.csts.api.functionalresources.values.ICstsIntValue;
 import esa.egos.csts.api.functionalresources.values.ICstsOctetStringValue;
 import esa.egos.csts.api.functionalresources.values.ICstsOidValue;
@@ -197,5 +198,17 @@ public class CstsValueFactory implements ICstsValueFactory
     public ICstsValue createEmptyValue()
     {
         return CstsValue.empty();
+    }
+
+    @Override
+    public ICstsEnumValue createCstsEnumValue(String name, int value, String valueName)
+    {
+        return CstsEnumValue.of(name, value, valueName);
+    }
+
+    @Override
+    public ICstsEnumValue createCstsEnumValue(String name, ParameterQualifier qualifier, int value, String valueName)
+    {
+        return CstsEnumValue.of(name, value, valueName, qualifier);
     }
 }
