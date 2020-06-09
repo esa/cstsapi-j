@@ -361,7 +361,7 @@ public class FunctionalResourceValue<T extends BerType>
                 Object object = valueField.get(berObject);
 
                 // field is List<? extends BerType> seqOf
-                if (object instanceof List && valueField.getName().equals("seqOf"))
+                if (object instanceof List && valueField.getName().equals(CstsComplexValue.SEQ_OF_NAME))
                 {
                     List<?> list = (List<?>) object;
                     // find generic type (must be BerType)
@@ -375,7 +375,7 @@ public class FunctionalResourceValue<T extends BerType>
                             if (optValueField.isPresent())
                             {
                                 // a simple value
-                                ICstsValue value = getSimpleValue("seqOf", (BerType) listObject, optValueField.get());
+                                ICstsValue value = getSimpleValue(CstsComplexValue.SEQ_OF_NAME, (BerType) listObject, optValueField.get());
                                 values.add(value);
                             }
                             else
@@ -385,7 +385,7 @@ public class FunctionalResourceValue<T extends BerType>
 
                                 ICstsValue value = getComplexValue(className, (BerType) listObject);
 
-                                ICstsValue listItem = this.cstsValueFactory.createCstsComplexValue("seqOf", value);
+                                ICstsValue listItem = this.cstsValueFactory.createCstsComplexValue(CstsComplexValue.SEQ_OF_NAME, value);
 
                                 values.add(listItem);
                             }
@@ -591,8 +591,8 @@ public class FunctionalResourceValue<T extends BerType>
                 cls = cls.getSuperclass();
             }
             
-            long seqOfValsCnt = value.getValues().stream().filter(v -> v.getName().equals("seqOf")).count();
-            int seqOfFrCnt = sequence.contains("seqOf") ? 1 : 0;
+            long seqOfValsCnt = value.getValues().stream().filter(v -> v.getName().equals(CstsComplexValue.SEQ_OF_NAME)).count();
+            int seqOfFrCnt = sequence.contains(CstsComplexValue.SEQ_OF_NAME) ? 1 : 0;
 
             if ((value.getValues().size() - seqOfValsCnt) != (sequence.size() - seqOfFrCnt))
             {
@@ -633,7 +633,7 @@ public class FunctionalResourceValue<T extends BerType>
             
             // process seqOf field
             boolean toList = false;
-            if (subValue.getName().equals("seqOf"))
+            if (subValue.getName().equals(CstsComplexValue.SEQ_OF_NAME))
             {
                 // clazz should be List<BerType>
                 if (clazz != List.class)

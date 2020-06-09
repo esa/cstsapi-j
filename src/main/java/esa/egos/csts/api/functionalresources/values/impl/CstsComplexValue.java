@@ -10,6 +10,10 @@ import esa.egos.csts.api.functionalresources.values.ICstsValue;
 
 public class CstsComplexValue extends CstsValue implements ICstsComplexValue
 {
+    public static final String SEQ_OF_NAME = "seqOf";
+
+    public static final String SET_OF_NAME = "setOf";
+
     private List<ICstsValue> values;
 
     public static CstsComplexValue of(CstsValue... values)
@@ -62,6 +66,23 @@ public class CstsComplexValue extends CstsValue implements ICstsComplexValue
     }
 
     @Override
+    public boolean isSizeConstrainedType()
+    {
+        boolean ret = false;
+
+        if (this.values != null && !this.values.isEmpty())
+        {
+            String subValueName = this.values.get(0).getName();
+            if (subValueName.equals(SEQ_OF_NAME) || subValueName.equals(SET_OF_NAME))
+            {
+                ret = true;
+            }
+        }
+
+        return ret;
+    }
+
+    @Override
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
@@ -74,7 +95,7 @@ public class CstsComplexValue extends CstsValue implements ICstsComplexValue
         sb.append(']');
         return sb.toString();
     }
-    
+
     @Override
     public boolean equals(Object o)
     {
@@ -93,11 +114,10 @@ public class CstsComplexValue extends CstsValue implements ICstsComplexValue
 		}
 		return this.values.equals(cstsComplexValue.getValues());
     }
-    
+
     @Override
     public int hashCode()
     {
         return 31*super.hashCode() + this.values.hashCode();
     }
-    
 }
