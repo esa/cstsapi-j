@@ -83,8 +83,8 @@ public class Fr
             public static final ObjectIdentifier antAzimuthAberrationParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 10100, 1, 13, 1, 1);
             public static final ObjectIdentifier antElevationResidualParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 10100, 1, 12, 1, 1);
             public static final ObjectIdentifier antAzimuthResidualParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 10100, 1, 11, 1, 1);
-            public static final ObjectIdentifier antTrackingRxModeParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 10100, 1, 17, 1, 1);
             public static final ObjectIdentifier antContrElevationRateParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 10100, 1, 10, 1, 1);
+            public static final ObjectIdentifier antTrackingRxModeParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 10100, 1, 17, 1, 1);
             public static final ObjectIdentifier antClosedLoopConfigurationParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 10100, 1, 16, 1, 1);
             public static final ObjectIdentifier antPointingModeParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 10100, 1, 15, 1, 1);
             public static final ObjectIdentifier antElevationAberrationParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 10100, 1, 14, 1, 1);
@@ -168,6 +168,7 @@ public class Fr
             public static final ObjectIdentifier ccsds401CarrierRcptSystemNoiseTemperatureParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20300, 1, 8, 1, 1);
             public static final ObjectIdentifier ccsds401CarrierRcptNominalFreqParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20300, 1, 9, 1, 1);
             public static final ObjectIdentifier ccsds401CarrierRcptPhysChnlNameParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20300, 1, 2, 1, 1);
+            public static final ObjectIdentifier ccsds401CarrierRcptModTypeParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20300, 1, 3, 1, 1);
             public static final ObjectIdentifier ccsds401CarrierRcptPolarizationParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20300, 1, 4, 1, 1);
             public static final ObjectIdentifier ccsds401CarrierRcptPolarizationAngleParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20300, 1, 5, 1, 1);
             public static final ObjectIdentifier ccsds401CarrierRcptExpectedEsOverNoParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20300, 1, 30, 1, 1);
@@ -206,14 +207,15 @@ public class Fr
             public static final ObjectIdentifier ccsds401CarrierXmitModParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 11, 1, 1);
             public static final ObjectIdentifier ccsds401CarrierXmitSubcarrierFreqParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 16, 1, 1);
             public static final ObjectIdentifier ccsds401CarrierXmitSubcarrierModParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 17, 1, 1);
+            public static final ObjectIdentifier ccsds401CarrierXmitSymbolStreamModTypeParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 14, 1, 1);
             public static final ObjectIdentifier ccsds401CarrierXmitRngModIndexParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 15, 1, 1);
             public static final ObjectIdentifier ccsds401CarrierXmitStatParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 3, 1, 1);
             public static final ObjectIdentifier ccsds401CarrierXmitPhysChnlNameParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 2, 1, 1);
             public static final ObjectIdentifier ccsds401CarrierXmitPolarizationParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 5, 1, 1);
             public static final ObjectIdentifier ccsds401CarrierXmitEirpParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 4, 1, 1);
             public static final ObjectIdentifier ccsds401CarrierXmitNominalCarrierFreqParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 7, 1, 1);
-            public static final ObjectIdentifier ccsds401CarrierXmitSweepProcStatParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 9, 1, 1);
             public static final ObjectIdentifier ccsds401CarrierXmitActualCarrierFreqParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 6, 1, 1);
+            public static final ObjectIdentifier ccsds401CarrierXmitSweepProcStatParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 9, 1, 1);
             public static final ObjectIdentifier ccsds401CarrierXmitReferenceFreqLockParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 8, 1, 1);
             public static final ObjectIdentifier ccsds401CarrierXmitResourceStatParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 1, 1, 1);
         }
@@ -587,6 +589,7 @@ public class Fr
         public static class parameter 
         {
             public static final ObjectIdentifier rngXmitModParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20101, 1, 2, 1, 1);
+            public static final ObjectIdentifier rngXmitRngTypeParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20101, 1, 3, 1, 1);
             public static final ObjectIdentifier rngXmitPnChipRateParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20101, 1, 4, 1, 1);
             public static final ObjectIdentifier rngXmitResourceStatParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20101, 1, 1, 1, 1);
         }
@@ -605,6 +608,7 @@ public class Fr
             public static final ObjectIdentifier rocfTransferBufferSizeParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 80600, 1, 10, 1, 1);
             public static final ObjectIdentifier rocfPermittedGvcidSetParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 80600, 1, 11, 1, 1);
             public static final ObjectIdentifier rocfRequestedGvcidParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 80600, 1, 12, 1, 1);
+            public static final ObjectIdentifier rocfPermittedContrWordTypeSetParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 80600, 1, 13, 1, 1);
             public static final ObjectIdentifier rocfResponderPortIdParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 80600, 1, 6, 1, 1);
             public static final ObjectIdentifier rocfRtnTimeoutPeriodParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 80600, 1, 7, 1, 1);
             public static final ObjectIdentifier rocfDeliveryModeParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 80600, 1, 8, 1, 1);
@@ -612,6 +616,7 @@ public class Fr
             public static final ObjectIdentifier rocfRequestedUpdateModeParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 80600, 1, 18, 1, 1);
             public static final ObjectIdentifier rocfReportingCycleParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 80600, 1, 19, 1, 1);
             public static final ObjectIdentifier rocfNumberOfOcfsDeliveredParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 80600, 1, 20, 1, 1);
+            public static final ObjectIdentifier rocfRequestedContrWordTypeParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 80600, 1, 14, 1, 1);
             public static final ObjectIdentifier rocfPermittedTcVcidSetParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 80600, 1, 15, 1, 1);
             public static final ObjectIdentifier rocfRequestedTcVcidParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 80600, 1, 16, 1, 1);
             public static final ObjectIdentifier rocfPermittedUpdateModeParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 80600, 1, 17, 1, 1);
@@ -656,6 +661,7 @@ public class Fr
             public static final ObjectIdentifier tcPlopSyncResourceStatParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 30100, 1, 1, 1, 1);
             public static final ObjectIdentifier tcPlopSyncMaxCltuLengthParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 30100, 1, 2, 1, 1);
             public static final ObjectIdentifier tcPlopSyncMaxNumberOfFramesPerCltuParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 30100, 1, 3, 1, 1);
+            public static final ObjectIdentifier tcPlopSyncEncodeTypeParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 30100, 1, 4, 1, 1);
             public static final ObjectIdentifier tcPlopSyncMaxCltuRepetitionsParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 30100, 1, 5, 1, 1);
             public static final ObjectIdentifier tcPlopSyncPlopParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 30100, 1, 6, 1, 1);
             public static final ObjectIdentifier tcPlopSyncAcqAndIdlePatternParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 30100, 1, 7, 1, 1);

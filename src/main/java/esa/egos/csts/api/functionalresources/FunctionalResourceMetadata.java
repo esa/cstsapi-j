@@ -261,7 +261,7 @@ public class FunctionalResourceMetadata
 
         this.oidName2oidArray.put(oidName, oidArray);
         this.oid2oidName.put(ObjectIdentifier.of(oidArray), oidName);
-        String oidLabelName = removeSuffix(oidName, TYPE_SUFFIX);
+        String oidLabelName = oidName;//removeSuffix(oidName, TYPE_SUFFIX);
         if (oidArray.length == OidTree.CROSS_FUNC_RES_BIT_LEN)
         {
             this.frOidName2oidArray.put(oidLabelName, oidArray);
@@ -627,7 +627,7 @@ public class FunctionalResourceMetadata
 
                     for (Entry<ObjectIdentifier, Class<?>> frParEntry : oid2parClass.entrySet())
                     {
-                        String oidName = removeSuffix(this.oid2oidName.get(frParEntry.getKey()), TYPE_SUFFIX);
+                        String oidName = this.oid2oidName.get(frParEntry.getKey());//removeSuffix(this.oid2oidName.get(frParEntry.getKey()), TYPE_SUFFIX);
                         int[] oidArray = frParEntry.getKey().toArray();
                         frTypesBuilder.addItem(oidName,
                                                "OIDs.crossSupportFunctionalities",

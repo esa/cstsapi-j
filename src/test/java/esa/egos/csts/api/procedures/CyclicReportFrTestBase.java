@@ -225,11 +225,11 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             Thread.sleep(300); // wait for several cyclic reports
 
             // verify that all user's procedures received all parameters updates for the first time no matter the onChange value
-            assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more than one report",
+            assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more parameters than expected",
                          2*testParameters.size(), this.userSi.getParameterUpdateCount(this.piid_ocr_prime));
-            assertEquals("procedure " + this.piid_ocr_secondary_01 + " started w/ onChange=true received more than one report",
+            assertEquals("procedure " + this.piid_ocr_secondary_01 + " started w/ onChange=true received more parameters than expected",
                          2*testParameters.size(), this.userSi.getParameterUpdateCount(this.piid_ocr_secondary_01));
-            assertTrue("procedure " + this.piid_ocr_secondary_02 + " started w/ onChange=true received more than one report",
+            assertTrue("procedure " + this.piid_ocr_secondary_02 + " started w/ onChange=true received more parameters than expected",
                        2*testParameters.size() < this.userSi.getParameterUpdateCount(this.piid_ocr_secondary_02));
 
             // reset procedure's parameter counters
@@ -269,11 +269,11 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             Thread.sleep(300); // wait for several cyclic reports (onChange=false)
 
             // verify that user's procedures received expected parameters updates depending on the onChange value
-            assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more than two reports",
+            assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more parameters than expected",
                          nParams, this.userSi.getParameterUpdateCount(this.piid_ocr_prime));
-            assertEquals("procedure " + this.piid_ocr_secondary_01 + " started w/ onChange=true received more than two reports",
+            assertEquals("procedure " + this.piid_ocr_secondary_01 + " started w/ onChange=true received more parameters than expected",
                          nParams, this.userSi.getParameterUpdateCount(this.piid_ocr_secondary_01));
-            assertTrue("procedure " + this.piid_ocr_secondary_02 + " started w/ onChange=true received more than one report",
+            assertTrue("procedure " + this.piid_ocr_secondary_02 + " started w/ onChange=true received more parameters than expected",
                          2*testParameters.size() < this.userSi.getParameterUpdateCount(this.piid_ocr_secondary_02));
 
             System.out.println("STOP-CYCLIC-REPORT " + this.piid_ocr_prime + "...");
@@ -475,11 +475,11 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             Thread.sleep(300); // wait for several cyclic reports
 
             // verify that all user's procedures received all parameters updates for the first time no matter the onChange value
-            assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more than one report",
+            assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more parameters than expected",
                          2*testParameters.size(), this.userSi.getParameterUpdateCount(this.piid_ocr_prime));
-            assertEquals("procedure " + this.piid_ocr_secondary_01 + " started w/ onChange=true received more than one report",
+            assertEquals("procedure " + this.piid_ocr_secondary_01 + " started w/ onChange=true received more parameters than expected",
                          2*testParameters.size(), this.userSi.getParameterUpdateCount(this.piid_ocr_secondary_01));
-            assertTrue("procedure " + this.piid_ocr_secondary_02 + " started w/ onChange=true received more than one report",
+            assertTrue("procedure " + this.piid_ocr_secondary_02 + " started w/ onChange=true received more parameters than expected",
                        2*testParameters.size() < this.userSi.getParameterUpdateCount(this.piid_ocr_secondary_02));
 
             // reset procedure's parameter counters
@@ -513,11 +513,11 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             Thread.sleep(300); // wait for several cyclic reports (onChange=false)
 
             // verify that user's procedures received expected parameters updates depending on the onChange value
-            assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more than two reports",
+            assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more parameters than expected",
                          2*nParams, this.userSi.getParameterUpdateCount(this.piid_ocr_prime));
-            assertEquals("procedure " + this.piid_ocr_secondary_01 + " started w/ onChange=true received more than two reports",
+            assertEquals("procedure " + this.piid_ocr_secondary_01 + " started w/ onChange=true received more parameters than expected",
                          2*nParams, this.userSi.getParameterUpdateCount(this.piid_ocr_secondary_01));
-            assertTrue("procedure " + this.piid_ocr_secondary_02 + " started w/ onChange=true received more than one report",
+            assertTrue("procedure " + this.piid_ocr_secondary_02 + " started w/ onChange=true received more parameters than expected",
                          2*testParameters.size() < this.userSi.getParameterUpdateCount(this.piid_ocr_secondary_02));
 
             System.out.println("STOP-CYCLIC-REPORT " + this.piid_ocr_prime + "...");
@@ -735,11 +735,11 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
                 System.out.println("CHK:");
                 System.out.println(this.userSi.getParameterValues(this.piid_ocr_prime, frn0));
             }
-            assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more than one report",
+            assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more parameters than expected",
                          testParameters.size(), this.userSi.getParameterUpdateCount(this.piid_ocr_prime));
-            assertEquals("procedure " + this.piid_ocr_secondary_01 + " started w/ onChange=true received more than one report",
+            assertEquals("procedure " + this.piid_ocr_secondary_01 + " started w/ onChange=true received more parameters than expected",
                          testParameters.size(), this.userSi.getParameterUpdateCount(this.piid_ocr_secondary_01));
-            assertTrue("procedure " + this.piid_ocr_secondary_02 + " started w/ onChange=true received more than one report",
+            assertTrue("procedure " + this.piid_ocr_secondary_02 + " started w/ onChange=true received more parameters than expected",
                        testParameters.size() < this.userSi.getParameterUpdateCount(this.piid_ocr_secondary_02));
 
             // reset procedure's parameter counters
@@ -792,11 +792,11 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             Thread.sleep(300); // wait for several cyclic reports (onChange=false)
 
             // verify that user's procedures received expected parameters updates depending on the onChange value
-            assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more than two reports",
+            assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more parameters than expected",
                          nParams0, this.userSi.getParameterUpdateCount(this.piid_ocr_prime));
-            assertEquals("procedure " + this.piid_ocr_secondary_01 + " started w/ onChange=true received more than two reports",
+            assertEquals("procedure " + this.piid_ocr_secondary_01 + " started w/ onChange=true received more parameters than expected",
                          nParams1, this.userSi.getParameterUpdateCount(this.piid_ocr_secondary_01));
-            assertTrue("procedure " + this.piid_ocr_secondary_02 + " started w/ onChange=true received more than one report",
+            assertTrue("procedure " + this.piid_ocr_secondary_02 + " started w/ onChange=true received more parameters than expected",
                          testParameters.size() < this.userSi.getParameterUpdateCount(this.piid_ocr_secondary_02));
 
             System.out.println("STOP-CYCLIC-REPORT " + this.piid_ocr_prime + "...");
@@ -1027,11 +1027,11 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             Thread.sleep(300); // wait for several cyclic reports
 
             // verify that all user's procedures received all parameters updates for the first time no matter the onChange value
-            assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more than one report",
+            assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more parameters than expected",
                          2*testParameters.size(), this.userSi.getParameterUpdateCount(this.piid_ocr_prime));
-            assertEquals("procedure " + this.piid_ocr_secondary_01 + " started w/ onChange=true received more than one report",
+            assertEquals("procedure " + this.piid_ocr_secondary_01 + " started w/ onChange=true received more parameters than expected",
                          2*testParameters.size(), this.userSi.getParameterUpdateCount(this.piid_ocr_secondary_01));
-            assertTrue("procedure " + this.piid_ocr_secondary_02 + " started w/ onChange=true received more than one report",
+            assertTrue("procedure " + this.piid_ocr_secondary_02 + " started w/ onChange=true received more parameters than expected",
                        2*testParameters.size() < this.userSi.getParameterUpdateCount(this.piid_ocr_secondary_02));
 
             // reset procedure's parameter counters
@@ -1073,11 +1073,11 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             Thread.sleep(300); // wait for several cyclic reports (onChange=false)
 
             // verify that user's procedures received expected parameters updates depending on the onChange value
-            assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more than two reports",
+            assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more parameters than expected",
                          2*nParams, this.userSi.getParameterUpdateCount(this.piid_ocr_prime));
-            assertEquals("procedure " + this.piid_ocr_secondary_01 + " started w/ onChange=true received more than two reports",
+            assertEquals("procedure " + this.piid_ocr_secondary_01 + " started w/ onChange=true received more parameters than expected",
                          2*nParams, this.userSi.getParameterUpdateCount(this.piid_ocr_secondary_01));
-            assertTrue("procedure " + this.piid_ocr_secondary_02 + " started w/ onChange=true received more than one report",
+            assertTrue("procedure " + this.piid_ocr_secondary_02 + " started w/ onChange=true received more parameters than expected",
                          2*testParameters.size() < this.userSi.getParameterUpdateCount(this.piid_ocr_secondary_02));
 
             System.out.println("STOP-CYCLIC-REPORT " + this.piid_ocr_prime + "...");
@@ -1275,11 +1275,11 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
 //            Thread.sleep(300); // wait for several cyclic reports
 //
 //            // verify that all user's procedures received all parameters updates for the first time no matter the onChange value
-//            assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more than one report",
+//            assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more parameters than expected",
 //                         2*testParameters.size(), this.userSi.getParameterUpdateCount(this.piid_ocr_prime));
-//            assertEquals("procedure " + this.piid_ocr_secondary_01 + " started w/ onChange=true received more than one report",
+//            assertEquals("procedure " + this.piid_ocr_secondary_01 + " started w/ onChange=true received more parameters than expected",
 //                         2*testParameters.size(), this.userSi.getParameterUpdateCount(this.piid_ocr_secondary_01));
-//            assertTrue("procedure " + this.piid_ocr_secondary_02 + " started w/ onChange=true received more than one report",
+//            assertTrue("procedure " + this.piid_ocr_secondary_02 + " started w/ onChange=true received more parameters than expected",
 //                       2*testParameters.size() < this.userSi.getParameterUpdateCount(this.piid_ocr_secondary_02));
 //
 //            // reset procedure's parameter counters
@@ -1330,11 +1330,11 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
 //            Thread.sleep(300); // wait for several cyclic reports (onChange=false)
 //
 //            // verify that user's procedures received expected parameters updates depending on the onChange value
-//            assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more than two reports",
+//            assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more parameters than expected",
 //                         nParams0, this.userSi.getParameterUpdateCount(this.piid_ocr_prime));
-//            assertEquals("procedure " + this.piid_ocr_secondary_01 + " started w/ onChange=true received more than two reports",
+//            assertEquals("procedure " + this.piid_ocr_secondary_01 + " started w/ onChange=true received more parameters than expected",
 //                         nParams1, this.userSi.getParameterUpdateCount(this.piid_ocr_secondary_01));
-//            assertTrue("procedure " + this.piid_ocr_secondary_02 + " started w/ onChange=true received more than one report",
+//            assertTrue("procedure " + this.piid_ocr_secondary_02 + " started w/ onChange=true received more parameters than expected",
 //                         2*testParameters.size() < this.userSi.getParameterUpdateCount(this.piid_ocr_secondary_02));
 //
 //            System.out.println("STOP-CYCLIC-REPORT " + this.piid_ocr_prime + "...");
