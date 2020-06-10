@@ -1,8 +1,5 @@
 package esa.egos.csts.api.procedures;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.BeforeClass;
 
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
@@ -11,7 +8,6 @@ import esa.egos.csts.api.functionalresources.values.impl.CstsIntValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsNullValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsRealValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsStringValue;
-import esa.egos.csts.api.types.Label;
 import esa.egos.csts.sim.impl.frm.Fr;
 
 /**
@@ -80,6 +76,37 @@ public class CyclicReportCcsds401SpaceLinkCarrierRcptTest extends CyclicReportFr
                 CstsStringValue.of("ccsds401CarrierRcptPhysChnlName", "name1"),
                 CstsStringValue.of("ccsds401CarrierRcptPhysChnlName", "name2")
         ));
+        testParameters.add(new TestParameter(Fr.Ccsds401SpaceLinkCarrierRcpt.parameter.ccsds401CarrierRcptModTypeParamOid,
+            CstsComplexValue.of("ccsds401CarrierRcptModType",
+                CstsComplexValue.of("subcarrier",
+                    CstsComplexValue.of("symbolRate",
+                        CstsIntValue.of("ccsdsSubcarrierFrequencySymbolRateRatio", 3)
+                    ),
+                    CstsIntValue.of("subcarrierWaveform", 1),
+                    CstsIntValue.of("modulationIndexTelemetry", 30),
+                    CstsIntValue.of("pcmFormat", 10)
+                )
+            ),
+            CstsComplexValue.of("ccsds401CarrierRcptModType",
+                CstsComplexValue.of("oqpsk",
+                    CstsIntValue.of("symbolRate", 5),
+                    CstsComplexValue.of("constellationConfiguration",
+                        CstsComplexValue.of("nonCcsds",
+                            CstsComplexValue.of("symbolToIqMapping",
+                                CstsNullValue.of("evenSymbolOnIchannel")
+                            ),
+                            CstsComplexValue.of("symbolPairToPhaseAssignment",
+                                CstsIntValue.of("symbolPair00", 1),
+                                CstsIntValue.of("symbolPair01", 2),
+                                CstsIntValue.of("symbolPair10", 3),
+                                CstsIntValue.of("symbolPair11", 4)
+                            )
+                        )
+                    ),
+                    CstsIntValue.of("matchedFilter", 2)
+                )
+            )
+        ));
         testParameters.add(new TestParameter(Fr.Ccsds401SpaceLinkCarrierRcpt.parameter.ccsds401CarrierRcptPolarizationParamOid,
                 CstsComplexValue.of("ccsds401CarrierRcptPolarization",
                     CstsIntValue.of("autoHysteresis", 100)
@@ -134,15 +161,4 @@ public class CyclicReportCcsds401SpaceLinkCarrierRcptTest extends CyclicReportFr
                 "ccsds401CarrierRcptResourceStat", 2, 3));
     }
     
-    @Override
-    protected List<Label> createDefaultLabelList()
-    {
-        List<Label> ret = new ArrayList<Label>(testParameters.size());
-        for (TestParameter testParameter : testParameters)
-        {
-            ret.add(Label.of(testParameter.oid, getFunctionalResource()));
-        }
-        return ret;
-    }
-
 }

@@ -1,8 +1,5 @@
 package esa.egos.csts.api.procedures;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.BeforeClass;
 
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
@@ -10,7 +7,6 @@ import esa.egos.csts.api.functionalresources.values.impl.CstsComplexValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsIntValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsNullValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsOctetStringValue;
-import esa.egos.csts.api.types.Label;
 import esa.egos.csts.sim.impl.frm.Fr;
 
 /**
@@ -99,17 +95,22 @@ public class CyclicReportTcPlopSyncAndChnlEncodeTest extends CyclicReportFrTestB
                 CstsNullValue.of("noEvaluation")
             )
         ));
-    }
-    
-    @Override
-    protected List<Label> createDefaultLabelList()
-    {
-        List<Label> ret = new ArrayList<Label>(testParameters.size());
-        for (TestParameter testParameter : testParameters)
-        {
-            ret.add(Label.of(testParameter.oid, getFunctionalResource()));
-        }
-        return ret;
+        testParameters.add(new TestParameter(Fr.TcPlopSyncAndChnlEncode.parameter.tcPlopSyncEncodeTypeParamOid,
+            CstsComplexValue.of("tcPlopSyncEncodeType",
+                CstsComplexValue.of("ldpcEncoding",
+                    CstsIntValue.of("randomization", 1),
+                    CstsComplexValue.of("ldpcCoding",
+                        CstsComplexValue.of("code2",
+                            CstsIntValue.of("n", 10),
+                            CstsIntValue.of("k", 20)
+                        )
+                    )
+                )
+            ),
+            CstsComplexValue.of("tcPlopSyncEncodeType",
+                CstsIntValue.of("bchEncoding", 202)
+            )
+        ));
     }
     
 }

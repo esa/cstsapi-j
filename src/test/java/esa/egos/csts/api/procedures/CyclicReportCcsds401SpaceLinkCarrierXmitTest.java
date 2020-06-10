@@ -5,6 +5,7 @@ import org.junit.BeforeClass;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.functionalresources.values.impl.CstsComplexValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsIntValue;
+import esa.egos.csts.api.functionalresources.values.impl.CstsNullValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsStringValue;
 import esa.egos.csts.sim.impl.frm.Fr;
 
@@ -75,6 +76,40 @@ public class CyclicReportCcsds401SpaceLinkCarrierXmitTest extends CyclicReportFr
         testParameters.add(new TestParameter(Fr.Ccsds401SpaceLinkCarrierXmit.parameter.ccsds401CarrierXmitModParamOid, "ccsds401CarrierXmitMod", 30000, 50000));
         testParameters.add(new TestParameter(Fr.Ccsds401SpaceLinkCarrierXmit.parameter.ccsds401CarrierXmitSubcarrierFreqParamOid, "ccsds401CarrierXmitSubcarrierFreq", 30000, 50000));
         testParameters.add(new TestParameter(Fr.Ccsds401SpaceLinkCarrierXmit.parameter.ccsds401CarrierXmitSubcarrierModParamOid, "ccsds401CarrierXmitSubcarrierMod", 30000, 50000));
+        testParameters.add(new TestParameter(Fr.Ccsds401SpaceLinkCarrierXmit.parameter.ccsds401CarrierXmitSymbolStreamModTypeParamOid, 
+            CstsComplexValue.of("ccsds401CarrierXmitSymbolStreamModType",
+                CstsComplexValue.of("symbolRateDopplerCompensation",
+                    CstsNullValue.of("noCompensation")
+                ),
+                CstsComplexValue.of("modType",
+                    CstsComplexValue.of("bpsk",
+                        CstsIntValue.of("bandpassFilter", 1),
+                        CstsComplexValue.of("bpskSymbolRateAndPcmFormat",
+                            CstsComplexValue.of("ccsds",
+                                CstsIntValue.of("symbolRate", 10),
+                                CstsIntValue.of("pcmFormat", 2)
+                            )
+                        )
+                    )
+                )
+            ),
+            CstsComplexValue.of("ccsds401CarrierXmitSymbolStreamModType",
+                CstsComplexValue.of("symbolRateDopplerCompensation",
+                    CstsNullValue.of("noCompensation")
+                ),
+                CstsComplexValue.of("modType",
+                    CstsComplexValue.of("bpsk",
+                        CstsIntValue.of("bandpassFilter", 1),
+                        CstsComplexValue.of("bpskSymbolRateAndPcmFormat",
+                            CstsComplexValue.of("ccsds",
+                                CstsIntValue.of("symbolRate", 10),
+                                CstsIntValue.of("pcmFormat", 2)
+                            )
+                        )
+                    )
+                )
+            )
+        ));
         testParameters.add(new TestParameter(Fr.Ccsds401SpaceLinkCarrierXmit.parameter.ccsds401CarrierXmitRngModIndexParamOid, 
             CstsComplexValue.of("ccsds401CarrierXmitRngModIndex",
                 CstsIntValue.of("duringAmbiguityResolution",47),

@@ -61,7 +61,7 @@ public final class OidValues {
 	public static final BerObjectIdentifier antTrackingSignalPolarizationParamOid = new BerObjectIdentifier(new int[]{1, 3, 112, 4, 4, 2, 1, 10100, 1, 18, 1, 1});
 	public static final BerObjectIdentifier antWindDirectionParamOid = new BerObjectIdentifier(new int[]{1, 3, 112, 4, 4, 2, 1, 10100, 1, 29, 1, 1});
 	public static final BerObjectIdentifier antWindIntegrationTimeParamOid = new BerObjectIdentifier(new int[]{1, 3, 112, 4, 4, 2, 1, 10100, 1, 26, 1, 1});
-	public static final BerObjectIdentifier antWindSpeedWarningEventOid = new BerObjectIdentifier(new int[]{          1, 3, 112, 4, 4, 2, 1, 10100, 2, 3, 1});
+	public static final BerObjectIdentifier antWindSpeedWarningEventOid = new BerObjectIdentifier(new int[]{1, 3, 112, 4, 4, 2, 1, 10100, 2, 3, 1});
 	public static final BerObjectIdentifier antWindSpeedWarningEventValueValueOid = new BerObjectIdentifier(new int[]{1, 3, 112, 4, 4, 2, 1, 10100, 2, 3, 1, 1});
 	public static final BerObjectIdentifier antennaFrOid = new BerObjectIdentifier(new int[]{1, 3, 112, 4, 4, 2, 1, 10100});
 	public static final BerObjectIdentifier aosEncapPktProcAndVcGenFrOid = new BerObjectIdentifier(new int[]{1, 3, 112, 4, 4, 2, 1, 40202});

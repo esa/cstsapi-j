@@ -732,7 +732,6 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             // verify that all user's procedures received all parameters updates for the first time no matter the onChange value
             if (testParameters.size() != this.userSi.getParameterUpdateCount(this.piid_ocr_prime))
             {
-                System.out.println("CHK:");
                 System.out.println(this.userSi.getParameterValues(this.piid_ocr_prime, frn0));
             }
             assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more parameters than expected",

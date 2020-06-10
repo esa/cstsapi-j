@@ -1,10 +1,6 @@
 package esa.egos.csts.api.procedures;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.functionalresources.values.impl.CstsComplexValue;
@@ -12,7 +8,6 @@ import esa.egos.csts.api.functionalresources.values.impl.CstsIntValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsNullValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsRealValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsStringValue;
-import esa.egos.csts.api.types.Label;
 import esa.egos.csts.sim.impl.frm.Fr;
 
 /**
@@ -97,37 +92,37 @@ public class InformationQueryCcsds401SpaceLinkCarrierRcptTest extends Informatio
                 CstsIntValue.of("softBitDistribution", 250)
             )
         ));
-//        testParameters.add(new TestParameter(Fr.Ccsds401SpaceLinkCarrierRcpt.parameter.ccsds401CarrierRcptModulationTypeParamOid,
-//            CstsComplexValue.of("ccsds401CarrierRcptModulationType",
-//                CstsComplexValue.of("subcarrier",
-//                    CstsComplexValue.of("symbolRate",
-//                        CstsIntValue.of("ccsdsSubcarrierFrequencySymbolRateRatio", 50)
-//                    ),
-//                    CstsIntValue.of("subcarrierWaveform", 1),
-//                    CstsIntValue.of("modulationIndexTelemetry", 200),
-//                    CstsIntValue.of("pcmFormat", 2)
-//                )
-//            ),
-//            CstsComplexValue.of("ccsds401CarrierRcptModulationType",
-//                CstsComplexValue.of("qpsk",
-//                    CstsIntValue.of("symbolRate", 500),
-//                    CstsComplexValue.of("constellationConfiguration",
-//                        CstsComplexValue.of("nonCcsds",
-//                            CstsComplexValue.of("symbolToIqMapping",
-//                                CstsNullValue.of("evenSymbolOnIchannel")
-//                            ),
-//                            CstsComplexValue.of("symbolPairToPhaseAssignment",
-//                                CstsIntValue.of("symbolPair00", 1),
-//                                CstsIntValue.of("symbolPair01", 2),
-//                                CstsIntValue.of("symbolPair10", 3),
-//                                CstsIntValue.of("symbolPair11", 4)
-//                            )
-//                        )
-//                    ),
-//                    CstsIntValue.of("matchedFilter", 1)
-//                )
-//            )
-//        ));
+        testParameters.add(new TestParameter(Fr.Ccsds401SpaceLinkCarrierRcpt.parameter.ccsds401CarrierRcptModTypeParamOid,
+            CstsComplexValue.of("ccsds401CarrierRcptModType",
+                CstsComplexValue.of("subcarrier",
+                    CstsComplexValue.of("symbolRate",
+                        CstsIntValue.of("ccsdsSubcarrierFrequencySymbolRateRatio", 50)
+                    ),
+                    CstsIntValue.of("subcarrierWaveform", 1),
+                    CstsIntValue.of("modulationIndexTelemetry", 200),
+                    CstsIntValue.of("pcmFormat", 2)
+                )
+            ),
+            CstsComplexValue.of("ccsds401CarrierRcptModType",
+                CstsComplexValue.of("qpsk",
+                    CstsIntValue.of("symbolRate", 500),
+                    CstsComplexValue.of("constellationConfiguration",
+                        CstsComplexValue.of("nonCcsds",
+                            CstsComplexValue.of("symbolToIqMapping",
+                                CstsNullValue.of("evenSymbolOnIchannel")
+                            ),
+                            CstsComplexValue.of("symbolPairToPhaseAssignment",
+                                CstsIntValue.of("symbolPair00", 1),
+                                CstsIntValue.of("symbolPair01", 2),
+                                CstsIntValue.of("symbolPair10", 3),
+                                CstsIntValue.of("symbolPair11", 4)
+                            )
+                        )
+                    ),
+                    CstsIntValue.of("matchedFilter", 1)
+                )
+            )
+        ));
         testParameters.add(new TestParameter(Fr.Ccsds401SpaceLinkCarrierRcpt.parameter.ccsds401CarrierRcptTrackingLoopBwdthParamOid,
             CstsComplexValue.of("ccsds401CarrierRcptTrackingLoopBwdth",
                 CstsIntValue.of("trackingLoopBwdth", 400),
@@ -168,57 +163,4 @@ public class InformationQueryCcsds401SpaceLinkCarrierRcptTest extends Informatio
         ));
     }
     
-    @Override
-    protected List<Label> createDefaultLabelList()
-    {
-        List<Label> ret = new ArrayList<Label>(testParameters.size());
-        for (TestParameter testParameter : testParameters)
-        {
-            ret.add(Label.of(testParameter.oid, getFunctionalResource()));
-        }
-        return ret;
-    }
-    
-    @Test
-    public void testQueryInformationWithNameSet()
-    {
-        super.testQueryInformationWithNameSet();
-    }
-
-    @Test
-    public void testQueryInformationWithLabelSet()
-    {
-        super.testQueryInformationWithLabelSet();
-    }
-
-    @Test
-    public void testQueryInformationWithFunctionalResourceName()
-    {
-        super.testQueryInformationWithFunctionalResourceName();
-    }
-    
-    @Test
-    public void testQueryInformationWithFunctionalResourceType()
-    {
-        super.testQueryInformationWithFunctionalResourceType();
-    }
-    
-    @Test
-    public void testQueryInformationWithProcedureType()
-    {
-        super.testQueryInformationWithProcedureType();
-    }
-
-    @Test
-    public void testQueryInformationWithProcedureInstanceIdentifier()
-    {
-        super.testQueryInformationWithProcedureInstanceIdentifier();
-    }
-
-    @Test
-    public void testQueryInformationWithEmpty()
-    {
-        super.testQueryInformationWithEmpty();
-    }
-
 }

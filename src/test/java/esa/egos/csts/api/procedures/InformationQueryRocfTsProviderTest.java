@@ -35,6 +35,7 @@ public class InformationQueryRocfTsProviderTest extends InformationQueryFrTestBa
         testParameters.add(new TestParameter(Fr.RocfTsProvider.parameter.rocfNumberOfOcfsDeliveredParamOid, "rocfNumberOfOcfsDelivered", 150, 200));
         testParameters.add(new TestParameter(Fr.RocfTsProvider.parameter.rocfProdStatParamOid, "rocfProdStat", 1, 2));
         testParameters.add(new TestParameter(Fr.RocfTsProvider.parameter.rocfSvcInstanceStateParamOid, "rocfSvcInstanceState", 0, 2));
+        testParameters.add(new TestParameter(Fr.RocfTsProvider.parameter.rocfRequestedContrWordTypeParamOid, "rocfRequestedContrWordType", 1, 3));
 
         testParameters.add(new TestParameter(Fr.RocfTsProvider.parameter.rocfResponderPortIdParamOid,
             CstsStringValue.of("rocfResponderPortId", "portid1"),
@@ -133,6 +134,17 @@ public class InformationQueryRocfTsProviderTest extends InformationQueryFrTestBa
             ),
             CstsComplexValue.of("rocfReportingCycle",
                 CstsNullValue.of("reportingOff")
+            )
+        ));
+        testParameters.add(new TestParameter(Fr.RocfTsProvider.parameter.rocfPermittedContrWordTypeSetParamOid,
+            CstsComplexValue.of("rocfPermittedContrWordTypeSet",
+                CstsIntValue.of("seqOf", 1),
+                CstsIntValue.of("seqOf", 2),
+                CstsIntValue.of("seqOf", 3)
+            ),
+            CstsComplexValue.of("rocfPermittedContrWordTypeSet",
+                CstsIntValue.of("seqOf", 1),
+                CstsIntValue.of("seqOf", 2)
             )
         ));
         testParameters.add(new TestParameter(Fr.RocfTsProvider.parameter.rocfPermittedTcVcidSetParamOid,
