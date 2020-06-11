@@ -22,8 +22,10 @@ import esa.egos.csts.api.diagnostics.StartDiagnosticType;
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.enumerations.EventValueType;
 import esa.egos.csts.api.enumerations.OperationResult;
+import esa.egos.csts.api.enumerations.ParameterQualifier;
 import esa.egos.csts.api.enumerations.ParameterType;
 import esa.egos.csts.api.enumerations.ProcedureRole;
+import esa.egos.csts.api.enumerations.ResourceIdentifier;
 import esa.egos.csts.api.events.EventValue;
 import esa.egos.csts.api.events.impl.FunctionalResourceEvent;
 import esa.egos.csts.api.exceptions.ApiException;
@@ -32,6 +34,7 @@ import esa.egos.csts.api.functionalresources.FunctionalResourceMetadata;
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.functionalresources.values.ICstsValue;
+import esa.egos.csts.api.functionalresources.values.impl.CstsEmptyValue;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
@@ -46,7 +49,9 @@ import esa.egos.csts.api.operations.ITransferData;
 import esa.egos.csts.api.operations.IUnbind;
 import esa.egos.csts.api.parameters.impl.FunctionalResourceParameter;
 import esa.egos.csts.api.parameters.impl.FunctionalResourceParameterEx;
+import esa.egos.csts.api.parameters.impl.ParameterValue;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
+import esa.egos.csts.api.parameters.impl.QualifiedValues;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.procedures.informationquery.InformationQueryUser;
@@ -164,7 +169,7 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
     @Override
     public void informOpInvocation(IOperation operation)
     {
-        System.out.println("MdCstsSiUserInform#informOpInvocation() begin");
+//        System.out.println("MdCstsSiUserInform#informOpInvocation() begin");
 
         switch (operation.getType())
         {
@@ -180,7 +185,7 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
             System.err.print("unexpected operation " + operation.getClass().getSimpleName() + " invoked");
             break;
         }
-        System.out.println("MdCstsSiUserInform#informOpInvocation() end");
+//        System.out.println("MdCstsSiUserInform#informOpInvocation() end");
     }
 
     /**
@@ -373,6 +378,73 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
         System.out.println("MdCstsSiUserInform#onStopReturn() end");
     }
 
+    private void processFunctionalResourceParameters(ProcedureInstanceIdentifier piid,
+                                                     List<QualifiedParameter> qualifiedParameters) throws InstantiationException,
+                                                                                                   IllegalAccessException,
+                                                                                                   IOException,
+                                                                                                   NoSuchFieldException,
+                                                                                                   IllegalArgumentException
+    {
+        synchronized (this.parameters)
+        {
+            Map<Name, FunctionalResourceParameterEx<?>> procedureParameters = this.parameters.get(piid);
+
+            for (QualifiedParameter qualifiedParameter : qualifiedParameters)
+            {
+                if (qualifiedParameter.getName().getResourceIdentifier() != ResourceIdentifier.FUNCTIONAL_RESOURCE_NAME)
+                {
+                    // ignore non-FR parameters
+                    continue;
+                }
+
+                if (!qualifiedParameter.getQualifiedValues().isEmpty())
+                {
+                    QualifiedValues qualifiedValues = qualifiedParameter.getQualifiedValues().get(0);
+                    if (ParameterQualifier.VALID == qualifiedValues.getQualifier())
+                    {
+                        if (!qualifiedValues.getParameterValues().isEmpty())
+                        {
+                            ParameterValue parameterValue = qualifiedValues.getParameterValues().get(0);
+                            if (parameterValue.getType() == ParameterType.EXTENDED)
+                            {
+                                FunctionalResourceParameterEx<?> parameter = getParameter(procedureParameters,
+                                                                                          qualifiedParameter.getName());
+                                parameter.setValue(qualifiedParameter);
+                            }
+                            else
+                            {
+                                System.out.println("Received qualified parameter "
+                                                   + qualifiedParameter.getName() + " w/ unexpected type "
+                                                   + parameterValue.getType());
+                            }
+                        }
+                        else
+                        {
+                            System.out.println("Received qualified parameter "
+                                               + qualifiedParameter.getName() + " w/o qualified values");
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            // ParameterQualifier.ERROR
+                            // ParameterQualifier.UNAVAILABLE
+                            // ParameterQualifier.UNDEFINED
+                            FunctionalResourceParameterEx<?> parameter = getParameter(procedureParameters,
+                                                                                      qualifiedParameter.getName());
+                            parameter.setCstsValue(CstsEmptyValue.empty(qualifiedValues.getQualifier()));
+                        }
+                        catch (IllegalArgumentException e)
+                        {
+                            // ignore a FR parameter w/o BER class
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Process a get operation return
      * 
@@ -380,7 +452,7 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
      */
     private void onGetReturn(IGet get)
     {
-        System.out.println("MdCstsSiUserInform#onGetReturn() begin");
+//        System.out.println("MdCstsSiUserInform#onGetReturn() begin");
 
         this.retLock.lock();
         try
@@ -394,36 +466,15 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
                 {
                     synchronized (this.queriedParameters)
                     {
-                        synchronized (this.parameters)
-                        {
-                            Map<Name, FunctionalResourceParameterEx<?>> procedureParameters =
-                                    this.parameters.get(get.getProcedureInstanceIdentifier());
-                            this.queriedParameters.add(get.getQualifiedParameters());
-                            for (QualifiedParameter qualifiedParameter : get.getQualifiedParameters())
-                            {
-                                if (!qualifiedParameter.getQualifiedValues().isEmpty()
-                                    && !qualifiedParameter.getQualifiedValues().get(0).getParameterValues().isEmpty()
-                                    && qualifiedParameter.getQualifiedValues().get(0).getParameterValues().get(0)
-                                            .getType() == ParameterType.EXTENDED)
-                                {
-                                    FunctionalResourceParameterEx<?> parameter = procedureParameters.get(qualifiedParameter.getName());
-                                    if (parameter == null)
-                                    {
-                                        parameter = FunctionalResourceMetadata.getInstance()
-                                                .createParameter(qualifiedParameter.getName());
-                                        procedureParameters.put(qualifiedParameter.getName(), parameter);
-                                    }
-                                    parameter.setValue(qualifiedParameter);
-                                }
-                            }
-                        }
-
+                        this.queriedParameters.add(get.getQualifiedParameters());
                         if (this.queriedParameters.size() > KEEP_MAX_LAST_DATA_UPDATES)
                         {
                             // remove oldest queried parameters
                             this.queriedParameters.remove(0);
                         }
                     }
+
+                    processFunctionalResourceParameters(get.getProcedureInstanceIdentifier(), get.getQualifiedParameters());
                 }
                 catch (Exception e)
                 {
@@ -452,7 +503,21 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
             this.retLock.unlock();
         }
 
-        System.out.println("MdCstsSiUserInform#onGetReturn() end");
+//        System.out.println("MdCstsSiUserInform#onGetReturn() end");
+    }
+
+    private FunctionalResourceParameterEx<?> getParameter(Map<Name, FunctionalResourceParameterEx<?>> procedureParameters, Name name) throws InstantiationException, IllegalAccessException
+    {
+        FunctionalResourceParameterEx<?> ret = procedureParameters.get(name);
+
+        if (ret == null)
+        {
+            ret = FunctionalResourceMetadata.getInstance()
+                    .createParameter(name);
+            procedureParameters.put(name, ret);
+        }
+
+        return ret;
     }
 
     /**
@@ -569,7 +634,7 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
      */
     private void onTransferData(ITransferData transferData)
     {
-        System.out.println("MdCstsSiUserInform#onTransferData() begin");
+//        System.out.println("MdCstsSiUserInform#onTransferData() begin");
 
         ProcedureInstanceIdentifier piid = transferData.getProcedureInstanceIdentifier();
 
@@ -579,44 +644,24 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
         synchronized (this.cyclicParameters)
         {
             this.cyclicParameters.add(params);
-            try
-            {
-                synchronized (this.parameters)
-                {
-                    incrementCounter(piid, this.parameterUpdateCounters, params.size());
-                    Map<Name, FunctionalResourceParameterEx<?>> procedureParameters = 
-                            this.parameters.get(transferData.getProcedureInstanceIdentifier());
-                    for (QualifiedParameter qualifiedParameter : params)
-                    {
-                        if (!qualifiedParameter.getQualifiedValues().isEmpty()
-                                && !qualifiedParameter.getQualifiedValues().get(0).getParameterValues().isEmpty()
-                                && qualifiedParameter.getQualifiedValues().get(0).getParameterValues().get(0).getType() == ParameterType.EXTENDED)
-                        {
-                            FunctionalResourceParameterEx<?> parameter = procedureParameters.get(qualifiedParameter.getName());
-                            if (parameter == null)
-                            {
-                                parameter = FunctionalResourceMetadata.getInstance()
-                                        .createParameter(qualifiedParameter.getName());
-                                procedureParameters.put(qualifiedParameter.getName(), parameter);
-                            }
-                            parameter.setValue(qualifiedParameter);
-                        }
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-
+            incrementCounter(piid, this.parameterUpdateCounters, params.size());
             if (this.cyclicParameters.size() > KEEP_MAX_LAST_DATA_UPDATES)
             {
-                // remove oldest reported parameters
+                // remove the oldest reported parameters
                 this.cyclicParameters.remove(0);
             }
         }
 
-        System.out.println("MdCstsSiUserInform#onTransferData() end");
+        try
+        {
+            processFunctionalResourceParameters(piid, params);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+//        System.out.println("MdCstsSiUserInform#onTransferData() end");
     }
 
     /**

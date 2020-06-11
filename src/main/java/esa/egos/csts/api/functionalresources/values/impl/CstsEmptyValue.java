@@ -9,11 +9,21 @@ public class CstsEmptyValue extends CstsValue
         return new CstsEmptyValue();
     }
 
+    public static CstsEmptyValue empty(ParameterQualifier qualifier)
+    {
+        return new CstsEmptyValue("empty", qualifier);
+    }
+
     protected CstsEmptyValue()
     {
         super("empty", ParameterQualifier.UNAVAILABLE);
     }
-    
+
+    protected CstsEmptyValue(String name, ParameterQualifier qualifier)
+    {
+        super(name, qualifier);
+    }
+
     @Override
     public String toString()
     {

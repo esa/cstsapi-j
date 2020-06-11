@@ -195,6 +195,12 @@ public class CstsValueFactory implements ICstsValueFactory
     }
 
     @Override
+    public ICstsValue createEmptyValue(ParameterQualifier qualifier)
+    {
+        return CstsValue.empty(qualifier);
+    }
+
+    @Override
     public ICstsValue createEmptyValue()
     {
         return CstsValue.empty();

@@ -7,11 +7,20 @@ public class CstsValue implements ICstsValue
 {
     private String name = "value";
 
-    private ParameterQualifier quality = ParameterQualifier.UNDEFINED;
+    private ParameterQualifier quality = ParameterQualifier.VALID;
 
     public static CstsValue empty()
     {
         return CstsEmptyValue.empty();
+    }
+
+    public static CstsValue empty(ParameterQualifier qualifier)
+    {
+        return CstsEmptyValue.empty(qualifier);
+    }
+
+    protected CstsValue()
+    {
     }
 
     protected CstsValue(String name)
@@ -51,36 +60,36 @@ public class CstsValue implements ICstsValue
         sb.append("]");
         return sb.toString();
     }
-    
+
     @Override
     public boolean equals(Object o)
     {
-		if (o == this)
-		{
-			return true;
-		}
-		if (!(o instanceof CstsValue))
-		{
-			return false;
-		}
-		CstsValue cstsValue = (CstsValue)o;
-		if (!this.name.equals(cstsValue.getName()))
-		{
-		    return false;
-		}
-		if (this.quality != cstsValue.getQuality())
-		{
-		    return false;
-		}
-		return true;
+        if (o == this)
+        {
+            return true;
+        }
+        if (!(o instanceof CstsValue))
+        {
+            return false;
+        }
+        CstsValue cstsValue = (CstsValue) o;
+        if (!this.name.equals(cstsValue.getName()))
+        {
+            return false;
+        }
+        if (this.quality != cstsValue.getQuality())
+        {
+            return false;
+        }
+        return true;
     }
-    
+
     @Override
     public int hashCode()
     {
         int hash = 7;
-        hash = 31*hash + this.name.hashCode();
-        hash = 31*hash + this.quality.ordinal();
+        hash = 31 * hash + this.name.hashCode();
+        hash = 31 * hash + this.quality.ordinal();
         return hash;
     }
 

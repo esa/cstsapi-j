@@ -30,25 +30,23 @@ public class CstsOidValue extends CstsSimpleValue<int[]> implements ICstsOidValu
 
     private CstsOidValue(ObjectIdentifier oid)
     {
-        super(ParameterQualifier.VALID);
         this.value = oid.toArray();
     }
 
     private CstsOidValue(String name, ObjectIdentifier oid)
     {
-        super(name, ParameterQualifier.VALID);
+        super(name);
         this.value = oid.toArray();
     }
 
     private CstsOidValue(int[] oidArray)
     {
-        super(ParameterQualifier.VALID);
         this.value = Arrays.copyOf(oidArray, oidArray.length);
     }
 
     private CstsOidValue(String name, int[] oidArray)
     {
-        super(name, ParameterQualifier.VALID);
+        super(name);
         this.value = oidArray;
     }
 

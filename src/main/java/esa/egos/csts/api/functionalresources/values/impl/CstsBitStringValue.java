@@ -16,7 +16,13 @@ public class CstsBitStringValue extends CstsSimpleValue<byte[]> implements ICsts
     {
         return new CstsBitStringValue(name, value);
     }
-    
+
+    public static ICstsBitStringValue of(String name, byte[] value, ParameterQualifier qualifier)
+    {
+        return new CstsBitStringValue(name, value, qualifier);
+    }
+
+
     public static ICstsBitStringValue of(boolean[] value)
     {
         return CstsBitStringValue.of("value", value);
@@ -38,16 +44,21 @@ public class CstsBitStringValue extends CstsSimpleValue<byte[]> implements ICsts
 
     private CstsBitStringValue(byte[] value)
     {
-        super(ParameterQualifier.VALID);
         this.value = value.clone();
     }
 
     private CstsBitStringValue(String name, byte[] value)
     {
-        super(name, ParameterQualifier.VALID);
+        super(name);
         this.value = value.clone();
     }
-    
+
+    private CstsBitStringValue(String name, byte[] value, ParameterQualifier qualifier)
+    {
+        super(name, qualifier);
+        this.value = value.clone();
+    }
+
     @Override
     public String toString()
     {

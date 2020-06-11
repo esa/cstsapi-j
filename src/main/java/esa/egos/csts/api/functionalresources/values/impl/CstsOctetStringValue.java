@@ -17,18 +17,28 @@ public class CstsOctetStringValue extends CstsSimpleValue<byte[]> implements ICs
         return new CstsOctetStringValue(name, value);
     }
 
+    public static CstsOctetStringValue of(String name, byte[] value, ParameterQualifier qualifier)
+    {
+        return new CstsOctetStringValue(name, value, qualifier);
+    }
+
     private CstsOctetStringValue(byte[] value)
     {
-        super(ParameterQualifier.VALID);
         this.value = value.clone();
     }
 
     private CstsOctetStringValue(String name, byte[] value)
     {
-        super(name, ParameterQualifier.VALID);
+        super(name);
         this.value = value;
     }
-    
+
+    private CstsOctetStringValue(String name, byte[] value, ParameterQualifier qualifier)
+    {
+        super(name, qualifier);
+        this.value = value;
+    }
+
     @Override
     public String toString()
     {

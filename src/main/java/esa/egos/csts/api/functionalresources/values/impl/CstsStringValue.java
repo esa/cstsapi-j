@@ -27,27 +27,36 @@ public class CstsStringValue extends CstsSimpleValue<byte[]> implements ICstsStr
         return new CstsStringValue(name, value);
     }
 
+    public static CstsStringValue of(String name, String value, ParameterQualifier qualifier)
+    {
+        return new CstsStringValue(name, value, qualifier);
+    }
+
     private CstsStringValue(String value)
     {
-        super(ParameterQualifier.VALID);
         this.value = value.getBytes();
     }
 
     private CstsStringValue(byte[] value)
     {
-        super(ParameterQualifier.VALID);
         this.value = value.clone();
     }
 
     private CstsStringValue(String name, byte[] value)
     {
-        super(name, ParameterQualifier.VALID);
+        super(name);
         this.value = value;
     }
 
     private CstsStringValue(String name, String value)
     {
-        super(name, ParameterQualifier.VALID);
+        super(name);
+        this.value = value.getBytes();
+    }
+
+    private CstsStringValue(String name, String value, ParameterQualifier qualifier)
+    {
+        super(name, qualifier);
         this.value = value.getBytes();
     }
 

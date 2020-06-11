@@ -65,4 +65,6 @@ public interface ICstsValueFactory
     ICstsComplexValue createCstsComplexValue(String name, ParameterQualifier qualifier, ICstsValue... values);
 
     ICstsValue createEmptyValue();
+
+    ICstsValue createEmptyValue(ParameterQualifier qualifier);
 }

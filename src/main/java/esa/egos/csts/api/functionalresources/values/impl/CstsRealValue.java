@@ -15,15 +15,19 @@ public class CstsRealValue extends CstsSimpleValue<Double> implements ICstsRealV
         return new CstsRealValue(name, value);
     }
 
+    public static CstsRealValue of(String name, double value, ParameterQualifier qualifier)
+    {
+        return new CstsRealValue(name, value, qualifier);
+    }
+
     private CstsRealValue(double value)
     {
-        super(ParameterQualifier.VALID);
         this.value = value;
     }
 
     private CstsRealValue(String name, double value)
     {
-        super(name, ParameterQualifier.VALID);
+        super(name);
         this.value = value;
     }
 

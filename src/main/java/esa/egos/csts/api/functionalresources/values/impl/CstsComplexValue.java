@@ -38,13 +38,12 @@ public class CstsComplexValue extends CstsValue implements ICstsComplexValue
 
     private CstsComplexValue(ICstsValue... values)
     {
-        super(ParameterQualifier.VALID);
         this.values = Arrays.asList(values);
     }
 
     private CstsComplexValue(String name, ICstsValue... values)
     {
-        super(name, ParameterQualifier.VALID);
+        super(name);
         this.values = Arrays.asList(values);
     }
 

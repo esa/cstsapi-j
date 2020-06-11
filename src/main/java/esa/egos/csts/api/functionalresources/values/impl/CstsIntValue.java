@@ -17,6 +17,11 @@ public class CstsIntValue extends CstsSimpleValue<BigInteger> implements ICstsIn
         return new CstsIntValue(name, value);
     }
 
+    public static CstsIntValue of(String name, long value, ParameterQualifier qualifier)
+    {
+        return new CstsIntValue(name, value, qualifier);
+    }
+
     public static CstsIntValue of(BigInteger value)
     {
         return new CstsIntValue(value);
@@ -29,25 +34,23 @@ public class CstsIntValue extends CstsSimpleValue<BigInteger> implements ICstsIn
 
     private CstsIntValue(long value)
     {
-        super(ParameterQualifier.VALID);
         this.value = BigInteger.valueOf(value);
     }
 
     private CstsIntValue(BigInteger value)
     {
-        super(ParameterQualifier.VALID);
         this.value = value;
     }
 
     private CstsIntValue(String name, long value)
     {
-        super(name, ParameterQualifier.VALID);
+        super(name);
         this.value = BigInteger.valueOf(value);
     }
 
     private CstsIntValue(String name, BigInteger value)
     {
-        super(name, ParameterQualifier.VALID);
+        super(name);
         this.value = value;
     }
 

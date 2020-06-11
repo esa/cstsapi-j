@@ -15,15 +15,19 @@ public class CstsBoolValue extends CstsSimpleValue<Boolean> implements ICstsBool
         return new CstsBoolValue(name, value);
     }
 
+    public static CstsBoolValue of(String name, boolean value, ParameterQualifier qualifier)
+    {
+        return new CstsBoolValue(name, value, qualifier);
+    }
+
     private CstsBoolValue(boolean value)
     {
-        super(ParameterQualifier.VALID);
         this.value = value;
     }
 
     private CstsBoolValue(String name, boolean value)
     {
-        super(name, ParameterQualifier.VALID);
+        super(name);
         this.value = value;
     }
 

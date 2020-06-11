@@ -7,6 +7,10 @@ public abstract class CstsSimpleValue<V> extends CstsValue implements ICstsSimpl
 {
     protected V value;
 
+    protected CstsSimpleValue()
+    {
+    }
+
     protected CstsSimpleValue(String name)
     {
         super(name);

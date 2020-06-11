@@ -130,11 +130,12 @@ public class FunctionalResourceValue<T extends BerType>
      * 
      * @param name The event name
      * @param value The event value
+     * @param qualifier The event value qualifier
      * @throws InstantiationException
      * @throws IllegalAccessException
      * @throws IOException
      */
-    public synchronized void setValue(Name name, EventValue value) throws InstantiationException,
+    public synchronized void setValue(Name name, EventValue value, ParameterQualifier qualifier) throws InstantiationException,
                                                                    IllegalAccessException,
                                                                    IOException
     {
@@ -148,10 +149,23 @@ public class FunctionalResourceValue<T extends BerType>
         ByteArrayInputStream is = new ByteArrayInputStream(embeddedData.getData());
         this.berObject = this.berClass.newInstance();
         this.berObject.decode(is);
-        if (value.getQualifiedValues() != null)
-        {
-            this.qualifier = value.getQualifiedValues().get(0).getQualifier();
-        }
+        this.qualifier = qualifier;
+    }
+
+    /**
+     * Set the value from a {@EventValue} instance to the FR value
+     * 
+     * @param name The event name
+     * @param value The event value
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws IOException
+     */
+    public synchronized void setValue(Name name, EventValue value) throws InstantiationException,
+                                                                   IllegalAccessException,
+                                                                   IOException
+    {
+        setValue(name, value, ParameterQualifier.VALID);
     }
 
     /**
@@ -239,6 +253,10 @@ public class FunctionalResourceValue<T extends BerType>
             }
             setComplexValue((ICstsComplexValue) value, this.berObject, this.berClass);
         }
+        else if (value instanceof CstsEmptyValue)
+        {
+            // do nothing
+        }
         else
         {
             throw new UnsupportedOperationException("Value " + value + " is not supported by parameter " + name);
@@ -250,23 +268,35 @@ public class FunctionalResourceValue<T extends BerType>
     {
         ICstsValue ret;
 
-        String name = CSTSUtils.firstToLowerCase(this.berObject.getClass().getSimpleName());
-        // treat CstsNullValue separately
-        if (this.berObject instanceof BerNull)
+        if (this.qualifier == ParameterQualifier.VALID)
         {
-            return this.cstsValueFactory.createCstsNullValue(name);
-        }
-
-        Optional<Field> optionalField = getValueField(this.berObject.getClass());
-        if (optionalField.isPresent())
-        {
-            // a parameter w/ simple value has the value field directly in its BER class
-            ret = getSimpleValue(name, this.berObject, optionalField.get());
+            String name = CSTSUtils.firstToLowerCase(this.berObject.getClass().getSimpleName());
+            Optional<Field> optionalField = getValueField(this.berObject.getClass());
+            if (optionalField.isPresent())
+            {
+                // a parameter w/ simple value has the value field directly in
+                // its BER class
+                ret = getSimpleValue(name, this.berObject, optionalField.get());
+            }
+            else if (this.berObject instanceof BerNull)
+            {
+                // a parameter w/ NULL value
+                ret = this.cstsValueFactory.createCstsNullValue(name);
+            }
+            else
+            {
+                // a parameter w/ complex value
+                ret = getComplexValue(name, this.berObject);
+            }
         }
         else
         {
-            // a parameter w/ complex value
-            ret = getComplexValue(name, this.berObject);
+            // for qualifiers 
+            // ParameterQualifier.ERROR
+            // ParameterQualifier.UNAVAILABLE
+            // ParameterQualifier.UNDEFINED
+            // the value is not provided
+            ret = this.cstsValueFactory.createEmptyValue(this.qualifier);
         }
 
         return ret;

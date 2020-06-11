@@ -26,14 +26,15 @@ public class CstsEnumValue extends CstsSimpleValue<BigInteger> implements ICstsE
 
     protected CstsEnumValue(int value, String valueName)
     {
-        super(null, ParameterQualifier.VALID);
         this.value = BigInteger.valueOf(value);
         this.valueName = valueName;
     }
 
     protected CstsEnumValue(String name, int value, String valueName)
     {
-        this(name, value, valueName, ParameterQualifier.VALID);
+        super(name);
+        this.value = BigInteger.valueOf(value);
+        this.valueName = valueName;
     }
 
     protected CstsEnumValue(String name, int value, String valueName, ParameterQualifier qualifier)
