@@ -240,7 +240,7 @@ public class OnChangeCyclicReportProvider extends CyclicReportProvider implement
      * - in case onChange is true, none changed parameter but the first update has not been dispatched
      */
     @Override
-    protected synchronized void createAndTransferData()
+    protected void createAndTransferData()
     {
         synchronized (this.changedParameters)
         {

@@ -37,6 +37,7 @@ import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.procedures.unbuffereddatadelivery.AbstractUnbufferedDataDelivery;
+import esa.egos.csts.api.states.State;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.LabelList;
 import esa.egos.csts.api.types.Name;
@@ -404,14 +405,24 @@ public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliver
 
 	}
 
-	protected synchronized void createAndTransferData() {
-		generateQualifiedParameters();
-		ITransferData data = createTransferData();
-		data.setGenerationTime(Time.now());
-		data.setSequenceCounter(getCurrentSequenceCounter());
-		data.setEmbeddedData(encodeDataRefinement());
-		getState().process(data);
-		//getQualifiedParameters().clear(); // https://sdejira.esa.int/browse/CSTSAPI-12
+	protected void createAndTransferData() {
+	    // do not lock this procedure
+	    // first off get and lock this procedure state because it can be locked by other operation (e.g. STOP)
+	    State<?> state = getState();
+	    synchronized (state)
+	    {
+	        // lock this procedure
+	        synchronized (this)
+	        {
+	            generateQualifiedParameters();
+	            ITransferData data = createTransferData();
+	            data.setGenerationTime(Time.now());
+	            data.setSequenceCounter(getCurrentSequenceCounter());
+	            data.setEmbeddedData(encodeDataRefinement());
+	            state.process(data);
+	            //getQualifiedParameters().clear(); // https://sdejira.esa.int/browse/CSTSAPI-12
+	        }
+	    }
 	}
 
 	@Override

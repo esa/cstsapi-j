@@ -707,7 +707,7 @@ public abstract class AbstractProcedure implements IProcedureInternal {
 	public CstsResult forwardInvocationToProxy(IOperation operation) {
 		Result res = getInternal().forwardInitiatePxyOpInv(operation, true);
 		if (res != Result.S_OK) {
-			LOGGER.warning("The underlying proxy returned with an error code: " + res);
+			LOGGER.warning("The underlying proxy returned with an error code: " + res + " for " + operation);
 			return CstsResult.COMMUNICATIONS_FAILURE;
 		}
 		return CstsResult.SUCCESS;
@@ -720,7 +720,7 @@ public abstract class AbstractProcedure implements IProcedureInternal {
 			acknowledgedOperation.setAcknowledgement(false);
 		}
 		if (getInternal().forwardInitiatePxyOpRtn(confirmedOperation, true) != Result.S_OK) {
-			LOGGER.warning("The underlying proxy returned with an error code.");
+			LOGGER.warning("The underlying proxy returned with an error code for " + confirmedOperation + ".");
 			return CstsResult.COMMUNICATIONS_FAILURE;
 		}
 		return CstsResult.SUCCESS;
@@ -730,7 +730,7 @@ public abstract class AbstractProcedure implements IProcedureInternal {
 	public CstsResult forwardAcknowledgementToProxy(IAcknowledgedOperation acknowledgedOperation) {
 		acknowledgedOperation.setAcknowledgement(true);
 		if (getInternal().forwardInitiatePxyOpAck(acknowledgedOperation, true) != Result.S_OK) {
-			LOGGER.warning("The underlying proxy returned with an error code.");
+            LOGGER.warning("The underlying proxy returned with an error code for " + acknowledgedOperation + ".");
 			return CstsResult.COMMUNICATIONS_FAILURE;
 		}
 		return CstsResult.SUCCESS;
