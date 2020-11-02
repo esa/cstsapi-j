@@ -7,7 +7,6 @@ import java.util.List;
 import org.junit.BeforeClass;
 
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
-import esa.egos.csts.api.functionalresources.values.impl.CstsNullValue;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.sim.impl.frm.Fr;
 
