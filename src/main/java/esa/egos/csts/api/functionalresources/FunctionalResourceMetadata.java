@@ -2,6 +2,7 @@ package esa.egos.csts.api.functionalresources;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +20,7 @@ import com.beanit.jasn1.ber.types.BerType;
 import esa.egos.csts.api.events.impl.FunctionalResourceEvent;
 import esa.egos.csts.api.functionalresources.values.ICstsValueFactory;
 import esa.egos.csts.api.functionalresources.values.impl.CstsValueFactory;
+import esa.egos.csts.api.functionalresources.values.impl.FunctionalResourceValue;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.oids.OidTree;
 import esa.egos.csts.api.parameters.impl.FunctionalResourceParameterEx;
@@ -41,7 +43,8 @@ public class FunctionalResourceMetadata
     private static FunctionalResourceMetadata instance = null;
 
     /** The parameter cache */
-    private static Map<Name, FunctionalResourceParameterEx<?>> parameterCache = new HashMap<Name, FunctionalResourceParameterEx<?>>();
+    private static Map<Name, FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> parameterCache =
+            new HashMap<Name, FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>>();
 
     /** The instance singleton lock */
     private static Object lock = new Object();
@@ -83,10 +86,10 @@ public class FunctionalResourceMetadata
     private Map<String, int[]> frDirectiveOidName2oidArray;
 
     /** The FR OID to map of FR parameter OID to parameter BER class */
-    private Map<ObjectIdentifier, Map<ObjectIdentifier, Class<?>>> frOid2frParameterOidAndClass;
+    protected Map<ObjectIdentifier, Map<ObjectIdentifier, Class<?>>> frOid2frParameterOidAndClass;
 
     /** The FR OID to map of FR event OID to event BER class */
-    private Map<ObjectIdentifier, Map<ObjectIdentifier, Class<?>>> frOid2frEventOidAndClass;
+    protected Map<ObjectIdentifier, Map<ObjectIdentifier, Class<?>>> frOid2frEventOidAndClass;
 
     /** CSTS value factory */
     private ICstsValueFactory cstsValueFactory;
@@ -101,7 +104,7 @@ public class FunctionalResourceMetadata
     /**
      * C-tor
      */
-    private FunctionalResourceMetadata()
+    protected FunctionalResourceMetadata()
     {
         this.berClasses = new LinkedHashMap<String, Class<?>>();
         this.nonBerClasses = new ArrayList<Class<?>>();
@@ -261,7 +264,7 @@ public class FunctionalResourceMetadata
 
         this.oidName2oidArray.put(oidName, oidArray);
         this.oid2oidName.put(ObjectIdentifier.of(oidArray), oidName);
-        String oidLabelName = oidName;//removeSuffix(oidName, TYPE_SUFFIX);
+        String oidLabelName = oidName;// removeSuffix(oidName, TYPE_SUFFIX);
         if (oidArray.length == OidTree.CROSS_FUNC_RES_BIT_LEN)
         {
             this.frOidName2oidArray.put(oidLabelName, oidArray);
@@ -425,10 +428,18 @@ public class FunctionalResourceMetadata
      * @return the FR parameter
      * @throws InstantiationException
      * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     * @throws IllegalArgumentException
+     * @throws SecurityException
+     * @throws NoSuchMethodException
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public FunctionalResourceParameterEx<?> createParameter(Name name) throws InstantiationException,
-                                                                       IllegalAccessException
+    public FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> createParameter(Name name) throws InstantiationException,
+                                                                                                   IllegalAccessException,
+                                                                                                   NoSuchMethodException,
+                                                                                                   SecurityException,
+                                                                                                   IllegalArgumentException,
+                                                                                                   InvocationTargetException
     {
         FunctionalResourceType frType = name.getFunctionalResourceName().getType();
         Map<ObjectIdentifier, Class<?>> oid2Class = this.frOid2frParameterOidAndClass.get(frType.getOid());
@@ -446,6 +457,7 @@ public class FunctionalResourceMetadata
         return new FunctionalResourceParameterEx(name.getOid(),
                                                  name.getFunctionalResourceName(),
                                                  berClass,
+                                                 FunctionalResourceValue.class,
                                                  this.cstsValueFactory);
     }
 
@@ -456,9 +468,18 @@ public class FunctionalResourceMetadata
      * @return FR event
      * @throws InstantiationException
      * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     * @throws IllegalArgumentException
+     * @throws SecurityException
+     * @throws NoSuchMethodException
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public FunctionalResourceEvent<?> createEvent(Name name) throws InstantiationException, IllegalAccessException
+    public FunctionalResourceEvent<?, FunctionalResourceValue<?>> createEvent(Name name) throws InstantiationException,
+                                                                                         IllegalAccessException,
+                                                                                         NoSuchMethodException,
+                                                                                         SecurityException,
+                                                                                         IllegalArgumentException,
+                                                                                         InvocationTargetException
     {
         FunctionalResourceType frType = name.getFunctionalResourceName().getType();
         Map<ObjectIdentifier, Class<?>> oid2Class = this.frOid2frEventOidAndClass.get(frType.getOid());
@@ -476,6 +497,7 @@ public class FunctionalResourceMetadata
         return new FunctionalResourceEvent(name.getOid(),
                                            name.getFunctionalResourceName(),
                                            berClass,
+                                           FunctionalResourceValue.class,
                                            this.cstsValueFactory);
     }
 
@@ -488,23 +510,29 @@ public class FunctionalResourceMetadata
      * @return the list of all FR parameters
      * @throws InstantiationException
      * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     * @throws IllegalArgumentException
+     * @throws SecurityException
+     * @throws NoSuchMethodException
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public List<FunctionalResourceParameterEx<?>> createParameters(FunctionalResourceType frType,
-                                                                   int instanceNumber) throws InstantiationException,
-                                                                                       IllegalAccessException
+    public List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> createParameters(FunctionalResourceType frType,
+                                                                                               int instanceNumber) throws InstantiationException,
+                                                                                                                   IllegalAccessException,
+                                                                                                                   NoSuchMethodException,
+                                                                                                                   SecurityException,
+                                                                                                                   IllegalArgumentException,
+                                                                                                                   InvocationTargetException
     {
-        List<FunctionalResourceParameterEx<?>> ret = new ArrayList<>();
+        List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> ret = new ArrayList<>();
         Map<ObjectIdentifier, Class<?>> oid2Class = this.frOid2frParameterOidAndClass.get(frType.getOid());
         if (oid2Class != null)
         {
             for (Entry<ObjectIdentifier, Class<?>> e : oid2Class.entrySet())
             {
                 FunctionalResourceName frName = FunctionalResourceName.of(frType, instanceNumber);
-                FunctionalResourceParameterEx<?> parameter = new FunctionalResourceParameterEx(e.getKey(),
-                                                                                               frName,
-                                                                                               e.getValue(),
-                                                                                               this.cstsValueFactory);
+                FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> parameter = new FunctionalResourceParameterEx(e
+                        .getKey(), frName, e.getValue(), FunctionalResourceValue.class, this.cstsValueFactory);
                 ret.add(parameter);
             }
         }
@@ -520,23 +548,29 @@ public class FunctionalResourceMetadata
      * @return the list of all FR events
      * @throws InstantiationException
      * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     * @throws IllegalArgumentException
+     * @throws SecurityException
+     * @throws NoSuchMethodException
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public List<FunctionalResourceEvent<?>> createEvents(FunctionalResourceType frType,
-                                                         int instanceNumber) throws InstantiationException,
-                                                                             IllegalAccessException
+    public List<FunctionalResourceEvent<?, FunctionalResourceValue<?>>> createEvents(FunctionalResourceType frType,
+                                                                                     int instanceNumber) throws InstantiationException,
+                                                                                                         IllegalAccessException,
+                                                                                                         NoSuchMethodException,
+                                                                                                         SecurityException,
+                                                                                                         IllegalArgumentException,
+                                                                                                         InvocationTargetException
     {
-        List<FunctionalResourceEvent<?>> ret = new ArrayList<>();
+        List<FunctionalResourceEvent<?, FunctionalResourceValue<?>>> ret = new ArrayList<>();
         Map<ObjectIdentifier, Class<?>> oid2Class = this.frOid2frEventOidAndClass.get(frType.getOid());
         if (oid2Class != null)
         {
             for (Entry<ObjectIdentifier, Class<?>> e : oid2Class.entrySet())
             {
                 FunctionalResourceName frName = FunctionalResourceName.of(frType, instanceNumber);
-                FunctionalResourceEvent<?> event = new FunctionalResourceEvent(e.getKey(),
-                                                                               frName,
-                                                                               e.getValue(),
-                                                                               this.cstsValueFactory);
+                FunctionalResourceEvent<?, FunctionalResourceValue<?>> event = new FunctionalResourceEvent(e
+                        .getKey(), frName, e.getValue(), FunctionalResourceValue.class, this.cstsValueFactory);
                 ret.add(event);
             }
         }
@@ -627,7 +661,8 @@ public class FunctionalResourceMetadata
 
                     for (Entry<ObjectIdentifier, Class<?>> frParEntry : oid2parClass.entrySet())
                     {
-                        String oidName = this.oid2oidName.get(frParEntry.getKey());//removeSuffix(this.oid2oidName.get(frParEntry.getKey()), TYPE_SUFFIX);
+                        String oidName = this.oid2oidName.get(frParEntry.getKey());// removeSuffix(this.oid2oidName.get(frParEntry.getKey()),
+                                                                                   // TYPE_SUFFIX);
                         int[] oidArray = frParEntry.getKey().toArray();
                         frTypesBuilder.addItem(oidName,
                                                "OIDs.crossSupportFunctionalities",
@@ -794,7 +829,7 @@ public class FunctionalResourceMetadata
         Name name = qualifiedParameter.getName();
         try
         {
-            FunctionalResourceParameterEx<?> frPar = parameterCache.get(name);
+            FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> frPar = parameterCache.get(name);
             if (frPar == null)
             {
                 frPar = createParameter(qualifiedParameter.getName());

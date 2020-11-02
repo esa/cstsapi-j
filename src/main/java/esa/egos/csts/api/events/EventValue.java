@@ -10,6 +10,7 @@ import esa.egos.csts.api.enumerations.EventValueType;
 import esa.egos.csts.api.events.impl.FunctionalResourceEvent;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.functionalresources.FunctionalResourceMetadata;
+import esa.egos.csts.api.functionalresources.values.impl.FunctionalResourceValue;
 import esa.egos.csts.api.parameters.impl.ParameterValue;
 import esa.egos.csts.api.parameters.impl.QualifiedValues;
 import esa.egos.csts.api.types.Name;
@@ -172,10 +173,10 @@ public class EventValue {
 		case EXTENDED:
 		    try
 		    {
-		        FunctionalResourceEvent<?> fre = FunctionalResourceMetadata.getInstance().createEvent(name);
+		        FunctionalResourceEvent<?, FunctionalResourceValue<?>> fre = FunctionalResourceMetadata.getInstance().createEvent(name);
 		        sb.append(fre.valueToString());
 		    }
-		    catch(IllegalAccessException | InstantiationException e)
+		    catch(Exception e)
 		    {
                 e.printStackTrace();
 		    }

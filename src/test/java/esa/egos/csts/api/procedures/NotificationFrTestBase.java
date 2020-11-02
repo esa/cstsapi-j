@@ -11,6 +11,7 @@ import org.junit.Test;
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.functionalresources.values.ICstsValue;
+import esa.egos.csts.api.functionalresources.values.impl.FunctionalResourceValue;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.Name;
@@ -95,7 +96,7 @@ public abstract class NotificationFrTestBase extends MdCstsTestBase
 
                 Thread.sleep(100);
 
-                FunctionalResourceEvent<?> event_01 = null;
+                FunctionalResourceEvent<?, FunctionalResourceValue<?>> event_01 = null;
                 try
                 {
                     event_01 = this.userSi.getEvent(this.piid_n_secondary, name);
@@ -125,7 +126,7 @@ public abstract class NotificationFrTestBase extends MdCstsTestBase
 
                 Thread.sleep(100);
 
-                FunctionalResourceEvent<?> event_02 = null;
+                FunctionalResourceEvent<?, FunctionalResourceValue<?>> event_02 = null;
                 try
                 {
                     event_02 = this.userSi.getEvent(this.piid_n_secondary, name);

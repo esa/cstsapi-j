@@ -1,6 +1,8 @@
 package esa.egos.csts.api.events.impl;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,20 +16,21 @@ import esa.egos.csts.api.functionalresources.values.ICstsValueFactory;
 import esa.egos.csts.api.functionalresources.values.impl.FunctionalResourceValue;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
-
+import esa.egos.csts.api.types.Name;
 
 /**
  * Implements the functional resource event
  *
  * @param <T> The jASN.1 BER encoding/decoding class
+ * @param <V> The FR value container
  */
-public class FunctionalResourceEvent<T extends BerType> extends Event
+public class FunctionalResourceEvent<T extends BerType, V extends FunctionalResourceValue<T>> extends Event
 {
     /** The logger */
     private static final Logger LOG = Logger.getLogger(FunctionalResourceEvent.class.getName());
 
     /** FR event value */
-    private FunctionalResourceValue<T> value;
+    protected V value;
 
 
     /**
@@ -36,18 +39,72 @@ public class FunctionalResourceEvent<T extends BerType> extends Event
      * @param identifier The event object identifier
      * @param functionalResourceName The functional resource name
      * @param berClass The jASN.1 generate class for the event value
-     * @param cstsValueFactory The external value factory
+     * @param valueClass FR value class
+     * @param valueFactories The external value factories
+     * 
      * @throws InstantiationException
      * @throws IllegalAccessException
+     * @throws SecurityException
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     * @throws IllegalArgumentException
      */
     public FunctionalResourceEvent(ObjectIdentifier identifier,
                                    FunctionalResourceName functionalResourceName,
                                    Class<T> berClass,
-                                   ICstsValueFactory cstsValueFactory) throws InstantiationException,
-                                                                       IllegalAccessException
+                                   Class<V> valueClass,
+                                   Object... valueFactories) throws InstantiationException,
+                                                             IllegalAccessException,
+                                                             NoSuchMethodException,
+                                                             SecurityException,
+                                                             IllegalArgumentException,
+                                                             InvocationTargetException
     {
         super(identifier, functionalResourceName);
-        this.value = new FunctionalResourceValue<>(getName(), berClass, cstsValueFactory);
+        this.value = createValue(getName(), berClass, valueClass, valueFactories);
+    }
+
+    /**
+     * Create the value for this event
+     * 
+     * @param name The event name
+     * @param berClass The jASN.1 generate class for the event value
+     * @param valueClass FR value class
+     * @param valueFactories The external value factories
+     * @return FR event value
+     * 
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws NoSuchMethodException
+     * @throws SecurityException
+     * @throws IllegalArgumentException
+     * @throws InvocationTargetException
+     */
+    protected V createValue(Name name,
+                            Class<T> berClass,
+                            Class<V> valueClass,
+                            Object... valueFactories) throws InstantiationException,
+                                                      IllegalAccessException,
+                                                      NoSuchMethodException,
+                                                      SecurityException,
+                                                      IllegalArgumentException,
+                                                      InvocationTargetException
+    {
+        Constructor<V> ctor = valueClass.getConstructor(Name.class, Class.class, ICstsValueFactory.class);
+        ICstsValueFactory cstsValueFactory = null;
+        for (Object obj : valueFactories)
+        {
+            if (obj instanceof ICstsValueFactory)
+            {
+                cstsValueFactory = (ICstsValueFactory) obj;
+                break;
+            }
+        }
+        if (cstsValueFactory == null)
+        {
+            throw new IllegalArgumentException("Missing an instance of ICstsValueFactory in the valueFactories argument");
+        }
+        return valueClass.cast(ctor.newInstance(name, berClass, cstsValueFactory));
     }
 
     /**
@@ -101,7 +158,8 @@ public class FunctionalResourceEvent<T extends BerType> extends Event
     @Override
     public void fire()
     {
-        // convert CSTS value to the EventValue and set it to the base Event class
+        // convert CSTS value to the EventValue and set it to the base Event
+        // class
         setValue(this.value.getEventValue());
         super.fire();
     }
@@ -114,7 +172,7 @@ public class FunctionalResourceEvent<T extends BerType> extends Event
             this.value.setValue(this.getName(), eventValue);
             super.fire(eventValue);
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             LOG.log(Level.SEVERE, "Failed to fire " + eventValue, e);
         }
@@ -127,7 +185,7 @@ public class FunctionalResourceEvent<T extends BerType> extends Event
             this.value.setCstsValue(cstsValue);
             fire();
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             LOG.log(Level.SEVERE, "Failed to fire " + cstsValue, e);
         }

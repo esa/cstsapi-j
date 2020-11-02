@@ -2,6 +2,7 @@ package esa.egos.csts.sim.impl.usr;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +36,7 @@ import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.functionalresources.values.ICstsValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsEmptyValue;
+import esa.egos.csts.api.functionalresources.values.impl.FunctionalResourceValue;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
@@ -47,7 +49,6 @@ import esa.egos.csts.api.operations.IStart;
 import esa.egos.csts.api.operations.IStop;
 import esa.egos.csts.api.operations.ITransferData;
 import esa.egos.csts.api.operations.IUnbind;
-import esa.egos.csts.api.parameters.impl.FunctionalResourceParameter;
 import esa.egos.csts.api.parameters.impl.FunctionalResourceParameterEx;
 import esa.egos.csts.api.parameters.impl.ParameterValue;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
@@ -65,7 +66,8 @@ import esa.egos.csts.sim.impl.MdCstsSiConfig;
 /**
  * MD-CSTS User service inform
  */
-public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, InformationQueryUser, OnChangeCyclicReportUser, NotificationUser>
+public abstract class MdCstsSiUserInform extends
+                                         MdCstsSi<MdCstsSiConfig, InformationQueryUser, OnChangeCyclicReportUser, NotificationUser>
 {
     /** the size of buffer for printing an operation parameters */
     protected static final int PRINT_BUFF_SIZE = 1024;
@@ -101,22 +103,23 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
     private List<List<QualifiedParameter>> cyclicParameters;
 
     /**
-     * events received on the NOTIFY operation invocation from a
-     * cyclic report procedure
+     * events received on the NOTIFY operation invocation from a cyclic report
+     * procedure
      */
     private List<Name> notifiedEvents;
 
     /** FR parameters received from procedures */
-    private Map<ProcedureInstanceIdentifier, Map<Name, FunctionalResourceParameterEx<?>>> parameters;
+    private Map<ProcedureInstanceIdentifier, Map<Name, FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>>> parameters;
 
     /** FR parameters received from procedures */
-    private Map<ProcedureInstanceIdentifier, Map<Name, FunctionalResourceEvent<?>>> events;
+    private Map<ProcedureInstanceIdentifier, Map<Name, FunctionalResourceEvent<?, FunctionalResourceValue<?>>>> events;
 
     /** Number of the received parameter updates by a procedure */
     protected Map<ProcedureInstanceIdentifier, Integer> parameterUpdateCounters;
 
     /** Number of the received event updates by a procedure */
     protected Map<ProcedureInstanceIdentifier, Integer> eventUpdateCounters;
+
 
     /**
      * Constructs an MD CSTS User SI
@@ -139,20 +142,21 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
         this.cyclicParameters = new ArrayList<List<QualifiedParameter>>();
         this.notifiedEvents = new ArrayList<Name>();
 
-        this.parameters = new HashMap<ProcedureInstanceIdentifier, Map<Name, FunctionalResourceParameterEx<?>>>();
-        this.events = new HashMap<ProcedureInstanceIdentifier, Map<Name, FunctionalResourceEvent<?>>>();
+        this.parameters = new HashMap<ProcedureInstanceIdentifier, Map<Name, FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>>>();
+        this.events = new HashMap<ProcedureInstanceIdentifier, Map<Name, FunctionalResourceEvent<?, FunctionalResourceValue<?>>>>();
         this.parameterUpdateCounters = new HashMap<ProcedureInstanceIdentifier, Integer>();
         this.eventUpdateCounters = new HashMap<ProcedureInstanceIdentifier, Integer>();
         for (ProcedureInstanceIdentifier piid : config.getProceduresIdentifiers())
         {
-            if (piid.getType().equals(ProcedureType.of(OIDs.ocoCyclicReport)) 
-                    || piid.getType().equals(ProcedureType.of(OIDs.informationQuery)))
+            if (piid.getType().equals(ProcedureType.of(OIDs.ocoCyclicReport))
+                || piid.getType().equals(ProcedureType.of(OIDs.informationQuery)))
             {
-                this.parameters.put(piid, new HashMap<Name, FunctionalResourceParameterEx<?>>());
+                this.parameters.put(piid,
+                                    new HashMap<Name, FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>>());
             }
             else if (piid.getType().equals(ProcedureType.of(OIDs.notification)))
             {
-                this.events.put(piid, new HashMap<Name, FunctionalResourceEvent<?>>());
+                this.events.put(piid, new HashMap<Name, FunctionalResourceEvent<?, FunctionalResourceValue<?>>>());
             }
         }
 
@@ -169,7 +173,7 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
     @Override
     public void informOpInvocation(IOperation operation)
     {
-//        System.out.println("MdCstsSiUserInform#informOpInvocation() begin");
+        // System.out.println("MdCstsSiUserInform#informOpInvocation() begin");
 
         switch (operation.getType())
         {
@@ -185,7 +189,7 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
             System.err.print("unexpected operation " + operation.getClass().getSimpleName() + " invoked");
             break;
         }
-//        System.out.println("MdCstsSiUserInform#informOpInvocation() end");
+        // System.out.println("MdCstsSiUserInform#informOpInvocation() end");
     }
 
     /**
@@ -214,11 +218,15 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
         switch (operation.getType())
         {
         case BIND:
-            onReturn((IBind) operation, ()-> { return ((IBind) operation).getBindDiagnostic().name();});
+            onReturn((IBind) operation, () -> {
+                return ((IBind) operation).getBindDiagnostic().name();
+            });
             break;
 
         case UNBIND:
-            onReturn((IUnbind) operation,()-> { return ((IUnbind) operation).getDiagnostic().getType().name();});
+            onReturn((IUnbind) operation, () -> {
+                return ((IUnbind) operation).getDiagnostic().getType().name();
+            });
             break;
 
         case START:
@@ -265,10 +273,11 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
     }
 
     /**
-     * Process operation's result and diagnostic and signal return to the invoker
-     *  
+     * Process operation's result and diagnostic and signal return to the
+     * invoker
+     * 
      * @param op The returned operation
-     * @param specDiagFn The supplier method for the operation diagnostic 
+     * @param specDiagFn The supplier method for the operation diagnostic
      */
     private <OP extends IConfirmedOperation> void onReturn(OP op, Supplier<String> specDiagFn)
     {
@@ -316,26 +325,36 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
 
         try
         {
-            if (start.getResult() == OperationResult.NEGATIVE) {
+            if (start.getResult() == OperationResult.NEGATIVE)
+            {
                 onReturn(start, () -> {
                     StartDiagnostic sd = start.getStartDiagnostic();
                     if (sd.getType() == StartDiagnosticType.EXTENDED)
                     {
                         EmbeddedData ed = sd.getDiagnosticExtension();
-                        if (ed.getOid().equals(OIDs.crStartDiagExt)) {
+                        if (ed.getOid().equals(OIDs.crStartDiagExt))
+                        {
                             CyclicReportStartDiagnosticExt cyclicReportStartDiagnosticExt = new CyclicReportStartDiagnosticExt();
-                            try (ByteArrayInputStream is = new ByteArrayInputStream(ed.getData())) {
+                            try (ByteArrayInputStream is = new ByteArrayInputStream(ed.getData()))
+                            {
                                 cyclicReportStartDiagnosticExt.decode(is);
-                            } catch (IOException e) {
+                            }
+                            catch (IOException e)
+                            {
                                 e.printStackTrace();
                             }
                             return CyclicReportStartDiagnostics.decode(cyclicReportStartDiagnosticExt)
                                     .getListOfParametersDiagnostics().toString();
-                        } else if (ed.getOid().equals(OIDs.nStartDiagExt)) {
+                        }
+                        else if (ed.getOid().equals(OIDs.nStartDiagExt))
+                        {
                             NotificationStartDiagnosticExt notificationStartDiagnosticExt = new NotificationStartDiagnosticExt();
-                            try (ByteArrayInputStream is = new ByteArrayInputStream(ed.getData())) {
+                            try (ByteArrayInputStream is = new ByteArrayInputStream(ed.getData()))
+                            {
                                 notificationStartDiagnosticExt.decode(is);
-                            } catch (IOException e) {
+                            }
+                            catch (IOException e)
+                            {
                                 e.printStackTrace();
                             }
                             return notificationStartDiagnosticExt.getCommon().toString();
@@ -343,8 +362,12 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
                     }
                     return start.getStartDiagnostic().getType().name();
                 });
-            } else {
-                onReturn(start, () -> { return start.getStartDiagnostic().getType().name();});
+            }
+            else
+            {
+                onReturn(start, () -> {
+                    return start.getStartDiagnostic().getType().name();
+                });
             }
         }
         finally
@@ -368,7 +391,9 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
 
         try
         {
-            onReturn(stop, ()->{ return stop.getDiagnostic().getType().name();});
+            onReturn(stop, () -> {
+                return stop.getDiagnostic().getType().name();
+            });
         }
         finally
         {
@@ -383,11 +408,15 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
                                                                                                    IllegalAccessException,
                                                                                                    IOException,
                                                                                                    NoSuchFieldException,
-                                                                                                   IllegalArgumentException
+                                                                                                   IllegalArgumentException,
+                                                                                                   NoSuchMethodException,
+                                                                                                   SecurityException,
+                                                                                                   InvocationTargetException
     {
         synchronized (this.parameters)
         {
-            Map<Name, FunctionalResourceParameterEx<?>> procedureParameters = this.parameters.get(piid);
+            Map<Name, FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> procedureParameters = this.parameters
+                    .get(piid);
 
             for (QualifiedParameter qualifiedParameter : qualifiedParameters)
             {
@@ -407,21 +436,21 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
                             ParameterValue parameterValue = qualifiedValues.getParameterValues().get(0);
                             if (parameterValue.getType() == ParameterType.EXTENDED)
                             {
-                                FunctionalResourceParameterEx<?> parameter = getParameter(procedureParameters,
-                                                                                          qualifiedParameter.getName());
+                                FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> parameter = getParameter(procedureParameters,
+                                                                                                                      qualifiedParameter
+                                                                                                                              .getName());
                                 parameter.setValue(qualifiedParameter);
                             }
                             else
                             {
-                                System.out.println("Received qualified parameter "
-                                                   + qualifiedParameter.getName() + " w/ unexpected type "
-                                                   + parameterValue.getType());
+                                System.out.println("Received qualified parameter " + qualifiedParameter.getName()
+                                                   + " w/ unexpected type " + parameterValue.getType());
                             }
                         }
                         else
                         {
-                            System.out.println("Received qualified parameter "
-                                               + qualifiedParameter.getName() + " w/o qualified values");
+                            System.out.println("Received qualified parameter " + qualifiedParameter.getName()
+                                               + " w/o qualified values");
                         }
                     }
                     else
@@ -431,8 +460,9 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
                             // ParameterQualifier.ERROR
                             // ParameterQualifier.UNAVAILABLE
                             // ParameterQualifier.UNDEFINED
-                            FunctionalResourceParameterEx<?> parameter = getParameter(procedureParameters,
-                                                                                      qualifiedParameter.getName());
+                            FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> parameter = getParameter(procedureParameters,
+                                                                                                                  qualifiedParameter
+                                                                                                                          .getName());
                             parameter.setCstsValue(CstsEmptyValue.empty(qualifiedValues.getQualifier()));
                         }
                         catch (IllegalArgumentException e)
@@ -452,7 +482,7 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
      */
     private void onGetReturn(IGet get)
     {
-//        System.out.println("MdCstsSiUserInform#onGetReturn() begin");
+        // System.out.println("MdCstsSiUserInform#onGetReturn() begin");
 
         this.retLock.lock();
         try
@@ -474,7 +504,8 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
                         }
                     }
 
-                    processFunctionalResourceParameters(get.getProcedureInstanceIdentifier(), get.getQualifiedParameters());
+                    processFunctionalResourceParameters(get.getProcedureInstanceIdentifier(),
+                                                        get.getQualifiedParameters());
                 }
                 catch (Exception e)
                 {
@@ -503,17 +534,22 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
             this.retLock.unlock();
         }
 
-//        System.out.println("MdCstsSiUserInform#onGetReturn() end");
+        // System.out.println("MdCstsSiUserInform#onGetReturn() end");
     }
 
-    private FunctionalResourceParameterEx<?> getParameter(Map<Name, FunctionalResourceParameterEx<?>> procedureParameters, Name name) throws InstantiationException, IllegalAccessException
+    private FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> getParameter(Map<Name, FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> procedureParameters,
+                                                                                      Name name) throws InstantiationException,
+                                                                                                 IllegalAccessException,
+                                                                                                 NoSuchMethodException,
+                                                                                                 SecurityException,
+                                                                                                 IllegalArgumentException,
+                                                                                                 InvocationTargetException
     {
-        FunctionalResourceParameterEx<?> ret = procedureParameters.get(name);
+        FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> ret = procedureParameters.get(name);
 
         if (ret == null)
         {
-            ret = FunctionalResourceMetadata.getInstance()
-                    .createParameter(name);
+            ret = FunctionalResourceMetadata.getInstance().createParameter(name);
             procedureParameters.put(name, ret);
         }
 
@@ -522,11 +558,13 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
 
     /**
      * Increment a procedure invocation counter
+     * 
      * @param piid The procedure identifier
      * @param counter The map with counters for each configured procedure
      */
     private static void incrementCounter(ProcedureInstanceIdentifier piid,
-                                         Map<ProcedureInstanceIdentifier, Integer> counter, int increment)
+                                         Map<ProcedureInstanceIdentifier, Integer> counter,
+                                         int increment)
     {
         synchronized (counter)
         {
@@ -549,6 +587,7 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
 
     /**
      * Reset the parameter update count
+     * 
      * @param piid The procedure identifier
      */
     public void resetParameterUpdateCount(ProcedureInstanceIdentifier piid)
@@ -558,6 +597,7 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
 
     /**
      * Reset the parameter update count
+     * 
      * @param piid The procedure identifier
      * @param increment The number of new parameters
      */
@@ -568,6 +608,7 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
 
     /**
      * Reset the event update counter
+     * 
      * @param piid The procedure identifier
      */
     public void resetEventUpdateCount(ProcedureInstanceIdentifier piid)
@@ -577,6 +618,7 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
 
     /**
      * Reset the event update counter
+     * 
      * @param piid The procedure identifier
      * @param increment The number of new events
      */
@@ -607,7 +649,6 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
      * Return the number of updated parameters since the last reset
      * 
      * @param piid The procedure identifier
-     * 
      * @return The number of update parameters
      */
     public int getParameterUpdateCount(ProcedureInstanceIdentifier piid)
@@ -619,7 +660,6 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
      * Return the number of updated events since the last reset
      * 
      * @param piid The procedure identifier
-     * 
      * @return The number of update events
      */
     public int getEventUpdateCount(ProcedureInstanceIdentifier piid)
@@ -634,7 +674,7 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
      */
     private void onTransferData(ITransferData transferData)
     {
-//        System.out.println("MdCstsSiUserInform#onTransferData() begin");
+        // System.out.println("MdCstsSiUserInform#onTransferData() begin");
 
         ProcedureInstanceIdentifier piid = transferData.getProcedureInstanceIdentifier();
 
@@ -661,7 +701,7 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
             e.printStackTrace();
         }
 
-//        System.out.println("MdCstsSiUserInform#onTransferData() end");
+        // System.out.println("MdCstsSiUserInform#onTransferData() end");
     }
 
     /**
@@ -691,12 +731,13 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
             synchronized (this.events)
             {
                 incrementCounter(piid, this.eventUpdateCounters, 1);
-                Map<Name, FunctionalResourceEvent<?>> procedureEvents = this.events.get(piid);
+                Map<Name, FunctionalResourceEvent<?, FunctionalResourceValue<?>>> procedureEvents = this.events
+                        .get(piid);
 
                 EventValue eventValue = notify.getEventValue();
                 if (eventValue.getType() == EventValueType.EXTENDED)
                 {
-                    FunctionalResourceEvent<?> event = procedureEvents.get(eventName);
+                    FunctionalResourceEvent<?, FunctionalResourceValue<?>> event = procedureEvents.get(eventName);
                     if (event == null)
                     {
                         event = FunctionalResourceMetadata.getInstance().createEvent(eventName);
@@ -732,7 +773,7 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
      * Provide CTSTS result from the operation result
      * 
      * @parame operationResult The invoked operation result
-     * @return CstsResult 
+     * @return CstsResult
      */
     protected static CstsResult convert(OperationResult operationResult)
     {
@@ -755,7 +796,6 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
     {
         this.dignostic.set(diag.name());
     }
-
 
     /**
      * Get the diagnostic of the last returned operation w/ negative result
@@ -813,7 +853,7 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
 
         return ret;
     }
-    
+
     public int getCyclicReportParametersCount()
     {
         return getCount(this.cyclicParameters);
@@ -843,15 +883,15 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
      * Get procedure's FR parameters
      * 
      * @param piid The procedure identifier
-     * 
      * @return The map of the procedure's FR parameters
      */
-    protected Map<Name, FunctionalResourceParameterEx<?>> getProcedureParameters(ProcedureInstanceIdentifier piid)
+    protected Map<Name, FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> getProcedureParameters(ProcedureInstanceIdentifier piid)
     {
-        Map<Name, FunctionalResourceParameterEx<?>> ret = this.parameters.get(piid);
+        Map<Name, FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> ret = this.parameters.get(piid);
         if (ret == null)
         {
-            throw new IllegalArgumentException(piid + " is not supported by " + this.serviceInstance.getServiceInstanceIdentifier());
+            throw new IllegalArgumentException(piid + " is not supported by "
+                                               + this.serviceInstance.getServiceInstanceIdentifier());
         }
 
         return ret;
@@ -861,32 +901,33 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
      * Get procedure's FR events
      * 
      * @param piid The procedure identifier
-     * 
      * @return The map of the procedure's FR events
      */
-    protected Map<Name, FunctionalResourceEvent<?>> getProcedureEvents(ProcedureInstanceIdentifier piid)
+    protected Map<Name, FunctionalResourceEvent<?, FunctionalResourceValue<?>>> getProcedureEvents(ProcedureInstanceIdentifier piid)
     {
-        Map<Name, FunctionalResourceEvent<?>> ret = this.events.get(piid);
+        Map<Name, FunctionalResourceEvent<?, FunctionalResourceValue<?>>> ret = this.events.get(piid);
         if (ret == null)
         {
-            throw new IllegalArgumentException(piid + " is not supported by " + this.serviceInstance.getServiceInstanceIdentifier());
+            throw new IllegalArgumentException(piid + " is not supported by "
+                                               + this.serviceInstance.getServiceInstanceIdentifier());
         }
 
         return ret;
     }
 
-    // TODO clone the returned instances of FunctionalResourceParameterEx<?> from methods below
+    // TODO clone the returned instances of FunctionalResourceParameterEx<?>
+    // from methods below
     /**
      * Get a parameter from a procedure
      * 
      * @param piid The procedure identifier
      * @param name FR parameter name
-     * 
      * @return the list of FR parameters
      */
-    public FunctionalResourceParameterEx<?> getParameter(ProcedureInstanceIdentifier piid, Name name)
+    public FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> getParameter(ProcedureInstanceIdentifier piid,
+                                                                                     Name name)
     {
-        FunctionalResourceParameterEx<?> ret;
+        FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> ret;
         synchronized (this.parameters)
         {
             ret = getProcedureParameters(piid).get(name);
@@ -905,19 +946,17 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
      * 
      * @param piid The procedure identifier
      * @param name FR event name
-     * 
      * @return the list of FR parameters
      */
-    public FunctionalResourceEvent<?> getEvent(ProcedureInstanceIdentifier piid, Name name)
+    public FunctionalResourceEvent<?, FunctionalResourceValue<?>> getEvent(ProcedureInstanceIdentifier piid, Name name)
     {
-        FunctionalResourceEvent<?> ret;
+        FunctionalResourceEvent<?, FunctionalResourceValue<?>> ret;
         synchronized (this.parameters)
         {
             ret = getProcedureEvents(piid).get(name);
             if (ret == null)
             {
-                throw new IllegalArgumentException("FR event " + name + " has not been received by procedure "
-                                                   + piid);
+                throw new IllegalArgumentException("FR event " + name + " has not been received by procedure " + piid);
             }
         }
 
@@ -928,11 +967,10 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
      * Get parameter from the prime procedure
      * 
      * @param name FR parameter name
-     * 
      * @return FR parameter
      */
     @Override
-    public FunctionalResourceParameterEx<?> getParameter(Name name)
+    public FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> getParameter(Name name)
     {
         return getParameter(getPrimeProcedureIdentifier(), name);
     }
@@ -941,11 +979,10 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
      * Get event from the prime procedure
      * 
      * @param name FR event name
-     * 
      * @return FR event
      */
     @Override
-    public FunctionalResourceEvent<?> getEvent(Name name)
+    public FunctionalResourceEvent<?, FunctionalResourceValue<?>> getEvent(Name name)
     {
         return getEvent(getPrimeProcedureIdentifier(), name);
     }
@@ -955,12 +992,12 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
      * 
      * @param piid The procedure identifier
      * @param label FR parameter label
-     * 
      * @return the list of FR parameters
      */
-    public List<FunctionalResourceParameterEx<?>> getParameters(ProcedureInstanceIdentifier piid, Label label)
+    public List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> getParameters(ProcedureInstanceIdentifier piid,
+                                                                                            Label label)
     {
-        synchronized(this.parameters)
+        synchronized (this.parameters)
         {
             return getProcedureParameters(piid).values().stream()
                     .filter(p -> (p instanceof FunctionalResourceParameterEx) && p.getLabel().equals(label))
@@ -972,11 +1009,10 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
      * Get parameters from the prime procedure
      * 
      * @param label FR parameter label
-     * 
      * @return the list of FR parameters
      */
     @Override
-    public List<FunctionalResourceParameterEx<?>> getParameters(Label label)
+    public List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> getParameters(Label label)
     {
         return getParameters(getPrimeProcedureIdentifier(), label);
     }
@@ -986,15 +1022,16 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
      * 
      * @param piid The procedure identifier
      * @param frn FR name
-     * 
      * @return the list of FR parameters
      */
-    public List<FunctionalResourceParameterEx<?>> getParameters(ProcedureInstanceIdentifier piid, FunctionalResourceName frn)
+    public List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> getParameters(ProcedureInstanceIdentifier piid,
+                                                                                            FunctionalResourceName frn)
     {
-        synchronized(this.parameters)
+        synchronized (this.parameters)
         {
-            return getProcedureParameters(piid).values().stream()
-                    .filter(p -> (p instanceof FunctionalResourceParameterEx<?> && p.getName().getFunctionalResourceName().equals(frn)))
+            return getProcedureParameters(piid).values()
+                    .stream().filter(p -> (p instanceof FunctionalResourceParameterEx<?, ?>
+                                           && p.getName().getFunctionalResourceName().equals(frn)))
                     .collect(Collectors.toList());
         }
     }
@@ -1003,11 +1040,10 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
      * Get parameters from the prime procedure
      * 
      * @param frn FR name
-     * 
      * @return the list of FR parameters
      */
     @Override
-    public List<FunctionalResourceParameterEx<?>> getParameters(FunctionalResourceName frn)
+    public List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> getParameters(FunctionalResourceName frn)
     {
         return getParameters(getPrimeProcedureIdentifier(), frn);
     }
@@ -1017,15 +1053,16 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
      * 
      * @param piid The procedure identifier
      * @param frt FR type
-     * 
      * @return the list of FR instance labels
      */
-    public List<FunctionalResourceParameterEx<?>> getParameters(ProcedureInstanceIdentifier piid, FunctionalResourceType frt)
+    public List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> getParameters(ProcedureInstanceIdentifier piid,
+                                                                                            FunctionalResourceType frt)
     {
-        synchronized(this.parameters)
+        synchronized (this.parameters)
         {
             return getProcedureParameters(piid).values().stream()
-                    .filter(p -> (p instanceof FunctionalResourceParameterEx<?> && p.getLabel().getFunctionalResourceType().equals(frt)))
+                    .filter(p -> (p instanceof FunctionalResourceParameterEx<?, ?>
+                                  && p.getLabel().getFunctionalResourceType().equals(frt)))
                     .collect(Collectors.toList());
         }
     }
@@ -1034,11 +1071,10 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
      * Get parameters from the prime procedure
      * 
      * @param frt FR type
-     * 
      * @return the map of FR instance number to map of labels to FR parameters
      */
     @Override
-    public List<FunctionalResourceParameterEx<?>> getParameters(FunctionalResourceType frt)
+    public List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> getParameters(FunctionalResourceType frt)
     {
         return getParameters(getPrimeProcedureIdentifier(), frt);
     }
@@ -1048,7 +1084,7 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
      * 
      * @return the list of FR parameters
      */
-    public List<FunctionalResourceParameterEx<?>> getParameters()
+    public List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> getParameters()
     {
         return getParameters(getPrimeProcedureIdentifier());
     }
@@ -1057,16 +1093,16 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
      * Get parameters from a procedure
      * 
      * @param piid The procedure identifier
-     * 
      * @return the map of FR instance number to map of labels to FR parameters
      */
     @Override
-    public List<FunctionalResourceParameterEx<?>> getParameters(ProcedureInstanceIdentifier piid)
+    public List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> getParameters(ProcedureInstanceIdentifier piid)
     {
-        synchronized(this.parameters)
+        synchronized (this.parameters)
         {
             return getProcedureParameters(piid).values().stream()
-                    .filter(p -> (p instanceof FunctionalResourceParameterEx<?> && p.getName().getProcedureInstanceIdentifier().equals(piid)))
+                    .filter(p -> (p instanceof FunctionalResourceParameterEx<?, ?>
+                                  && p.getName().getProcedureInstanceIdentifier().equals(piid)))
                     .collect(Collectors.toList());
         }
     }
@@ -1076,15 +1112,16 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
      * 
      * @param piid The procedure identifier
      * @param frt FR procedure type
-     * 
      * @return the map of FR instance number to map of labels to FR parameters
      */
-    public List<FunctionalResourceParameterEx<?>> getParameters(ProcedureInstanceIdentifier piid, ProcedureType procTyp)
+    public List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> getParameters(ProcedureInstanceIdentifier piid,
+                                                                                            ProcedureType procTyp)
     {
-        synchronized(this.parameters)
+        synchronized (this.parameters)
         {
-            return getProcedureParameters(piid).values().stream()
-                    .filter(p -> (p instanceof FunctionalResourceParameterEx<?> && p.getLabel().getProcedureType().equals(procTyp)))
+            return getProcedureParameters(piid).values()
+                    .stream().filter(p -> (p instanceof FunctionalResourceParameterEx<?, ?>
+                                           && p.getLabel().getProcedureType().equals(procTyp)))
                     .collect(Collectors.toList());
         }
     }
@@ -1092,66 +1129,75 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
     /**
      * Get parameters from the prime procedure
      * 
-     * @param procTyp  The procedure type
-     * 
+     * @param procTyp The procedure type
      * @return the list of FR parameters
      */
     @Override
-    public List<FunctionalResourceParameterEx<?>> getParameters(ProcedureType procTyp)
+    public List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> getParameters(ProcedureType procTyp)
     {
         return getParameters(getPrimeProcedureIdentifier(), procTyp);
     }
 
     public ICstsValue getParameterValue(ProcedureInstanceIdentifier piid, Name name) throws IllegalAccessException
     {
-        FunctionalResourceParameter parameter = getParameter(piid, name);
+        FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> parameter = getParameter(piid, name);
         if (parameter == null)
         {
             throw new IllegalArgumentException("Parameter " + name + " is not available in MD collection");
         }
-        return ((FunctionalResourceParameterEx<?>) parameter).getCstsValue();
+        return ((FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>) parameter).getCstsValue();
     }
 
-    public Map<Long, ICstsValue> getParameterValues(ProcedureInstanceIdentifier piid, Label label) throws IllegalAccessException
+    public Map<Long, ICstsValue> getParameterValues(ProcedureInstanceIdentifier piid,
+                                                    Label label) throws IllegalAccessException
     {
-        List<FunctionalResourceParameterEx<?>> parameters = getParameters(piid, label);
+        List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> parameters = getParameters(piid, label);
         if (parameters.isEmpty())
         {
             throw new IllegalArgumentException("Label " + label + " is not available in MD collection");
         }
 
         Map<Long, ICstsValue> res = new HashMap<>();
-        for (FunctionalResourceParameterEx<?> parameter : parameters) {
-            res.put(Long.valueOf(parameter.getName().getFunctionalResourceName().getInstanceNumber()), parameter.getCstsValue());
+        for (FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> parameter : parameters)
+        {
+            res.put(Long.valueOf(parameter.getName().getFunctionalResourceName().getInstanceNumber()),
+                    parameter.getCstsValue());
         }
         return res;
     }
 
-    public Map<Name, ICstsValue> getParameterValues(ProcedureInstanceIdentifier piid, FunctionalResourceName frn) throws IllegalArgumentException, IllegalAccessException
+    public Map<Name, ICstsValue> getParameterValues(ProcedureInstanceIdentifier piid,
+                                                    FunctionalResourceName frn) throws IllegalArgumentException,
+                                                                                IllegalAccessException
     {
-        List<FunctionalResourceParameterEx<?>> parameters = getParameters(piid, frn);
+        List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> parameters = getParameters(piid, frn);
         if (parameters.isEmpty())
         {
-            throw new IllegalArgumentException("Functional resource name " + frn + " is not available in MD collection");
+            throw new IllegalArgumentException("Functional resource name " + frn
+                                               + " is not available in MD collection");
         }
 
         Map<Name, ICstsValue> res = new HashMap<Name, ICstsValue>(parameters.size());
-        for (FunctionalResourceParameterEx<?> parameter : parameters) {
+        for (FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> parameter : parameters)
+        {
             res.put(parameter.getName(), parameter.getCstsValue());
         }
         return res;
     }
 
-    public Map<Long, Map<Label, ICstsValue>> getParameterValues(ProcedureInstanceIdentifier piid, FunctionalResourceType frt) throws IllegalArgumentException, IllegalAccessException
+    public Map<Long, Map<Label, ICstsValue>> getParameterValues(ProcedureInstanceIdentifier piid,
+                                                                FunctionalResourceType frt) throws IllegalArgumentException,
+                                                                                            IllegalAccessException
     {
-        List<FunctionalResourceParameterEx<?>> parameters = getParameters(piid, frt);
+        List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> parameters = getParameters(piid, frt);
         if (parameters.isEmpty())
         {
-            throw new IllegalArgumentException("Functional resource type " + frt + " is not available in MD collection");
+            throw new IllegalArgumentException("Functional resource type " + frt
+                                               + " is not available in MD collection");
         }
-        
+
         Map<Long, Map<Label, ICstsValue>> ret = new HashMap<Long, Map<Label, ICstsValue>>();
-        for (FunctionalResourceParameterEx<?> p : parameters)
+        for (FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> p : parameters)
         {
             Long instNum = Long.valueOf(p.getName().getFunctionalResourceName().getInstanceNumber());
             Map<Label, ICstsValue> instPars;
@@ -1171,29 +1217,32 @@ public abstract class MdCstsSiUserInform extends MdCstsSi<MdCstsSiConfig, Inform
 
     public Map<Name, ICstsValue> getParameterValues(ProcedureInstanceIdentifier piid) throws IllegalAccessException
     {
-        List<FunctionalResourceParameterEx<?>> parameters = getParameters(piid);
+        List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> parameters = getParameters(piid);
         if (parameters.isEmpty())
         {
-            throw new IllegalArgumentException("Procedure instance identifier " + piid + " is not available in MD collection");
+            throw new IllegalArgumentException("Procedure instance identifier " + piid
+                                               + " is not available in MD collection");
         }
-        
+
         Map<Name, ICstsValue> ret = new HashMap<Name, ICstsValue>(parameters.size());
-        for (FunctionalResourceParameterEx<?> p : parameters) {
+        for (FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> p : parameters)
+        {
             ret.put(p.getName(), p.getCstsValue());
         }
         return ret;
     }
 
-    public Map<ProcedureRole, Map<Long, Map<Label, ICstsValue>>> getParameterValues(ProcedureInstanceIdentifier piid, ProcedureType procTyp) throws IllegalAccessException
+    public Map<ProcedureRole, Map<Long, Map<Label, ICstsValue>>> getParameterValues(ProcedureInstanceIdentifier piid,
+                                                                                    ProcedureType procTyp) throws IllegalAccessException
     {
-        List<FunctionalResourceParameterEx<?>> parameters = getParameters(piid, procTyp);
+        List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> parameters = getParameters(piid, procTyp);
         if (parameters.isEmpty())
         {
             throw new IllegalArgumentException("Procedure type " + procTyp + " is not available in MD collection");
         }
 
         Map<ProcedureRole, Map<Long, Map<Label, ICstsValue>>> ret = new HashMap<ProcedureRole, Map<Long, Map<Label, ICstsValue>>>();
-        for (FunctionalResourceParameterEx<?> p : parameters)
+        for (FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> p : parameters)
         {
             ProcedureRole procedureRole = piid.getRole();
             Map<Long, Map<Label, ICstsValue>> roleMap;

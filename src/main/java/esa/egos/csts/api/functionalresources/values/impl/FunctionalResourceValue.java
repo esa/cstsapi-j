@@ -66,19 +66,19 @@ public class FunctionalResourceValue<T extends BerType>
     private static final byte[] INIT_BIT_STR_VALUE = new byte[0];
 
     /** The generated BER class */
-    private final Class<T> berClass;
+    protected final Class<T> berClass;
 
     /** The instance of the BER class */
-    private T berObject;
+    protected T berObject;
 
     /** The value name */
-    private Name name;
+    protected Name name;
 
     /** The value qualifier */
-    private ParameterQualifier qualifier;
+    protected ParameterQualifier qualifier;
 
     /** The BER name */
-    private String berName;
+    protected String berName;
 
     /** The CSTS value factory */
     private ICstsValueFactory cstsValueFactory;
@@ -302,7 +302,7 @@ public class FunctionalResourceValue<T extends BerType>
         return ret;
     }
 
-    private Optional<Field> getValueField(Class<?> berClass)
+    protected Optional<Field> getValueField(Class<?> berClass)
     {
         return Stream.of(berClass.getFields()).filter(f -> f.getName().equals("value")).findAny();
     }
@@ -470,7 +470,7 @@ public class FunctionalResourceValue<T extends BerType>
      * @return The class Field
      * @throws NoSuchFieldException In case the field does not exist
      */
-    private Field getValueField(Class<?> berClass, String name) throws NoSuchFieldException
+    protected Field getValueField(Class<?> berClass, String name) throws NoSuchFieldException
     {
         Field ret = null;
 
@@ -758,7 +758,7 @@ public class FunctionalResourceValue<T extends BerType>
      * 
      * @return The flag indicating whether the BER class is ASN.1 CHOICE and not ASN.1 SEQUENCE
      */
-    private static boolean isChoice(Class<?> berClass)
+    protected static boolean isChoice(Class<?> berClass)
     {
         // ASN.1 CHOICE has not BER Tag
         return !Stream.of(berClass.getFields()).filter(f -> f.getName().equals("tag")).findAny().isPresent();

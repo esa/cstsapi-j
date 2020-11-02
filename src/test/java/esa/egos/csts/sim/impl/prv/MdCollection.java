@@ -14,6 +14,7 @@ import esa.egos.csts.api.functionalresources.FunctionalResourceMetadata;
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.functionalresources.values.ICstsValue;
+import esa.egos.csts.api.functionalresources.values.impl.FunctionalResourceValue;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.parameters.impl.FunctionalResourceParameter;
 import esa.egos.csts.api.parameters.impl.FunctionalResourceParameterEx;
@@ -73,7 +74,7 @@ public class MdCollection
 
             // create FR's parameters
             // e.g. for FR Antenna: antAccumulatedPrecipitation, antActualAzimuth and etc 
-            List<FunctionalResourceParameterEx<?>> frParameters =
+            List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> frParameters =
                     FunctionalResourceMetadata.getInstance().createParameters(frType, instanceNumber);
 
             // add FR's parameters to the MD collection
@@ -84,7 +85,7 @@ public class MdCollection
 
             // create FR's events
             // e.g. for FR Antenna: antEventTrackingRxLockStat, antWindSpeedCriticality and etc 
-            List<FunctionalResourceEvent<?>> frEvents =
+            List<FunctionalResourceEvent<?, FunctionalResourceValue<?>>> frEvents =
                     FunctionalResourceMetadata.getInstance().createEvents(frType, instanceNumber);
 
             // add FR's parameters to the MD collection
@@ -410,6 +411,7 @@ public class MdCollection
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void setParameterValue(Name name, ICstsValue value) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InstantiationException
     {
         FunctionalResourceParameter parameter = getParameter(name);
@@ -418,14 +420,15 @@ public class MdCollection
             throw new NullPointerException("Parameter " + name + " is not available in MD collection");
         }
 
-        if (!(parameter instanceof FunctionalResourceParameterEx<?>))
+        if (!(parameter instanceof FunctionalResourceParameterEx<?, ?>))
         {
             throw new UnsupportedOperationException("Parameter " + name + " is not an instance of FunctionalResourceParameterEx<?>");
         }
 
-        ((FunctionalResourceParameterEx<?>) parameter).setCstsValue(value);
+        ((FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>) parameter).setCstsValue(value);
     }
 
+    @SuppressWarnings("unchecked")
     public ICstsValue getParameterValue(Name name) throws IllegalArgumentException, IllegalAccessException
     {
         FunctionalResourceParameter parameter = getParameter(name);
@@ -434,11 +437,11 @@ public class MdCollection
             throw new NullPointerException("Parameter " + name + " is not available in MD collection");
         }
 
-        if (!(parameter instanceof FunctionalResourceParameterEx<?>))
+        if (!(parameter instanceof FunctionalResourceParameterEx<?, ?>))
         {
             throw new UnsupportedOperationException("Parameter " + name + " is not an instance of FunctionalResourceParameterEx<?>");
         }
 
-        return ((FunctionalResourceParameterEx<?>) parameter).getCstsValue();
+        return ((FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>) parameter).getCstsValue();
     }
 }

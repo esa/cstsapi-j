@@ -10,6 +10,7 @@ import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.functionalresources.values.ICstsValue;
+import esa.egos.csts.api.functionalresources.values.impl.FunctionalResourceValue;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.oids.ObjectIdentifier;
@@ -124,17 +125,17 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
         this.api.destroyServiceInstance(this.serviceInstance);
     }
 
-    public abstract FunctionalResourceParameterEx<?> getParameter(Name name);
-    public abstract FunctionalResourceEvent<?> getEvent(Name name);
-    public abstract List<FunctionalResourceParameterEx<?>> getParameters(Label label);
-    public abstract List<FunctionalResourceParameterEx<?>> getParameters(FunctionalResourceName frn);
-    public abstract List<FunctionalResourceParameterEx<?>> getParameters(FunctionalResourceType frt);
-    public abstract List<FunctionalResourceParameterEx<?>> getParameters(ProcedureInstanceIdentifier piid);
-    public abstract List<FunctionalResourceParameterEx<?>> getParameters(ProcedureType procTyp);
+    public abstract FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> getParameter(Name name);
+    public abstract FunctionalResourceEvent<?, FunctionalResourceValue<?>> getEvent(Name name);
+    public abstract List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> getParameters(Label label);
+    public abstract List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> getParameters(FunctionalResourceName frn);
+    public abstract List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> getParameters(FunctionalResourceType frt);
+    public abstract List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> getParameters(ProcedureInstanceIdentifier piid);
+    public abstract List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> getParameters(ProcedureType procTyp);
 
     public ICstsValue getParameterValue(Name name) throws IllegalAccessException
     {
-        FunctionalResourceParameterEx<?> parameter = getParameter(name);
+        FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> parameter = getParameter(name);
         if (parameter == null)
         {
             throw new IllegalArgumentException("Parameter " + name + " is not available in MD collection");
@@ -144,7 +145,7 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
 
     public ICstsValue getEventValue(Name name) throws IllegalAccessException
     {
-        FunctionalResourceEvent<?> event = getEvent(name);
+        FunctionalResourceEvent<?, FunctionalResourceValue<?>> event = getEvent(name);
         if (event == null)
         {
             throw new IllegalArgumentException("Event " + name + " is not available in MD collection");
@@ -154,14 +155,14 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
 
     public Map<Long, ICstsValue> getParameterValues(Label label) throws IllegalAccessException
     {
-        List<FunctionalResourceParameterEx<?>> parameters = getParameters(label);
+        List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> parameters = getParameters(label);
         if (parameters.isEmpty())
         {
             throw new IllegalArgumentException("Label " + label + " is not available in MD collection");
         }
 
         Map<Long, ICstsValue> res = new HashMap<Long, ICstsValue>();
-        for (FunctionalResourceParameterEx<?> p : parameters)
+        for (FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> p : parameters)
         {
             res.put(Long.valueOf(p.getName().getFunctionalResourceName().getInstanceNumber()), p.getCstsValue());
         }
@@ -170,14 +171,14 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
 
     public Map<Name, ICstsValue> getParameterValues(FunctionalResourceName frn) throws IllegalAccessException
     {
-        List<FunctionalResourceParameterEx<?>> parameters = getParameters(frn);
+        List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> parameters = getParameters(frn);
         if (parameters.isEmpty())
         {
             throw new IllegalArgumentException("Functional resource name " + frn + " is not available in MD collection");
         }
 
         Map<Name, ICstsValue> res = new HashMap<Name, ICstsValue>(parameters.size());
-        for (FunctionalResourceParameterEx<?> p : parameters) {
+        for (FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> p : parameters) {
             res.put(p.getName(), p.getCstsValue());
         }
         return res;
@@ -185,14 +186,14 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
 
     public Map<Long, Map<Label, ICstsValue>> getParameterValues(FunctionalResourceType frt) throws IllegalAccessException
     {
-        List<FunctionalResourceParameterEx<?>> parameters = getParameters(frt);
+        List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> parameters = getParameters(frt);
         if (parameters.isEmpty())
         {
             throw new IllegalArgumentException("Functional resource type " + frt + " is not available in MD collection");
         }
         
         Map<Long, Map<Label, ICstsValue>> ret = new HashMap<Long, Map<Label, ICstsValue>>();
-        for (FunctionalResourceParameterEx<?> p : parameters)
+        for (FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> p : parameters)
         {
             Long instNum = Long.valueOf(p.getName().getFunctionalResourceName().getInstanceNumber());
             Map<Label, ICstsValue> instPars;
@@ -212,14 +213,14 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
 
     public Map<Name, ICstsValue> getParameterValues(ProcedureInstanceIdentifier piid) throws IllegalAccessException
     {
-        List<FunctionalResourceParameterEx<?>> parameters = getParameters(piid);
+        List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> parameters = getParameters(piid);
         if (parameters.isEmpty())
         {
             throw new IllegalArgumentException("Procedure instance identifier " + piid + " is not available in MD collection");
         }
         
         Map<Name, ICstsValue> ret = new HashMap<Name, ICstsValue>(parameters.size());
-        for (FunctionalResourceParameterEx<?> p : parameters) {
+        for (FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> p : parameters) {
             ret.put(p.getName(), p.getCstsValue());
         }
         return ret;
@@ -227,14 +228,14 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
 
     public Map<ProcedureRole, Map<Long, Map<Label, ICstsValue>>> getParameterValues(ProcedureType procTyp) throws IllegalAccessException
     {
-        List<FunctionalResourceParameterEx<?>> parameters = getParameters(procTyp);
+        List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> parameters = getParameters(procTyp);
         if (parameters.isEmpty())
         {
             throw new IllegalArgumentException("Procedure type " + procTyp + " is not available in MD collection");
         }
 
         Map<ProcedureRole, Map<Long, Map<Label, ICstsValue>>> ret = new HashMap<ProcedureRole, Map<Long, Map<Label, ICstsValue>>>();
-        for (FunctionalResourceParameterEx<?> p : parameters)
+        for (FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> p : parameters)
         {
             ProcedureInstanceIdentifier piid = p.getName().getProcedureInstanceIdentifier();
 

@@ -11,6 +11,7 @@ import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.functionalresources.values.ICstsValue;
+import esa.egos.csts.api.functionalresources.values.impl.FunctionalResourceValue;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IConfirmedOperation;
@@ -192,7 +193,7 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
 
     public void setParameterValue(Name name, ICstsValue value) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InstantiationException
     {
-        FunctionalResourceParameterEx<?> parameter = getParameter(name);
+        FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> parameter = getParameter(name);
         if (parameter == null)
         {
             throw new NullPointerException("Parameter " + name + " is not available in MD collection");
@@ -202,7 +203,7 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
 
     public void setEventValue(Name name, ICstsValue value) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InstantiationException
     {
-        FunctionalResourceEvent<?> event = getEvent(name);
+        FunctionalResourceEvent<?, FunctionalResourceValue<?>> event = getEvent(name);
         if (event == null)
         {
             throw new NullPointerException("Event " + name + " is not available in MD collection");
@@ -212,18 +213,19 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
 
     public void setParameterValue(Label label, ICstsValue value) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InstantiationException
     {
-        List<FunctionalResourceParameterEx<?>> parameters = getParameters(label);
+        List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> parameters = getParameters(label);
         if (parameters.isEmpty())
         {
             throw new IllegalArgumentException("Label " + label + " is not available in MD collection");
         }
-        for (FunctionalResourceParameterEx<?> parameter : parameters) {
+        for (FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> parameter : parameters) {
             parameter.setCstsValue(value);
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public FunctionalResourceParameterEx<?> getParameter(Name name)
+    public FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> getParameter(Name name)
     {
         Optional<IParameter> op = this.serviceInstance.gatherParameters().stream()
                 .filter(p -> (p instanceof FunctionalResourceParameterEx && p.getName().equals(name))).findFirst();
@@ -234,11 +236,12 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
                                                + this.serviceInstance.getServiceInstanceIdentifier());
         }
 
-        return (FunctionalResourceParameterEx<?>) op.get();
+        return (FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>) op.get();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public FunctionalResourceEvent<?> getEvent(Name name)
+    public FunctionalResourceEvent<?, FunctionalResourceValue<?>> getEvent(Name name)
     {
         Optional<IEvent> op = this.serviceInstance.gatherEvents().stream()
                 .filter(e -> (e instanceof FunctionalResourceEvent && e.getName().equals(name))).findFirst();
@@ -249,51 +252,56 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
                                                + this.serviceInstance.getServiceInstanceIdentifier());
         }
 
-        return (FunctionalResourceEvent<?>) op.get();
+        return (FunctionalResourceEvent<?, FunctionalResourceValue<?>>) op.get();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public List<FunctionalResourceParameterEx<?>> getParameters(Label label)
+    public List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> getParameters(Label label)
     {
         return this.serviceInstance.gatherParameters().stream()
                 .filter(p -> (p instanceof FunctionalResourceParameterEx && p.getLabel().equals(label)))
-                .map(p -> (FunctionalResourceParameterEx<?>)p)
+                .map(p -> (FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>)p)
                 .collect(Collectors.toList());
     }
     
+    @SuppressWarnings("unchecked")
     @Override
-    public List<FunctionalResourceParameterEx<?>> getParameters(FunctionalResourceName frn)
+    public List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> getParameters(FunctionalResourceName frn)
     {
         return this.serviceInstance.gatherParameters().stream()
                 .filter(p -> (p instanceof FunctionalResourceParameterEx && p.getName().getFunctionalResourceName().equals(frn)))
-                .map(p -> (FunctionalResourceParameterEx<?>)p)
+                .map(p -> (FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>)p)
                 .collect(Collectors.toList());
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public List<FunctionalResourceParameterEx<?>> getParameters(FunctionalResourceType frt)
+    public List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> getParameters(FunctionalResourceType frt)
     {
         return this.serviceInstance.gatherParameters().stream()
                 .filter(p -> (p instanceof FunctionalResourceParameterEx && p.getLabel().getFunctionalResourceType().equals(frt)))
-                .map(p -> (FunctionalResourceParameterEx<?>)p)
+                .map(p -> (FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>)p)
                 .collect(Collectors.toList());
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public List<FunctionalResourceParameterEx<?>> getParameters(ProcedureInstanceIdentifier piid)
+    public List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> getParameters(ProcedureInstanceIdentifier piid)
     {
         return this.serviceInstance.gatherParameters().stream()
                 .filter(p -> (p instanceof FunctionalResourceParameterEx && p.getName().getProcedureInstanceIdentifier().equals(piid)))
-                .map(p -> (FunctionalResourceParameterEx<?>)p)
+                .map(p -> (FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>)p)
                 .collect(Collectors.toList());
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public List<FunctionalResourceParameterEx<?>> getParameters(ProcedureType procTyp)
+    public List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> getParameters(ProcedureType procTyp)
     {
         return this.serviceInstance.gatherParameters().stream()
                 .filter(p -> (p instanceof FunctionalResourceParameterEx && p.getLabel().getProcedureType().equals(procTyp)))
-                .map(p -> (FunctionalResourceParameterEx<?>)p)
+                .map(p -> (FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>)p)
                 .collect(Collectors.toList());
     }
 
