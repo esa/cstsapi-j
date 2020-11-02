@@ -1,12 +1,17 @@
 package esa.egos.csts.api.util.impl;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
 
 /**
  * Implements package utilities methods
@@ -75,46 +80,119 @@ public class PackageUtils
      * @return the list of found classes in the package
      * @throws ClassNotFoundException
      */
-    public static List<Class<?>> getPackageClasses(String packageName,
-                                                   boolean alsoNestedClasses)
+    public static List<Class<?>> getPackageClasses(String packageName, boolean alsoNestedClasses)
     {
         List<Class<?>> ret = new ArrayList<Class<?>>();
-        URL url = ClassLoader.getSystemResource(packageName.replace('.', '/'));
+        String internalPath = packageName.replace('.', '/');
+        URL url = ClassLoader.getSystemResource(internalPath);
+        LOG.log(Level.INFO, "package URL: " + url);
         if (url == null)
         {
             throw new IllegalArgumentException("Could not find package " + packageName);
         }
-        File packageDirectory = new File(url.getFile());
-        if (packageDirectory.exists())
+        LOG.log(Level.INFO, "JAR file: " + url.getFile());
+        try
         {
-            int packageNameSegmentCount = getDotCount(packageName);
-            for (String fileName : packageDirectory.list())
+            File packageDirectory = new File(url.getFile());
+            if (packageDirectory.exists())
             {
-                try
+                ret = getPackageClassesFromDirectory(packageDirectory, packageName, alsoNestedClasses);
+            }
+            else
+            {
+                ret = getPackageClassesFromJar(url, packageName, alsoNestedClasses);
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            LOG.log(Level.SEVERE, "Failed to provide classes of the " + packageName + " package. ", e);
+        }
+
+        return ret;
+    }
+
+    private static List<Class<?>> getPackageClassesFromDirectory(File packageDirectory, String packageName, boolean alsoNestedClasses) throws ClassNotFoundException
+    {
+        LOG.log(Level.INFO, "getting classes from a package director");
+        List<Class<?>> ret = new ArrayList<Class<?>>();
+        int packageNameSegmentCount = getDotCount(packageName);
+        for (String fileName : packageDirectory.list())
+        {
+            if (fileName.endsWith(CLASS_FILE_SUFFIX))
+            {
+                // build the class name
+                Class<?> clazz = Class
+                        .forName(packageName + "."
+                                 + fileName.substring(0, fileName.length() - CLASS_FILE_SUFFIX.length()));
+                if (!alsoNestedClasses)
                 {
-                    if (fileName.endsWith(CLASS_FILE_SUFFIX))
+                    if ((packageNameSegmentCount + 1) != getDotCount(clazz.getCanonicalName()))
                     {
-                        Class<?> clazz = Class
-                                .forName(packageName + "."
-                                         + fileName.substring(0, fileName.length() - CLASS_FILE_SUFFIX.length()));
-                        if (!alsoNestedClasses)
-                        {
-                            if ((packageNameSegmentCount + 1) != getDotCount(clazz.getCanonicalName()))
-                            {
-                                // ignore nested classes
-                                continue;
-                            }
-                        }
-                        ret.add(clazz);
+                        // ignore nested classes
+                        continue;
                     }
                 }
-                catch (Exception e)
+                ret.add(clazz);
+            }
+        }
+        return ret;
+    }
+
+    public static List<Class<?>> getPackageClassesFromJar(URL url, String packageName, boolean alsoNestedClasses) throws IOException, ClassNotFoundException
+    {
+        LOG.log(Level.INFO, "getting classes from JAR file");
+        List<Class<?>> ret = new ArrayList<Class<?>>();
+        // extract the path file name from URL: file:<path file name>!/package
+        String[] split1 = url.getFile().split(":");
+        String[] split2 = split1[1].split("!");
+        String filePath = split2[0];
+        String internalPath = split2[1];
+
+        LOG.log(Level.INFO, "filePath: " + filePath);
+        LOG.log(Level.INFO, "internalPath: " + internalPath);
+
+        if (internalPath.charAt(0) == '/')
+        {
+            // cut off the very first slash
+            internalPath = internalPath.substring(1);
+        }
+        int packageNameSegmentCount = getDotCount(packageName);
+        JarFile jar = new JarFile(filePath);
+        try
+        {
+            // Getting jar's entries
+            Enumeration<? extends JarEntry> enumeration = jar.entries();
+            // iterates over jar's entries
+            while (enumeration.hasMoreElements())
+            {
+                ZipEntry zipEntry = enumeration.nextElement();
+                LOG.log(Level.INFO, "zipEntry: " + zipEntry.getName());
+
+                // take the classes stored at the certain path in the jar only
+                if (zipEntry.getName().contains(internalPath) && zipEntry.getName().endsWith(CLASS_FILE_SUFFIX))
                 {
-                    LOG.log(Level.SEVERE, "Failed to provide classes of the " + packageName + " package. ", e);
+                    // the relative path of file in the jar.
+                    String fileName = zipEntry.getName();
+
+                    // build the class name
+                    Class<?> clazz = Class.forName(fileName.replace("/", ".").replace(CLASS_FILE_SUFFIX, ""));
+                    if (!alsoNestedClasses)
+                    {
+                        if ((packageNameSegmentCount + 1) != getDotCount(clazz.getCanonicalName()))
+                        {
+                            // ignore nested classes
+                            continue;
+                        }
+                    }
+                    ret.add(clazz);
                 }
             }
         }
-
+        finally
+        {
+            jar.close();
+        }
         return ret;
     }
 
