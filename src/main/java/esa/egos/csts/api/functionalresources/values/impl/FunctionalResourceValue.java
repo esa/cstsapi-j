@@ -374,13 +374,13 @@ public class FunctionalResourceValue<T extends BerType>
     }
 
     private ICstsValue getComplexValue(String name, BerType berObject) throws IllegalArgumentException,
-                                                                       IllegalAccessException
+                                                                              IllegalAccessException
     {
         boolean isChoice = isChoice(berObject.getClass());
+        boolean choiceItemFound = false; // flag used to interrupt outer loop below after selected choice was found
 
         List<ICstsValue> values = new ArrayList<ICstsValue>();
 
-        boolean choiceItemFound = false;
         // iterate through all superclasses
         Class<?> cls = berObject.getClass();
         while (cls != null && !choiceItemFound)
@@ -394,7 +394,7 @@ public class FunctionalResourceValue<T extends BerType>
                 if (object instanceof List && valueField.getName().equals(CstsComplexValue.SEQ_OF_NAME))
                 {
                     List<?> list = (List<?>) object;
-                    // find generic type (must be BerType)
+                    // find generic type of List (must be BerType)
                     ParameterizedType listType = (ParameterizedType) valueField.getGenericType();
                     Class<?> clazz = (Class<?>) listType.getActualTypeArguments()[0];
                     if (BerType.class.isAssignableFrom(clazz))
@@ -561,7 +561,7 @@ public class FunctionalResourceValue<T extends BerType>
                            + valueField.getType() + " for parameter " + this.name);
             valueField.set(berObject, value.getValue());
 
-            // not very nice solution for BerBitString (it has 2 fields instead of one (value) which both must be set):
+            // additional operation for BerBitString (it has 2 fields instead of one (value) which both must be set):
             if (berObject instanceof BerBitString)
             {
                 Field valueField2 = getValueField(berClass, "numBits");
@@ -607,7 +607,7 @@ public class FunctionalResourceValue<T extends BerType>
         }
         else
         {
-            // exclude common BER fields serialVersionUID, tag and code
+            // exclude common BER fields serialVersionUID, tag and code (and also BerNull)
             Class<?> cls = berClass;
             List<String> sequence = new ArrayList<String>();
             while (cls != null)
@@ -621,17 +621,27 @@ public class FunctionalResourceValue<T extends BerType>
                 cls = cls.getSuperclass();
             }
             
-            long seqOfValsCnt = value.getValues().stream().filter(v -> v.getName().equals(CstsComplexValue.SEQ_OF_NAME)).count();
-            int seqOfFrCnt = sequence.contains(CstsComplexValue.SEQ_OF_NAME) ? 1 : 0;
-
-            if ((value.getValues().size() - seqOfValsCnt) != (sequence.size() - seqOfFrCnt))
+            // field to be set is either only 'seqOf' (is List)
+            if (sequence.contains(CstsComplexValue.SEQ_OF_NAME))
             {
-                throw new IllegalArgumentException("Parameter " + this.name + " value is a SEQUENCE, but " + value
-                                                   + " does not contain all elements of the SEQUENCE: "
-                                                   + String.join(", ", sequence));
+                if(sequence.size() != 1)
+                {
+                    throw new IllegalArgumentException("Parameter " + this.name + " value " + value
+                                                       + " containing " + CstsComplexValue.SEQ_OF_NAME
+                                                       + " field should not contain other fields: " + String.join(", ", sequence));
+                }
+            }
+            // or should not contain 'seqOf' field at all
+            else
+            {
+                if(value.getValues().size() != sequence.size())
+                {
+                    throw new IllegalArgumentException("Parameter " + this.name + " value " + value
+                                                       + " does not contain all elements: " + String.join(", ", sequence));
+                }
             }
 
-            LOG.fine(() -> "Setting " + value + " to the " + this.berName + " sequence");
+            LOG.fine(() -> "Setting " + value + " to the " + this.berName);
         }
         
         // for choice - first set all BerType fields to null to unselect previous value
@@ -654,15 +664,14 @@ public class FunctionalResourceValue<T extends BerType>
             }
         }
         
-        boolean firstToList = true;
         for (ICstsValue subValue : value.getValues())
         {
             Field valueField = getValueField(berClass, subValue.getName());
 
             Class<?> clazz = valueField.getType();
             
-            // process seqOf field
-            boolean toList = false;
+            // process seqOf field if present
+            boolean seqOf = false;
             if (subValue.getName().equals(CstsComplexValue.SEQ_OF_NAME))
             {
                 // clazz should be List<BerType>
@@ -670,20 +679,18 @@ public class FunctionalResourceValue<T extends BerType>
                 {
                     throw new IllegalArgumentException("Parameter " + this.name + ": field 'seqOf' is not List");
                 }
-                toList = true;
+
+                seqOf = true; // berObject is a List<clazz>
+
                 // get generic type of list
                 ParameterizedType listType = (ParameterizedType)valueField.getGenericType();
                 clazz = (Class<?>)listType.getActualTypeArguments()[0];
                 
+                // if subValue is complex value then it should have one subvalue with name SEQUENCE
                 if (subValue instanceof ICstsComplexValue)
                 {
-                    Optional<ICstsValue> res = ((ICstsComplexValue) subValue).getValues().stream()
-                                                .filter(v -> (v instanceof ICstsComplexValue)).findFirst();
-                    if (!res.isPresent())
-                    {
-                        throw new IllegalArgumentException("Parameter " + this.name + " doesn't contain ICstsComplexValue");
-                    }
-                    subValue = res.get();
+                    // replace seqOf with its subvalue seqOf.SEQUENCE
+                    subValue = ((ICstsComplexValue) subValue).getValues().get(0);
                 }
             }
 
@@ -699,7 +706,7 @@ public class FunctionalResourceValue<T extends BerType>
             // treat CstsNullValue individually
             if (subValue instanceof CstsNullValue)
             {
-                // subBerObject is now instance of BerNull class
+                // subBerObject is instance of BerNull class
             }
             else if (subValue instanceof ICstsSimpleValue<?>)
             {
@@ -719,19 +726,14 @@ public class FunctionalResourceValue<T extends BerType>
                              + berObject.getClass().getSimpleName() + " in parameter " + this.name
                              + " on setComplexValue()");
             // inject an intermediate BER object
-            if (toList)
+            if (seqOf) // inject to List
             {
                 String listGetterName = "get" + clazz.getSimpleName();
                 try
                 {
                     Method listGetterMethod = berClass.getMethod(listGetterName);
                     @SuppressWarnings("unchecked")
-                    List<BerType> list = (List<BerType>)listGetterMethod.invoke(berObject);
-                    if (firstToList)
-                    {
-                        list.clear();
-                        firstToList = false;
-                    }
+                    List<BerType> list = (List<BerType>)listGetterMethod.invoke(berObject); // reference to List in berObject
                     list.add(subBerObject);
                 }
                 catch (NoSuchMethodException e)
@@ -740,11 +742,10 @@ public class FunctionalResourceValue<T extends BerType>
                 }
                 catch (Exception e)
                 {
-                    throw new UnsupportedOperationException("Cannot get list for " + value + " in parameter "
-                                                            + this.name);
+                    throw new UnsupportedOperationException("Cannot inject value " + value + " to List in parameter " + this.name);
                 }
             }
-            else
+            else // inject to value
             {
                 valueField.set(berObject, subBerObject);
             }
