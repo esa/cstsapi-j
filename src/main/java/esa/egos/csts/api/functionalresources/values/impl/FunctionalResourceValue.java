@@ -664,6 +664,7 @@ public class FunctionalResourceValue<T extends BerType>
             }
         }
         
+        boolean firstToList = true;
         for (ICstsValue subValue : value.getValues())
         {
             Field valueField = getValueField(berClass, subValue.getName());
@@ -681,7 +682,7 @@ public class FunctionalResourceValue<T extends BerType>
                 }
 
                 seqOf = true; // berObject is a List<clazz>
-
+                
                 // get generic type of list
                 ParameterizedType listType = (ParameterizedType)valueField.getGenericType();
                 clazz = (Class<?>)listType.getActualTypeArguments()[0];
@@ -734,6 +735,11 @@ public class FunctionalResourceValue<T extends BerType>
                     Method listGetterMethod = berClass.getMethod(listGetterName);
                     @SuppressWarnings("unchecked")
                     List<BerType> list = (List<BerType>)listGetterMethod.invoke(berObject); // reference to List in berObject
+                    if (firstToList)
+                    {
+                        list.clear();
+                        firstToList = false;
+                    }
                     list.add(subBerObject);
                 }
                 catch (NoSuchMethodException e)
