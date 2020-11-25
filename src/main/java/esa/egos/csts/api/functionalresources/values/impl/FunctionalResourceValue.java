@@ -117,12 +117,15 @@ public class FunctionalResourceValue<T extends BerType>
                                                                              IllegalAccessException,
                                                                              IOException
     {
-        EmbeddedData embeddedData = getEmbededData(qualifiedParameter);
-
-        ByteArrayInputStream is = new ByteArrayInputStream(embeddedData.getData());
-        this.berObject = this.berClass.newInstance();
-        this.berObject.decode(is);
         this.qualifier = qualifiedParameter.getQualifiedValues().get(0).getQualifier();
+        this.berObject = this.berClass.newInstance();
+        if (this.qualifier == ParameterQualifier.VALID)
+        {
+            EmbeddedData embeddedData = getEmbededData(qualifiedParameter);
+
+            ByteArrayInputStream is = new ByteArrayInputStream(embeddedData.getData());
+            this.berObject.decode(is);
+        }
     }
 
     /**
@@ -182,13 +185,16 @@ public class FunctionalResourceValue<T extends BerType>
 
         try
         {
-            ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(INIT_STREAM_BUFF_SIZE, true);
-            this.berObject.encode(os);
-            byte[] data = os.getArray();
-            EmbeddedData embeddedData = EmbeddedData.of(this.name.getOid(), data);
-            ParameterValue parameterValue = new ParameterValue(embeddedData);
             QualifiedValues qualifiedValues = new QualifiedValues(this.qualifier);
-            qualifiedValues.getParameterValues().add(parameterValue);
+            if (this.qualifier == ParameterQualifier.VALID)
+            {
+                ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(INIT_STREAM_BUFF_SIZE, true);
+                this.berObject.encode(os);
+                byte[] data = os.getArray();
+                EmbeddedData embeddedData = EmbeddedData.of(this.name.getOid(), data);
+                ParameterValue parameterValue = new ParameterValue(embeddedData);
+                qualifiedValues.getParameterValues().add(parameterValue);
+            }
             qualifiedParameter.getQualifiedValues().add(qualifiedValues);
         }
         catch (Exception e)
