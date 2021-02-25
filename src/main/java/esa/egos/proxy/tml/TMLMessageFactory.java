@@ -1,7 +1,9 @@
 package esa.egos.proxy.tml;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
@@ -31,15 +33,20 @@ public class TMLMessageFactory
     public TMLMessage decodeFrom(InputStream is, Reference<EE_APIPX_TMLErrors> error) throws IOException,
                                                                                                  ApiException
     {
+    	int length = this.buf.length;
         int read = 0;
         try
         {
-            read = is.read(this.buf, 0, this.buf.length);
-            if (read < 0)
-            {
-                error.setReference(EE_APIPX_TMLErrors.eeAPIPXtml_unexpectedClose);
-                throw new IOException("Connection has been unexpectedly closed: Received <0 bytes from socket");
-            }
+        	//CSTSAPI-29 - fix reading from input stream (socket)
+        	while (read < length) {
+        		int left = (length - read);
+        		int currentlyRead = is.read(this.buf, read, left);
+        		if (currentlyRead < 0) {
+                    error.setReference(EE_APIPX_TMLErrors.eeAPIPXtml_unexpectedClose);
+                    throw new IOException("Connection has been unexpectedly closed: Received <0 bytes from socket");
+        		}
+        		read += currentlyRead;
+        	}
         }
         catch (IOException e)
         {
