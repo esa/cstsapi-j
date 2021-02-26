@@ -609,18 +609,24 @@ public class EE_APIPX_Link
             {
                 LOG.finest("About to read " + toBeRead + " data on the link " + this);
             }
-            read = this.socket.getInputStream().read(data, 0, data.length);
+            
+            //CSTSAPI-29 incorrect handling of the input socket causes error
+            while (read < toBeRead) {
+            	int left = (toBeRead - read);
+            	int currentlyRead = this.socket.getInputStream().read(data, read, left);
+            	if (currentlyRead < 0) {
+            		if (LOG.isLoggable(Level.FINEST))
+                    {
+                        LOG.finest("The end of the stream has been reached on link " + this);
+                    }
+            		return null;
+            	}
+            	read += currentlyRead;
+            }
+              
             if (LOG.isLoggable(Level.FINEST))
             {
                 LOG.finest("Read " + read + " data on the link " + this);
-            }
-            if (read < 0)
-            {
-                if (LOG.isLoggable(Level.FINEST))
-                {
-                    LOG.finest("The end of the stream has been reached on link " + this);
-                }
-                return null;
             }
         }
         catch (IOException e)
@@ -644,7 +650,7 @@ public class EE_APIPX_Link
 
 
     protected class ReceivingThread extends Thread
-    {
+    { 	
 
         protected volatile boolean cancelThread;
 
