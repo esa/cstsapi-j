@@ -4,6 +4,7 @@
 
 package esa.egos.proxy.impl;
 
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -42,7 +43,17 @@ public abstract class EE_APIPX_LinkAdapter
 
     public EE_APIPX_LinkAdapter()
     {
-        this.listRcvData = new LinkedBlockingQueue<TransmittableUnit>();
+        //CSTSAPI-30 - make buffer size configurable
+    	// default value defined outside try catch to ensure that valid value is always present
+    	int listRcvDataCapacity = 50_000;
+    	try {
+    		listRcvDataCapacity = Integer.parseInt(System.getProperty("listRcvDataCapacity", "50000"));
+    	} 
+    	catch (Exception ee) {
+    		LOG.warning("Invalidy listRcvDataCapacity defined, "
+    				+ "default value of " + listRcvDataCapacity + " will be used");
+    	}
+    	this.listRcvData = new ArrayBlockingQueue<TransmittableUnit>(listRcvDataCapacity);
         this.linkClosed = false;
         this.condVar = new CondVar(new ReentrantLock());
     }
