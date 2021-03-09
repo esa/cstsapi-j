@@ -2,6 +2,8 @@ package esa.egos.proxy.tml;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.proxy.GenStrUtil;
@@ -10,6 +12,9 @@ import esa.egos.proxy.util.impl.IntegralEncoder;
 
 public class PDUMessage extends TMLMessage
 {
+	
+	private static final Logger LOG = Logger.getLogger(PDUMessage.class.getName());
+	
     private static byte firstByte = 0x01;
 
     private static int hdrLength = 8;
@@ -37,8 +42,11 @@ public class PDUMessage extends TMLMessage
 
         // write it to the socket
         socketOutStream.write(buff);
-
-        GenStrUtil.print("Writing to socket:", buff);
+        
+        if (LOG.isLoggable(Level.FINEST)) {
+        	GenStrUtil.print("Writing to socket:", buff);
+        }
+        
     }
 
     @Override

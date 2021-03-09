@@ -45,12 +45,12 @@ public abstract class EE_APIPX_LinkAdapter
     {
         //CSTSAPI-30 - make buffer size configurable
     	// default value defined outside try catch to ensure that valid value is always present
-    	int listRcvDataCapacity = 50_000;
+    	int listRcvDataCapacity = 5_000;
     	try {
-    		listRcvDataCapacity = Integer.parseInt(System.getProperty("listRcvDataCapacity", "50000"));
+    		listRcvDataCapacity = Integer.parseInt(System.getProperty("listRcvDataCapacity", "5000"));
     	} 
     	catch (Exception ee) {
-    		LOG.warning("Invalidy listRcvDataCapacity defined, "
+    		LOG.fine("Invalidy listRcvDataCapacity defined, "
     				+ "default value of " + listRcvDataCapacity + " will be used");
     	}
     	this.listRcvData = new ArrayBlockingQueue<TransmittableUnit>(listRcvDataCapacity);

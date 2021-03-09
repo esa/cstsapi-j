@@ -275,7 +275,9 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 		String bindinitId = bindOp.getInitiatorIdentifier();
 		if (!(bindinitId.toLowerCase()).equals(this.peerId.toLowerCase())) {
 			bindOp.setBindDiagnostic(BindDiagnostic.SERVICE_INSTANCE_NOT_ACCESSIBLE_TO_THIS_INITIATOR);
-			LOG.fine("Access violation by initiator" + bindinitId);
+			if(LOG.isLoggable(Level.FINE)) {
+				LOG.fine("Access violation by initiator" + bindinitId);
+			}
 			throw new ApiException("Access to initiator " + bindinitId.toLowerCase() + " denied to " + this.peerId + " in service instance " + toString());
 		}
 
@@ -469,9 +471,12 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 		
 		IConfirmedOperation confOperation = (IConfirmedOperation) operation;
 		localReturns.remove(confOperation);
-		String txt = operation.toString();
-		txt += " return is being passed to the proxy";
-		LOG.finer(txt);
+		if(LOG.isLoggable(Level.FINER)) {
+			String txt = operation.toString();
+			txt += " return is being passed to the proxy";
+			LOG.finer(txt);
+		}
+
 
 		try {
 
@@ -485,8 +490,10 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 			if (rc == Result.SLE_E_OVERFLOW) {
 				abort(PeerAbortDiagnostics.COMMUNICATION_FAILURE);
 			} else if (rc == Result.SLE_E_PROTOCOL) {
-				String pstateS = this.pxySrvInit.getAssocState().toString();
-				LOG.fine("Protocol error, PDU: " + operation.toString() + ", proxy state: " + pstateS);
+				if(LOG.isLoggable(Level.FINE)) {
+					String pstateS = this.pxySrvInit.getAssocState().toString();
+					LOG.fine("Protocol error, PDU: " + operation.toString() + ", proxy state: " + pstateS);
+				}
 				abort(PeerAbortDiagnostics.PROTOCOL_ERROR);
 			}
 
@@ -507,9 +514,11 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 		if (confOperation.isAcknowledged() && confOperation.getResult() == OperationResult.NEGATIVE) {
 			localReturns.remove(confOperation);
 		}
-		String txt = operation.toString();
-		txt += " return is being passed to the proxy";
-		LOG.finer(txt);
+		if(LOG.isLoggable(Level.FINER)) {
+			String txt = operation.toString();
+			txt += " return is being passed to the proxy";
+			LOG.finer(txt);
+		}
 
 		try {
 
@@ -523,8 +532,10 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 			if (rc == Result.SLE_E_OVERFLOW) {
 				abort(PeerAbortDiagnostics.COMMUNICATION_FAILURE);
 			} else if (rc == Result.SLE_E_PROTOCOL) {
-				String pstateS = this.pxySrvInit.getAssocState().toString();
-				LOG.fine("Protocol error, PDU: " + operation.toString() + ", proxy state: " + pstateS);
+				if(LOG.isLoggable(Level.FINE)) {
+					String pstateS = this.pxySrvInit.getAssocState().toString();
+					LOG.fine("Protocol error, PDU: " + operation.toString() + ", proxy state: " + pstateS);
+				}
 				abort(PeerAbortDiagnostics.PROTOCOL_ERROR);
 			}
 
@@ -540,21 +551,27 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 			IConfirmedOperation confOp = (IConfirmedOperation) operation;
 			this.localReturns.add(confOp);
 		}
-		LOG.fine(operation.toString() + " invocation is beeing passed to the application ");
+		if(LOG.isLoggable(Level.FINE)) {
+			LOG.fine(operation.toString() + " invocation is beeing passed to the application ");
+		}
 		getApplicationServiceInform().informOpInvocation(operation);
 		return Result.S_OK;
 	}
 
 	@Override
 	public Result forwardInformAplOpRtn(IConfirmedOperation cop) {
-		LOG.fine(cop.toString() + " return is beeing passed to the application ");
+		if(LOG.isLoggable(Level.FINE)) {
+			LOG.fine(cop.toString() + " return is beeing passed to the application ");
+		}
 		this.serviceInform.informOpReturn(cop);
 		return Result.S_OK;
 	}
 
 	@Override
 	public Result forwardInformAplOpAck(IAcknowledgedOperation aop) {
-		LOG.fine(aop.toString() + " acknowledgement is beeing passed to the application ");
+		if(LOG.isLoggable(Level.FINE)) {
+			LOG.fine(aop.toString() + " acknowledgement is beeing passed to the application ");
+		}
 		this.serviceInform.informOpAcknowledgement(aop);
 		return Result.S_OK;
 	}
