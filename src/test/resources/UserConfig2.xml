@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<UserConfig oid_config_file="src/test/resources/OidConfig.xml" authentication_delay="180" local_id="CSTS-USER"
+	local_password="ffdf01449809e4e5e677818892" non_useheartbeat="true"
+	proxy_role="INITIATOR" startup_timer="180" transmit_queue_size="10"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="UserConfig1.xsd"
+	transfer_type="COMPLETE">
+	<service_types>
+		<service_type srv_id="DUMMY">
+			<srv_versions>
+				<srv_version>1</srv_version>
+				<srv_version>2</srv_version>
+			</srv_versions>
+		</service_type>
+		<service_type srv_id="MONITORING">
+			<srv_versions>
+				<srv_version>1</srv_version>
+			</srv_versions>
+		</service_type>
+		
+		<!-- Monitored Data Service -->
+		<service_type srv_id="[1, 3, 112, 4, 4, 1, 2]">
+			<srv_versions>
+				<srv_version>1</srv_version>
+			</srv_versions>
+		</service_type>
+
+		<!-- Return CFDP PDU Service -->
+		<service_type srv_id="[1, 3, 112, 4, 4, 1, 4]">
+			<srv_versions>
+				<srv_version>1</srv_version>
+			</srv_versions>
+		</service_type>
+
+	</service_types>
+	<remote_peers>
+		<remote_peer authentication_mode="NONE"
+			password="000102030405060708090a0b0c0d0e0f" id="CSTS-PROVIDER" />
+	</remote_peers>
+	<foreign_logical_ports>
+	
+		<logical_port tcp_recv_buffer_size="65536" port_name="CSTS_PT1" 
+			port_heartbeat_timer="5" tcp_xmit_buffer_size="65536"
+			port_dead_factor="2">
+			<port_data port_number="5018" ip_address="127.0.0.1"></port_data>
+		</logical_port>
+		
+		<logical_port tcp_recv_buffer_size="65536" port_name="CSTS_PT2"
+			port_heartbeat_timer="300" tcp_xmit_buffer_size="65536"
+			port_dead_factor="2">
+			<port_data port_number="5020" ip_address="127.0.0.1"></port_data>
+		</logical_port>
+		
+		
+	</foreign_logical_ports>
+	<portlist default="ISP1" />
+</UserConfig>
