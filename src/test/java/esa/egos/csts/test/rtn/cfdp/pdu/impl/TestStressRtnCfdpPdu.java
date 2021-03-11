@@ -2,10 +2,15 @@ package esa.egos.csts.test.rtn.cfdp.pdu.impl;
 
 import static org.junit.Assert.assertTrue;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
@@ -297,6 +302,21 @@ public class TestStressRtnCfdpPdu {
 				CSTS_LOG.CSTS_API_LOGGER.info("Transmission Time: " + timeSpan);	
 				CSTS_LOG.CSTS_API_LOGGER.info("Data size: " + nFrames*dataSize/(1000*1000) + " MByte, rate: "+ rate/1000_000  +  " Mbit/s");
 				CSTS_LOG.CSTS_API_LOGGER.info("Data units: " + numFramesReceived + " rate: " + numFramesReceived/timeSpan + " Units/s");
+				
+				String recordPerformance = System.getProperty("recordPerformance");
+				
+				if(Objects.nonNull(recordPerformance)) {
+					FileWriter fw = new FileWriter("PerformanceLog.txt",true);
+					BufferedWriter bw = new BufferedWriter(fw);
+					Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+					bw.write(timestamp + ", " + numFramesReceived +
+							", " + dataSize +
+							", " + timeSpan +
+							", " + rate/1000_000_000 +
+							", " + numFramesReceived/timeSpan);
+					bw.newLine();
+					bw.close();
+				}
 
 							
 			} catch(Exception e) {
