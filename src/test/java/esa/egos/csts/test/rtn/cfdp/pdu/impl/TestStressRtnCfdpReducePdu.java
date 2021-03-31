@@ -141,7 +141,7 @@ public class TestStressRtnCfdpReducePdu {
 	
 	@Test
 	public void test100kFramesMaxSize() {
-		implementRtnCfdpPduDataTransfer(100_000, 64536);
+		implementRtnCfdpPduDataTransfer(100_000, 16134);
 	}
 	
 	public void implementRtnCfdpPduDataTransfer(long nFrames, int dataSize) {
@@ -242,19 +242,19 @@ public class TestStressRtnCfdpReducePdu {
 
 				CSTS_LOG.CSTS_API_LOGGER.info("Transmission Time: " + timeSpan);	
 				CSTS_LOG.CSTS_API_LOGGER.info("Data size: " + nFrames*dataSize/(1000*1000) + " MByte, rate: "+ rate/1000_000  +  " Mbit/s");
-				CSTS_LOG.CSTS_API_LOGGER.info("Data units: " + numFramesReceived + " rate: " + numFramesReceived/timeSpan + " Units/s");
+				CSTS_LOG.CSTS_API_LOGGER.info("Data units: " + nFrames + " rate: " + nFrames/timeSpan + " Units/s");
 				
 				String recordPerformance = System.getProperty("recordPerformance");
 				
 				if(Objects.nonNull(recordPerformance)) {
-					FileWriter fw = new FileWriter("PerformanceLog.txt",true);
+					FileWriter fw = new FileWriter("ReducePerformanceLog.txt",true);
 					BufferedWriter bw = new BufferedWriter(fw);
 					Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-					bw.write(timestamp + ", " + numFramesReceived +
+					bw.write(timestamp + ", " + nFrames +
 							", " + dataSize +
 							", " + timeSpan +
 							", " + rate/1000_000_000 +
-							", " + numFramesReceived/timeSpan);
+							", " + nFrames/timeSpan);
 					bw.newLine();
 					bw.close();
 				}
@@ -299,7 +299,7 @@ public class TestStressRtnCfdpReducePdu {
 		Assert.assertTrue(providerSi.getDeliveryProc().isActivationPending() == false);
 		Assert.assertTrue(providerSi.getDeliveryProc().isDeactivationPending() == false);
 		
-		CfdpPduPackAndTransfer packAndTransfer = new CfdpPduPackAndTransfer(providerSi);
+		CfdpPduPackAndTransfer packAndTransfer = new CfdpPduPackAndTransfer(providerSi,1000,500,true,true);
 		
 		
 		ArrayList<CfdpTransferData> dataToTransfer = new ArrayList<>();

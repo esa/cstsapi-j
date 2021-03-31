@@ -13,6 +13,7 @@ package esa.egos.csts.rtn.cfdp.reduction;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.IntStream;
 
 public class CfdpPduReduce
 {
@@ -133,6 +134,7 @@ public class CfdpPduReduce
         return 4 + 2 * entityIdLength + seqNumLength;
     }
 
+   
     private long calculateChecksum(byte[] aBytes, int fileDataOffset, long segmentOffset)
     {
         long checksum =0;
@@ -192,6 +194,48 @@ public class CfdpPduReduce
         number &= 0x00000000FFFFFFFFL;
         return (int) number;
 
+    }
+    
+    private long calculateChecksumAlternative(byte[] aBytes, int fileDataOffset, long segmentOffset)
+    {
+        long checksum =0;
+        
+        // align to have offset an integral multiple of 4, see CCSDS 727.0-B4,
+        // Annex C - Note 1
+        int bytesBefore = (int) (segmentOffset % 4);
+
+        byte[] line = new byte[4];
+        System.arraycopy(aBytes, fileDataOffset, line, bytesBefore, Math.min(4 - bytesBefore, aBytes.length));
+        checksum += processCheckNumbers(line[0], line[1], line[2], line[3]);
+
+        
+        int first = fileDataOffset + 4 - bytesBefore;
+        int last =  aBytes.length - 4 - first;
+        int current = first;
+        int last4 = last/4;
+//        for (int i = 0; i < last4; i ++)
+//        {
+//            checksum += processCheckNumbers(aBytes[current], aBytes[current + 1], aBytes[current + 2], aBytes[current + 3]);
+//            current = current + 4;
+//        }
+        
+        
+        checksum += IntStream.range(0,last4-1).parallel().map(i -> {
+        	int local = first + i*4;
+        	return processCheckNumbers(aBytes[local], aBytes[local + 1], aBytes[local + 2], aBytes[local + 3]);
+        }).sum();
+        
+        current = first + last4*4 + 4;
+        // padding to length 4, see CCSDS 727.0-B4, Annex C - Note 2
+        if (current < aBytes.length)
+        {
+            line = new byte[4];
+            System.arraycopy(aBytes, current, line, 0, aBytes.length - current);
+            checksum += processCheckNumbers(line[0], line[1], line[2], line[3]);
+        }
+        
+        checksum &= 0x00000000FFFFFFFFL;
+        return  checksum;
     }
 
 }
