@@ -134,14 +134,23 @@ public class TestStressRtnCfdpReducePdu {
 	
 	
 	@Test
-	@Ignore
 	public void test50kFramesMaxSize() {
 		implementRtnCfdpPduDataTransfer(50_000, 64536);
 	}
 	
 	@Test
-	public void test100kFramesMaxSize() {
-		implementRtnCfdpPduDataTransfer(100_000, 16134);
+	public void test250kFramesMaxSize() {
+		implementRtnCfdpPduDataTransfer(250_000, 64536);
+	}
+	
+	@Test
+	public void test200kFramesMidSize() {
+		implementRtnCfdpPduDataTransfer(200_000, 16134);
+	}
+	
+	@Test
+	public void test1MFramesMidSize() {
+		implementRtnCfdpPduDataTransfer(1_000_000, 16134);
 	}
 	
 	public void implementRtnCfdpPduDataTransfer(long nFrames, int dataSize) {
@@ -267,7 +276,7 @@ public class TestStressRtnCfdpReducePdu {
 	
 	private void doDataTransfer(RtnCfdpPduSiUser userSi, RtnCfdpPduSiProvider providerSi, long numFrames, boolean withTime, int dataSize) throws InterruptedException {
 		
-		byte[] bigFiledata = new byte[65535];
+		byte[] bigFiledata = new byte[dataSize];
         Arrays.fill(bigFiledata, (byte) 0x0F);
         
         bigFiledata[0]=(byte) 0x10;//file data
@@ -299,7 +308,7 @@ public class TestStressRtnCfdpReducePdu {
 		Assert.assertTrue(providerSi.getDeliveryProc().isActivationPending() == false);
 		Assert.assertTrue(providerSi.getDeliveryProc().isDeactivationPending() == false);
 		
-		CfdpPduPackAndTransfer packAndTransfer = new CfdpPduPackAndTransfer(providerSi,1000,500,true,true);
+		CfdpPduPackAndTransfer packAndTransfer = new CfdpPduPackAndTransfer(providerSi,1000,500,true);
 		
 		
 		ArrayList<CfdpTransferData> dataToTransfer = new ArrayList<>();
@@ -317,11 +326,6 @@ public class TestStressRtnCfdpReducePdu {
 		
 		packAndTransfer.stopTransfer();
 		CSTS_LOG.CSTS_API_LOGGER.info("Waiting for transfer completion...");
-//		for(CfdpTransferData dataUnit:dataToTransfer) {
-//			while(dataUnit.getCstsResult()==CstsResult.NOT_APPLICABLE) {
-//				Thread.currentThread().sleep(100);
-//			}
-//		}
 		
 		while(packAndTransfer.isTransferring()) {
 			Thread.currentThread().sleep(100);

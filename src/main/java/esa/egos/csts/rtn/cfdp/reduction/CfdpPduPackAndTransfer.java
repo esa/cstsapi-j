@@ -3,7 +3,13 @@ package esa.egos.csts.rtn.cfdp.reduction;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -24,6 +30,10 @@ public class CfdpPduPackAndTransfer {
 		private final AtomicBoolean statusTransferring = new AtomicBoolean(false);
 		
 		private final ArrayList<CfdpTransferData> currentBatch = new ArrayList<>();
+		
+		private final ArrayList<Future<byte[]>> currentReducedBatch = new ArrayList<>();
+		
+		private final ExecutorService executorService = Executors.newFixedThreadPool(8);
 		
 		public void requestStop()
 		{
@@ -49,20 +59,38 @@ public class CfdpPduPackAndTransfer {
 				{
 					try {
 						cfdpTransferData = transferQueue.poll(waitingTime, TimeUnit.MILLISECONDS);
+
 					} catch (InterruptedException e) {
 						Thread.currentThread().interrupt();
 						//We do not care, the value would be null and we proceed
 					}
 					
 					if(cfdpTransferData!=null) {
+						
+						
+						final byte[] fullPduData = cfdpTransferData.getData();
+						
+						Callable<byte[]> callable = new Callable<byte[]>() {
+
+							@Override
+							public byte[] call() throws Exception {
+								return reducer.createReducedPdu(fullPduData, computeChecksum);
+							}
+						};
+						
+						Future<byte[]> future = executorService.submit(callable);
+						
 						currentBatch.add(cfdpTransferData);
+						currentReducedBatch.add(future);
+
 					}					
 				}
 				while(cfdpTransferData!=null && currentBatch.size() < packingSize);	
 				
-				packAndTransfer(currentBatch);
+				packAndTransfer(currentBatch,currentReducedBatch);
 				
 				currentBatch.clear();
+				currentReducedBatch.clear();
 			}
 			
 			statusTransferring.set(false);
@@ -74,8 +102,6 @@ public class CfdpPduPackAndTransfer {
 	private final int packingSize;
 	
 	private final int waitingTime;
-	
-	private final boolean outOfOrder;
 	
 	private final boolean computeChecksum;
 	
@@ -90,13 +116,12 @@ public class CfdpPduPackAndTransfer {
 	 * Create the object managing the data reduction and transfer with the default configuration
 	 * packing size is 1000
 	 * waiting time is 500ms
-	 * out of order transfer is false
 	 * checksum computation is true
 	 * @param rtnCfdpPduSiProvider the service to which reduced and packed data will be sent
 	 */
 	public CfdpPduPackAndTransfer(RtnCfdpPduSiProvider rtnCfdpPduSiProvider)
 	{
-		this(rtnCfdpPduSiProvider,1000,500, false, true);
+		this(rtnCfdpPduSiProvider,1000,500, true);
 	}
 	
 	/**
@@ -104,15 +129,13 @@ public class CfdpPduPackAndTransfer {
 	 * @param rtnCfdpPduSiProvider the service to which reduced and packed data will be sent
 	 * @param packingSize the max number of reduced pdus contained in each data unit send out
 	 * @param waitingTime (ms) the timeout waiting for an incoming pdu before sending message shorter than max
-	 * @param outOfOrder true if reduction of PDUs can be done out of order (improve performance)
 	 * @param computeChecksum true if the checksum has to be computed (false improve performance)
 	 */
-	public CfdpPduPackAndTransfer(RtnCfdpPduSiProvider rtnCfdpPduSiProvider, int packingSize, int waitingTime, boolean outOfOrder, boolean computeChecksum)
+	public CfdpPduPackAndTransfer(RtnCfdpPduSiProvider rtnCfdpPduSiProvider, int packingSize, int waitingTime, boolean computeChecksum)
 	{
 		this.rtnCfdpPduSiProvider = rtnCfdpPduSiProvider;
 		this.packingSize = packingSize;
 		this.waitingTime = waitingTime;
-		this.outOfOrder = outOfOrder;
 		this.computeChecksum = computeChecksum;
 	}
 	
@@ -162,10 +185,26 @@ public class CfdpPduPackAndTransfer {
 		}
 	}
 	
-	private void packAndTransfer(List<CfdpTransferData> transferBatch)
+	private void packAndTransfer(List<CfdpTransferData> transferBatch,ArrayList<Future<byte[]>> reducedBatch)
 	{
-		List<byte[]> reducedPdus = reducedPdus(transferBatch);
+		List<byte[]> reducedPdus = reducedBatch.stream().map(future -> futureGetNoThrow(future)).collect(Collectors.toList());
 		
+		packAndTransfer(transferBatch, reducedPdus);
+	}
+	
+	private byte[] futureGetNoThrow(Future<byte[]> future ) {
+		
+		try {
+			return future.get();
+		} 
+		catch(Exception ee)
+		{
+			return null;
+		}
+	}
+	
+	private void packAndTransfer(List<CfdpTransferData> transferBatch,List<byte[]> reducedPdus )
+	{
 		int totalTransferSize = reducedPdus.stream().mapToInt( reducedPdu -> reducedPdu.length).sum();
 		
 		byte[] completeTransferMessage = new byte[totalTransferSize];
@@ -182,21 +221,4 @@ public class CfdpPduPackAndTransfer {
 		transferBatch.stream().forEach(transferData -> transferData.setCstsResult(cstsResult));
 	}
 	
-	private List<byte[]> reducedPdus(List<CfdpTransferData> transferBatch)
-	{
-		if(outOfOrder)
-		{
-			return transferBatch.parallelStream().map( 
-					transferData -> reducer.createReducedPdu(transferData.getData(), computeChecksum) )
-					.collect(Collectors.toList());
-		}
-		else
-		{
-			return transferBatch.stream().map( 
-					transferData -> reducer.createReducedPdu(transferData.getData(), computeChecksum) )
-					.collect(Collectors.toList());
-		}
-	}
-
-
 }
