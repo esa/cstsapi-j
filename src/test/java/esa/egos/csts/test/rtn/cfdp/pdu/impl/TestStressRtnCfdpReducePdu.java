@@ -121,13 +121,11 @@ public class TestStressRtnCfdpReducePdu {
 	//-XX:+UseG1GC -DlistRcvDataCapacity=25000
 	
 	@Test
-	@Ignore
 	public void testOneFrameMaxSize() {
 		implementRtnCfdpPduDataTransfer(1, 65535);
 	}
 	
 	@Test
-	@Ignore
 	public void testTwoFramesMaxSize() {
 		implementRtnCfdpPduDataTransfer(2, 65535);
 	}
@@ -318,6 +316,10 @@ public class TestStressRtnCfdpReducePdu {
 		}
 		
 		packAndTransfer.startTransfer();
+		
+		while(packAndTransfer.isTransferring()==false) {
+			Thread.currentThread().sleep(100);
+		}
 		
 		for(CfdpTransferData dataUnit:dataToTransfer) {
 			packAndTransfer.transferData(dataUnit);

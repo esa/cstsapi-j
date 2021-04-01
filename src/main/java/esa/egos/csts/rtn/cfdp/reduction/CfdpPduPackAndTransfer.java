@@ -11,6 +11,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import esa.egos.csts.api.enumerations.CstsResult;
@@ -22,6 +24,8 @@ import esa.egos.csts.app.si.rtn.cfdp.pdu.RtnCfdpPduSiProvider;
  *
  */
 public class CfdpPduPackAndTransfer {
+	
+	private static final Logger LOG = Logger.getLogger(CfdpPduPackAndTransfer.class.getName());
 	
 	private class CfdpPduPackAndTransferConsumer implements Runnable {
 		
@@ -87,7 +91,10 @@ public class CfdpPduPackAndTransfer {
 				}
 				while(cfdpTransferData!=null && currentBatch.size() < packingSize);	
 				
-				packAndTransfer(currentBatch,currentReducedBatch);
+				if(currentBatch.isEmpty() == false)
+				{
+					packAndTransfer(currentBatch,currentReducedBatch);
+				}
 				
 				currentBatch.clear();
 				currentReducedBatch.clear();
@@ -140,12 +147,16 @@ public class CfdpPduPackAndTransfer {
 	}
 	
 	/**
-	 * Start the consumer thread transferring the data
+	 * Request to start the consumer thread transferring the data
+	 * Note: this is a non blocking call
 	 */
 	public void startTransfer()
 	{
-		Thread thread = new Thread(consumer);
-		thread.start();
+		if(consumer.isTransferring() == false)
+		{
+			Thread thread = new Thread(consumer);
+			thread.start();
+		}
 	}
 	
 	/**
@@ -217,8 +228,15 @@ public class CfdpPduPackAndTransfer {
 			last = last + reducedPdu.length;
 		}
 		
+		if(LOG.isLoggable(Level.FINE))
+		{
+			LOG.fine("TransferData for " + reducedPdus.size() + " units " 
+					+ " for a total of " + completeTransferMessage.length + " bytes");
+		}
+		
 		CstsResult cstsResult = rtnCfdpPduSiProvider.transferData(completeTransferMessage);
 		transferBatch.stream().forEach(transferData -> transferData.setCstsResult(cstsResult));
+
 	}
 	
 }
