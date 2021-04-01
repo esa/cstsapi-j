@@ -151,6 +151,16 @@ public class TestStressRtnCfdpReducePdu {
 		implementRtnCfdpPduDataTransfer(1_000_000, 16134);
 	}
 	
+	@Test
+	public void test1MFrames256Size() {
+		implementRtnCfdpPduDataTransfer(1_000_000, 256);
+	}
+	
+	@Test
+	public void test1MFrames512Size() {
+		implementRtnCfdpPduDataTransfer(1_000_000, 512);
+	}
+	
 	public void implementRtnCfdpPduDataTransfer(long nFrames, int dataSize) {
 			RtnCfdpPduDeliveryProcedureConfig rtnCfdpProcedureConfig = new RtnCfdpPduDeliveryProcedureConfig();
 			rtnCfdpProcedureConfig.setLatencyLimit(1);
