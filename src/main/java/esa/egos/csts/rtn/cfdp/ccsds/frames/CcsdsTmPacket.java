@@ -40,7 +40,7 @@ public class CcsdsTmPacket
     // Complete Space Packet
     private byte[] mTmSpacePkt = null;
 
-    private Logger log = Logger.getLogger(CCSDS_PACKET_LOG);
+    private static final Logger log = Logger.getLogger(CCSDS_PACKET_LOG);
 
     // Set up enumeration for packet type.
     public enum TmPacketStatus
