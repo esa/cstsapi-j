@@ -104,7 +104,7 @@ public class CfdpPduPackAndTransfer {
 		}
 	}
 	
-	private final RtnCfdpPduSiProvider rtnCfdpPduSiProvider;
+	private final CfdpTransferOperation rtnCfdpPduSiProvider;
 	
 	private final int packingSize;
 	
@@ -126,7 +126,7 @@ public class CfdpPduPackAndTransfer {
 	 * checksum computation is true
 	 * @param rtnCfdpPduSiProvider the service to which reduced and packed data will be sent
 	 */
-	public CfdpPduPackAndTransfer(RtnCfdpPduSiProvider rtnCfdpPduSiProvider)
+	public CfdpPduPackAndTransfer(CfdpTransferOperation rtnCfdpPduSiProvider)
 	{
 		this(rtnCfdpPduSiProvider,1000,500, true);
 	}
@@ -138,7 +138,7 @@ public class CfdpPduPackAndTransfer {
 	 * @param waitingTime (ms) the timeout waiting for an incoming pdu before sending message shorter than max
 	 * @param computeChecksum true if the checksum has to be computed (false improve performance)
 	 */
-	public CfdpPduPackAndTransfer(RtnCfdpPduSiProvider rtnCfdpPduSiProvider, int packingSize, int waitingTime, boolean computeChecksum)
+	public CfdpPduPackAndTransfer(CfdpTransferOperation rtnCfdpPduSiProvider, int packingSize, int waitingTime, boolean computeChecksum)
 	{
 		this.rtnCfdpPduSiProvider = rtnCfdpPduSiProvider;
 		this.packingSize = packingSize;
@@ -155,6 +155,7 @@ public class CfdpPduPackAndTransfer {
 		if(consumer.isTransferring() == false)
 		{
 			Thread thread = new Thread(consumer);
+			thread.setName("RTN CFDP pack and transfer consumer");
 			thread.start();
 		}
 	}

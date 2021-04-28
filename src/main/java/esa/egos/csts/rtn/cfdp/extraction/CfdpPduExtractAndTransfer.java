@@ -101,6 +101,7 @@ public class CfdpPduExtractAndTransfer {
 		if(consumer.isTransferring() == false)
 		{
 			Thread thread = new Thread(consumer);
+			thread.setName("RTN CFDP extract consumer");
 			thread.start();
 		}
 	}

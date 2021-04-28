@@ -35,7 +35,7 @@ public class TestCfdpPduExtract {
 			FrameGenerator frameGenerator = new FrameGenerator(frameConfigData,packetConfigData);
 			List<CcsdsTmFrame> frames = frameGenerator.prepareDataFrames(2000, 16384);
 			System.out.println("N Frames " + frames.size());
-			assertTrue(frames.size()==4000+3);
+			assertTrue(frames.size()==18000+3);
 			//meta data
 			//4xpdu
 			//cfdp eof
@@ -49,7 +49,7 @@ public class TestCfdpPduExtract {
 					.collect(Collectors.toList());
 			
 			System.out.println("N Frames 2" + extractedFrames.size());
-			assertTrue(extractedFrames.size()==4000+3);
+			assertTrue(extractedFrames.size()==18000+3);
 			
 			Instant t2 = Instant.now();
 					

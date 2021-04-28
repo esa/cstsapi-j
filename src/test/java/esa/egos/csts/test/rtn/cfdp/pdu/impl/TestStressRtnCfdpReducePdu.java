@@ -316,7 +316,8 @@ public class TestStressRtnCfdpReducePdu {
 		Assert.assertTrue(providerSi.getDeliveryProc().isActivationPending() == false);
 		Assert.assertTrue(providerSi.getDeliveryProc().isDeactivationPending() == false);
 		
-		CfdpPduPackAndTransfer packAndTransfer = new CfdpPduPackAndTransfer(providerSi,1000,500,true);
+		CfdpPduPackAndTransfer packAndTransfer = new CfdpPduPackAndTransfer(
+				data -> providerSi.transferData(data),1000,500,true);
 		
 		
 		ArrayList<CfdpTransferData> dataToTransfer = new ArrayList<>();

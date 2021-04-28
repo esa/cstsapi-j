@@ -217,7 +217,7 @@ public class TestStressRtnCfdpWithFrames {
 							swatcher.startReceive = Instant.now();
 						}
 						numFramesReceived++;
-						CSTS_LOG.CSTS_API_LOGGER.info("Received " + numFramesReceived + " CFDP PDU of length " + cfdpPdu.length);
+						//CSTS_LOG.CSTS_API_LOGGER.info("Received " + numFramesReceived + " CFDP PDU of length " + cfdpPdu.length);
 						
 						numBytesReceived += cfdpPdu.length;
 						
@@ -320,7 +320,8 @@ public class TestStressRtnCfdpWithFrames {
 		Assert.assertTrue(providerSi.getDeliveryProc().isActivationPending() == false);
 		Assert.assertTrue(providerSi.getDeliveryProc().isDeactivationPending() == false);
 		
-		CfdpPduPackAndTransfer packAndTransfer = new CfdpPduPackAndTransfer(providerSi,1000,500,true);
+		CfdpPduPackAndTransfer packAndTransfer = new CfdpPduPackAndTransfer(
+				data -> providerSi.transferData(data),1000,50,true);
 		PacketConfigData packetConfigData = FrameGenerator.generatePacketconfigData();
 		FrameConfigData frameConfigData = FrameGenerator.generateTestFrameConfigData();
 		CfdpPduExtractAndTransfer extractAndTransfer = 

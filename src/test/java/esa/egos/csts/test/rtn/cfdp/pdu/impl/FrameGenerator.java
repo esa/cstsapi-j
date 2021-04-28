@@ -60,7 +60,7 @@ public class FrameGenerator {
     		}
     	});
     	
-    	frameConfigData.PutVcFrameLen((byte) 0, 16383);
+    	frameConfigData.PutVcFrameLen((byte) 0, 2048);
     	frameConfigData.PutVcScId((byte)0, (short)650);
     	frameConfigData.PutVcFECWPresent((byte) 0,Boolean.FALSE);
     	
