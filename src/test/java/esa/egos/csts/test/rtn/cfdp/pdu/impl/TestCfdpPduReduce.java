@@ -22,17 +22,17 @@ public class TestCfdpPduReduce {
 	{
 		CfdpPduReduce cfdpPduReduce = new CfdpPduReduce();
 		
-        byte[] bigFiledata = new byte[65535];
-        Arrays.fill(bigFiledata, (byte) 0x0F);
+        byte[] fullPdu = new byte[65535];
+        Arrays.fill(fullPdu, (byte) 0x0F);
         
-        bigFiledata[0]=(byte) 0x10;//file data
-        bigFiledata[1]=(byte) 0xFF;//length 64k
-        bigFiledata[2]=(byte) 0xFF;//length 64k
-        bigFiledata[3]=(byte) 0x01;//8 bytes header
+        fullPdu[0]=(byte) 0x10;//file data
+        fullPdu[1]=(byte) 0xFF;//length 64k
+        fullPdu[2]=(byte) 0xFF;//length 64k
+        fullPdu[3]=(byte) 0x01;//8 bytes header
 		
-        byte[] reducedFiledata = cfdpPduReduce.createReducedPdu(bigFiledata);
-        assertTrue(reducedFiledata.length < bigFiledata.length);
-        System.out.println("Resulting RPDU Size = " + reducedFiledata.length); 
+        byte[] reducedPdu = cfdpPduReduce.createReducedPdu(fullPdu);
+        assertTrue(reducedPdu.length < fullPdu.length);
+        System.out.println("Resulting RPDU Size = " + reducedPdu.length); 
 	}
 	
 	
@@ -41,13 +41,13 @@ public class TestCfdpPduReduce {
 	{
 		CfdpPduReduce cfdpPduReduce = new CfdpPduReduce();
 		
-        byte[] bigFiledata = new byte[65535];
-        Arrays.fill(bigFiledata, (byte) 0x0F);
+        byte[] fullPdu = new byte[65535];
+        Arrays.fill(fullPdu, (byte) 0x0F);
         
-        bigFiledata[0]=(byte) 0x10;//file data
-        bigFiledata[1]=(byte) 0xFF;//length 64k
-        bigFiledata[2]=(byte) 0xFF;//length 64k
-        bigFiledata[3]=(byte) 0x01;//8 bytes header
+        fullPdu[0]=(byte) 0x10;//file data
+        fullPdu[1]=(byte) 0xFF;//length 64k
+        fullPdu[2]=(byte) 0xFF;//length 64k
+        fullPdu[3]=(byte) 0x01;//8 bytes header
         
         Instant start = Instant.now();
 		
@@ -55,7 +55,7 @@ public class TestCfdpPduReduce {
         
         for(int i = 0; i < N;i++)
         {
-        	byte[] reducedFiledata = cfdpPduReduce.createReducedPdu(bigFiledata,true);
+        	byte[] reducedPdu = cfdpPduReduce.createReducedPdu(fullPdu,true);
         }
         
         Instant stop = Instant.now();

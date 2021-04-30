@@ -55,11 +55,11 @@ public class TestStressRtnCfdpReducePdu {
     Lock testConditionLock = new ReentrantLock();
     Condition testCondition = testConditionLock.newCondition();
 
-	private long numFramesReceived;
+	private long numDataTransferReceived;
 	
 	private long numBytesReceived;
 
-	private long numFramesSent;
+	private long numPduSent;
 	
 	private static class StopWatcher {
 		public Instant startTransmit;
@@ -126,42 +126,42 @@ public class TestStressRtnCfdpReducePdu {
 	}
 	
 	@Test
-	public void testTwoFramesMaxSize() {
+	public void testTwoPdusMaxSize() {
 		implementRtnCfdpPduDataTransfer(2, 65535);
 	}
 	
 	
 	@Test
-	public void test50kFramesMaxSize() {
+	public void test50kPdusMaxSize() {
 		implementRtnCfdpPduDataTransfer(50_000, 64536);
 	}
 	
 	@Test
-	public void test250kFramesMaxSize() {
+	public void test250kPdusMaxSize() {
 		implementRtnCfdpPduDataTransfer(250_000, 64536);
 	}
 	
 	@Test
-	public void test200kFramesMidSize() {
+	public void test200kPdusMidSize() {
 		implementRtnCfdpPduDataTransfer(200_000, 16134);
 	}
 	
 	@Test
-	public void test1MFramesMidSize() {
+	public void test1MPdusMidSize() {
 		implementRtnCfdpPduDataTransfer(1_000_000, 16134);
 	}
 	
 	@Test
-	public void test1MFrames256Size() {
+	public void test1MPdus256Size() {
 		implementRtnCfdpPduDataTransfer(1_000_000, 256);
 	}
 	
 	@Test
-	public void test1MFrames512Size() {
+	public void test1MPdus512Size() {
 		implementRtnCfdpPduDataTransfer(1_000_000, 512);
 	}
 	
-	public void implementRtnCfdpPduDataTransfer(long nFrames, int dataSize) {
+	public void implementRtnCfdpPduDataTransfer(long nPdus, int fullPduSize) {
 			RtnCfdpPduDeliveryProcedureConfig rtnCfdpProcedureConfig = new RtnCfdpPduDeliveryProcedureConfig();
 			rtnCfdpProcedureConfig.setLatencyLimit(1);
 			rtnCfdpProcedureConfig.setReturnBufferSize(5);
@@ -181,7 +181,7 @@ public class TestStressRtnCfdpReducePdu {
 						"CSTS-PROVIDER",
 						"CSTS_PT1");
 				
-				numFramesReceived = 0;
+				numDataTransferReceived = 0;
 				numBytesReceived = 0;
 				RtnCfdpPduSiProvider providerSi = new RtnCfdpPduSiProvider(providerApi, providerConfig, rtnCfdpProcedureConfig, new IRtnCfdpPduProduction() {
 					
@@ -208,17 +208,17 @@ public class TestStressRtnCfdpReducePdu {
 					@Override
 					public void cfdpPdu(byte[] cfdpPdu) {
 						
-						if(numFramesReceived==0) {
+						if(numDataTransferReceived==0) {
 							swatcher.startReceive = Instant.now();
 						}
-						numFramesReceived++;
+						numDataTransferReceived++;
 						//CSTS_LOG.CSTS_API_LOGGER.info("Received " + numFramesReceived + " CFDP PDU of length " + cfdpPdu.length);
 						
 						numBytesReceived += cfdpPdu.length;
 						
 						testConditionLock.lock();
-						if(numBytesReceived == nFrames*18) {
-							System.out.println("Received the expected " + numFramesReceived 
+						if(numBytesReceived == nPdus*18) {
+							System.out.println("Received the expected " + numDataTransferReceived 
 									+ " frames for a total of " + numBytesReceived + " bytes" );
 							swatcher.stopReceive = Instant.now();
 							testCondition.signal();
@@ -233,15 +233,12 @@ public class TestStressRtnCfdpReducePdu {
 					}
 				});
 				
-//								Scanner scanner = new Scanner(System.in);
-//							    scanner.nextLine();
-
-				numFramesSent = 0;
+				numPduSent = 0;
 				
-				doDataTransfer(userSi, providerSi, nFrames, false,dataSize);	
+				doDataTransfer(userSi, providerSi, nPdus, false,fullPduSize);	
 
 				testConditionLock.lock();
-				while(numBytesReceived < nFrames*18) {
+				while(numBytesReceived < nPdus*18) {
 					testCondition.await(10, TimeUnit.SECONDS);
 				}
 				testConditionLock.unlock();
@@ -252,14 +249,14 @@ public class TestStressRtnCfdpReducePdu {
 				double timeSpan = interval.getSeconds() + interval.getNano()/(1000.0*1000*1000);
 				
 				//bits /s
-				double rate = (nFrames*dataSize*8.0)/(timeSpan); 
+				double rate = (nPdus*fullPduSize*8.0)/(timeSpan); 
 				
 				providerSi.destroy();
 				userSi.destroy();
 
 				CSTS_LOG.CSTS_API_LOGGER.info("Transmission Time: " + timeSpan);	
-				CSTS_LOG.CSTS_API_LOGGER.info("Data size: " + nFrames*dataSize/(1000*1000) + " MByte, rate: "+ rate/1000_000  +  " Mbit/s");
-				CSTS_LOG.CSTS_API_LOGGER.info("Data units: " + nFrames + " rate: " + nFrames/timeSpan + " Units/s");
+				CSTS_LOG.CSTS_API_LOGGER.info("Total full PDUs size: " + nPdus*fullPduSize/(1000*1000) + " MByte, rate: "+ rate/1000_000  +  " Mbit/s");
+				CSTS_LOG.CSTS_API_LOGGER.info("Full PDUs: " + nPdus + " rate: " + nPdus/timeSpan + " Units/s");
 				
 				String recordPerformance = System.getProperty("recordPerformance");
 				
@@ -267,11 +264,11 @@ public class TestStressRtnCfdpReducePdu {
 					FileWriter fw = new FileWriter("ReducePerformanceLog.txt",true);
 					BufferedWriter bw = new BufferedWriter(fw);
 					Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-					bw.write(timestamp + ", " + nFrames +
-							", " + dataSize +
+					bw.write(timestamp + ", " + nPdus +
+							", " + fullPduSize +
 							", " + timeSpan +
 							", " + rate/1000_000_000 +
-							", " + nFrames/timeSpan);
+							", " + nPdus/timeSpan);
 					bw.newLine();
 					bw.close();
 				}
@@ -282,17 +279,17 @@ public class TestStressRtnCfdpReducePdu {
 			}
 	}
 	
-	private void doDataTransfer(RtnCfdpPduSiUser userSi, RtnCfdpPduSiProvider providerSi, long numFrames, boolean withTime, int dataSize) throws InterruptedException {
+	private void doDataTransfer(RtnCfdpPduSiUser userSi, RtnCfdpPduSiProvider providerSi, long numPdus, boolean withTime, int fullPduSize) throws InterruptedException {
 		
-		byte[] bigFiledata = new byte[dataSize];
-        Arrays.fill(bigFiledata, (byte) 0x0F);
+		byte[] fullPdu = new byte[fullPduSize];
+        Arrays.fill(fullPdu, (byte) 0x0F);
         
-        bigFiledata[0]=(byte) 0x10;//file data
-        bigFiledata[1]=(byte) 0xFF;//length 64k
-        bigFiledata[2]=(byte) 0xFF;//length 64k
-        bigFiledata[3]=(byte) 0x01;//8 bytes header
+        fullPdu[0]=(byte) 0x10;//file data
+        fullPdu[1]=(byte) 0xFF;//length 64k
+        fullPdu[2]=(byte) 0xFF;//length 64k
+        fullPdu[3]=(byte) 0x01;//8 bytes header
         
-        CfdpTransferData cfdpPduData = new CfdpTransferData(bigFiledata);
+        CfdpTransferData cfdpPduData = new CfdpTransferData(fullPdu);
 		
 		
 		CSTS_LOG.CSTS_API_LOGGER.info("BIND...");
@@ -322,7 +319,7 @@ public class TestStressRtnCfdpReducePdu {
 		
 		ArrayList<CfdpTransferData> dataToTransfer = new ArrayList<>();
 		
-		for(int idx=0; idx<numFrames; idx++) {
+		for(int idx=0; idx<numPdus; idx++) {
 			dataToTransfer.add(cfdpPduData);
 		}
 		
@@ -334,7 +331,7 @@ public class TestStressRtnCfdpReducePdu {
 		
 		for(CfdpTransferData dataUnit:dataToTransfer) {
 			packAndTransfer.transferData(dataUnit);
-			numFramesSent++;
+			numPduSent++;
 		}
 		
 		packAndTransfer.stopTransfer();

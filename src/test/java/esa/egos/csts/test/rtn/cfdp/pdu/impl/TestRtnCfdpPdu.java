@@ -46,9 +46,9 @@ public class TestRtnCfdpPdu {
     Lock testConditionLock = new ReentrantLock();
     Condition testCondition = testConditionLock.newCondition();
 
-	private long numFramesReceived;
+	private long fullPdusReceived;
 
-	private long numFramesSent;
+	private long fullPdusSent;
 
     @BeforeClass
     public static void setUpClass() throws ApiException
@@ -122,7 +122,7 @@ public class TestRtnCfdpPdu {
 						"CSTS-PROVIDER",
 						"CSTS_PT1");
 				
-				numFramesReceived = 0;
+				fullPdusReceived = 0;
 				RtnCfdpPduSiProvider providerSi = new RtnCfdpPduSiProvider(providerApi, providerConfig, rtnCfdpProcedureConfig, new IRtnCfdpPduProduction() {
 					
 					@Override
@@ -147,11 +147,11 @@ public class TestRtnCfdpPdu {
 					@Override
 					public void cfdpPdu(byte[] cfdpPdu) {
 						//CSTS_LOG.CSTS_API_LOGGER.fine("Received CFDP PDU of length " + cfdpPdu.length);
-						numFramesReceived++;
+						fullPdusReceived++;
 						
 						testConditionLock.lock();
-						if(numFramesReceived == numFramesSent) {
-							System.out.println("Received the expected " + numFramesReceived + " frames");
+						if(fullPdusReceived == fullPdusSent) {
+							System.out.println("Received the expected " + fullPdusReceived + " frames");
 							testCondition.signal();
 						}
 						testConditionLock.unlock();
@@ -164,13 +164,13 @@ public class TestRtnCfdpPdu {
 					}
 				});
 
-				numFramesSent = 0;
+				fullPdusSent = 0;
 				for(int idx=0; idx<2; idx++) {
 					doDataTransfer(userSi, providerSi, 5, (idx%2 == 0));					
 				}
 
 				testConditionLock.lock();
-				while(numFramesReceived != numFramesSent) {
+				while(fullPdusReceived != fullPdusSent) {
 					testCondition.await(100, TimeUnit.SECONDS);
 				}
 				testConditionLock.unlock();
@@ -210,7 +210,7 @@ public class TestRtnCfdpPdu {
 		
 		for(int idx=0; idx<numFrames; idx++) {
 			providerSi.transferData(cfdpPduData);
-			numFramesSent++;
+			fullPdusSent++;
 		}
 		
 		verifyResult(userSi.endDataDelivery(), "END DATA Delivery");
@@ -241,18 +241,18 @@ public class TestRtnCfdpPdu {
 						"CSTS-PROVIDER",
 						"CSTS_PT1");
 				
-				numFramesReceived = 0;
+				fullPdusReceived = 0;
 
 				RtnCfdpPduSiUser userSi = new RtnCfdpPduSiUser(userApi, userConfig, new ICfpdPduReceiver() {
 					
 					@Override
 					public void cfdpPdu(byte[] cfdpPdu) {
 						//CSTS_LOG.CSTS_API_LOGGER.fine("Received CFDP PDU of length " + cfdpPdu.length);
-						numFramesReceived++;
+						fullPdusReceived++;
 						
 						testConditionLock.lock();
-						if(numFramesReceived == numFramesSent) {
-							System.out.println("Received the expected " + numFramesReceived + " frames");
+						if(fullPdusReceived == fullPdusSent) {
+							System.out.println("Received the expected " + fullPdusReceived + " frames");
 							testCondition.signal();
 						}
 						testConditionLock.unlock();
@@ -265,7 +265,7 @@ public class TestRtnCfdpPdu {
 					}
 				});
 
-				numFramesSent = 0;
+				fullPdusSent = 0;
 
 				byte[] cfdpPduData = new byte[1024];
 				
@@ -307,7 +307,7 @@ public class TestRtnCfdpPdu {
 				
 				for(int idx=0; idx<numFrames; idx++) {
 					providerSi.transferData(cfdpPduData);
-					numFramesSent++;
+					fullPdusSent++;
 				}
 				
 				verifyResult(userSi.endDataDelivery(), "END DATA Delivery");
@@ -317,7 +317,7 @@ public class TestRtnCfdpPdu {
 				
 
 				testConditionLock.lock();
-				while(numFramesReceived != numFramesSent) {
+				while(fullPdusReceived != fullPdusSent) {
 					testCondition.await(100, TimeUnit.SECONDS);
 				}
 				testConditionLock.unlock();
@@ -353,7 +353,7 @@ public class TestRtnCfdpPdu {
 					"CSTS-PROVIDER",
 					"CSTS_PT1");
 			
-			numFramesReceived = 0;
+			fullPdusReceived = 0;
 			RtnCfdpPduSiProvider providerSi = new RtnCfdpPduSiProvider(providerApi, providerConfig, rtnCfdpProcedureConfig);
 			RtnCfdpPduSiUser userSi = new RtnCfdpPduSiUser(userApi, userConfig, new ICfpdPduReceiver() {
 				

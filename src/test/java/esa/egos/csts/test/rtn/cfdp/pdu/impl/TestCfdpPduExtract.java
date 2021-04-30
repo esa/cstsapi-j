@@ -53,17 +53,17 @@ public class TestCfdpPduExtract {
 			
 			Instant t2 = Instant.now();
 					
-			List<CfdpTransferData>  transferData = extractedFrames.stream()
+			List<CfdpTransferData>  fullPdus = extractedFrames.stream()
 					.map(frame -> extractor.extractTransferData(frame))
 					.flatMap(List::stream).collect(Collectors.toList());
 			
 			Instant t3= Instant.now();
 					
-			System.out.println("Transfer Data units " + transferData.size());
-			assertTrue(transferData.size()==2000+3);
+			System.out.println("Full PDUs " + fullPdus.size());
+			assertTrue(fullPdus.size()==2000+3);
 
-			CfdpTransferData pdu = transferData.get(1);
-			System.out.println("Transfer PDU length " + pdu.getData().length);
+			CfdpTransferData pdu = fullPdus.get(1);
+			System.out.println("Full PDU (1) length " + pdu.getData().length);
 			assertTrue(pdu.getData().length == 16384 +12 );
 			
 			System.out.println("Frame generation: " + 8*2000*16.384/Duration.between(t0, t1).toMillis() + "Mbit/s");
