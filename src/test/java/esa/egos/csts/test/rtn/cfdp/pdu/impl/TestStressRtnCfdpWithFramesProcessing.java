@@ -230,9 +230,11 @@ public class TestStressRtnCfdpWithFramesProcessing {
 				//bits /s
 				long totalDataSize = ((long)repetitions)*nPdus*fullPduSize;//Byte
 				double rate = (totalDataSize*8.0)/(timeSpan); 
+				double rateReduced = (repetitions*nPdus*18*8.0)/(timeSpan); 
 				
 				CSTS_LOG.CSTS_API_LOGGER.info("Transmission Time: " + timeSpan);	
 				CSTS_LOG.CSTS_API_LOGGER.info("Total full PDUs size: " + totalDataSize/(1000*1000) + " MByte, rate: "+ rate/1_000_000  +  " Mbit/s");
+				CSTS_LOG.CSTS_API_LOGGER.info("Total reduced PDUs size: " + nPdus*18/(1000*1000) + " MByte, rate: "+ rateReduced/1000_000  +  " Mbit/s");
 				CSTS_LOG.CSTS_API_LOGGER.info("Full PDUs: " + repetitions*nPdus + " rate: " + repetitions*nPdus/timeSpan + " Units/s");
 				
 				String recordPerformance = System.getProperty("recordPerformance");
