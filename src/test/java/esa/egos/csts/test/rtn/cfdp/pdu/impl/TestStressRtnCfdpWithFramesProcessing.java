@@ -234,7 +234,7 @@ public class TestStressRtnCfdpWithFramesProcessing {
 				
 				CSTS_LOG.CSTS_API_LOGGER.info("Transmission Time: " + timeSpan);	
 				CSTS_LOG.CSTS_API_LOGGER.info("Total full PDUs size: " + totalDataSize/(1000*1000) + " MByte, rate: "+ rate/1_000_000  +  " Mbit/s");
-				CSTS_LOG.CSTS_API_LOGGER.info("Total reduced PDUs size: " + nPdus*18/(1000*1000) + " MByte, rate: "+ rateReduced/1000_000  +  " Mbit/s");
+				CSTS_LOG.CSTS_API_LOGGER.info("Total reduced PDUs size: " + repetitions*nPdus*18/(1000*1000) + " MByte, rate: "+ rateReduced/1000_000  +  " Mbit/s");
 				CSTS_LOG.CSTS_API_LOGGER.info("Full PDUs: " + repetitions*nPdus + " rate: " + repetitions*nPdus/timeSpan + " Units/s");
 				
 				String recordPerformance = System.getProperty("recordPerformance");
@@ -243,11 +243,11 @@ public class TestStressRtnCfdpWithFramesProcessing {
 					FileWriter fw = new FileWriter("FrameProcessingPerformanceLog.txt",true);
 					BufferedWriter bw = new BufferedWriter(fw);
 					Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-					bw.write(timestamp + ", " + nPdus +
+					bw.write(timestamp + ", " + repetitions*nPdus +
 							", " + fullPduSize +
 							", " + timeSpan +
 							", " + rate/1000_000_000 +
-							", " + nPdus/timeSpan);
+							", " + repetitions*nPdus/timeSpan);
 					bw.newLine();
 					bw.close();
 				}
