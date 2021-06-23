@@ -1,5 +1,7 @@
 package esa.egos.csts.app.si.rtn.cfdp.pdu;
 
+import java.util.List;
+
 import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 
 /**
@@ -12,6 +14,10 @@ public interface ICfpdPduReceiver {
 	 * @param cfdpPdu	The CDP PDU
 	 */
 	public void cfdpPdu(byte[] cfdpPdu);
+	
+	
+	
+	public void cfdpPdu(List<byte[]> cfdpPdus);
 	
 	/**
 	 * Informs the PDU receiver about an abort

@@ -100,6 +100,12 @@ IMPORTS	BufferedDataDeliveryPdu
 
 CfdpDeliveryPdu  ::=  BufferedDataDeliveryPdu
 
+CfdpDeliveryPduData ::= SEQUENCE OF OCTET STRING
+
+cfdpDeliveryPduDataId OBJECT IDENTIFIER ::=
+						{rtnCfdpPduBuffDelExtendedOpsParam	4}
+
+
 -- START negative return extension parameters
 -- No extension parameters are added to the START negative return of the
 -- BufferedDataDelivery procedure. Therefore ‘StartReturn’:
@@ -204,7 +210,6 @@ pCFDPPDcfdpDestEntities	OBJECT IDENTIFIER ::=
                 				{rtnCfdpPduBuffDelExtendedOpsParam	3}
 
 PCFDPPDcfdpDestEntitiesType ::= SEQUENCE OF INTEGER
-
 
 
 END

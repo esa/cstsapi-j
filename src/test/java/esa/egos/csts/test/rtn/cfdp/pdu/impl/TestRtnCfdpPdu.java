@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -162,6 +163,12 @@ public class TestRtnCfdpPdu {
 						System.out.println("Return CFDP PDU User aborted. Diagnostic: " + diag);
 						
 					}
+
+					@Override
+					public void cfdpPdu(List<byte[]> cfdpPdus) {
+						// TODO Auto-generated method stub
+						
+					}
 				});
 
 				fullPdusSent = 0;
@@ -261,6 +268,12 @@ public class TestRtnCfdpPdu {
 					@Override
 					public void abort(PeerAbortDiagnostics diag) {
 						System.out.println("Return CFDP PDU User aborted. Diagnostic: " + diag);
+						
+					}
+
+					@Override
+					public void cfdpPdu(List<byte[]> cfdpPdus) {
+						// TODO Auto-generated method stub
 						
 					}
 				});
@@ -367,6 +380,12 @@ public class TestRtnCfdpPdu {
 					testConditionLock.lock();
 					testCondition.signal();
 					testConditionLock.unlock();
+					
+				}
+
+				@Override
+				public void cfdpPdu(List<byte[]> cfdpPdus) {
+					// TODO Auto-generated method stub
 					
 				}
 			});

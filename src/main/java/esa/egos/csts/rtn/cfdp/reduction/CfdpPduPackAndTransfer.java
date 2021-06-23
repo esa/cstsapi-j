@@ -4,26 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import esa.egos.csts.api.enumerations.CstsResult;
-import esa.egos.csts.app.si.rtn.cfdp.pdu.RtnCfdpPduSiProvider;
 
 /**
  * Wrapper to RtnCfdpPduSiProvider performing the reduction and the packing of PDUs before transferring them
  * @author mrenesto
  *
  */
-public class CfdpPduPackAndTransfer {
+public abstract class CfdpPduPackAndTransfer {
 	
 	private static final Logger LOG = Logger.getLogger(CfdpPduPackAndTransfer.class.getName());
 	
@@ -104,8 +100,6 @@ public class CfdpPduPackAndTransfer {
 		}
 	}
 	
-	private final CfdpTransferOperation rtnCfdpPduSiProvider;
-	
 	private final int packingSize;
 	
 	private final int waitingTime;
@@ -126,9 +120,9 @@ public class CfdpPduPackAndTransfer {
 	 * checksum computation is true
 	 * @param rtnCfdpPduSiProvider the service to which reduced and packed data will be sent
 	 */
-	public CfdpPduPackAndTransfer(CfdpTransferOperation rtnCfdpPduSiProvider)
+	public CfdpPduPackAndTransfer()
 	{
-		this(rtnCfdpPduSiProvider,1000,500, true);
+		this(1000,500, true);
 	}
 	
 	/**
@@ -138,9 +132,8 @@ public class CfdpPduPackAndTransfer {
 	 * @param waitingTime (ms) the timeout waiting for an incoming pdu before sending message shorter than max
 	 * @param computeChecksum true if the checksum has to be computed (false improve performance)
 	 */
-	public CfdpPduPackAndTransfer(CfdpTransferOperation rtnCfdpPduSiProvider, int packingSize, int waitingTime, boolean computeChecksum)
+	public CfdpPduPackAndTransfer(int packingSize, int waitingTime, boolean computeChecksum)
 	{
-		this.rtnCfdpPduSiProvider = rtnCfdpPduSiProvider;
 		this.packingSize = packingSize;
 		this.waitingTime = waitingTime;
 		this.computeChecksum = computeChecksum;
@@ -215,29 +208,6 @@ public class CfdpPduPackAndTransfer {
 		}
 	}
 	
-	private void packAndTransfer(List<CfdpTransferData> transferBatch,List<byte[]> reducedPdus )
-	{
-		int totalTransferSize = reducedPdus.stream().mapToInt( reducedPdu -> reducedPdu.length).sum();
-		
-		byte[] completeTransferMessage = new byte[totalTransferSize];
-		
-		int last = 0;
-		
-		for(byte[] reducedPdu: reducedPdus)
-		{
-			System.arraycopy(reducedPdu,0,completeTransferMessage,last, reducedPdu.length);
-			last = last + reducedPdu.length;
-		}
-		
-		if(LOG.isLoggable(Level.FINE))
-		{
-			LOG.fine("TransferData for " + reducedPdus.size() + " units " 
-					+ " for a total of " + completeTransferMessage.length + " bytes");
-		}
-		
-		CstsResult cstsResult = rtnCfdpPduSiProvider.transferData(completeTransferMessage);
-		transferBatch.stream().forEach(transferData -> transferData.setCstsResult(cstsResult));
-
-	}
+	protected abstract void packAndTransfer(List<CfdpTransferData> transferBatch,List<byte[]> reducedPdus );
 	
 }

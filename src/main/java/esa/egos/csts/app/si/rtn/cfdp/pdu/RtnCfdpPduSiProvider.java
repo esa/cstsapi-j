@@ -1,12 +1,21 @@
 package esa.egos.csts.app.si.rtn.cfdp.pdu;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
+import com.beanit.jasn1.ber.types.BerOctetString;
+
+import b1.ccsds.csts.rtn.cfdp.pdu.buffered.delivery.pdus.CfdpDeliveryPduData;
+import b1.ccsds.csts.rtn.cfdp.pdu.buffered.delivery.pdus.OidValues;
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.enumerations.ProcedureRole;
 import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.main.ICstsApi;
+import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
@@ -114,10 +123,40 @@ public class RtnCfdpPduSiProvider extends AppSi {
 	}
 	
 	/**
+	 * allow to transfer multiple string as a single sequence of octect-string
+	 * @param data list of strings
+	 * @return
+	 */
+	public CstsResult transferData(List<byte[]> data) {
+		try {
+			EmbeddedData embeddedData = encodeSequenceOfStrings(data);
+			return this.deliveryProcedure.transferData(embeddedData);
+		} catch (IOException e) {
+			return CstsResult.FAILURE;
+		}
+	}
+	
+	/**
 	 * For testing. Should be removed?
 	 * @return
 	 */
 	public ICfdpPduDelivery getDeliveryProc() {
 		return this.deliveryProcedure;
+	}
+	
+	private EmbeddedData encodeSequenceOfStrings(List<byte[]> inputData) throws IOException {
+		CfdpDeliveryPduData deliveryData = new CfdpDeliveryPduData();
+		
+		for(byte[] byteString:inputData) {
+			BerOctetString octetString = new BerOctetString(byteString);
+			deliveryData.getBerOctetString().add(octetString);
+		}
+		
+		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
+			deliveryData.encode(os);
+			return EmbeddedData.of(ObjectIdentifier.of(OidValues.cfdpDeliveryPduDataId.value), os.getArray());
+		} catch (IOException e) {
+			throw e; 
+		}             
 	}
 }

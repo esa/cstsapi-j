@@ -47,6 +47,7 @@ import esa.egos.csts.rtn.cfdp.ccsds.frames.FrameConfigData;
 import esa.egos.csts.rtn.cfdp.ccsds.frames.PacketConfigData;
 import esa.egos.csts.rtn.cfdp.extraction.CfdpPduExtractAndTransfer;
 import esa.egos.csts.rtn.cfdp.reduction.CfdpPduPackAndTransfer;
+import esa.egos.csts.rtn.cfdp.reduction.CfdpPduPackAndTransferSingleBlock;
 
 
 public class TestStressRtnCfdpWithFrames {
@@ -242,6 +243,12 @@ public class TestStressRtnCfdpWithFrames {
 						System.out.println("Return CFDP PDU User aborted. Diagnostic: " + diag);
 						
 					}
+
+					@Override
+					public void cfdpPdu(List<byte[]> cfdpPdus) {
+						// TODO Auto-generated method stub
+						
+					}
 				});
 				
 				doDataTransfer(userSi, providerSi, frames, repetitions, false);	
@@ -321,7 +328,7 @@ public class TestStressRtnCfdpWithFrames {
 		Assert.assertTrue(providerSi.getDeliveryProc().isActivationPending() == false);
 		Assert.assertTrue(providerSi.getDeliveryProc().isDeactivationPending() == false);
 		
-		CfdpPduPackAndTransfer packAndTransfer = new CfdpPduPackAndTransfer(
+		CfdpPduPackAndTransfer packAndTransfer = new CfdpPduPackAndTransferSingleBlock(
 				data -> providerSi.transferData(data),1000,50,true);
 		PacketConfigData packetConfigData = FrameGenerator.generatePacketconfigData();
 		FrameConfigData frameConfigData = FrameGenerator.generateTestFrameConfigData();

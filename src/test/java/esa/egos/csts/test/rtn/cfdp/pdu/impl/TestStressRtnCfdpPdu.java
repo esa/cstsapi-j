@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -272,6 +273,12 @@ public class TestStressRtnCfdpPdu {
 					public void abort(PeerAbortDiagnostics diag) {
 						System.out.println("Return CFDP PDU User aborted. Diagnostic: " + diag);
 						
+					}
+
+					@Override
+					public void cfdpPdu(List<byte[]> cfdpPdus) {
+						// TODO Auto-generated method stub
+						cfdpPdus.stream().forEach(pdu -> cfdpPdu(pdu));
 					}
 				});
 				

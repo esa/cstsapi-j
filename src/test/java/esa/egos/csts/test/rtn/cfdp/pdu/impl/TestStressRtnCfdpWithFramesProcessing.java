@@ -47,7 +47,8 @@ import esa.egos.csts.rtn.cfdp.ccsds.frames.FrameConfigData;
 import esa.egos.csts.rtn.cfdp.ccsds.frames.PacketConfigData;
 import esa.egos.csts.rtn.cfdp.extraction.CfdpPduExtractAndTransfer;
 import esa.egos.csts.rtn.cfdp.reduction.CfdpPduPackAndTransfer;
-import esa.egos.csts.rtn.cfdp.reduction.CfdpTransferOperation;
+import esa.egos.csts.rtn.cfdp.reduction.CfdpPduPackAndTransferSingleBlock;
+import esa.egos.csts.rtn.cfdp.reduction.CfdpTransferOperationSingleBlock;
 
 
 public class TestStressRtnCfdpWithFramesProcessing {
@@ -258,10 +259,10 @@ public class TestStressRtnCfdpWithFramesProcessing {
 			}
 	}
 	
-	private void doDataTransfer(CfdpTransferOperation transferOp,List<CcsdsTmFrame> frames, int repetitions, boolean withTime) throws InterruptedException {
+	private void doDataTransfer(CfdpTransferOperationSingleBlock transferOp,List<CcsdsTmFrame> frames, int repetitions, boolean withTime) throws InterruptedException {
 				
 		
-		CfdpPduPackAndTransfer packAndTransfer = new CfdpPduPackAndTransfer(transferOp,1000,50,true);
+		CfdpPduPackAndTransfer packAndTransfer = new CfdpPduPackAndTransferSingleBlock(transferOp,1000,50,true);
 		PacketConfigData packetConfigData = FrameGenerator.generatePacketconfigData();
 		FrameConfigData frameConfigData = FrameGenerator.generateTestFrameConfigData();
 		CfdpPduExtractAndTransfer extractAndTransfer = 

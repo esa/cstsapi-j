@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
@@ -42,6 +43,8 @@ import esa.egos.csts.app.si.rtn.cfdp.pdu.RtnCfdpPduDeliveryProcedureConfig;
 import esa.egos.csts.app.si.rtn.cfdp.pdu.RtnCfdpPduSiProvider;
 import esa.egos.csts.app.si.rtn.cfdp.pdu.RtnCfdpPduSiUser;
 import esa.egos.csts.rtn.cfdp.reduction.CfdpPduPackAndTransfer;
+import esa.egos.csts.rtn.cfdp.reduction.CfdpPduPackAndTransferSequence;
+import esa.egos.csts.rtn.cfdp.reduction.CfdpPduPackAndTransferSingleBlock;
 import esa.egos.csts.rtn.cfdp.reduction.CfdpTransferData;
 
 
@@ -231,6 +234,12 @@ public class TestStressRtnCfdpReducePdu {
 						System.out.println("Return CFDP PDU User aborted. Diagnostic: " + diag);
 						
 					}
+
+					@Override
+					public void cfdpPdu(List<byte[]> cfdpPdus) {
+						// TODO Auto-generated method stub
+						cfdpPdus.stream().forEach(pdu -> cfdpPdu(pdu));
+					}
 				});
 				
 				numPduSent = 0;
@@ -315,7 +324,7 @@ public class TestStressRtnCfdpReducePdu {
 		Assert.assertTrue(providerSi.getDeliveryProc().isActivationPending() == false);
 		Assert.assertTrue(providerSi.getDeliveryProc().isDeactivationPending() == false);
 		
-		CfdpPduPackAndTransfer packAndTransfer = new CfdpPduPackAndTransfer(
+		CfdpPduPackAndTransfer packAndTransfer = new CfdpPduPackAndTransferSequence(
 				data -> providerSi.transferData(data),1000,500,true);
 		
 		
