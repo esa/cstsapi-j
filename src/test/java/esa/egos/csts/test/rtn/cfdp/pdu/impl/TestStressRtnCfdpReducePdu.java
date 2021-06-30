@@ -211,6 +211,12 @@ public class TestStressRtnCfdpReducePdu {
 					@Override
 					public void cfdpPdu(byte[] cfdpPdu) {
 						
+						int offset = 0;
+						while(offset < cfdpPdu.length) {
+							CfdpTestPdu testPdu = new CfdpTestPdu(cfdpPdu,offset);
+							offset+=testPdu.getLength();
+						}
+						
 						if(numDataTransferReceived==0) {
 							swatcher.startReceive = Instant.now();
 						}
