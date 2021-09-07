@@ -4,11 +4,12 @@ CCSDS-CSTS-RTN-CFDP-PDU-OBJECT-IDENTIFIERS
 }
 
 DEFINITIONS
-
+ 
 IMPLICIT TAGS
 ::= BEGIN
 
 EXPORTS	rtnCfdpPduBuffDelExtendedOpsParam
+,			rtnCfdpPduBuffDelExtendedProcParam
 ,			rtnCfdpPduDerivedServices
 ,			rtnCfdpPduExtendedServiceParameters
 ,			rtnCfdpPduServiceProcedures
@@ -103,7 +104,8 @@ CfdpDeliveryPdu  ::=  BufferedDataDeliveryPdu
 CfdpDeliveryPduData ::= SEQUENCE OF OCTET STRING
 
 cfdpDeliveryPduDataId OBJECT IDENTIFIER ::=
-						{rtnCfdpPduBuffDelExtendedOpsParam	4}
+						{rtnCfdpPduBuffDelExtendedOpsParam	1}
+
 
 
 -- START negative return extension parameters
@@ -190,7 +192,7 @@ DEFINITIONS
 IMPLICIT TAGS
 ::=	BEGIN
 
-IMPORTS	rtnCfdpPduBuffDelExtendedOpsParam
+IMPORTS	rtnCfdpPduBuffDelExtendedProcParam
 FROM CCSDS-CSTS-RTN-CFDP-PDU-OBJECT-IDENTIFIERS
 ;
 
@@ -198,7 +200,7 @@ FROM CCSDS-CSTS-RTN-CFDP-PDU-OBJECT-IDENTIFIERS
 -- CFDP PDU Delivery
 
 pCFDPPDcfdpPduOperationMode	OBJECT IDENTIFIER ::= 
-                				{rtnCfdpPduBuffDelExtendedOpsParam	2}
+                				{rtnCfdpPduBuffDelExtendedProcParam	1}
 
 PCFDPPDcfdpPduOperationModeType ::= ENUMERATED
 {
@@ -207,9 +209,19 @@ PCFDPPDcfdpPduOperationModeType ::= ENUMERATED
 }
 
 pCFDPPDcfdpDestEntities	OBJECT IDENTIFIER ::= 
-                				{rtnCfdpPduBuffDelExtendedOpsParam	3}
+                				{rtnCfdpPduBuffDelExtendedProcParam	2}
 
 PCFDPPDcfdpDestEntitiesType ::= SEQUENCE OF INTEGER
 
+-- CFDP PDU Aggregation
+pCFDPPDcfdpPduAggregationMaxSize OBJECT IDENTIFIER ::=
+								{rtnCfdpPduBuffDelExtendedProcParam	3}
+
+PCFDPPDcfdpPduAggregationMaxSizeType ::= INTEGER					
+
+pCFDPPDcfdpPduAggregationTimeout OBJECT IDENTIFIER ::=
+								{rtnCfdpPduBuffDelExtendedProcParam	4}
+
+PCFDPPDcfdpPduAggregationTimeoutType ::= INTEGER
 
 END

@@ -27,6 +27,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 
 /**
@@ -170,6 +171,7 @@ public class TestMds {
 	}
 	
 	@Test
+	@Ignore
 	public void testAbortByUser() {
 		try {
 			SiConfig mdSiProviderConfig = new SiConfig(ObjectIdentifier.of(1,3,112,4,7,0),
@@ -236,6 +238,7 @@ public class TestMds {
 	}
 
 	@Test
+	@Ignore
 	public void testProtocolAbort() {
 		try {
 			SiConfig mdSiProviderConfig = new SiConfig(ObjectIdentifier.of(1,3,112,4,7,0),
@@ -290,6 +293,7 @@ public class TestMds {
 	}	
 	
 	@Test
+	@Ignore
 	public void testAbortByProvider() {
 		try {
 			SiConfig mdSiProviderConfig = new SiConfig(ObjectIdentifier.of(1,3,112,4,7,0),

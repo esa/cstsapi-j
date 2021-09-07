@@ -20,6 +20,8 @@ import com.beanit.jasn1.ber.types.string.*;
 
 
 public final class OidValues {
-	public static final BerObjectIdentifier pCFDPPDcfdpDestEntities = new BerObjectIdentifier(new int[]{1, 3, 112, 4, 4, 1, 2, 4, 3, 1, 1, 3});
-	public static final BerObjectIdentifier pCFDPPDcfdpPduOperationMode = new BerObjectIdentifier(new int[]{1, 3, 112, 4, 4, 1, 2, 4, 3, 1, 1, 2});
+	public static final BerObjectIdentifier pCFDPPDcfdpDestEntities = new BerObjectIdentifier(new int[]{1, 3, 112, 4, 4, 1, 2, 4, 3, 1, 2, 2});
+	public static final BerObjectIdentifier pCFDPPDcfdpPduAggregationMaxSize = new BerObjectIdentifier(new int[]{1, 3, 112, 4, 4, 1, 2, 4, 3, 1, 2, 3});
+	public static final BerObjectIdentifier pCFDPPDcfdpPduAggregationTimeout = new BerObjectIdentifier(new int[]{1, 3, 112, 4, 4, 1, 2, 4, 3, 1, 2, 4});
+	public static final BerObjectIdentifier pCFDPPDcfdpPduOperationMode = new BerObjectIdentifier(new int[]{1, 3, 112, 4, 4, 1, 2, 4, 3, 1, 2, 1});
 }

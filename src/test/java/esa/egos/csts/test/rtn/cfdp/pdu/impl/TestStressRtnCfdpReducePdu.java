@@ -124,44 +124,57 @@ public class TestStressRtnCfdpReducePdu {
 	//-XX:+UseG1GC -DlistRcvDataCapacity=25000
 	
 	@Test
+	@Ignore
 	public void testOneFrameMaxSize() {
 		implementRtnCfdpPduDataTransfer(1, 65535);
 	}
 	
 	@Test
+	@Ignore
 	public void testTwoPdusMaxSize() {
 		implementRtnCfdpPduDataTransfer(2, 65535);
 	}
 	
 	
 	@Test
+	@Ignore
 	public void test50kPdusMaxSize() {
 		implementRtnCfdpPduDataTransfer(50_000, 64536);
 	}
 	
 	@Test
+	@Ignore
 	public void test250kPdusMaxSize() {
 		implementRtnCfdpPduDataTransfer(250_000, 64536);
 	}
 	
 	@Test
+	@Ignore
 	public void test200kPdusMidSize() {
 		implementRtnCfdpPduDataTransfer(200_000, 16134);
 	}
 	
 	@Test
+	@Ignore
 	public void test1MPdusMidSize() {
 		implementRtnCfdpPduDataTransfer(1_000_000, 16134);
 	}
 	
 	@Test
+	@Ignore
 	public void test1MPdus256Size() {
 		implementRtnCfdpPduDataTransfer(1_000_000, 256);
 	}
 	
 	@Test
+	@Ignore
 	public void test1MPdus512Size() {
 		implementRtnCfdpPduDataTransfer(1_000_000, 512);
+	}
+	
+	@Test
+	public void test1MPdus2kSize() {
+		implementRtnCfdpPduDataTransfer(1_000_000, 2048);
 	}
 	
 	public void implementRtnCfdpPduDataTransfer(long nPdus, int fullPduSize) {
