@@ -287,7 +287,7 @@ public class OidTree
 
                 // add the event(2) node
                 int[] eventOidArray = Arrays.copyOf(oidArray, oidArray.length + 1);
-                parameterOidArray[eventOidArray.length - 1] = EVENT_BIT_VALUE;
+                eventOidArray[eventOidArray.length - 1] = EVENT_BIT_VALUE;
                 addChildNode(eventOidArray, PARENT_NODES_MUST_EXIST, CROSS_SUPP_FUNC_KIND_BIT_POS, "event");
 
                 // add the directive(3) node
