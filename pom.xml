@@ -1,107 +1,113 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>esa.egos</groupId>
-	<artifactId>csts.api</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
-	<packaging>bundle</packaging> <!-- bundle (instead of jar) packaging is required for maven-bundle-plugin  -->
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>esa.egos</groupId>
+    <artifactId>csts.api</artifactId>
+    <version>1.0.1-SNAPSHOT</version>
+    <packaging>bundle</packaging> <!-- bundle (instead of jar) packaging is required for maven-bundle-plugin -->
 
-	<name>CSTS API</name>
+    <name>CSTS API</name>
 
-	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<jasn1.version>1.11.2</jasn1.version>
-	</properties>
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <jasn1.version>1.11.2</jasn1.version>
+        <project.repository.id>vsdenexus</project.repository.id>
+        <project.repository.url>https://vsdenexus.esoc.esa.int/nexus/content/repositories/systems-snapshots</project.repository.url>
+        <project.site.id>vsdenexus</project.site.id>
+        <project.site.url>dav:https://vsdenexus.esoc.esa.int/nexus/content/repositories/systems-snapshots/esa/egos/csts.api/repository-p2</project.site.url>
+    </properties>
 
-	<description>Cross Support Transfer Service API</description>
+    <description>Cross Support Transfer Service API</description>
 
-	<distributionManagement>
-      <repository>
-        <id>vsdenexus</id>
-        <url>https://vsdenexus.esoc.esa.int/nexus/content/repositories/systems-snapshots</url>
-      </repository>
-	  <site>	
-      	<id>vsdenexus</id>
-      	<url>dav:https://vsdenexus.esoc.esa.int/nexus/content/repositories/systems-snapshots/esa/egos/csts.api/repository-p2</url>
-	  </site>      
-      
-	</distributionManagement>
+    <distributionManagement>
+        <repository>
+            <id>${project.repository.id}</id>
+            <url>${project.repository.url}</url>
+        </repository>
+        <site>
+            <id>${project.site.id}</id>
+            <url>${project.site.url}</url>
+        </site>
+    </distributionManagement>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.beanit</groupId>
-				<artifactId>jasn1</artifactId>
-				<version>${jasn1.version}</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-	
-	<dependencies>
-		<dependency>
-			<groupId>com.beanit</groupId>
-			<artifactId>jasn1</artifactId>
-		</dependency>
-		
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>				
-			<scope>test</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.4</version>
-		</dependency>
-	</dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.beanit</groupId>
+                <artifactId>jasn1</artifactId>
+                <version>${jasn1.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
-	<build>
-		<plugins>
+    <dependencies>
+        <dependency>
+            <groupId>com.beanit</groupId>
+            <artifactId>jasn1</artifactId>
+        </dependency>
 
-			<plugin>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.3.1</version>
-				
-				<configuration>
-				    <archive>  
-				      <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-				    </archive> 
-				 </configuration>				
-				
-				<executions>
-					<execution>
-						<id>default-jar</id>
-						<phase>none</phase>
-					</execution>
-				</executions>
-			</plugin>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
 
-			<!-- create also a jar with a MANIFEST.MF suitable for OSGi development -->
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<version>4.2.1</version>
-			
-				<extensions>true</extensions>
-				<configuration>
-					<instructions>
-						<Bundle-SymbolicName>${groupId}.${pom.artifactId}</Bundle-SymbolicName>
-						<!-- How to get rid of the jasn1-1.8.0.jar in the csts.api-osgi-1.0.1.jar? Not ideal, but in line with the fat jar.  -->
-						<Embed-Dependency>*;scope=compile|runtime</Embed-Dependency> embed the jasn1 jar
-					</instructions>
-					<finalName>${project.artifactId}-osgi-${project.version}</finalName> <!-- different to the default name for fat jar with dependencies -->
-				</configuration>
-			</plugin>	
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.4</version>
+        </dependency>
+    </dependencies>
 
-			<!-- Build an P2 repository to provide CSTS API for eclipse target platforms -->
-			<plugin>
+    <build>
+        <plugins>
+
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+
+                <configuration>
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- create also a jar with a MANIFEST.MF suitable for OSGi development -->
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>4.2.1</version>
+
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${groupId}.${pom.artifactId}</Bundle-SymbolicName>
+                        <!-- How to get rid of the jasn1-1.8.0.jar in the 
+                            csts.api-osgi-1.0.1.jar? Not ideal, but in line with the fat jar. -->
+                        <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
+                        embed the jasn1 jar
+                    </instructions>
+                    <finalName>${project.artifactId}-osgi-${project.version}</finalName> <!-- different to the default name for fat jar with dependencies -->
+                </configuration>
+            </plugin>
+
+            <!-- Build an P2 repository to provide CSTS API for eclipse target 
+                platforms -->
+            <plugin>
                 <groupId>org.reficio</groupId>
                 <artifactId>p2-maven-plugin</artifactId>
                 <version>1.3.0</version>
@@ -109,110 +115,110 @@
                     <execution>
                         <id>default-cli</id>
                         <phase>package</phase>
-      					<goals>
-        					<goal>site</goal>
-      					</goals>                        
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
                         <configuration>
-							<featureDefinitions>
-								<feature>
-									<id>${project.artifactId}.feature</id>
-									<version>${project.version}</version>
-									<label>CSTS API</label>
-									<providerName>${project.groupId}</providerName>
-									<description>${project.description}</description>
-									<copyright>European Space Agency</copyright>
-									<license>TBD</license>
-									<generateSourceFeature>true</generateSourceFeature>
-									<artifacts>
-										<artifact>
-											<id>${project.groupId}:${project.artifactId}:${project.version}</id>
-											<transitive>true</transitive>
-											<source>true</source>
-										</artifact>
-									</artifacts>									
-								</feature>
-							</featureDefinitions>                            
+                            <featureDefinitions>
+                                <feature>
+                                    <id>${project.artifactId}.feature</id>
+                                    <version>${project.version}</version>
+                                    <label>CSTS API</label>
+                                    <providerName>${project.groupId}</providerName>
+                                    <description>${project.description}</description>
+                                    <copyright>European Space Agency</copyright>
+                                    <license>TBD</license>
+                                    <generateSourceFeature>true</generateSourceFeature>
+                                    <artifacts>
+                                        <artifact>
+                                            <id>${project.groupId}:${project.artifactId}:${project.version}</id>
+                                            <transitive>true</transitive>
+                                            <source>true</source>
+                                        </artifact>
+                                    </artifacts>
+                                </feature>
+                            </featureDefinitions>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
 
-			<!-- upload the P2 repository as is to maven  -->
-			<plugin>
-		        <artifactId>maven-site-plugin</artifactId>
-		        <version>3.9.1</version>
-		        <executions>
-		          <execution>
-		            <id>deploy-p2-site</id>
-		            <phase>deploy</phase>
-		            <goals>
-		              <goal>deploy</goal>
-		            </goals>
-		            <inherited>false</inherited>
-		            <configuration>
-		              <inputDirectory>${project.build.directory}/repository</inputDirectory>
-		            </configuration>
-		          </execution>
-		        </executions>
-		        <dependencies>
-		          <dependency>
-		            <groupId>org.apache.maven.wagon</groupId>
-		            <artifactId>wagon-webdav-jackrabbit</artifactId>
-		            	<version>3.2.0</version>
-		          </dependency>
-		        </dependencies>
-			</plugin>
+            <!-- upload the P2 repository as is to maven -->
+            <plugin>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.9.1</version>
+                <executions>
+                    <execution>
+                        <id>deploy-p2-site</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>deploy</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <inputDirectory>${project.build.directory}/repository</inputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.wagon</groupId>
+                        <artifactId>wagon-webdav-jackrabbit</artifactId>
+                        <version>3.2.0</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>fat-jar-with-dependencies</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<archive>
-								<manifest>
-									<mainClass>esa.egos.csts.api.main.Slecsexe</mainClass>
-								</manifest>
-							</archive>
-							<descriptorRefs>
-								<descriptorRef>jar-with-dependencies</descriptorRef>
-							</descriptorRefs>
-							<finalName>${project.artifactId}-${project.version}</finalName>
-							<appendAssemblyId>false</appendAssemblyId>
-						</configuration>
-					</execution>
-					
-					<execution>
-						<id>source-package</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<descriptor>src/assembly/source-delivery.xml</descriptor>
-							<finalName>${project.artifactId}-${project.version}</finalName>
-						</configuration>
-					</execution>
-					<execution>
-						<id>binary-package</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<descriptor>src/assembly/binary-delivery.xml</descriptor>
-							<finalName>${project.artifactId}-${project.version}</finalName>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-					
-		</plugins>
-	</build>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>fat-jar-with-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <mainClass>esa.egos.csts.api.main.Slecsexe</mainClass>
+                                </manifest>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <finalName>${project.artifactId}-${project.version}</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>source-package</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptor>src/assembly/source-delivery.xml</descriptor>
+                            <finalName>${project.artifactId}-${project.version}</finalName>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>binary-package</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptor>src/assembly/binary-delivery.xml</descriptor>
+                            <finalName>${project.artifactId}-${project.version}</finalName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
 
 </project>
