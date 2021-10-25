@@ -25,6 +25,7 @@ import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.procedures.informationquery.InformationQueryProvider;
 import esa.egos.csts.api.procedures.notification.NotificationProvider;
+import esa.egos.csts.api.serviceinstance.IServiceInstance;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.LabelList;
 import esa.egos.csts.api.types.Name;
@@ -49,6 +50,12 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
         System.out.println("MdCstsSiProvider#MdCstsSiProvider() end");
     }
 
+    // getter only for test purpose to simulate a peer abort
+    public IServiceInstance getServiceInstance() 
+    {
+    	return serviceInstance;
+    }
+    
     @Override
     protected void addProcedure(IProcedure procedure,
                                 ProcedureInstanceIdentifier pii,

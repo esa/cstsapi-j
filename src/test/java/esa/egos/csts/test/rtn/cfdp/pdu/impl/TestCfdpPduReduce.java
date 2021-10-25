@@ -37,6 +37,7 @@ public class TestCfdpPduReduce {
 	
 	
 	@Test
+	@Ignore
 	public void testCfdpPduReductionWithChecksum1M()
 	{
 		CfdpPduReduce cfdpPduReduce = new CfdpPduReduce();
@@ -51,11 +52,12 @@ public class TestCfdpPduReduce {
         
         Instant start = Instant.now();
 		
-        int N = 10_000_000;
+        int N = 10_000_000; //10_000_000
         
         for(int i = 0; i < N;i++)
         {
         	byte[] reducedPdu = cfdpPduReduce.createReducedPdu(fullPdu,true);
+        	//System.out.print("Created reduced PDUs " + i + "/"+ N + "\r");
         }
         
         Instant stop = Instant.now();
