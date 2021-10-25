@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by  (Telespazio Germany GmbH) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified" attributeFormDefault="unqualified" vc:minVersion="1.1">
+	<xs:element name="MDSicf">
+		<xs:annotation>
+			<xs:documentation>root element</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ServiceInstances"/>
+				<xs:element ref="ParameterDefinitions" minOccurs="0"/>
+				<xs:element ref="enumDefinitions" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="TailoringVersion" type="xs:string" use="required"/>
+		</xs:complexType>
+		<xs:key name="EnumKey">
+			<xs:selector xpath="enumDefinitions/EnumType"/>
+			<xs:field xpath="Reference"/>
+		</xs:key>
+		<xs:keyref name="EnumKeyRef" refer="EnumKey">
+			<xs:selector xpath=".//ParameterDefinitions/Parameter/EnumReference"/>
+			<xs:field xpath="."/>
+		</xs:keyref>
+	</xs:element>
+	<xs:element name="enumDefinitions">
+		<xs:annotation>
+			<xs:documentation>enumerative definitions</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="EnumType" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Reference" type="xs:string"/>
+							<xs:element name="Literals">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Literal" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:attribute name="stringValue" type="xs:string" use="required"/>
+												<xs:attribute name="intValue" type="xs:int" use="required"/>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+		<xs:unique name="enumReferenceUnique">
+			<xs:selector xpath="EnumType"/>
+			<xs:field xpath="Reference"/>
+		</xs:unique>
+	</xs:element>
+	<xs:element name="ParameterDefinitions">
+		<xs:annotation>
+			<xs:documentation>parameters definitions</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Parameter" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="paramOrEventId" type="xs:string"/>
+							<xs:element name="FunctionalResourceType" type="xs:string"/>
+							<xs:element name="FunctionalResourceInstance" type="xs:int"/>
+							<xs:element name="Description" type="xs:string"/>
+							<xs:element name="UnitOfMeasure" type="xs:string" minOccurs="0"/>
+							<xs:element ref="ParameterType"/>
+							<xs:element name="EnumReference" type="xs:string" minOccurs="0"/>
+						</xs:sequence>
+						<xs:attribute name="name" type="xs:string" use="required"/>
+						<xs:attribute name="OID" type="xs:string" use="required"/>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+		<xs:unique name="ParamNameUnique">
+			<xs:selector xpath="Parameter"/>
+			<xs:field xpath="@name"/>
+			<xs:field xpath="@OID"/>
+		</xs:unique>
+	</xs:element>
+	<xs:element name="ServiceInstances">
+		<xs:annotation>
+			<xs:documentation>service instances definitions</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="ServiceInstance" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="initiatorIdentifier" type="xs:string"/>
+							<xs:element name="responderIdentifier" type="xs:string"/>
+							<xs:element name="ResponderPortId" type="xs:string"/>
+							<xs:element name="UpdateCycleTime" type="xs:int"/>
+							<xs:element name="SIParameterList" type="SIParameterListType">
+								<xs:unique name="parameterNameParameterIdNameUnique">
+									<xs:selector xpath="ParamEventName"/>
+									<xs:field xpath="@name"/>
+								</xs:unique>
+								<xs:unique name="ListNameUnique">
+									<xs:selector xpath="./ListName"/>
+									<xs:field xpath="@name"/>
+								</xs:unique>
+								<xs:unique name="listParameterNameUnique">
+									<xs:selector xpath="ListName/Parameter"/>
+									<xs:field xpath="@name"/>
+								</xs:unique>
+								<xs:unique name="FunctionalResourceTypeUnique">
+									<xs:selector xpath="./FunctionalResourceType"/>
+									<xs:field xpath="."/>
+								</xs:unique>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="SIID" type="xs:string" use="required"/>
+						<xs:attribute name="stationOID" type="xs:string" use="required"/>
+						<xs:attribute name="spacecraftOID" type="xs:string" use="required"/>
+						<xs:attribute name="serviceOID" type="xs:string" use="required"/>
+						<xs:attribute name="instance" type="xs:string" use="required"/>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+		<xs:unique name="SIIDUnique">
+			<xs:selector xpath="ServiceInstance"/>
+			<xs:field xpath="@SIID"/>
+		</xs:unique>
+	</xs:element>
+	<xs:element name="ParameterType">
+		<xs:annotation>
+			<xs:documentation>parameter types</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="String"/>
+				<xs:enumeration value="Integer"/>
+				<xs:enumeration value="Double"/>
+				<xs:enumeration value="Enumerative"/>
+				<xs:enumeration value="Boolean"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:complexType name="SIParameterListType">
+		<xs:annotation>
+			<xs:documentation>list of requests that MD client can ask to the MD provider</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ParamEventName" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:attribute name="parameterOrEventId" type="xs:string" use="required"/>
+					<xs:attribute name="functionalResourceType" type="xs:string" use="required"/>
+					<xs:attribute name="functionalResourceInstance" type="xs:int" use="required"/>
+					<xs:attribute name="name" type="xs:string"/>
+					<xs:attribute name="OID" type="xs:string"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="FunctionalResourceName" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:attribute name="functionalResourceType" type="xs:string" use="required"/>
+					<xs:attribute name="functionalResourceInstance" type="xs:integer" use="required"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ListName" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Parameter" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:attribute name="parameterOrEventId" type="xs:string" use="required"/>
+								<xs:attribute name="functionalResourceType" type="xs:string" use="required"/>
+								<xs:attribute name="functionalResourceInstance" type="xs:int" use="required"/>
+								<xs:attribute name="name" type="xs:string"/>
+								<xs:attribute name="OID" type="xs:string"/>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+					<xs:attribute name="name" type="xs:string"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="FunctionalResourceType" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ParameterEventLabel" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:attribute name="parameterOrEventId" type="xs:string" use="required"/>
+					<xs:attribute name="functionalResourceType" type="xs:string" use="required"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

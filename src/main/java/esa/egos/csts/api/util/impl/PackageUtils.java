@@ -139,28 +139,31 @@ public class PackageUtils
         return ret;
     }
 
-    public static List<Class<?>> getPackageClassesFromJar(URL url, String packageName, boolean alsoNestedClasses) throws IOException, ClassNotFoundException
+    public static List<Class<?>> getPackageClassesFromJar(URL url, String packageName, boolean alsoNestedClasses) throws IOException
     {
-        LOG.log(Level.INFO, "getting classes from JAR file");
         List<Class<?>> ret = new ArrayList<Class<?>>();
-        // extract the path file name from URL: file:<path file name>!/package
-        String[] split1 = url.getFile().split(":");
-        String[] split2 = split1[1].split("!");
-        String filePath = split2[0];
-        String internalPath = split2[1];
+        JarFile jar = null;
 
-        LOG.log(Level.INFO, "filePath: " + filePath);
-        LOG.log(Level.INFO, "internalPath: " + internalPath);
-
-        if (internalPath.charAt(0) == '/')
-        {
-            // cut off the very first slash
-            internalPath = internalPath.substring(1);
-        }
-        int packageNameSegmentCount = getDotCount(packageName);
-        JarFile jar = new JarFile(filePath);
         try
         {
+            LOG.log(Level.INFO, "getting classes from JAR file " + url);
+            // extract the path file name from URL: file:<path file name>!/package
+            String[] split1 = url.getFile().split("file:");
+            String[] split2 = split1[1].split("!");
+            String filePath = split2[0];
+            String internalPath = split2[1];
+
+            LOG.log(Level.INFO, "filePath: " + filePath);
+            LOG.log(Level.INFO, "internalPath: " + internalPath);
+
+            if (internalPath.charAt(0) == '/')
+            {
+                // cut off the very first slash
+                internalPath = internalPath.substring(1);
+            }
+            int packageNameSegmentCount = getDotCount(packageName);
+            jar = new JarFile(filePath);
+
             // Getting jar's entries
             Enumeration<? extends JarEntry> enumeration = jar.entries();
             // iterates over jar's entries
@@ -189,9 +192,18 @@ public class PackageUtils
                 }
             }
         }
+        catch (Exception e)
+        {
+            StringBuilder sbMsg = new StringBuilder("Could not get package ");
+            sbMsg.append(packageName).append(" classes from file ").append(url);
+            throw new RuntimeException(sbMsg.toString(), e);
+        }
         finally
         {
-            jar.close();
+            if (jar != null)
+            {
+                jar.close();
+            }
         }
         return ret;
     }

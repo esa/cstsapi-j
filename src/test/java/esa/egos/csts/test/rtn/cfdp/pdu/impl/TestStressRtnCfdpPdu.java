@@ -119,31 +119,37 @@ public class TestStressRtnCfdpPdu {
 	//-XX:+UseG1GC -DlistRcvDataCapacity=25000
 	
 	@Test
+	@Ignore
 	public void testOnePduMaxSize() {
 		implementRtnCfdpPduDataTransfer(1, 65535);
 	}
 	
 	@Test
+	@Ignore
 	public void testTwoPdusMaxSize() {
 		implementRtnCfdpPduDataTransfer(2, 65535);
 	}
 	
 	@Test
+	@Ignore
 	public void test2kPdus2kSize() {
 		implementRtnCfdpPduDataTransfer(2000, 2048);
 	}
 	
 	@Test
+	@Ignore
 	public void test5kPdus2kSize() {
 		implementRtnCfdpPduDataTransfer(5000, 2048);
 	}
 	
 	@Test
+	@Ignore
 	public void test25kPdus2kSize() {
 		implementRtnCfdpPduDataTransfer(50_000, 2048);
 	}
 	
 	@Test
+	@Ignore
 	public void test1MPdus1kSize() {
 		implementRtnCfdpPduDataTransfer(1_000_000, 1024);
 	}
@@ -160,51 +166,61 @@ public class TestStressRtnCfdpPdu {
 	}
 	
 	@Test
+	@Ignore
 	public void testTenPdusLargeSize() {
 		implementRtnCfdpPduDataTransfer(10, 16348);
 	}
 
 	@Test
+	@Ignore
 	public void test1kPdusLargeSize() {
 		implementRtnCfdpPduDataTransfer(1000, 16348);
 	}
 	
 	@Test
+	@Ignore
 	public void test10kPdusLargeSize() {
 		implementRtnCfdpPduDataTransfer(10_000, 16348);
 	}
 	
 	@Test
+	@Ignore
 	public void test100kPdusLargeSize() {
 		implementRtnCfdpPduDataTransfer(100_000, 16348);
 	}
 	
 	@Test
+	@Ignore
 	public void test1MPdusLargeSize() {
 		implementRtnCfdpPduDataTransfer(1_000_000, 16348);
 	}
 	
 	@Test
+	@Ignore
 	public void test1kPdusVeryLargeSize() {
 		implementRtnCfdpPduDataTransfer(1000, 32768);
 	}
 	
 	@Test
+	@Ignore
 	public void test10kPdusVeryLargeSize() {
 		implementRtnCfdpPduDataTransfer(10_000, 32768);
 	}
 	
 	@Test
+	@Ignore
 	public void test100kPdusVeryLargeSize() {
 		implementRtnCfdpPduDataTransfer(100_000, 32768);
 	}
 	
 	@Test
+	@Ignore
 	public void test1MPdusVeryLargeSize() {
 		implementRtnCfdpPduDataTransfer(1_000_000, 32768);
 	}
 	
 	@Test
+	@Ignore
 	public void test25kPdusMaxSize() {
 		implementRtnCfdpPduDataTransfer(25_000, 64536);
 	}
