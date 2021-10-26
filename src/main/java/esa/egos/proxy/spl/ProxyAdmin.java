@@ -9,8 +9,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -90,8 +92,8 @@ public class ProxyAdmin implements IProxy
      */
     private boolean configOk;
 
-    public LinkedList<Association> associationsList;
-
+    public ConcurrentLinkedQueue<Association> concurrentAssociationsList;
+    
     public ProxyConfig config;
 
     public ISecAttributes iSecAttr;
@@ -137,7 +139,7 @@ public class ProxyAdmin implements IProxy
         this.binder = null;
         this.started = false;
         this.configOk = false;
-        this.associationsList = new LinkedList<Association>();
+        this.concurrentAssociationsList = new ConcurrentLinkedQueue<>();
         this.iSecAttr = null;
         this.objMutex = new ReentrantLock();
         this.protocolId = "ISP1";
@@ -151,7 +153,7 @@ public class ProxyAdmin implements IProxy
     public void registerAssoc(Association pAssoc)
     {
         // insert the association in the list
-        this.associationsList.addFirst(pAssoc);
+    	this.concurrentAssociationsList.add(pAssoc);
     }
 
     /**
@@ -163,15 +165,17 @@ public class ProxyAdmin implements IProxy
         // check all the associations
         // if one association is release, the proxy can release it
         this.objMutex.lock();
-        ListIterator<Association> li = this.associationsList.listIterator();
-        while (li.hasNext())
+        
+        Iterator<Association> qi = this.concurrentAssociationsList.iterator();
+        while (qi.hasNext())
         {
-            Association pAssoc = li.next();
+            Association pAssoc = qi.next();
             if (pAssoc != null && pAssoc.getIsReleased())
             {
-                this.associationsList.remove(this.associationsList.indexOf(pAssoc));
+            	this.concurrentAssociationsList.remove(pAssoc);
             }
         }
+    
         this.objMutex.unlock();
     }
 
@@ -333,7 +337,7 @@ public class ProxyAdmin implements IProxy
         this.objMutex.lock();
 
         // check if all the associations are terminated
-        for (Association passoc : this.associationsList)
+        for (Association passoc : this.concurrentAssociationsList)        	
         {
             if (passoc.getAssocState() != AssocState.sleAST_unbound)
             {
@@ -533,7 +537,7 @@ public class ProxyAdmin implements IProxy
         pUnknown1 = passoc;
         if (pUnknown1 != null)
         {
-            for (Association passocList : this.associationsList)
+            for (Association passocList : this.concurrentAssociationsList) 
             {
                 // take the iunknown interface from the assoc of the list
                 pUnknown2 = passocList;
@@ -558,7 +562,7 @@ public class ProxyAdmin implements IProxy
                             {
                                 passocList.releaseChannel();
                                 // erase the association from the list
-                                this.associationsList.remove(this.associationsList.indexOf(passocList));
+                                this.concurrentAssociationsList.remove(passoc);
                                 res = Result.S_OK;
                             }
                         }

@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.junit.Assert;
 
@@ -39,6 +41,33 @@ public class TestUtils
         {
             System.out.println(what + " " + res + " OK ");
         }
+    }
+    
+    public static void verifyResultsWithTimeout(CstsResult res, String what, long timeout) 
+    {
+    	long startTime = System.currentTimeMillis();
+    	long currentTime = 0;
+    	long timeElapsed = 0;
+    	
+    	boolean isTimeout = false;
+    	boolean isTestStarted = false;
+    	
+    	while(!isTimeout) {
+    		currentTime = System.currentTimeMillis();
+    		timeElapsed = currentTime - startTime;
+    		isTimeout = (timeElapsed > timeout)?  true : false;
+    		
+    		if (!isTestStarted) {
+    			System.out.println("STARTED");
+    			verifyResult(res, what);
+    			isTestStarted = true;
+    		}
+    		   		
+    		if (isTimeout) {
+    			System.out.println("FAILING");
+    			Assert.fail(what + " failed with timeout!");
+    		}
+    	}
     }
 
 

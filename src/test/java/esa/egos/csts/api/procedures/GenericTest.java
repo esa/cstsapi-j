@@ -91,6 +91,7 @@ public class GenericTest
         System.out.println("CSTS user and provider API stopped");
     }
 
+
     /**
      * Test association procedure and its bind and unbind operations
      */
@@ -108,7 +109,6 @@ public class GenericTest
             ProcedureInstanceIdentifier piid = ProcedureInstanceIdentifier.of(ProcedureType.of(OIDs.ocoCyclicReport),
                                                                               ProcedureRole.PRIME,
                                                                               0);
-
             // all procedure identifiers
             List<ProcedureInstanceIdentifier> piids = Collections.singletonList(piid);
 
@@ -166,6 +166,7 @@ public class GenericTest
         }
     }
 
+    
     /**
      * Test the Cyclic report procedure
      */
@@ -218,7 +219,7 @@ public class GenericTest
 
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");
-
+            
             System.out.println("START-CYCLIC-REPORT...");
             TestUtils.verifyResult(userSi.startCyclicReport(piid.getInstanceNumber(), mdCollection.getParameterNameSet(), 3000), "START-CYCLIC-REPORT");
 

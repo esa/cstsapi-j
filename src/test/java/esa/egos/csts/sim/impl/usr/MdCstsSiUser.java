@@ -18,6 +18,7 @@ import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.procedures.informationquery.InformationQueryUser;
 import esa.egos.csts.api.procedures.notification.NotificationUser;
+import esa.egos.csts.api.serviceinstance.IServiceInstance;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceInternal;
 import esa.egos.csts.api.states.service.ServiceStatus;
 import esa.egos.csts.monitored.data.procedures.OnChangeCyclicReportUser;
@@ -52,6 +53,12 @@ public class MdCstsSiUser extends MdCstsSiUserInform
         System.out.println("MdCstsSiUser#MdCstsSiUser() end");
     }
 
+    // getter only for test purpose to simulate a peer abort
+    public IServiceInstance getServiceInstance() 
+    {
+    	return serviceInstance;
+    }
+    
     /**
      * Create InformationQueryUser procedure
      * 
