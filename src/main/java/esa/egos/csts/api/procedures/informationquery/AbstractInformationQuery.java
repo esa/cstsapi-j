@@ -1,12 +1,8 @@
 package esa.egos.csts.api.procedures.informationquery;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 
-import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
-
-import b1.ccsds.csts.information.query.pdus.InformationQueryPdu;
 import esa.egos.csts.api.diagnostics.ListOfParametersDiagnostics;
 import esa.egos.csts.api.diagnostics.ListOfParametersDiagnosticsType;
 import esa.egos.csts.api.enumerations.CstsResult;
@@ -30,16 +26,9 @@ public abstract class AbstractInformationQuery extends AbstractProcedure impleme
 
 	private static final ProcedureType TYPE = ProcedureType.of(OIDs.informationQuery);
 	
-	private static final int VERSION = 1;
-
 	@Override
 	public ProcedureType getType() {
 		return TYPE;
-	}
-	
-	@Override
-	public int getVersion() {
-		return VERSION;
 	}
 
 	@Override
@@ -248,46 +237,8 @@ public abstract class AbstractInformationQuery extends AbstractProcedure impleme
 	}
 	
 	@Override
-	public byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException {
-
-		byte[] encodedOperation;
-		InformationQueryPdu pdu = new InformationQueryPdu();
-
-		if (operation.getType() == OperationType.GET) {
-			IGet get = (IGet) operation;
-			if (isInvoke) {
-				pdu.setGetInvocation(get.encodeGetInvocation());
-			} else {
-				pdu.setGetReturn(get.encodeGetReturn());
-			}
-		}
-
-		try (ReverseByteArrayOutputStream berBAOStream = new ReverseByteArrayOutputStream(10, true)) {
-			pdu.encode(berBAOStream);
-			encodedOperation = berBAOStream.getArray();
-		}
-
-		return encodedOperation;
-	}
+	public abstract byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException;
 
 	@Override
-	public IOperation decodeOperation(byte[] encodedPdu) throws IOException {
-
-		InformationQueryPdu pdu = new InformationQueryPdu();
-
-		try (ByteArrayInputStream is = new ByteArrayInputStream(encodedPdu)) {
-			pdu.decode(is);
-		}
-
-		IGet get = createGet();
-
-		if (pdu.getGetInvocation() != null) {
-			get.decodeGetInvocation(pdu.getGetInvocation());
-		} else if (pdu.getGetReturn() != null) {
-			get.decodeGetReturn(pdu.getGetReturn());
-		}
-
-		return get;
-	}
-
+	public abstract IOperation decodeOperation(byte[] encodedPdu) throws IOException;
 }

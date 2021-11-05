@@ -44,7 +44,7 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
     public MdCstsSiProvider(ICstsApi api,
                             MdCstsSiProviderConfig config) throws ApiException
     {
-        super(api, config);
+        super(api, config,0);
 
         System.out.println("MdCstsSiProvider#MdCstsSiProvider() begin");
         System.out.println("MdCstsSiProvider#MdCstsSiProvider() end");

@@ -26,6 +26,10 @@ public abstract class AppSi implements IServiceInform {
 	 * @throws ApiException 
 	 */
 	public AppSi(ICstsApi api, SiConfig config, int serviceType) throws ApiException {
+		this(api,config,serviceType,0);
+	}
+	
+	public AppSi(ICstsApi api, SiConfig config, int serviceType, int serviceVersion) throws ApiException {
 		this.api = api;
 		
 		IServiceInstanceIdentifier identifier = new ServiceInstanceIdentifier(config.getScId(),
@@ -33,7 +37,7 @@ public abstract class AppSi implements IServiceInform {
 				ObjectIdentifier.of(1,3,112,4,4,1, serviceType), 
 				config.getInstanceNumber());
 
-		this.apiServiceInstance = api.createServiceInstance(identifier, this);	
+		this.apiServiceInstance = api.createServiceInstance(identifier,serviceVersion, this);	
 		
 		// the application needs to make sure that it chooses valid values from the proxy configuration
 		apiServiceInstance.setPeerIdentifier(config.getPeerIdentifier());

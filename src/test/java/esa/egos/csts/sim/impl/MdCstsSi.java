@@ -11,6 +11,7 @@ import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.functionalresources.values.ICstsValue;
 import esa.egos.csts.api.functionalresources.values.impl.FunctionalResourceValue;
+import esa.egos.csts.api.main.CstsUserApi;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.oids.ObjectIdentifier;
@@ -27,6 +28,7 @@ import esa.egos.csts.api.serviceinstance.IServiceInstanceIdentifier;
 import esa.egos.csts.api.serviceinstance.impl.ServiceInstanceIdentifier;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.Name;
+import esa.egos.csts.api.types.SfwVersion;
 
 /**
  * Base class for MD-CSTS service instance (SI)
@@ -47,7 +49,7 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
     protected K config;
 
 
-    public MdCstsSi(ICstsApi api, K config) throws ApiException
+    public MdCstsSi(ICstsApi api, K config, int serviceVersion) throws ApiException
     {
         super();
 
@@ -61,7 +63,7 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
                                                                               SIOID,
                                                                               config.getInstanceNumber());
 
-        this.serviceInstance = api.createServiceInstance(identifier, this);
+        this.serviceInstance = api.createServiceInstance(identifier,serviceVersion, this);
         System.out.println("created service instance " + identifier);
 
         createProcedures(config);
@@ -73,6 +75,10 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
         this.serviceInstance.configure();
 
         System.out.println("MdCstsSi#MdCstsSi() end");
+    }
+    
+    protected SfwVersion getSfwVersion() {
+    	return this.serviceInstance.getSfwVersion();
     }
 
     protected void createProcedures(K config) throws ApiException

@@ -48,7 +48,7 @@ public abstract class MdSi  implements IServiceInform {
 																				ObjectIdentifier.of(1,3,112,4,4,1,2), 
 																				config.getInstanceNumber());
 		
-		apiServiceInstance = api.createServiceInstance(identifier, this);		
+		apiServiceInstance = api.createServiceInstance(identifier,1, this);		
 
 		int index = 0;
 		for(ListOfParameters list : parameterLists) {

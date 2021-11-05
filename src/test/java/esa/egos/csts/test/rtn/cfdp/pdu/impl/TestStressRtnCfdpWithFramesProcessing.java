@@ -32,6 +32,8 @@ import esa.egos.csts.api.enumerations.AppRole;
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.main.CstsApi;
+import esa.egos.csts.api.main.CstsProviderApi;
+import esa.egos.csts.api.main.CstsUserApi;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.types.Time;
@@ -99,11 +101,11 @@ public class TestStressRtnCfdpWithFramesProcessing {
 		System.out.println("provider config: "  + providerConfigName);
 		System.out.println("user config: "  + userConfigName);
 		
-		providerApi = new CstsApi("Test Service Provider API", AppRole.PROVIDER);
+		providerApi = new CstsProviderApi("Test Service Provider API");
 		providerApi.initialize(providerConfigName);
 		providerApi.start();
 
-		userApi = new CstsApi("Test Service User API", AppRole.USER);
+		userApi = new CstsUserApi("Test Service User API");
 		userApi.initialize(userConfigName);
 		userApi.start();
 		

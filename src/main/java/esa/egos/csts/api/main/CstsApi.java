@@ -14,6 +14,7 @@ import esa.egos.csts.api.diagnostics.BindDiagnostic;
 import esa.egos.csts.api.enumerations.AppRole;
 import esa.egos.csts.api.enumerations.Result;
 import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.oids.OidTree;
 import esa.egos.csts.api.operations.IBind;
 import esa.egos.csts.api.procedures.associationcontrol.IAssociationControl;
@@ -28,6 +29,7 @@ import esa.egos.csts.api.serviceinstance.impl.ServiceInstanceProvider;
 import esa.egos.csts.api.serviceinstance.impl.ServiceInstanceUser;
 import esa.egos.csts.api.serviceinstance.impl.ServiceType;
 import esa.egos.csts.api.states.service.ServiceStatus;
+import esa.egos.csts.api.types.SfwVersion;
 import esa.egos.csts.api.util.ICredentials;
 import esa.egos.proxy.ILocator;
 import esa.egos.proxy.IProxyAdmin;
@@ -54,7 +56,7 @@ import esa.egos.proxy.xml.ProxyRoleEnum;
 import esa.egos.proxy.xml.RemotePeer;
 import esa.egos.proxy.xml.UserConfig;
 
-public class CstsApi implements IApi, ILocator {
+public abstract class CstsApi implements IApi, ILocator {
 
 	private AppRole role;
 	private IReporter reporter;
@@ -63,14 +65,7 @@ public class CstsApi implements IApi, ILocator {
 	private IUtil util;
 
 	private Map<String, ProxyPair> proxyList;
-	private ProxyAdmin proxyAdmin;
 
-	private ProxyConfig proxyConfig;
-
-	/**
-	 * Configuration XML file that contains information from old proxy and se file
-	 */
-	private String configFile;
 
 	/**
 	 * The default protocol identifier to use when the responder port identifier is
@@ -78,9 +73,6 @@ public class CstsApi implements IApi, ILocator {
 	 * a service element supporting user and/or provider applications.
 	 */
 	private String defaultProtocolId;
-
-	private UserConfig userConfig;
-	private ProviderConfig providerConfig;
 
 	private ArrayList<IServiceInstance> serviceInstanceList;
 
@@ -93,44 +85,28 @@ public class CstsApi implements IApi, ILocator {
 		this.serviceInstanceList = new ArrayList<IServiceInstance>();
 
 		this.proxyList = new LinkedHashMap<String, ProxyPair>();
-	}
-
-	@Override
-	public void initialize(String configFile) throws ApiException {
-
-		this.configFile = configFile;
-
+		
 		this.util = new Util();
-
+	}
+	
+	protected abstract void initialize(InputStream configFileStream) throws ApiException ;
+	
+	protected abstract ProxyConfig getProxyConfig();
+	
+	protected abstract String getOidConfigFile();
+	
+	public void initialize(String configFile) throws ApiException {
+		
 		InputStream configFileStream;
 		try {
-			configFileStream = new FileInputStream(new File(this.configFile));
+			configFileStream = new FileInputStream(new File(configFile));
 		} catch (FileNotFoundException e) {
-			throw new ApiException("File not found: " + this.configFile);
+			throw new ApiException("File not found: " + configFile);
 		}
-
-		String oidConfigFile = null;
-
-		if (this.role == AppRole.USER) {
-
-			this.userConfig = UserConfig.load(configFileStream);
-			if (this.userConfig != null && this.userConfig.getRole() == ProxyRoleEnum.INITIATOR) {
-				this.proxyConfig = new ProxyConfig(this.userConfig);
-				oidConfigFile = this.userConfig.getOidConfigFile();
-			} else {
-				throw new ApiException("The role specified in the configuration file does not match the role " + "used to construct the CSTS API instance.");
-			}
-		} else {
-
-			this.providerConfig = ProviderConfig.load(configFileStream);
-			if (this.providerConfig != null && this.providerConfig.getRole() == ProxyRoleEnum.RESPONDER) {
-				this.proxyConfig = new ProxyConfig(providerConfig);
-				oidConfigFile = this.providerConfig.getOidConfigFile();
-			} else {
-				throw new ApiException("The role specified in the configuration file does not match the role " + "used to construct the CSTS API instance.");
-			}
-		}
-
+		
+		initialize(configFileStream);
+		
+		
 		this.reporter = new IReporter() {
 
 			@Override
@@ -145,21 +121,31 @@ public class CstsApi implements IApi, ILocator {
 			}
 		};
 
-		// setting pProxyAdmin
-		// ProxyAdmin.initialiseInstance();
+		
 		ProxyAdmin proxyAdmin = new ProxyAdmin();
-		setupProxyAdmin(proxyAdmin);
-
 		proxyAdmin.configure(configFile, (ILocator) this, this, getReporter());
 
 		this.portList = new LinkedHashMap<String, String>();
 
 		initProxyMap();
-		addProxy(proxyAdmin.getProtocolId(), this.role, proxyAdmin);
+		
+		addProxy(proxyAdmin.getProtocolId(), proxyAdmin);
 
-		// add external OIDs
-		loadOidConfiguration(oidConfigFile);
+		loadOidConfiguration(configFile);
+
+		initializeServiceVersions();
 	}
+	
+	
+	private void initializeServiceVersions() {
+		
+		getProxyConfig().getServiceTypeList().forEach(
+				configService -> configService.getServiceVersion().forEach( 
+				serviceVersion -> SfwVersion.fromInt(serviceVersion.sfwVersion).addServiceVersion(
+						ObjectIdentifier.of(configService.getServiceId(),","),serviceVersion.value))); 
+	
+	}
+	
 
 	@Override
 	public void start() throws ApiException {
@@ -248,15 +234,15 @@ public class CstsApi implements IApi, ILocator {
 
 	protected void initProxyMap() {
 
-		this.defaultProtocolId = this.proxyConfig.getPortList().getDefaultPort();
+		this.defaultProtocolId = getProxyConfig().getPortList().getDefaultPort();
 
-		if (this.proxyConfig.getLogicalPortList() != null) {
-			for (LogicalPort port : this.proxyConfig.getLogicalPortList()) {
+		if (getProxyConfig().getLogicalPortList() != null) {
+			for (LogicalPort port : getProxyConfig().getLogicalPortList()) {
 
 				boolean found = false;
 
-				if (this.proxyConfig.getPortList().getPortList() != null) {
-					for (PortMapping map : this.proxyConfig.getPortList().getPortList()) {
+				if (getProxyConfig().getPortList().getPortList() != null) {
+					for (PortMapping map : getProxyConfig().getPortList().getPortList()) {
 						// if there is a mapping for the same responderportid, add it
 						if (map.getResponderPortId() == port.getName() && found == false) {
 							this.portList.put(port.getName(), map.getProtocolId());
@@ -272,12 +258,8 @@ public class CstsApi implements IApi, ILocator {
 		}
 	}
 
-	private void setupProxyAdmin(ProxyAdmin proxyAdmin) {
-		this.proxyAdmin = proxyAdmin;
-	}
-
 	@Override
-	public IServiceInstance createServiceInstance(IServiceInstanceIdentifier identifier, IServiceInform servInf) {
+	public IServiceInstance createServiceInstance(IServiceInstanceIdentifier identifier, int serviceVersion, IServiceInform servInf) {
 
 		// a) identities of the service initiator (i.e., the service user) and
 		// the service responder (i.e., the service provider
@@ -288,23 +270,15 @@ public class CstsApi implements IApi, ILocator {
 		// IProcedure, could be null then take the standard internal one
 
 		IServiceInstance serviceInstance = null;
-
-		if (this.role == AppRole.PROVIDER) {
-			try {
-				serviceInstance = new ServiceInstanceProvider(this, servInf, /* apId, */ null);
-				serviceInstance.setServiceInstanceIdentifier(identifier);
-				serviceInstance.setReturnTimeout(proxyConfig.getAuthenticationDelay());
-			} catch (ApiException e) {
-				e.printStackTrace();
-			}
-		} else if (this.role == AppRole.USER) {
-			try {
-				serviceInstance = new ServiceInstanceUser(this, servInf, /* apId, */ null);
-				serviceInstance.setServiceInstanceIdentifier(identifier);
-				serviceInstance.setReturnTimeout(proxyConfig.getAuthenticationDelay());
-			} catch (ApiException e) {
-				e.printStackTrace();
-			}
+		try {
+			serviceInstance = createServiceInstance(this, servInf, /* apId, */ null);
+			serviceInstance.setServiceInstanceIdentifier(identifier);
+			serviceInstance.setReturnTimeout(getProxyConfig().getAuthenticationDelay());
+			serviceInstance.setSfwVersion(
+					SfwVersion.getFrameworkVersion(identifier.getCstsTypeIdentifier(), serviceVersion));
+			serviceInstance.setVersion(serviceVersion);
+		} catch (ApiException e) {
+			e.printStackTrace();
 		}
 
 		serviceInstance.initialize();
@@ -312,8 +286,14 @@ public class CstsApi implements IApi, ILocator {
 		this.serviceInstanceList.add(serviceInstance);
 		return serviceInstance;
 	}
+	
+	protected abstract IServiceInstance createServiceInstance(
+			CstsApi api,
+			IServiceInform serviceInform, 
+			IAssociationControl associationControlProcedure) throws ApiException;
 
 	public IServiceInstance createServiceInstance(String sii, /* ServiceType apId, */
+			int serviceVersion,
 			IServiceInform servInf) {
 
 		// a) identities of the service initiator (i.e., the service user) and
@@ -325,27 +305,15 @@ public class CstsApi implements IApi, ILocator {
 		// IProcedure, could be null then take the standard internal one
 
 		IServiceInstance serviceInstance = null;
-
-		if (this.role == AppRole.PROVIDER) {
-			try {
-				serviceInstance = new ServiceInstanceProvider(this, servInf, /* apId, */ null);
-			} catch (ApiException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} else if (this.role == AppRole.USER) {
-			try {
-				serviceInstance = new ServiceInstanceUser(this, servInf, /* apId, */ null);
-			} catch (ApiException e) {
-				e.printStackTrace();
-			}
-		}
-
 		IServiceInstanceIdentifier serviceId;
 		try {
+			serviceInstance = createServiceInstance(this, servInf, /* apId, */ null);
 			serviceId = ServiceInstanceConverter.decodeServiceInstanceIdentifier(sii);
 			serviceInstance.setServiceInstanceIdentifier(serviceId);
-			serviceInstance.setReturnTimeout(proxyConfig.getAuthenticationDelay());
+			serviceInstance.setReturnTimeout(getProxyConfig().getAuthenticationDelay());
+			serviceInstance.setSfwVersion(
+					SfwVersion.getFrameworkVersion(serviceId.getCstsTypeIdentifier(), serviceVersion));
+			serviceInstance.setVersion(serviceVersion);
 		} catch (ApiException e) {
 			// couldn't create service instance because couldn't decode siid
 			return null;
@@ -357,7 +325,7 @@ public class CstsApi implements IApi, ILocator {
 		return serviceInstance;
 	}
 
-	public IServiceInstance createServiceInstance(String sii, ServiceType apId, IServiceInform servInf, IAssociationControl associationControlProcedure) {
+	public IServiceInstance createServiceInstance(String sii, ServiceType apId, int serviceVersion, IServiceInform servInf, IAssociationControl associationControlProcedure) {
 
 		// a) identities of the service initiator (i.e., the service user) and
 		// the service responder (i.e., the service provider
@@ -367,25 +335,14 @@ public class CstsApi implements IApi, ILocator {
 		// get data from initialise
 
 		IServiceInstance serviceInstance = null;
-
-		if (this.role == AppRole.PROVIDER) {
-			try {
-				serviceInstance = new ServiceInstanceProvider(this, servInf, /* apId, */ associationControlProcedure);
-			} catch (ApiException e) {
-				e.printStackTrace();
-			}
-		} else if (this.role == AppRole.USER) {
-			try {
-				serviceInstance = new ServiceInstanceUser(this, servInf, /* apId, */ associationControlProcedure);
-			} catch (ApiException e) {
-				e.printStackTrace();
-			}
-		}
-
 		IServiceInstanceIdentifier serviceId;
 		try {
+			serviceInstance = createServiceInstance(this, servInf, /* apId, */ associationControlProcedure);
 			serviceId = ServiceInstanceConverter.decodeServiceInstanceIdentifier(sii);
 			serviceInstance.setServiceInstanceIdentifier(serviceId);
+			serviceInstance.setSfwVersion(
+					SfwVersion.getFrameworkVersion(serviceId.getCstsTypeIdentifier(), serviceVersion));
+			serviceInstance.setVersion(serviceVersion);
 		} catch (ApiException e) {
 			// couldn't create service instance because couldn't decode siid
 			return null;
@@ -482,7 +439,7 @@ public class CstsApi implements IApi, ILocator {
 	 * @param proxy
 	 * @throws ApiException
 	 */
-	public void addProxy(String protocolId, AppRole role, IProxyAdmin proxy) throws ApiException {
+	private void addProxy(String protocolId, IProxyAdmin proxy) throws ApiException {
 
 		// check for duplicate registration
 		IProxyAdmin iup = getProxy(protocolId);
@@ -505,10 +462,6 @@ public class CstsApi implements IApi, ILocator {
 
 		ProxyPair newPxy = new ProxyPair(proxy, role);
 		this.proxyList.put(protocolId, newPxy);
-	}
-
-	public IProxyAdmin getProxyAdmin() {
-		return proxyAdmin;
 	}
 
 	/**
@@ -535,15 +488,15 @@ public class CstsApi implements IApi, ILocator {
 
 	@Override
 	public ArrayList<RemotePeer> getPeerList() {
-		if (this.proxyConfig != null) {
-			return this.proxyConfig.getRemotePeerList();
+		if (getProxyConfig() != null) {
+			return getProxyConfig().getRemotePeerList();
 		} else
 			return null;
 	}
 
 	@Override
 	public ProxyConfig getProxySettings() {
-		return this.proxyConfig;
+		return getProxyConfig();
 	}
 
 	@Override
@@ -600,7 +553,10 @@ public class CstsApi implements IApi, ILocator {
 	 * 
 	 * @param oidConfigFile The path and file name of the 
 	 */
-	private void loadOidConfiguration(String oidConfigFile) {
+	private void loadOidConfiguration(String configFile) {
+		
+		String oidConfigFile = getOidConfigFile();
+		
 		try {
 			// add application's (e.g. FRs) OIDs to API's OID tree
 			if (oidConfigFile != null && !oidConfigFile.isEmpty()) {
@@ -610,7 +566,7 @@ public class CstsApi implements IApi, ILocator {
 				if(new File(oidConfigFile).exists() == false) {
 					// try the path of this config file
 					File oidFile = new File(oidConfigFile);
-					File apiConfigFile = new File(this.configFile);
+					File apiConfigFile = new File(configFile);
 					String oidConfigNameNew = apiConfigFile.getParentFile().toString() + File.separator + oidFile.getName();
 					if(new File(oidConfigNameNew).exists() == true) {
 						oidConfigFile = oidConfigNameNew;

@@ -2,8 +2,10 @@ package esa.egos.csts.api.diagnostics;
 
 import java.util.Arrays;
 
-import b1.ccsds.csts.association.control.types.PeerAbortDiagnostic;
+import com.beanit.jasn1.ber.types.BerOctetString;
+
 import esa.egos.csts.api.exceptions.CodeNotFoundException;
+import esa.egos.csts.api.types.SfwVersion;
 
 /**
  * The Diagnostic of a PEER-ABORT operation in case the connection must be
@@ -50,10 +52,14 @@ public enum PeerAbortDiagnostics {
 	 * @return the CCSDS PeerAbortDiagnostic type representing this PEER-ABORT
 	 *         Diagnostic
 	 */
-	public PeerAbortDiagnostic encode() {
+	public BerOctetString encode(SfwVersion sfwVersion) {
 		byte[] code = new byte[1];
 		code[0] = (byte) this.code;
-		return new PeerAbortDiagnostic(code);
+		switch(sfwVersion) {
+		case B1: return new  b1.ccsds.csts.association.control.types.PeerAbortDiagnostic(code);
+		case B2: return new  b2.ccsds.csts.association.control.types.PeerAbortDiagnostic(code);
+		default: return null;
+		}		
 	}
 
 	/**
@@ -64,7 +70,11 @@ public enum PeerAbortDiagnostics {
 	 * @return a new PEER-ABORT Diagnostic decoded from the specified CCSDS
 	 *         PeerAbortDiagnostic type
 	 */
-	public static PeerAbortDiagnostics decode(PeerAbortDiagnostic peerAbortDiagnostic) {
+	public static PeerAbortDiagnostics decode(b1.ccsds.csts.association.control.types.PeerAbortDiagnostic peerAbortDiagnostic) {
+		return getPeerAbortDiagnosticByCode(peerAbortDiagnostic.value[0]);
+	}
+	
+	public static PeerAbortDiagnostics decode(b2.ccsds.csts.association.control.types.PeerAbortDiagnostic peerAbortDiagnostic) {
 		return getPeerAbortDiagnosticByCode(peerAbortDiagnostic.value[0]);
 	}
 

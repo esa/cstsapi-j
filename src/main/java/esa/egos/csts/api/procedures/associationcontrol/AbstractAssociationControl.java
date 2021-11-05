@@ -5,7 +5,9 @@ import java.io.IOException;
 
 import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 
-import b1.ccsds.csts.association.control.types.AssociationPdu;
+//import b1.ccsds.csts.association.control.types.AssociationPdu;
+//import b1.ccsds.csts.association.control.types.BindInvocation;
+//import b1.ccsds.csts.association.control.types.BindReturn;
 import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.enumerations.OperationType;
@@ -24,19 +26,13 @@ import esa.egos.csts.api.states.service.ServiceStatus;
 public abstract class AbstractAssociationControl extends AbstractProcedure implements IAssociationControlInternal {
 
 	private static final ProcedureType TYPE = ProcedureType.of(OIDs.associationControl);
-	
-	private static final int VERSION = 1;
 
 	private AssociationControlState state;
+	
 
 	@Override
 	public ProcedureType getType() {
 		return TYPE;
-	}
-
-	@Override
-	public int getVersion() {
-		return VERSION;
 	}
 	
 	@Override
@@ -136,42 +132,80 @@ public abstract class AbstractAssociationControl extends AbstractProcedure imple
 	
 	@Override
 	public byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException {
-
+		
+		switch(getServiceInstance().getSfwVersion()) {
+		case B1: return encodeOperation(new b1.ccsds.csts.association.control.types.AssociationPdu(), operation, isInvoke);
+		case B2: return encodeOperation(new b2.ccsds.csts.association.control.types.AssociationPdu(), operation, isInvoke);
+		default: throw new IOException("Undefiend framework version, cannot encode opration");
+		}
+	}
+	
+	public byte[] encodeOperation(b1.ccsds.csts.association.control.types.AssociationPdu pdu, IOperation operation, boolean isInvoke) throws IOException {
 		byte[] encodedOperation;
-		AssociationPdu pdu = new AssociationPdu();
 
 		if (operation.getType() == OperationType.BIND) {
 			IBind bind = (IBind) operation;
 			if (isInvoke) {
-				pdu.setBindInvocation(bind.encodeBindInvocation());
+				pdu.setBindInvocation((b1.ccsds.csts.association.control.types.BindInvocation)bind.encodeBindInvocation());
 			} else {
-				pdu.setBindReturn(bind.encodeBindReturn());
+				pdu.setBindReturn((b1.ccsds.csts.association.control.types.BindReturn)bind.encodeBindReturn());
 			}
 		} else if (operation.getType() == OperationType.UNBIND) {
 			IUnbind unbind = (IUnbind) operation;
 			if (isInvoke) {
-				pdu.setUnbindInvocation(unbind.encodeUnbindInvocation());
+				pdu.setUnbindInvocation((b1.ccsds.csts.association.control.types.UnbindInvocation)
+						unbind.encodeUnbindInvocation());
 			} else {
-				pdu.setUnbindReturn(unbind.encodeUnbindReturn());
+				pdu.setUnbindReturn((b1.ccsds.csts.association.control.types.UnbindReturn)unbind.encodeUnbindReturn());
 			}
 		} else if (operation.getType() == OperationType.PEER_ABORT) {
 			IPeerAbort peerAbort = (IPeerAbort) operation;
-			pdu.setPeerAbortInvocation(peerAbort.encodePeerAbortInvocation());
+			pdu.setPeerAbortInvocation((b1.ccsds.csts.association.control.types.PeerAbortInvocation)
+					peerAbort.encodePeerAbortInvocation());
 		}
 
 		try (ReverseByteArrayOutputStream berBAOStream = new ReverseByteArrayOutputStream(10, true)) {
 			pdu.encode(berBAOStream);
 			encodedOperation = berBAOStream.getArray();
 		}
-
 		return encodedOperation;
 	}
+	
+	public byte[] encodeOperation(b2.ccsds.csts.association.control.types.AssociationPdu pdu, IOperation operation, boolean isInvoke) throws IOException {
+		byte[] encodedOperation;
 
-	@Override
-	public IOperation decodeOperation(byte[] encodedPdu) throws IOException {
+		if (operation.getType() == OperationType.BIND) {
+			IBind bind = (IBind) operation;
+			if (isInvoke) {
+				pdu.setBindInvocation((b2.ccsds.csts.association.control.types.BindInvocation)bind.encodeBindInvocation());
+			} else {
+				pdu.setBindReturn((b2.ccsds.csts.association.control.types.BindReturn)bind.encodeBindReturn());
+			}
+		} else if (operation.getType() == OperationType.UNBIND) {
+			IUnbind unbind = (IUnbind) operation;
+			if (isInvoke) {
+				pdu.setUnbindInvocation((b2.ccsds.csts.association.control.types.UnbindInvocation)
+						unbind.encodeUnbindInvocation());
+			} else {
+				pdu.setUnbindReturn((b2.ccsds.csts.association.control.types.UnbindReturn)
+						unbind.encodeUnbindReturn());
+			}
+		} else if (operation.getType() == OperationType.PEER_ABORT) {
+			IPeerAbort peerAbort = (IPeerAbort) operation;
+			pdu.setPeerAbortInvocation((b2.ccsds.csts.association.control.types.PeerAbortInvocation)
+					peerAbort.encodePeerAbortInvocation());
+		}
 
-		AssociationPdu pdu = new AssociationPdu();
+		try (ReverseByteArrayOutputStream berBAOStream = new ReverseByteArrayOutputStream(10, true)) {
+			pdu.encode(berBAOStream);
+			encodedOperation = berBAOStream.getArray();
+		}
+		return encodedOperation;
+	}
+	
 
+	public IOperation decodeOperation(b1.ccsds.csts.association.control.types.AssociationPdu pdu,byte[] encodedPdu) throws IOException {
+		
 		try (ByteArrayInputStream is = new ByteArrayInputStream(encodedPdu)) {
 			pdu.decode(is);
 		}
@@ -199,7 +233,38 @@ public abstract class AbstractAssociationControl extends AbstractProcedure imple
 			peerAbort.decodePeerAbortInvocation(pdu.getPeerAbortInvocation());
 			operation = peerAbort;
 		}
+		return operation;
+	}
+	
+	public IOperation decodeOperation(b2.ccsds.csts.association.control.types.AssociationPdu pdu,byte[] encodedPdu) throws IOException {
+		
+		try (ByteArrayInputStream is = new ByteArrayInputStream(encodedPdu)) {
+			pdu.decode(is);
+		}
 
+		IOperation operation = null;
+
+		if (pdu.getBindInvocation() != null) {
+			IBind bind = createBind();
+			bind.decodeBindInvocation(pdu.getBindInvocation());
+			operation = bind;
+		} else if (pdu.getBindReturn() != null) {
+			IBind bind = createBind();
+			bind.decodeBindReturn(pdu.getBindReturn());
+			operation = bind;
+		} else if (pdu.getUnbindInvocation() != null) {
+			IUnbind unbind = createUnbind();
+			unbind.decodeUnbindInvocation(pdu.getUnbindInvocation());
+			operation = unbind;
+		} else if (pdu.getUnbindReturn() != null) {
+			IUnbind unbind = createUnbind();
+			unbind.decodeUnbindReturn(pdu.getUnbindReturn());
+			operation = unbind;
+		} else if (pdu.getPeerAbortInvocation() != null) {
+			IPeerAbort peerAbort = createPeerAbort();
+			peerAbort.decodePeerAbortInvocation(pdu.getPeerAbortInvocation());
+			operation = peerAbort;
+		}
 		return operation;
 	}
 

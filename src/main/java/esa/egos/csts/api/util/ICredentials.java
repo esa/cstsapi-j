@@ -1,6 +1,7 @@
 package esa.egos.csts.api.util;
 
-import b1.ccsds.csts.common.types.Credentials;
+import com.beanit.jasn1.ber.types.BerType;
+
 import esa.egos.proxy.util.ITime;
 
 public interface ICredentials {
@@ -73,7 +74,5 @@ public interface ICredentials {
      */
     @Override
     int hashCode();
-
-	Credentials encode();
 	
 }

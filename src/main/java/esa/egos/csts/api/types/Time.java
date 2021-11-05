@@ -12,8 +12,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-import b1.ccsds.csts.common.types.TimeCCSDSMilli;
-import b1.ccsds.csts.common.types.TimeCCSDSPico;
 import esa.egos.csts.api.enumerations.TimeType;
 
 /**
@@ -268,12 +266,20 @@ public class Time implements Comparable<Time> {
 	 * 
 	 * @return the CCSDS Time type representing this Time object
 	 */
-	public b1.ccsds.csts.common.types.Time encode() {
-		b1.ccsds.csts.common.types.Time time = new b1.ccsds.csts.common.types.Time();
+	public b1.ccsds.csts.common.types.Time encode(b1.ccsds.csts.common.types.Time time) {
 		if (value.length == 8) {
-			time.setCcsdsFormatMilliseconds(new TimeCCSDSMilli(value));
+			time.setCcsdsFormatMilliseconds(new b1.ccsds.csts.common.types.TimeCCSDSMilli(value));
 		} else if (value.length == 10) {
-			time.setCcsdsFormatPicoseconds(new TimeCCSDSPico(value));
+			time.setCcsdsFormatPicoseconds(new b1.ccsds.csts.common.types.TimeCCSDSPico(value));
+		}
+		return time;
+	}
+	
+	public b2.ccsds.csts.common.types.Time encode(b2.ccsds.csts.common.types.Time time) {
+		if (value.length == 8) {
+			time.setCcsdsFormatMilliseconds(new b2.ccsds.csts.common.types.TimeCCSDSMilli(value));
+		} else if (value.length == 10) {
+			time.setCcsdsFormatPicoseconds(new b2.ccsds.csts.common.types.TimeCCSDSPico(value));
 		}
 		return time;
 	}
@@ -285,6 +291,16 @@ public class Time implements Comparable<Time> {
 	 * @return a new Time object decoded from the specified CCSDS Duration type
 	 */
 	public static Time decode(b1.ccsds.csts.common.types.Time time) {
+		Time newTime = null;
+		if (time.getCcsdsFormatMilliseconds() != null) {
+			newTime = new Time(time.getCcsdsFormatMilliseconds().value);
+		} else if (time.getCcsdsFormatPicoseconds() != null) {
+			newTime = new Time(time.getCcsdsFormatPicoseconds().value);
+		}
+		return newTime;
+	}
+	
+	public static Time decode(b2.ccsds.csts.common.types.Time time) {
 		Time newTime = null;
 		if (time.getCcsdsFormatMilliseconds() != null) {
 			newTime = new Time(time.getCcsdsFormatMilliseconds().value);

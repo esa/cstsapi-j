@@ -7,7 +7,7 @@ import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.states.UserStateInactive;
 
-public class NotificationUser extends AbstractNotification {
+public class NotificationUser extends AbstractNotificationB2 {
 
 	@Override
 	protected void initializeState() {

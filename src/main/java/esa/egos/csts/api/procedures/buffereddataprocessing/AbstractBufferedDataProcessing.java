@@ -14,8 +14,6 @@ import java.util.logging.Level;
 
 import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 
-import b1.ccsds.csts.buffered.data.processing.pdus.BufferedDataProcessingPdu;
-import b1.ccsds.csts.common.operations.pdus.ProcessDataInvocation;
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.enumerations.DataTransferMode;
 import esa.egos.csts.api.enumerations.EventValueType;
@@ -35,14 +33,14 @@ import esa.egos.csts.api.operations.impl.ForwardBuffer;
 import esa.egos.csts.api.parameters.IConfigurationParameter;
 import esa.egos.csts.api.parameters.impl.IntegerConfigurationParameter;
 import esa.egos.csts.api.procedures.dataprocessing.AbstractDataProcessing;
+import esa.egos.csts.api.procedures.dataprocessing.AbstractDataProcessingB2;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.types.Time;
+import esa.egos.csts.api.types.SfwVersion;
 
-public abstract class AbstractBufferedDataProcessing extends AbstractDataProcessing implements IBufferedDataProcessingInternal {
+public abstract class AbstractBufferedDataProcessing extends AbstractDataProcessingB2 implements IBufferedDataProcessingInternal {
 
 	private static final ProcedureType TYPE = ProcedureType.of(OIDs.bufferedDataProcessing);
-	
-	private static final int VERSION = 1;
 
 	private HashMap<IProcessData, ScheduledFuture<?>> latencyTimers;
 	private ScheduledExecutorService executorService;
@@ -64,11 +62,6 @@ public abstract class AbstractBufferedDataProcessing extends AbstractDataProcess
 	@Override
 	public ProcedureType getType() {
 		return TYPE;
-	}
-	
-	@Override
-	public int getVersion() {
-		return VERSION;
 	}
 
 	@Override
@@ -99,6 +92,14 @@ public abstract class AbstractBufferedDataProcessing extends AbstractDataProcess
 			return null;
 		}
 		return forwardBuffer;
+	}
+	
+	protected IForwardBuffer getForwardBuffer() {
+		return forwardBuffer;
+	}
+	
+	protected void setForwardBuffer(IForwardBuffer forwardBuffer) {
+		this.forwardBuffer = forwardBuffer;
 	}
 	
 	@Override
@@ -315,97 +316,9 @@ public abstract class AbstractBufferedDataProcessing extends AbstractDataProcess
 	}
 
 	@Override
-	public byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException {
-
-		byte[] encodedOperation;
-		BufferedDataProcessingPdu pdu = new BufferedDataProcessingPdu();
-
-		if (operation.getType() == OperationType.START) {
-			IStart start = (IStart) operation;
-			if (isInvoke) {
-				pdu.setStartInvocation(start.encodeStartInvocation());
-			} else {
-				pdu.setStartReturn(start.encodeStartReturn());
-			}
-		} else if (operation.getType() == OperationType.STOP) {
-			IStop stop = (IStop) operation;
-			if (isInvoke) {
-				pdu.setStopInvocation(stop.encodeStopInvocation());
-			} else {
-				pdu.setStopReturn(stop.encodeStopReturn());
-			}
-		} else if (operation.getType() == OperationType.PROCESS_DATA) {
-			IProcessData processData = (IProcessData) operation;
-			if (isInvoke) {
-				pdu.setProcessDataInvocation(processData.encodeProcessDataInvocation());
-			}
-		} else if (operation.getType() == OperationType.NOTIFY) {
-			INotify notify = (INotify) operation;
-			if (isInvoke) {
-				pdu.setNotifyInvocation(notify.encodeNotifyInvocation());
-			}
-		} else if (operation.getType() == OperationType.FORWARD_BUFFER) {
-			b1.ccsds.csts.buffered.data.processing.pdus.ForwardBuffer forwardBuffer = new b1.ccsds.csts.buffered.data.processing.pdus.ForwardBuffer();
-			for (IProcessData processData : ((IForwardBuffer) operation).getBuffer()) {
-				forwardBuffer.getProcessDataInvocation().add(processData.encodeProcessDataInvocation());
-			}
-			pdu.setForwardBuffer(forwardBuffer);
-		}
-
-		try (ReverseByteArrayOutputStream berBAOStream = new ReverseByteArrayOutputStream(10, true)) {
-			pdu.encode(berBAOStream);
-			encodedOperation = berBAOStream.getArray();
-		}
-
-		return encodedOperation;
-	}
-
+	public abstract byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException;
+	
 	@Override
-	public IOperation decodeOperation(byte[] encodedPdu) throws IOException {
-
-		BufferedDataProcessingPdu pdu = new BufferedDataProcessingPdu();
-		try (ByteArrayInputStream is = new ByteArrayInputStream(encodedPdu)) {
-			pdu.decode(is);
-		}
-
-		IOperation operation = null;
-
-		if (pdu.getStartInvocation() != null) {
-			IStart start = createStart();
-			start.decodeStartInvocation(pdu.getStartInvocation());
-			operation = start;
-		} else if (pdu.getStartReturn() != null) {
-			IStart start = createStart();
-			start.decodeStartReturn(pdu.getStartReturn());
-			operation = start;
-		} else if (pdu.getStopInvocation() != null) {
-			IStop stop = createStop();
-			stop.decodeStopInvocation(pdu.getStopInvocation());
-			operation = stop;
-		} else if (pdu.getStopReturn() != null) {
-			IStop stop = createStop();
-			stop.decodeStopReturn(pdu.getStopReturn());
-			operation = stop;
-		} else if (pdu.getProcessDataInvocation() != null) {
-			IProcessData processData = createProcessData();
-			processData.decodeProcessDataInvocation(pdu.getProcessDataInvocation());
-			operation = processData;
-		} else if (pdu.getNotifyInvocation() != null) {
-			INotify notify = createNotify();
-			notify.decodeNotifyInvocation(pdu.getNotifyInvocation());
-			operation = notify;
-		} else if (pdu.getForwardBuffer() != null) {
-			if (forwardBuffer == null) {
-				forwardBuffer = createForwardBuffer();
-			}
-			for (ProcessDataInvocation processDataInvocation : pdu.getForwardBuffer().getProcessDataInvocation()) {
-				IProcessData processData = createProcessData();
-				processData.decodeProcessDataInvocation(processDataInvocation);
-				forwardBuffer.getBuffer().add(processData);
-			}
-			operation = forwardBuffer;
-		}
-
-		return operation;
-	}
+	public abstract IOperation decodeOperation(byte[] encodedPdu) throws IOException;
+	
 }

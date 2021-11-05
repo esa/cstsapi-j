@@ -1,8 +1,7 @@
 package esa.egos.csts.api.operations;
 
-import b1.ccsds.csts.common.operations.pdus.ExecuteDirectiveAcknowledge;
-import b1.ccsds.csts.common.operations.pdus.ExecuteDirectiveInvocation;
-import b1.ccsds.csts.common.operations.pdus.ExecuteDirectiveReturn;
+import com.beanit.jasn1.ber.types.BerType;
+
 import esa.egos.csts.api.diagnostics.ExecDirAcknowledgementDiagnostic;
 import esa.egos.csts.api.diagnostics.ExecDirReturnDiagnostic;
 import esa.egos.csts.api.directives.DirectiveQualifier;
@@ -91,7 +90,7 @@ public interface IExecuteDirective extends IAcknowledgedOperation {
 	 * 
 	 * @return this operation encoded into a CCSDS ExecuteDirectiveInvocation
 	 */
-	ExecuteDirectiveInvocation encodeExecuteDirectiveInvocation();
+	BerType encodeExecuteDirectiveInvocation();
 
 	/**
 	 * Decodes a specified CCSDS ExecuteDirectiveInvocation into this operation.
@@ -99,14 +98,14 @@ public interface IExecuteDirective extends IAcknowledgedOperation {
 	 * @param executeDirectiveInvocation the specified CCSDS
 	 *                                   ExecuteDirectiveInvocation
 	 */
-	void decodeExecuteDirectiveInvocation(ExecuteDirectiveInvocation executeDirectiveInvocation);
+	void decodeExecuteDirectiveInvocation(BerType executeDirectiveInvocation);
 
 	/**
 	 * Encodes this operation into a CCSDS ExecuteDirectiveAcknowledge.
 	 * 
 	 * @return this operation encoded into a CCSDS ExecuteDirectiveAcknowledge
 	 */
-	ExecuteDirectiveAcknowledge encodeExecuteDirectiveAcknowledge();
+	BerType encodeExecuteDirectiveAcknowledge();
 
 	/**
 	 * Decodes a specified CCSDS ExecuteDirectiveAcknowledge into this operation.
@@ -114,20 +113,20 @@ public interface IExecuteDirective extends IAcknowledgedOperation {
 	 * @param executeDirectiveAcknowledge the specified CCSDS
 	 *                                    ExecuteDirectiveAcknowledge
 	 */
-	void decodeExecuteDirectiveAcknowledge(ExecuteDirectiveAcknowledge executeDirectiveAcknowledge);
+	void decodeExecuteDirectiveAcknowledge(BerType executeDirectiveAcknowledge);
 
 	/**
 	 * Encodes this operation into a CCSDS ExecuteDirectiveReturn.
 	 * 
 	 * @return this operation encoded into a CCSDS ExecuteDirectiveReturn
 	 */
-	ExecuteDirectiveReturn encodeExecuteDirectiveReturn();
+	BerType encodeExecuteDirectiveReturn();
 
 	/**
 	 * Decodes a specified CCSDS ExecuteDirectiveReturn into this operation.
 	 * 
 	 * @param executeDirectiveReturn the specified CCSDS ExecuteDirectiveReturn
 	 */
-	void decodeExecuteDirectiveReturn(ExecuteDirectiveReturn executeDirectiveReturn);
+	void decodeExecuteDirectiveReturn(BerType executeDirectiveReturn);
 
 }

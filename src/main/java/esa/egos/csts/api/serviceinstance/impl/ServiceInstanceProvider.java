@@ -22,6 +22,7 @@ import esa.egos.csts.api.procedures.associationcontrol.IAssociationControlIntern
 import esa.egos.csts.api.serviceinstance.AbstractServiceInstance;
 import esa.egos.csts.api.serviceinstance.IServiceInform;
 import esa.egos.csts.api.states.service.ServiceStatus;
+import esa.egos.csts.api.types.SfwVersion;
 import esa.egos.proxy.IProxyAdmin;
 import esa.egos.proxy.enums.TimeFormat;
 import esa.egos.proxy.enums.TimeRes;
@@ -31,6 +32,8 @@ import esa.egos.proxy.time.ElapsedTimer;
 import esa.egos.proxy.util.ITime;
 
 public class ServiceInstanceProvider extends AbstractServiceInstance {
+	
+	private SfwVersion sfwVersion;
 
 	/**
 	 * The port registration Id for responding service instances.
@@ -47,6 +50,8 @@ public class ServiceInstanceProvider extends AbstractServiceInstance {
 		// TODO Auto-generated constructor stub
 
 		this.portRegId = -1;
+		
+		sfwVersion = SfwVersion.NOT_DEF;
 
 	}
 
@@ -303,5 +308,18 @@ public class ServiceInstanceProvider extends AbstractServiceInstance {
 			throw new ApiException(msg);
 		}
 	}
+
+	@Override
+	public SfwVersion getSfwVersion() {
+		return sfwVersion;
+	}
+
+	@Override
+	public void setSfwVersion(SfwVersion sfwVersion) {
+		this.sfwVersion = sfwVersion;
+		
+	}
+
+
 
 }

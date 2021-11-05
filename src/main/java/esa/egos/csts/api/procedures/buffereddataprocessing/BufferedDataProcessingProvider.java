@@ -9,7 +9,7 @@ import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.parameters.impl.IntegerConfigurationParameter;
 import esa.egos.csts.api.states.buffereddataprocessing.Inactive;
 
-public class BufferedDataProcessingProvider extends AbstractBufferedDataProcessing {
+public class BufferedDataProcessingProvider extends AbstractBufferedDataProcessingB2 {
 
 	@Override
 	protected void initializeState() {

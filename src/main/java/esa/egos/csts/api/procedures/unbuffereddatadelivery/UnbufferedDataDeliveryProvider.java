@@ -6,7 +6,7 @@ import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.states.unbuffereddatadelivery.Inactive;
 
-public class UnbufferedDataDeliveryProvider extends AbstractUnbufferedDataDelivery {
+public class UnbufferedDataDeliveryProvider extends AbstractUnbufferedDataDeliveryB2 {
 
 	@Override
 	protected void initializeState() {

@@ -5,8 +5,6 @@ import java.util.Optional;
 
 import com.beanit.jasn1.ber.types.BerNull;
 
-import b1.ccsds.csts.common.types.Extended;
-
 /**
  * This class represents the CCSDS Extended type.
  */
@@ -69,10 +67,18 @@ public class Extension {
 	 * 
 	 * @return the CCSDS Extended type representing this object
 	 */
-	public Extended encode() {
-		Extended extended = new Extended();
+	public b1.ccsds.csts.common.types.Extended encode(b1.ccsds.csts.common.types.Extended extended ) {
 		if (embeddedData.isPresent()) {
-			extended.setExternal(embeddedData.get().encode());
+			extended.setExternal(embeddedData.get().encode(new b1.ccsds.csts.common.types.Embedded()));
+		} else {
+			extended.setNotUsed(new BerNull());
+		}
+		return extended;
+	}
+	
+	public b2.ccsds.csts.common.types.Extended encode(b2.ccsds.csts.common.types.Extended extended ) {
+		if (embeddedData.isPresent()) {
+			extended.setExternal(embeddedData.get().encode(new b2.ccsds.csts.common.types.Embedded()));
 		} else {
 			extended.setNotUsed(new BerNull());
 		}
@@ -86,7 +92,15 @@ public class Extension {
 	 *            the specified CCSDS Extended type
 	 * @return a new Extension decoded from the specified CCSDS Extended type
 	 */
-	public static Extension decode(Extended extended) {
+	public static Extension decode(b1.ccsds.csts.common.types.Extended extended) {
+		Extension extension = new Extension();
+		if (extended.getExternal() != null) {
+			extension.setEmbedded(EmbeddedData.decode(extended.getExternal()));
+		}
+		return extension;
+	}
+	
+	public static Extension decode(b2.ccsds.csts.common.types.Extended extended) {
 		Extension extension = new Extension();
 		if (extended.getExternal() != null) {
 			extension.setEmbedded(EmbeddedData.decode(extended.getExternal()));

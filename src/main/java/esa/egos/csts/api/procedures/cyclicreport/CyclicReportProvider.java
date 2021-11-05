@@ -1,5 +1,6 @@
 package esa.egos.csts.api.procedures.cyclicreport;
 
+
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.oids.OIDs;
@@ -9,7 +10,7 @@ import esa.egos.csts.api.parameters.impl.IntegerConfigurationParameter;
 import esa.egos.csts.api.parameters.impl.LabelLists;
 import esa.egos.csts.api.states.cyclicreport.Inactive;
 
-public class CyclicReportProvider extends AbstractCyclicReport {
+public class CyclicReportProvider extends AbstractCyclicReportB2 {
 
 	@Override
 	protected void initializeState() {

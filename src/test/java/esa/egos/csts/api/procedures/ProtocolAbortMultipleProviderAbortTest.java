@@ -10,10 +10,10 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.rules.Timeout;
 
-import esa.egos.csts.api.enumerations.AppRole;
 import esa.egos.csts.api.enumerations.ProcedureRole;
 import esa.egos.csts.api.exceptions.ApiException;
-import esa.egos.csts.api.main.CstsApi;
+import esa.egos.csts.api.main.CstsProviderApi;
+import esa.egos.csts.api.main.CstsUserApi;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.oids.ObjectIdentifier;
@@ -67,11 +67,11 @@ public class ProtocolAbortMultipleProviderAbortTest {
 		System.out.println("provider config: " + providerConfigName);
 		System.out.println("user config: " + userConfigName);
 
-		this.providerApi = new CstsApi("Test Service Provider API", AppRole.PROVIDER);
+		this.providerApi = new CstsProviderApi("Test Service Provider API");
 		this.providerApi.initialize(providerConfigName);
 		this.providerApi.start();
 
-		this.userApi = new CstsApi("Test Service User API", AppRole.USER);
+		this.userApi = new CstsUserApi("Test Service User API");
 		this.userApi.initialize(userConfigName);
 		this.userApi.start();
 

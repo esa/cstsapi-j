@@ -4,9 +4,9 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import esa.egos.csts.api.enumerations.OperationType;
-import esa.egos.csts.api.operations.AbstractOperation;
 import esa.egos.csts.api.operations.IForwardBuffer;
 import esa.egos.csts.api.operations.IProcessData;
+import esa.egos.csts.api.operations.impl.b1.AbstractOperation;
 
 /**
  * This class is a dummy operation representing the forward buffer type used in

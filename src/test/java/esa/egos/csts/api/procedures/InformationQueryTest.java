@@ -20,6 +20,8 @@ import esa.egos.csts.api.exceptions.ConfigurationParameterNotModifiableException
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.main.CstsApi;
+import esa.egos.csts.api.main.CstsProviderApi;
+import esa.egos.csts.api.main.CstsUserApi;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.oids.ObjectIdentifier;
@@ -30,6 +32,7 @@ import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.Name;
+import esa.egos.csts.api.types.SfwVersion;
 import esa.egos.csts.sim.impl.MdCstsSiConfig;
 import esa.egos.csts.sim.impl.prv.MdCollection;
 import esa.egos.csts.sim.impl.prv.MdCstsSiProvider;
@@ -42,6 +45,7 @@ import esa.egos.csts.api.TestUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 
 /**
@@ -144,11 +148,11 @@ public class InformationQueryTest
         System.out.println("provider config: " + providerConfigName);
         System.out.println("user config: " + userConfigName);
 
-        this.providerApi = new CstsApi("Test Service Provider API", AppRole.PROVIDER);
+        this.providerApi = new CstsProviderApi("Test Service Provider API");
         this.providerApi.initialize(providerConfigName);
         this.providerApi.start();
 
-        this.userApi = new CstsApi("Test Service User API", AppRole.USER);
+        this.userApi = new CstsUserApi("Test Service User API");
         this.userApi.initialize(userConfigName);
         this.userApi.start();
 
@@ -170,7 +174,19 @@ public class InformationQueryTest
      * Test information query procedure and its GET operation w/ default list => ListOfParameter /w type EMPTY
      */
     @Test
-    public void testQueryInformationWithDefaultLabelList()
+    public void testQueryInformationWithDefaultLabelListB1()
+    {
+    	testQueryInformationWithDefaultLabelList(1);
+    }
+    
+    @Test
+    @Ignore
+    public void testQueryInformationWithDefaultLabelListB2()
+    {
+    	testQueryInformationWithDefaultLabelList(2);
+    }
+    
+    public void testQueryInformationWithDefaultLabelList(int version)
     {
         try
         {
@@ -182,7 +198,7 @@ public class InformationQueryTest
             providerSi.setMdCollection(mdCollection);
 
             // create user SI
-            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, 1);
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, version);
 
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");
@@ -255,7 +271,18 @@ public class InformationQueryTest
      * Test information query procedure and its GET operation w/ FUNCTIONAL_RESOURCE_NAME
      */
     @Test
-    public void testQueryInformationWithFunctionalResourceName()
+    public void testQueryInformationWithFunctionalResourceNameB1() {
+    	testQueryInformationWithFunctionalResourceName(1);
+    }
+    
+    @Test
+    @Ignore
+    public void testQueryInformationWithFunctionalResourceNameB2() {
+    	testQueryInformationWithFunctionalResourceName(2);
+    }
+    
+    
+    public void testQueryInformationWithFunctionalResourceName(int version)
     {
         try
         {
@@ -267,7 +294,7 @@ public class InformationQueryTest
             providerSi.setMdCollection(mdCollection);
 
             // create user SI
-            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, 1);
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, version);
 
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");
@@ -323,7 +350,19 @@ public class InformationQueryTest
      * Test information query procedure and its GET operation w/ non-existent FUNCTIONAL_RESOURCE_NAME 
      */
     @Test
-    public void testQueryInformationWithNonExistentFunctionalResourceName()
+    public void testQueryInformationWithNonExistentFunctionalResourceNameB1()
+    {
+    	testQueryInformationWithNonExistentFunctionalResourceName(1);
+    }
+    
+    @Test
+    @Ignore
+    public void testQueryInformationWithNonExistentFunctionalResourceNameB2()
+    {
+    	testQueryInformationWithNonExistentFunctionalResourceName(2);
+    }
+    
+    public void testQueryInformationWithNonExistentFunctionalResourceName(int version)
     {
         try
         {
@@ -335,7 +374,7 @@ public class InformationQueryTest
             providerSi.setMdCollection(mdCollection);
 
             // create user SI
-            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, 1);
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, version);
 
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");
@@ -370,7 +409,19 @@ public class InformationQueryTest
      * Test information query procedure and its GET operation w/ FUNCTIONAL_RESOURCE_TYPE
      */
     @Test
-    public void testQueryInformationWithFunctionalResourceType()
+    public void testQueryInformationWithFunctionalResourceTypeB1()
+    {
+    	testQueryInformationWithFunctionalResourceType(1);
+    }
+    
+    @Test
+    @Ignore
+    public void testQueryInformationWithFunctionalResourceTypeB2()
+    {
+    	testQueryInformationWithFunctionalResourceType(2);
+    }
+    
+    public void testQueryInformationWithFunctionalResourceType(int version)
     {
         try
         {
@@ -382,7 +433,7 @@ public class InformationQueryTest
             providerSi.setMdCollection(mdCollection);
 
             // create user SI
-            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, 1);
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, version);
 
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");
@@ -438,7 +489,19 @@ public class InformationQueryTest
      * Test information query procedure and its GET operation w/ non-existent FUNCTIONAL_RESOURCE_TYPE
      */
     @Test
-    public void testQueryInformationWithNonExistentFunctionalResourceType()
+    public void testQueryInformationWithNonExistentFunctionalResourceTypeB1()
+    {
+    	testQueryInformationWithNonExistentFunctionalResourceType(1);
+    }
+    
+    @Test
+    @Ignore
+    public void testQueryInformationWithNonExistentFunctionalResourceTypeB2()
+    {
+    	testQueryInformationWithNonExistentFunctionalResourceType(2);
+    }
+    
+    public void testQueryInformationWithNonExistentFunctionalResourceType(int version)
     {
         try
         {
@@ -450,7 +513,7 @@ public class InformationQueryTest
             providerSi.setMdCollection(mdCollection);
 
             // create user SI
-            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, 1);
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, version);
 
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");
@@ -486,7 +549,19 @@ public class InformationQueryTest
      * Test information query procedure and its GET operation w/ NAME_SET"
      */
     @Test
-    public void testQueryInformationWithNameSet()
+    public void testQueryInformationWithNameSetB1()
+    {
+    	testQueryInformationWithNameSet(1);
+    }
+    
+    @Test
+    @Ignore
+    public void testQueryInformationWithNameSetB2()
+    {
+    	testQueryInformationWithNameSet(2);
+    }
+    
+    public void testQueryInformationWithNameSet(int version)
     {
         try
         {
@@ -498,7 +573,7 @@ public class InformationQueryTest
             providerSi.setMdCollection(mdCollection);
 
             // create user SI
-            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, 1);
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, version);
 
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");
@@ -556,7 +631,21 @@ public class InformationQueryTest
      * Test information query procedure and its GET operation w/ NAME_SET w/ non-existent NAME"
      */
     @Test
-    public void testQueryInformationWithNameSetWithNonExistentName()
+    public void testQueryInformationWithNameSetWithNonExistentNameB1()
+    {
+    	testQueryInformationWithNameSetWithNonExistentName(1);
+    }
+    
+    
+    @Test
+    @Ignore
+    public void testQueryInformationWithNameSetWithNonExistentNameB2()
+    {
+    	testQueryInformationWithNameSetWithNonExistentName(2);
+    }
+    
+    
+    public void testQueryInformationWithNameSetWithNonExistentName(int version)
     {
         try
         {
@@ -568,7 +657,7 @@ public class InformationQueryTest
             providerSi.setMdCollection(mdCollection);
 
             // create user SI
-            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, 1);
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, version);
 
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");
@@ -605,7 +694,19 @@ public class InformationQueryTest
      * Test information query procedure and its GET operation w/ LABEL_SET"
      */
     @Test
-    public void testQueryInformationWithLabelSet()
+    public void testQueryInformationWithLabelSetB1()
+    {
+    	testQueryInformationWithLabelSet(1);
+    }
+    
+    @Test
+    @Ignore
+    public void testQueryInformationWithLabelSetB2()
+    {
+    	testQueryInformationWithLabelSet(2);
+    }
+    
+    public void testQueryInformationWithLabelSet(int version)
     {
         try
         {
@@ -617,7 +718,7 @@ public class InformationQueryTest
             providerSi.setMdCollection(mdCollection);
 
             // create user SI
-            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, 1);
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, version);
 
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");
@@ -659,7 +760,21 @@ public class InformationQueryTest
      * Test information query procedure and its GET operation w/ LABEL_SET w/ non-existent LABEL"
      */
     @Test
-    public void testQueryInformationWithLabelSetWithNonExistentLabel()
+    public void testQueryInformationWithLabelSetWithNonExistentLabelB1()
+    {
+    	testQueryInformationWithLabelSetWithNonExistentLabel(1);
+    }
+    
+    
+    @Test
+    @Ignore
+    public void testQueryInformationWithLabelSetWithNonExistentLabelB2()
+    {
+    	testQueryInformationWithLabelSetWithNonExistentLabel(2);
+    }
+    
+    
+    public void testQueryInformationWithLabelSetWithNonExistentLabel(int version)
     {
         try
         {
@@ -671,7 +786,7 @@ public class InformationQueryTest
             providerSi.setMdCollection(mdCollection);
 
             // create user SI
-            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, 1);
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, version);
 
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");
@@ -712,7 +827,19 @@ public class InformationQueryTest
      * NOTE: The information query procedure has the pIQnamedLabelLists configuration parameter only
      */
     @Test
-    public void testQueryInformationWithItSelfProcedureIdentifier()
+    public void testQueryInformationWithItSelfProcedureIdentifierB1()
+    {
+    	testQueryInformationWithItSelfProcedureIdentifier(1);
+    }
+    
+    @Test
+    @Ignore
+    public void testQueryInformationWithItSelfProcedureIdentifierB2()
+    {
+    	testQueryInformationWithItSelfProcedureIdentifier(2);
+    }
+    
+    public void testQueryInformationWithItSelfProcedureIdentifier(int version)
     {
         try
         {
@@ -720,7 +847,7 @@ public class InformationQueryTest
             MdCstsSiProvider providerSi = new MdCstsSiProvider(this.providerApi, this.mdSiProviderConfig);
 
             // create user SI
-            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, 1);
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, version);
 
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");
@@ -780,7 +907,20 @@ public class InformationQueryTest
      * NOTE: The information query procedure has the pIQnamedLabelLists configuration parameter only
      */
     @Test
-    public void testQueryInformationWithForeignProcedureIdentifier()
+    public void testQueryInformationWithForeignProcedureIdentifierB1()
+    {
+    	testQueryInformationWithForeignProcedureIdentifier(1);
+    }
+    
+    @Test
+    @Ignore
+    public void testQueryInformationWithForeignProcedureIdentifierB2()
+    {
+    	testQueryInformationWithForeignProcedureIdentifier(2);
+    }
+    
+    
+    public void testQueryInformationWithForeignProcedureIdentifier(int version)
     {
         try
         {
@@ -788,7 +928,7 @@ public class InformationQueryTest
             MdCstsSiProvider providerSi = new MdCstsSiProvider(this.providerApi, this.mdSiProviderConfig);
 
             // create user SI
-            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, 1);
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, version);
 
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");
@@ -848,7 +988,20 @@ public class InformationQueryTest
      * NOTE: The information query procedure has the pIQnamedLabelLists configuration parameter only
      */
     @Test
-    public void testQueryInformationWithProcedureType()
+    public void testQueryInformationWithProcedureTypeB1()
+    {
+    	testQueryInformationWithProcedureType(1);
+    }
+    
+    @Test
+    @Ignore
+    public void testQueryInformationWithProcedureTypeB2()
+    {
+    	testQueryInformationWithProcedureType(2);
+    }
+    
+    
+    public void testQueryInformationWithProcedureType(int version)
     {
         try
         {
@@ -856,7 +1009,7 @@ public class InformationQueryTest
             MdCstsSiProvider providerSi = new MdCstsSiProvider(this.providerApi, this.mdSiProviderConfig);
 
             // create user SI
-            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, 1);
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, version);
 
             System.out.println("set the default label list to provider SI");
             providerSi.setDefaultLabelList(this.piid_prime, defaultLabelList);
@@ -903,7 +1056,19 @@ public class InformationQueryTest
      * Test as a secondary procedure w/ a parallel cyclic report 
      */
     @Test
-    public void testMultipleInformationQuerySecondary()
+    public void testMultipleInformationQuerySecondaryB1()
+    {
+    	testMultipleInformationQuerySecondary(1);
+    }
+    
+    @Test
+    @Ignore
+    public void testMultipleInformationQuerySecondaryB2()
+    {
+    	testMultipleInformationQuerySecondary(2);
+    }
+    
+    public void testMultipleInformationQuerySecondary(int version)
     {
         System.out.println("Test the Cyclic report procedure");
 
@@ -938,7 +1103,7 @@ public class InformationQueryTest
             MdCstsSiProvider providerSi = new MdCstsSiProvider(this.providerApi, mdSiProviderConfig);
 
             // create user SI
-            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, mdSiUserConfig, 1);
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, mdSiUserConfig, version);
 
             // create FR parameters and attach them to the provider SI
             MdCollection mdCollection = MdCollection.createSimpleMdCollection();

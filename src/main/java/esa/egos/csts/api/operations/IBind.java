@@ -1,11 +1,12 @@
 package esa.egos.csts.api.operations;
 
-import b1.ccsds.csts.association.control.types.BindInvocation;
-import b1.ccsds.csts.association.control.types.BindReturn;
+import com.beanit.jasn1.ber.types.BerType;
+
 import esa.egos.csts.api.diagnostics.BindDiagnostic;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.extensions.Extension;
 import esa.egos.csts.api.serviceinstance.impl.ServiceType;
+import esa.egos.csts.api.types.SfwVersion;
 
 /**
  * This interface represents a BIND operation.
@@ -76,25 +77,18 @@ public interface IBind extends IConfirmedOperation {
 	ServiceType getServiceType();
 
 	/**
-	 * Sets the service type.
-	 * 
-	 * @param type the service type
-	 */
-	void setServiceType(ServiceType type);
-
-	/**
 	 * Returns the version number.
 	 * 
 	 * @return the version number
 	 */
-	int getVersionNumber();
-
+	int getServiceVersion();
+	
+	
 	/**
-	 * Sets the version number.
-	 * 
-	 * @param version the specified version number
+	 * Returns the framework version
+	 * @return framework version
 	 */
-	void setVersionNumber(int version);
+	SfwVersion getSfwVersion();
 
 	/**
 	 * Returns the invocation extension.
@@ -115,27 +109,27 @@ public interface IBind extends IConfirmedOperation {
 	 * 
 	 * @return this operation encoded into a CCSDS BindInvocation
 	 */
-	BindInvocation encodeBindInvocation();
+	BerType encodeBindInvocation();
 
 	/**
 	 * Decodes a specified CCSDS BindInvocation into this operation.
 	 * 
 	 * @param bindInvocation the specified CCSDS BindInvocation
 	 */
-	void decodeBindInvocation(BindInvocation bindInvocation);
+	void decodeBindInvocation(BerType bindInvocation);
 
 	/**
 	 * Encodes this operation into a CCSDS BindReturn.
 	 * 
 	 * @return this operation encoded into a CCSDS BindReturn
 	 */
-	BindReturn encodeBindReturn();
+	BerType encodeBindReturn();
 
 	/**
 	 * Decodes a specified CCSDS BindReturn into this operation.
 	 * 
 	 * @param bindReturn the specified CCSDS BindReturn
 	 */
-	void decodeBindReturn(BindReturn bindReturn);
+	void decodeBindReturn(BerType bindReturn);
 
 }

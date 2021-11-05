@@ -19,6 +19,8 @@ import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.main.CstsApi;
+import esa.egos.csts.api.main.CstsProviderApi;
+import esa.egos.csts.api.main.CstsUserApi;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.oids.ObjectIdentifier;
@@ -29,6 +31,7 @@ import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.Name;
+import esa.egos.csts.api.types.SfwVersion;
 import esa.egos.csts.sim.impl.MdCstsSiConfig;
 import esa.egos.csts.sim.impl.prv.MdCollection;
 import esa.egos.csts.sim.impl.prv.MdCstsSiProvider;
@@ -124,11 +127,11 @@ public class NotificationTest
         System.out.println("provider config: " + providerConfigName);
         System.out.println("user config: " + userConfigName);
 
-        this.providerApi = new CstsApi("Test Service Provider API", AppRole.PROVIDER);
+        this.providerApi = new CstsProviderApi("Test Service Provider API");
         this.providerApi.initialize(providerConfigName);
         this.providerApi.start();
 
-        this.userApi = new CstsApi("Test Service User API", AppRole.USER);
+        this.userApi = new CstsUserApi("Test Service User API");
         this.userApi.initialize(userConfigName);
         this.userApi.start();
 
@@ -162,7 +165,7 @@ public class NotificationTest
             providerSi.setMdCollection(mdCollection);
 
             // create user SI
-            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, 1);
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig,1);
 
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");

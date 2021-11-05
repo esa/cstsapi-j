@@ -7,10 +7,6 @@ import java.util.List;
 import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 import com.beanit.jasn1.ber.types.BerNull;
 
-import b1.ccsds.csts.common.operations.pdus.ExecDirNegAckDiagnosticExt;
-import b1.ccsds.csts.common.operations.pdus.ExecDirNegAckDiagnosticExt.InvalidFunctionalResourceParameter;
-import b1.ccsds.csts.common.operations.pdus.ExecDirNegAckDiagnosticExt.InvalidProcedureParameter;
-import b1.ccsds.csts.common.operations.pdus.ExecDirNegAckDiagnosticExt.ParameterValueOutOfRange;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.types.Name;
 
@@ -99,8 +95,8 @@ public class ExecDirAcknowledgementDiagnostic {
 	 * @return the CCSDS ExecDirNegAckDiagnosticExt type representing this
 	 *         Diagnostic
 	 */
-	public ExecDirNegAckDiagnosticExt encode() {
-		ExecDirNegAckDiagnosticExt execDirNegAckDiagnosticExt = new ExecDirNegAckDiagnosticExt();
+	public b1.ccsds.csts.common.operations.pdus.ExecDirNegAckDiagnosticExt encode(b1.ccsds.csts.common.operations.pdus.ExecDirNegAckDiagnosticExt execDirNegAckDiagnosticExt ) {
+
 		switch (type) {
 		case UNKNOWN_DIRECTIVE:
 			execDirNegAckDiagnosticExt.setUnknownDirective(new BerNull());
@@ -115,28 +111,88 @@ public class ExecDirAcknowledgementDiagnostic {
 			execDirNegAckDiagnosticExt.setInvalidFunctionalResourceInstance(new BerNull());
 			break;
 		case INVALID_FUNCTIONAL_RESOURCE_PARAMETER:
-			InvalidFunctionalResourceParameter invalidFunctionalResourceParameter = new InvalidFunctionalResourceParameter();
+			b1.ccsds.csts.common.operations.pdus.ExecDirNegAckDiagnosticExt.InvalidFunctionalResourceParameter invalidFunctionalResourceParameter = 
+				new b1.ccsds.csts.common.operations.pdus.ExecDirNegAckDiagnosticExt.InvalidFunctionalResourceParameter();
 			for (Name name : names) {
-				invalidFunctionalResourceParameter.getName().add(name.encode());
+				invalidFunctionalResourceParameter.getName().add(name.encode(new b1.ccsds.csts.common.types.Name()));
 			}
 			execDirNegAckDiagnosticExt.setInvalidFunctionalResourceParameter(invalidFunctionalResourceParameter);
 			break;
 		case INVALID_PROCEDURE_PARAMETER:
-			InvalidProcedureParameter invalidProcedureParameter = new InvalidProcedureParameter();
+			b1.ccsds.csts.common.operations.pdus.ExecDirNegAckDiagnosticExt.InvalidProcedureParameter invalidProcedureParameter = 
+				new b1.ccsds.csts.common.operations.pdus.ExecDirNegAckDiagnosticExt.InvalidProcedureParameter();
 			for (Name name : names) {
-				invalidProcedureParameter.getName().add(name.encode());
+				invalidProcedureParameter.getName().add(name.encode(new b1.ccsds.csts.common.types.Name()));
 			}
 			execDirNegAckDiagnosticExt.setInvalidProcedureParameter(invalidProcedureParameter);
 			break;
 		case PARAMETER_VALUE_OUT_OF_RANGE:
-			ParameterValueOutOfRange parameterValueOutOfRange = new ParameterValueOutOfRange();
+			b1.ccsds.csts.common.operations.pdus.ExecDirNegAckDiagnosticExt.ParameterValueOutOfRange parameterValueOutOfRange = 
+				new b1.ccsds.csts.common.operations.pdus.ExecDirNegAckDiagnosticExt.ParameterValueOutOfRange();
 			for (Name name : names) {
-				parameterValueOutOfRange.getName().add(name.encode());
+				parameterValueOutOfRange.getName().add(name.encode(new b1.ccsds.csts.common.types.Name()));
 			}
 			execDirNegAckDiagnosticExt.setParameterValueOutOfRange(parameterValueOutOfRange);
 			break;
 		case EXTENDED:
-			execDirNegAckDiagnosticExt.setExecDirNegAckDiagnosticExtExtension(diagnosticExtension.encode());
+			execDirNegAckDiagnosticExt.setExecDirNegAckDiagnosticExtExtension(diagnosticExtension.encode(
+					new b1.ccsds.csts.common.types.Embedded()));
+			break;
+		}
+		
+		// encode with a resizable output stream and an initial capacity of 128 bytes
+		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
+			execDirNegAckDiagnosticExt.encode(os);
+			execDirNegAckDiagnosticExt.code = os.getArray();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return execDirNegAckDiagnosticExt;
+	}
+	
+	public b2.ccsds.csts.common.operations.pdus.ExecDirNegAckDiagnosticExt encode(b2.ccsds.csts.common.operations.pdus.ExecDirNegAckDiagnosticExt execDirNegAckDiagnosticExt ) {
+
+		switch (type) {
+		case UNKNOWN_DIRECTIVE:
+			execDirNegAckDiagnosticExt.setUnknownDirective(new BerNull());
+			break;
+		case UNKNOWN_QUALIFIER:
+			execDirNegAckDiagnosticExt.setUnknownQualifier(new BerNull());
+			break;
+		case INVALID_PROCEDURE_INSTANCE:
+			execDirNegAckDiagnosticExt.setInvalidProcedureName(new BerNull());
+			break;
+		case INVALID_FUNCTIONAL_RESOURCE_INSTANCE:
+			execDirNegAckDiagnosticExt.setInvalidFunctionalResourceName(new BerNull());
+			break;
+		case INVALID_FUNCTIONAL_RESOURCE_PARAMETER:
+			b2.ccsds.csts.common.operations.pdus.ExecDirNegAckDiagnosticExt.InvalidFunctionalResourceParameter invalidFunctionalResourceParameter = 
+				new b2.ccsds.csts.common.operations.pdus.ExecDirNegAckDiagnosticExt.InvalidFunctionalResourceParameter();
+			for (Name name : names) {
+				invalidFunctionalResourceParameter.getName().add(name.encode(new b2.ccsds.csts.common.types.Name()));
+			}
+			execDirNegAckDiagnosticExt.setInvalidFunctionalResourceParameter(invalidFunctionalResourceParameter);
+			break;
+		case INVALID_PROCEDURE_PARAMETER:
+			b2.ccsds.csts.common.operations.pdus.ExecDirNegAckDiagnosticExt.InvalidProcedureParameter invalidProcedureParameter = 
+				new b2.ccsds.csts.common.operations.pdus.ExecDirNegAckDiagnosticExt.InvalidProcedureParameter();
+			for (Name name : names) {
+				invalidProcedureParameter.getName().add(name.encode(new b2.ccsds.csts.common.types.Name()));
+			}
+			execDirNegAckDiagnosticExt.setInvalidProcedureParameter(invalidProcedureParameter);
+			break;
+		case PARAMETER_VALUE_OUT_OF_RANGE:
+			b2.ccsds.csts.common.operations.pdus.ExecDirNegAckDiagnosticExt.ParameterValueOutOfRange parameterValueOutOfRange = 
+				new b2.ccsds.csts.common.operations.pdus.ExecDirNegAckDiagnosticExt.ParameterValueOutOfRange();
+			for (Name name : names) {
+				parameterValueOutOfRange.getName().add(name.encode(new b2.ccsds.csts.common.types.Name()));
+			}
+			execDirNegAckDiagnosticExt.setParameterValueOutOfRange(parameterValueOutOfRange);
+			break;
+		case EXTENDED:
+			execDirNegAckDiagnosticExt.setExecDirNegAckDiagnosticExtExtension(diagnosticExtension.encode(
+					new b2.ccsds.csts.common.types.Embedded()));
 			break;
 		}
 		
@@ -158,7 +214,7 @@ public class ExecDirAcknowledgementDiagnostic {
 	 * @return a new EXECUTE-DIRECTIVE acknowledgement Diagnostic decoded from the
 	 *         specified CCSDS ExecDirNegAckDiagnosticExt type
 	 */
-	public static ExecDirAcknowledgementDiagnostic decode(ExecDirNegAckDiagnosticExt execDirNegAckDiagnosticExt) {
+	public static ExecDirAcknowledgementDiagnostic decode(b1.ccsds.csts.common.operations.pdus.ExecDirNegAckDiagnosticExt execDirNegAckDiagnosticExt) {
 		ExecDirAcknowledgementDiagnostic diagnostic = null;
 		if (execDirNegAckDiagnosticExt.getUnknownDirective() != null) {
 			diagnostic = new ExecDirAcknowledgementDiagnostic(ExecDirAcknowledgementDiagnosticType.UNKNOWN_DIRECTIVE);
@@ -186,6 +242,42 @@ public class ExecDirAcknowledgementDiagnostic {
 			diagnostic = new ExecDirAcknowledgementDiagnostic(
 					ExecDirAcknowledgementDiagnosticType.PARAMETER_VALUE_OUT_OF_RANGE);
 			for (b1.ccsds.csts.common.types.Name name : execDirNegAckDiagnosticExt.getParameterValueOutOfRange().getName()) {
+				diagnostic.getNames().add(Name.decode(name));
+			}
+		} else if (execDirNegAckDiagnosticExt.getExecDirNegAckDiagnosticExtExtension() != null) {
+			diagnostic = new ExecDirAcknowledgementDiagnostic(EmbeddedData.decode(execDirNegAckDiagnosticExt.getExecDirNegAckDiagnosticExtExtension()));
+		}
+		return diagnostic;
+	}
+	
+	public static ExecDirAcknowledgementDiagnostic decode(b2.ccsds.csts.common.operations.pdus.ExecDirNegAckDiagnosticExt execDirNegAckDiagnosticExt) {
+		ExecDirAcknowledgementDiagnostic diagnostic = null;
+		if (execDirNegAckDiagnosticExt.getUnknownDirective() != null) {
+			diagnostic = new ExecDirAcknowledgementDiagnostic(ExecDirAcknowledgementDiagnosticType.UNKNOWN_DIRECTIVE);
+		} else if (execDirNegAckDiagnosticExt.getUnknownQualifier() != null) {
+			diagnostic = new ExecDirAcknowledgementDiagnostic(ExecDirAcknowledgementDiagnosticType.UNKNOWN_QUALIFIER);
+		} else if (execDirNegAckDiagnosticExt.getInvalidProcedureName() != null) {
+			diagnostic = new ExecDirAcknowledgementDiagnostic(
+					ExecDirAcknowledgementDiagnosticType.INVALID_PROCEDURE_INSTANCE);
+		} else if (execDirNegAckDiagnosticExt.getInvalidFunctionalResourceName() != null) {
+			diagnostic = new ExecDirAcknowledgementDiagnostic(
+					ExecDirAcknowledgementDiagnosticType.INVALID_FUNCTIONAL_RESOURCE_INSTANCE);
+		} else if (execDirNegAckDiagnosticExt.getInvalidFunctionalResourceParameter() != null) {
+			diagnostic = new ExecDirAcknowledgementDiagnostic(
+					ExecDirAcknowledgementDiagnosticType.INVALID_FUNCTIONAL_RESOURCE_PARAMETER);
+			for (b2.ccsds.csts.common.types.Name name : execDirNegAckDiagnosticExt.getInvalidFunctionalResourceParameter().getName()) {
+				diagnostic.getNames().add(Name.decode(name));
+			}
+		} else if (execDirNegAckDiagnosticExt.getInvalidProcedureParameter() != null) {
+			diagnostic = new ExecDirAcknowledgementDiagnostic(
+					ExecDirAcknowledgementDiagnosticType.INVALID_PROCEDURE_PARAMETER);
+			for (b2.ccsds.csts.common.types.Name name : execDirNegAckDiagnosticExt.getInvalidProcedureParameter().getName()) {
+				diagnostic.getNames().add(Name.decode(name));
+			}
+		} else if (execDirNegAckDiagnosticExt.getParameterValueOutOfRange() != null) {
+			diagnostic = new ExecDirAcknowledgementDiagnostic(
+					ExecDirAcknowledgementDiagnosticType.PARAMETER_VALUE_OUT_OF_RANGE);
+			for (b2.ccsds.csts.common.types.Name name : execDirNegAckDiagnosticExt.getParameterValueOutOfRange().getName()) {
 				diagnostic.getNames().add(Name.decode(name));
 			}
 		} else if (execDirNegAckDiagnosticExt.getExecDirNegAckDiagnosticExtExtension() != null) {

@@ -1,14 +1,10 @@
 package esa.egos.csts.api.procedures.throwevent;
 
-import java.io.ByteArrayInputStream;
+
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
-
-import b1.ccsds.csts.throw_.event.pdus.TeExecDirNegReturnDiagnosticExt;
-import b1.ccsds.csts.throw_.event.pdus.ThrowEventPdu;
 import esa.egos.csts.api.diagnostics.ThrowEventDiagnostic;
 import esa.egos.csts.api.directives.DirectiveQualifier;
 import esa.egos.csts.api.enumerations.CstsResult;
@@ -24,11 +20,10 @@ import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.states.throwevent.Inactive;
 import esa.egos.csts.api.states.throwevent.ThrowEventState;
 
+
 public abstract class AbstractThrowEvent extends AbstractStatefulProcedure implements IThrowEventInternal {
 
 	private static final ProcedureType TYPE = ProcedureType.of(OIDs.throwEvent);
-	
-	private static final int VERSION = 1;
 	
 	private final Queue<IExecuteDirective> queue;
 	
@@ -41,11 +36,6 @@ public abstract class AbstractThrowEvent extends AbstractStatefulProcedure imple
 	@Override
 	public ProcedureType getType() {
 		return TYPE;
-	}
-	
-	@Override
-	public int getVersion() {
-		return VERSION;
 	}
 
 	@Override
@@ -124,10 +114,7 @@ public abstract class AbstractThrowEvent extends AbstractStatefulProcedure imple
 		executeDirective.setDiagnostic(encodeExecuteDirectiveDiagnosticExt());
 		((ThrowEventState) getState()).process(executeDirective, false);
 	}
-	
-	public EmbeddedData encodeExecuteDirectiveDiagnosticExt() {
-		return EmbeddedData.of(OIDs.teExecDirDiagExt, diagnostic.encode().code);
-	}
+
 	
 	@Override
 	public CstsResult informOperationReturn(IConfirmedOperation confOperation) {
@@ -140,67 +127,14 @@ public abstract class AbstractThrowEvent extends AbstractStatefulProcedure imple
 		return doInformOperationReturn(confOperation);
 	}
 	
-	protected void decodeExecDirNegReturnDiagnosticExt(EmbeddedData embeddedData) {
-		if (embeddedData.getOid().equals(OIDs.teExecDirDiagExt)) {
-			TeExecDirNegReturnDiagnosticExt teExecDirNegReturnDiagnosticExt = new TeExecDirNegReturnDiagnosticExt();
-			try (ByteArrayInputStream is = new ByteArrayInputStream(embeddedData.getData())) {
-				teExecDirNegReturnDiagnosticExt.decode(is);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			diagnostic = ThrowEventDiagnostic.decode(teExecDirNegReturnDiagnosticExt);
-		}
-	}
+	public abstract EmbeddedData encodeExecuteDirectiveDiagnosticExt();
+	
+	protected abstract void decodeExecDirNegReturnDiagnosticExt(EmbeddedData embeddedData);
 	
 	@Override
-	public byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException {
-		
-		byte[] encodedOperation;
-		ThrowEventPdu pdu = new ThrowEventPdu();
-		
-		if (operation.getType() == OperationType.EXECUTE_DIRECTIVE) {
-			IExecuteDirective executeDirective = (IExecuteDirective) operation;
-			if (isInvoke) {
-				pdu.setExecuteDirectiveInvocation(executeDirective.encodeExecuteDirectiveInvocation());
-			} else {
-				if (executeDirective.isAcknowledgement()) {
-					pdu.setExecuteDirectiveAcknowledge(executeDirective.encodeExecuteDirectiveAcknowledge());
-				} else {
-					pdu.setExecuteDirectiveReturn(executeDirective.encodeExecuteDirectiveReturn());
-				}
-			}
-		}
-		
-		try (ReverseByteArrayOutputStream berBAOStream = new ReverseByteArrayOutputStream(10, true)) {
-			pdu.encode(berBAOStream);
-			encodedOperation = berBAOStream.getArray();
-		}
-		
-		return encodedOperation;
-	}
+	public abstract byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException;
 
 	@Override
-	public IOperation decodeOperation(byte[] encodedPdu) throws IOException {
-
-		ThrowEventPdu pdu = new ThrowEventPdu();
-		
-		try (ByteArrayInputStream is = new ByteArrayInputStream(encodedPdu)) {
-			pdu.decode(is);
-		}
-		
-		IExecuteDirective executeDirective = createExecuteDirective();
-		
-		if (pdu.getExecuteDirectiveInvocation() != null) {
-			executeDirective.decodeExecuteDirectiveInvocation(pdu.getExecuteDirectiveInvocation());
-		} else if (pdu.getExecuteDirectiveAcknowledge() != null) {
-			executeDirective.decodeExecuteDirectiveAcknowledge(pdu.getExecuteDirectiveAcknowledge());
-			executeDirective.setAcknowledgement(true);
-		} else if (pdu.getExecuteDirectiveReturn() != null) {
-			executeDirective.decodeExecuteDirectiveReturn(pdu.getExecuteDirectiveReturn());
-			executeDirective.setAcknowledgement(false);
-		}
-		
-		return executeDirective;
-	}
+	public abstract IOperation decodeOperation(byte[] encodedPdu) throws IOException;
 
 }

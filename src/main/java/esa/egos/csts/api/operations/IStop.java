@@ -1,7 +1,7 @@
 package esa.egos.csts.api.operations;
 
-import b1.ccsds.csts.common.operations.pdus.StopInvocation;
-import b1.ccsds.csts.common.operations.pdus.StopReturn;
+import com.beanit.jasn1.ber.types.BerType;
+
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.extensions.Extension;
 
@@ -29,27 +29,27 @@ public interface IStop extends IConfirmedOperation {
 	 * 
 	 * @return this operation encoded into a CCSDS StopInvocation
 	 */
-	StopInvocation encodeStopInvocation();
+	BerType encodeStopInvocation();
 
 	/**
 	 * Decodes a specified CCSDS StopInvocation into this operation.
 	 * 
 	 * @param stopInvocation the specified CCSDS StopInvocation
 	 */
-	void decodeStopInvocation(StopInvocation stopInvocation);
+	void decodeStopInvocation(BerType stopInvocation);
 
 	/**
 	 * Encodes this operation into a CCSDS StopReturn.
 	 * 
 	 * @return this operation encoded into a CCSDS StopReturn
 	 */
-	StopReturn encodeStopReturn();
+	BerType encodeStopReturn();
 
 	/**
 	 * Decodes a specified CCSDS StopReturn into this operation.
 	 * 
 	 * @param stopReturn the specified CCSDS StopReturn
 	 */
-	void decodeStopReturn(StopReturn stopReturn);
+	void decodeStopReturn(BerType stopReturn);
 
 }

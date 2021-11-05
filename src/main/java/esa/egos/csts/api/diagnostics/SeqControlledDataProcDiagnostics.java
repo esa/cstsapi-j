@@ -5,7 +5,6 @@ import java.io.IOException;
 import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 import com.beanit.jasn1.ber.types.BerNull;
 
-import b1.ccsds.csts.sequence.controlled.data.processing.pdus.SequContrDataProcProcDataDiagnosticExt;
 import esa.egos.csts.api.extensions.EmbeddedData;
 
 /**
@@ -76,8 +75,9 @@ public class SeqControlledDataProcDiagnostics {
 	 * @return the CCSDS SequContrDataProcProcDataDiagnosticExt type representing
 	 *         this Diagnostic
 	 */
-	public SequContrDataProcProcDataDiagnosticExt encode() {
-		SequContrDataProcProcDataDiagnosticExt diagnostics = new SequContrDataProcProcDataDiagnosticExt();
+	public b1.ccsds.csts.sequence.controlled.data.processing.pdus.SequContrDataProcProcDataDiagnosticExt encode(
+			b1.ccsds.csts.sequence.controlled.data.processing.pdus.SequContrDataProcProcDataDiagnosticExt diagnostics) {
+
 		switch (type) {
 		case DATA_ERROR:
 			diagnostics.setDataError(new BerNull());
@@ -104,7 +104,51 @@ public class SeqControlledDataProcDiagnostics {
 			diagnostics.setUnableToStore(new BerNull());
 			break;
 		case EXTENDED:
-			diagnostics.setSequContrDataProcProcDataDiagnosticExtExtension(diagnosticExtension.encode());
+			diagnostics.setSequContrDataProcProcDataDiagnosticExtExtension(diagnosticExtension.encode(
+					new b1.ccsds.csts.common.types.Embedded()));
+			break;
+		}
+		// encode with a resizable output stream and an initial capacity of 128 bytes
+		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
+			diagnostics.encode(os);
+			diagnostics.code = os.getArray();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return diagnostics;
+	}
+	
+	public b2.ccsds.csts.sequence.controlled.data.processing.pdus.SequContrDataProcProcDataDiagnosticExt encode(
+			b2.ccsds.csts.sequence.controlled.data.processing.pdus.SequContrDataProcProcDataDiagnosticExt diagnostics) {
+
+		switch (type) {
+		case DATA_ERROR:
+			diagnostics.setDataError(new BerNull());
+			break;
+		case INCONSISTENT_TIME_RANGE:
+			diagnostics.setInconsistentTimeRange(new BerNull());
+			break;
+		case INVALID_TIME:
+			diagnostics.setInvalidTime(new BerNull());
+			break;
+		case LATE_DATA:
+			diagnostics.setLateData(new BerNull());
+			break;
+		case OUT_OF_SEQUENCE:
+			diagnostics.setOutOfSequence(new BerNull());
+			break;
+		case SERVICE_INSTANCE_LOCKED:
+			diagnostics.setServiceInstanceLocked(new BerNull());
+			break;
+		case UNABLE_TO_PROCESS:
+			diagnostics.setUnableToProcess(new BerNull());
+			break;
+		case UNABLE_TO_STORE:
+			diagnostics.setUnableToStore(new BerNull());
+			break;
+		case EXTENDED:
+			diagnostics.setSequContrDataProcProcDataDiagnosticExtExtension(diagnosticExtension.encode(
+					new b2.ccsds.csts.common.types.Embedded()));
 			break;
 		}
 		// encode with a resizable output stream and an initial capacity of 128 bytes
@@ -124,7 +168,41 @@ public class SeqControlledDataProcDiagnostics {
 	 * @return a new Sequence-Controlled Data Processing PROCESS-DATA decoded from
 	 *         the specified CCSDS BuffDataDelStartDiagnosticExt type
 	 */
-	public static SeqControlledDataProcDiagnostics decode(SequContrDataProcProcDataDiagnosticExt diagnostics) {
+	public static SeqControlledDataProcDiagnostics decode(b1.ccsds.csts.sequence.controlled.data.processing.pdus.SequContrDataProcProcDataDiagnosticExt diagnostics) {
+
+		SeqControlledDataProcDiagnostics seqControlledDataProcDiagnostics = null;
+		if (diagnostics.getDataError() != null) {
+			seqControlledDataProcDiagnostics = new SeqControlledDataProcDiagnostics(
+					SeqControlledDataProcDiagnosticsType.DATA_ERROR);
+		} else if (diagnostics.getInconsistentTimeRange() != null) {
+			seqControlledDataProcDiagnostics = new SeqControlledDataProcDiagnostics(
+					SeqControlledDataProcDiagnosticsType.INCONSISTENT_TIME_RANGE);
+		} else if (diagnostics.getInvalidTime() != null) {
+			seqControlledDataProcDiagnostics = new SeqControlledDataProcDiagnostics(
+					SeqControlledDataProcDiagnosticsType.INVALID_TIME);
+		} else if (diagnostics.getLateData() != null) {
+			seqControlledDataProcDiagnostics = new SeqControlledDataProcDiagnostics(
+					SeqControlledDataProcDiagnosticsType.LATE_DATA);
+		} else if (diagnostics.getOutOfSequence() != null) {
+			seqControlledDataProcDiagnostics = new SeqControlledDataProcDiagnostics(
+					SeqControlledDataProcDiagnosticsType.OUT_OF_SEQUENCE);
+		} else if (diagnostics.getServiceInstanceLocked() != null) {
+			seqControlledDataProcDiagnostics = new SeqControlledDataProcDiagnostics(
+					SeqControlledDataProcDiagnosticsType.SERVICE_INSTANCE_LOCKED);
+		} else if (diagnostics.getUnableToProcess() != null) {
+			seqControlledDataProcDiagnostics = new SeqControlledDataProcDiagnostics(
+					SeqControlledDataProcDiagnosticsType.UNABLE_TO_PROCESS);
+		} else if (diagnostics.getUnableToStore() != null) {
+			seqControlledDataProcDiagnostics = new SeqControlledDataProcDiagnostics(
+					SeqControlledDataProcDiagnosticsType.UNABLE_TO_STORE);
+		} else if (diagnostics.getSequContrDataProcProcDataDiagnosticExtExtension() != null) {
+			seqControlledDataProcDiagnostics = new SeqControlledDataProcDiagnostics(
+					EmbeddedData.decode(diagnostics.getSequContrDataProcProcDataDiagnosticExtExtension()));
+		}
+		return seqControlledDataProcDiagnostics;
+	}
+	
+	public static SeqControlledDataProcDiagnostics decode(b2.ccsds.csts.sequence.controlled.data.processing.pdus.SequContrDataProcProcDataDiagnosticExt diagnostics) {
 
 		SeqControlledDataProcDiagnostics seqControlledDataProcDiagnostics = null;
 		if (diagnostics.getDataError() != null) {

@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 import com.beanit.jasn1.ber.types.BerBoolean;
 
-import b1.ccsds.on.change.option.cyclic.report.pdus.OnChangeOptCyclicReportStartInvocExt;
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.extensions.Extension;
@@ -14,6 +13,7 @@ import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.procedures.cyclicreport.CyclicReportUser;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
+import esa.egos.csts.api.types.SfwVersion;
 
 public class OnChangeCyclicReportUser extends CyclicReportUser implements IOnChangeCyclicReport
 {
@@ -43,11 +43,41 @@ public class OnChangeCyclicReportUser extends CyclicReportUser implements IOnCha
      * @return the Extension object representing the extension of the derived
      *         procedure
      */
-    protected Extension encodeStartInvocationExtExtension()
+    @Override
+    protected Extension encodeStartInvocationExtExtension() {
+    	if(getServiceInstance().getSfwVersion().equals(SfwVersion.B2)) {
+    		return encodeStartInvocationExtExtension(new b2.ccsds.on.change.option.cyclic.report.pdus.OnChangeOptCyclicReportStartInvocExt());
+    	} else {
+    		return encodeStartInvocationExtExtension(new b1.ccsds.on.change.option.cyclic.report.pdus.OnChangeOptCyclicReportStartInvocExt());
+    	}
+    }
+    
+    protected Extension encodeStartInvocationExtExtension(b1.ccsds.on.change.option.cyclic.report.pdus.OnChangeOptCyclicReportStartInvocExt invocationExtension)
     {
-        OnChangeOptCyclicReportStartInvocExt invocationExtension = new OnChangeOptCyclicReportStartInvocExt();
+    	invocationExtension.setOnChangeOnly(new BerBoolean(this.onChange));
+    	invocationExtension.setOnChangeOptCyclicReportStartInvocExtExtension(Extension.notUsed().encode(
+    			new b1.ccsds.csts.common.types.Extended()));
+
+        // encode with a resizable output stream and an initial capacity of 128
+        // bytes
+        try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(INIT_STREAM_BUFF_SIZE, true))
+        {
+            invocationExtension.encode(os);
+            invocationExtension.code = os.getArray();
+        }
+        catch (Exception e)
+        {
+            LOG.log(Level.SEVERE, "Failed to encode StartInvocationExtExtension", e);
+        }
+
+        return Extension.of(EmbeddedData.of(OIDs.onChangeOptCyclicReportStartInvocExt, invocationExtension.code));
+    }
+    
+    protected Extension encodeStartInvocationExtExtension(b2.ccsds.on.change.option.cyclic.report.pdus.OnChangeOptCyclicReportStartInvocExt invocationExtension)
+    {
         invocationExtension.setOnChangeOnly(new BerBoolean(this.onChange));
-        invocationExtension.setOnChangeOptCyclicReportStartInvocExtExtension(Extension.notUsed().encode());
+        invocationExtension.setOnChangeOptCyclicReportStartInvocExtExtension(Extension.notUsed().encode(
+        		new b2.ccsds.csts.common.types.Extended()));
 
         // encode with a resizable output stream and an initial capacity of 128
         // bytes

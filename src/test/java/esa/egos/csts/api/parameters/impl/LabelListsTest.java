@@ -22,6 +22,7 @@ import esa.egos.csts.api.procedures.IProcedure;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.serviceinstance.IServiceInstance;
+import esa.egos.csts.api.types.SfwVersion;
 
 public class LabelListsTest
 {
@@ -100,11 +101,6 @@ public class LabelListsTest
                 return true;
             }
 
-            @Override
-            public int getVersion()
-            {
-                return 0;
-            }
 
             @Override
             public boolean isConfigured()

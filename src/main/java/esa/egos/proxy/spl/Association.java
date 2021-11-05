@@ -1150,6 +1150,7 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 					this.translator = new PDUTranslator();
 
 				op = this.translator.decode(data, isInvoke);
+				
 			}
 			poperation.setReference(op);
 		} catch (ApiResultException e) {
@@ -1287,7 +1288,7 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 		IOperation poperation = null;
 
 		try {
-			poperation = getSrvProxyInform().getTranslator().decode(peerabortDiag, null, abortOriginator);
+			poperation = getSrvProxyInform().getTranslator().decode(peerabortDiag, abortOriginator);
 		} catch (ApiException e) {
 			doAbort(PeerAbortDiagnostics.ENCODING_ERROR, AbortOriginator.INTERNAL, true);
 			String mess = PeerAbortDiagnostics.ENCODING_ERROR.toString() + " : " + e.getMessage();

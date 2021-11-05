@@ -4,6 +4,7 @@ import esa.egos.csts.api.enumerations.AppRole;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.exceptions.ConfigException;
 import esa.egos.csts.api.serviceinstance.impl.ServiceType;
+import esa.egos.csts.api.types.SfwVersion;
 import esa.egos.proxy.util.ITime;
 
 public interface IServiceConfiguration {
@@ -69,6 +70,10 @@ public interface IServiceConfiguration {
 
     void setVersion(int version);
     
+    
+    SfwVersion getSfwVersion();
+    
+    void setSfwVersion(SfwVersion sfwVersion);
     /**
      * Gets the role.
      * 

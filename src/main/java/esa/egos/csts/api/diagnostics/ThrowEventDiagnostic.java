@@ -5,7 +5,6 @@ import java.io.IOException;
 import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 import com.beanit.jasn1.ber.types.BerNull;
 
-import b1.ccsds.csts.throw_.event.pdus.TeExecDirNegReturnDiagnosticExt;
 import esa.egos.csts.api.extensions.EmbeddedData;
 
 /**
@@ -74,14 +73,38 @@ public class ThrowEventDiagnostic {
 	 * @return the CCSDS TeExecDirNegReturnDiagnosticExt type representing this
 	 *         Diagnostic
 	 */
-	public TeExecDirNegReturnDiagnosticExt encode() {
-		TeExecDirNegReturnDiagnosticExt diagnostic = new TeExecDirNegReturnDiagnosticExt();
+	public b1.ccsds.csts.throw_.event.pdus.TeExecDirNegReturnDiagnosticExt encode(b1.ccsds.csts.throw_.event.pdus.TeExecDirNegReturnDiagnosticExt diagnostic ) {
+
 		switch (type) {
 		case GUARD_CONDITION_EVALUATED_TO_FALSE:
 			diagnostic.setGuardConditionEvaluatedToFalse(new BerNull());
 			break;
 		case EXTENDED:
-			diagnostic.setTeExecDirNegReturnDiagnosticExtExtension(diagnosticExtension.encode());
+			diagnostic.setTeExecDirNegReturnDiagnosticExtExtension(diagnosticExtension.encode(
+					new b1.ccsds.csts.common.types.Embedded()));
+			break;
+		}
+		
+		// encode with a resizable output stream and an initial capacity of 128 bytes
+		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
+			diagnostic.encode(os);
+			diagnostic.code = os.getArray();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return diagnostic;
+	}
+	
+	public b2.ccsds.csts.throw_.event.pdus.TeExecDirNegReturnDiagnosticExt encode(b2.ccsds.csts.throw_.event.pdus.TeExecDirNegReturnDiagnosticExt diagnostic ) {
+
+		switch (type) {
+		case GUARD_CONDITION_EVALUATED_TO_FALSE:
+			diagnostic.setGuardConditionEvaluatedToFalse(new BerNull());
+			break;
+		case EXTENDED:
+			diagnostic.setTeExecDirNegReturnDiagnosticExtExtension(diagnosticExtension.encode(
+					new b2.ccsds.csts.common.types.Embedded()));
 			break;
 		}
 		
@@ -103,7 +126,7 @@ public class ThrowEventDiagnostic {
 	 * @return a new Throw Event EXECUTE-DIRECTIVE Diagnostic decoded from the
 	 *         specified CCSDS BuffDataDelStartDiagnosticExt type
 	 */
-	public static ThrowEventDiagnostic decode(TeExecDirNegReturnDiagnosticExt diagnostic) {
+	public static ThrowEventDiagnostic decode(b1.ccsds.csts.throw_.event.pdus.TeExecDirNegReturnDiagnosticExt diagnostic) {
 		ThrowEventDiagnostic throwEventDiagnostic = null;
 		if (diagnostic.getGuardConditionEvaluatedToFalse() != null) {
 			throwEventDiagnostic = new ThrowEventDiagnostic(
@@ -114,5 +137,16 @@ public class ThrowEventDiagnostic {
 		}
 		return throwEventDiagnostic;
 	}
-
+	
+	public static ThrowEventDiagnostic decode(b2.ccsds.csts.throw_.event.pdus.TeExecDirNegReturnDiagnosticExt diagnostic) {
+		ThrowEventDiagnostic throwEventDiagnostic = null;
+		if (diagnostic.getGuardConditionEvaluatedToFalse() != null) {
+			throwEventDiagnostic = new ThrowEventDiagnostic(
+					ThrowEventDiagnosticType.GUARD_CONDITION_EVALUATED_TO_FALSE);
+		} else if (diagnostic.getTeExecDirNegReturnDiagnosticExtExtension() != null) {
+			throwEventDiagnostic = new ThrowEventDiagnostic(
+					EmbeddedData.decode(diagnostic.getTeExecDirNegReturnDiagnosticExtExtension()));
+		}
+		return throwEventDiagnostic;
+	}
 }

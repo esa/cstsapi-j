@@ -4,8 +4,6 @@ import java.util.Arrays;
 
 import com.beanit.jasn1.ber.types.BerEmbeddedPdv.Identification;
 
-import b1.ccsds.csts.common.types.Embedded;
-
 import com.beanit.jasn1.ber.types.BerObjectIdentifier;
 import com.beanit.jasn1.ber.types.BerOctetString;
 
@@ -63,8 +61,15 @@ public class EmbeddedData {
 	 * 
 	 * @return the encoded CCSDS Embedded type
 	 */
-	public Embedded encode() {
-		Embedded embedded = new Embedded();
+	public b1.ccsds.csts.common.types.Embedded encode(b1.ccsds.csts.common.types.Embedded embedded) {
+		Identification identification = new Identification();
+		identification.setSyntax(new BerObjectIdentifier(oid.toArray()));
+		embedded.setIdentification(identification);
+		embedded.setDataValue(new BerOctetString(data));
+		return embedded;
+	}
+	
+	public b2.ccsds.csts.common.types.Embedded encode(b2.ccsds.csts.common.types.Embedded embedded) {
 		Identification identification = new Identification();
 		identification.setSyntax(new BerObjectIdentifier(oid.toArray()));
 		embedded.setIdentification(identification);
@@ -79,7 +84,13 @@ public class EmbeddedData {
 	 *            the specified CCSDS Embedded type
 	 * @return a new EmbeddedData decoded from the specified CCSDS Embedded type
 	 */
-	public static EmbeddedData decode(Embedded embedded) {
+	public static EmbeddedData decode( b1.ccsds.csts.common.types.Embedded embedded) {
+		ObjectIdentifier oid = ObjectIdentifier.of(embedded.getIdentification().getSyntax().value);
+		byte[] data = embedded.getDataValue().value;
+		return new EmbeddedData(oid, data);
+	}
+	
+	public static EmbeddedData decode( b2.ccsds.csts.common.types.Embedded embedded) {
 		ObjectIdentifier oid = ObjectIdentifier.of(embedded.getIdentification().getSyntax().value);
 		byte[] data = embedded.getDataValue().value;
 		return new EmbeddedData(oid, data);

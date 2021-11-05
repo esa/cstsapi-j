@@ -1,9 +1,6 @@
 package esa.egos.csts.api.procedures.impl;
 
 import com.beanit.jasn1.ber.types.BerNull;
-
-import b1.ccsds.csts.common.types.IntPos;
-import b1.ccsds.csts.common.types.ProcedureInstanceId;
 import esa.egos.csts.api.enumerations.ProcedureRole;
 
 /**
@@ -68,9 +65,7 @@ public class ProcedureInstanceIdentifier {
 	 * 
 	 * @return the CCSDS ProcedureInstanceId type representing this object
 	 */
-	public ProcedureInstanceId encode() {
-
-		ProcedureInstanceId pid = new ProcedureInstanceId();
+	public b1.ccsds.csts.common.types.ProcedureInstanceId encode(b1.ccsds.csts.common.types.ProcedureInstanceId pid) {
 
 		pid.setProcedureType(new b1.ccsds.csts.common.types.ProcedureType(type.getOid().toArray()));
 
@@ -83,7 +78,28 @@ public class ProcedureInstanceIdentifier {
 			encodeRole.setAssociationControl(new BerNull());
 			break;
 		case SECONDARY:
-			encodeRole.setSecondaryProcedure(new IntPos(instanceNumber));
+			encodeRole.setSecondaryProcedure(new b1.ccsds.csts.common.types.IntPos(instanceNumber));
+			break;
+		}
+		pid.setProcedureRole(encodeRole);
+
+		return pid;
+	}
+	
+	public b2.ccsds.csts.common.types.ProcedureName encode(b2.ccsds.csts.common.types.ProcedureName pid) {
+
+		pid.setProcedureType(new b2.ccsds.csts.common.types.ProcedureType(type.getOid().toArray()));
+
+		b2.ccsds.csts.common.types.ProcedureName.ProcedureRole encodeRole = new b2.ccsds.csts.common.types.ProcedureName.ProcedureRole();
+		switch (role) {
+		case PRIME:
+			encodeRole.setPrimeProcedure(new BerNull());
+			break;
+		case ASSOCIATION_CONTROL:
+			encodeRole.setAssociationControl(new BerNull());
+			break;
+		case SECONDARY:
+			encodeRole.setSecondaryProcedure(new b2.ccsds.csts.common.types.IntPos(instanceNumber));
 			break;
 		}
 		pid.setProcedureRole(encodeRole);
@@ -98,7 +114,23 @@ public class ProcedureInstanceIdentifier {
 	 * @return a new Procedure Instance Identifier decoded from the specified CCSDS
 	 *         ProcedureInstanceId type
 	 */
-	public static ProcedureInstanceIdentifier decode(ProcedureInstanceId procedureInstanceId) {
+	public static ProcedureInstanceIdentifier decode(b1.ccsds.csts.common.types.ProcedureInstanceId procedureInstanceId) {
+
+		ProcedureInstanceIdentifier procedureInstanceIdentifier = null;
+
+		if (procedureInstanceId.getProcedureRole().getAssociationControl() != null) {
+			procedureInstanceIdentifier = new ProcedureInstanceIdentifier(ProcedureType.decode(procedureInstanceId.getProcedureType()), ProcedureRole.ASSOCIATION_CONTROL, 0);
+		} else if (procedureInstanceId.getProcedureRole().getPrimeProcedure() != null) {
+			procedureInstanceIdentifier = new ProcedureInstanceIdentifier(ProcedureType.decode(procedureInstanceId.getProcedureType()), ProcedureRole.PRIME, 0);
+		} else if (procedureInstanceId.getProcedureRole().getSecondaryProcedure() != null) {
+			procedureInstanceIdentifier = new ProcedureInstanceIdentifier(ProcedureType.decode(procedureInstanceId.getProcedureType()), ProcedureRole.SECONDARY,
+					procedureInstanceId.getProcedureRole().getSecondaryProcedure().intValue());
+		}
+
+		return procedureInstanceIdentifier;
+	}
+	
+	public static ProcedureInstanceIdentifier decode(b2.ccsds.csts.common.types.ProcedureName procedureInstanceId) {
 
 		ProcedureInstanceIdentifier procedureInstanceIdentifier = null;
 

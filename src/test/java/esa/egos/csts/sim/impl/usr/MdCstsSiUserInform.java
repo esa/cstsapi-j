@@ -14,8 +14,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import b1.ccsds.csts.cyclic.report.pdus.CyclicReportStartDiagnosticExt;
-import b1.ccsds.csts.notification.pdus.NotificationStartDiagnosticExt;
 import esa.egos.csts.api.diagnostics.CyclicReportStartDiagnostics;
 import esa.egos.csts.api.diagnostics.DiagnosticType;
 import esa.egos.csts.api.diagnostics.StartDiagnostic;
@@ -59,6 +57,7 @@ import esa.egos.csts.api.procedures.informationquery.InformationQueryUser;
 import esa.egos.csts.api.procedures.notification.NotificationUser;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.Name;
+import esa.egos.csts.api.types.SfwVersion;
 import esa.egos.csts.monitored.data.procedures.OnChangeCyclicReportUser;
 import esa.egos.csts.sim.impl.MdCstsSi;
 import esa.egos.csts.sim.impl.MdCstsSiConfig;
@@ -129,9 +128,9 @@ public abstract class MdCstsSiUserInform extends
      * @param version The CSTS version to use
      * @throws ApiException
      */
-    public MdCstsSiUserInform(ICstsApi api, MdCstsSiConfig config) throws ApiException
+    public MdCstsSiUserInform(ICstsApi api, MdCstsSiConfig config, int serviceVersion) throws ApiException
     {
-        super(api, config);
+        super(api, config, serviceVersion);
 
         System.out.println("MdCstsSiUserInform#MdCstsSiUser() begin");
 
@@ -317,9 +316,17 @@ public abstract class MdCstsSiUserInform extends
      * 
      * @param start The returned start operation
      */
-    private void onStartReturn(IStart start)
+    private void onStartReturn(IStart start) {
+    	if(this.getSfwVersion().equals(SfwVersion.B2)) {
+    		onStartReturnB2(start);
+    	} else {
+    		onStartReturnB1(start);
+    	}
+    }
+    
+    private void onStartReturnB1(IStart start)
     {
-        System.out.println("MdCstsSiUserInform#onStartReturn() begin");
+        System.out.println("MdCstsSiUserInform#onStartReturn() begin(b1)");
 
         this.retLock.lock();
 
@@ -334,7 +341,8 @@ public abstract class MdCstsSiUserInform extends
                         EmbeddedData ed = sd.getDiagnosticExtension();
                         if (ed.getOid().equals(OIDs.crStartDiagExt))
                         {
-                            CyclicReportStartDiagnosticExt cyclicReportStartDiagnosticExt = new CyclicReportStartDiagnosticExt();
+                        	b1.ccsds.csts.cyclic.report.pdus.CyclicReportStartDiagnosticExt cyclicReportStartDiagnosticExt = 
+                        			new b1.ccsds.csts.cyclic.report.pdus.CyclicReportStartDiagnosticExt();
                             try (ByteArrayInputStream is = new ByteArrayInputStream(ed.getData()))
                             {
                                 cyclicReportStartDiagnosticExt.decode(is);
@@ -348,7 +356,8 @@ public abstract class MdCstsSiUserInform extends
                         }
                         else if (ed.getOid().equals(OIDs.nStartDiagExt))
                         {
-                            NotificationStartDiagnosticExt notificationStartDiagnosticExt = new NotificationStartDiagnosticExt();
+                        	b1.ccsds.csts.notification.pdus.NotificationStartDiagnosticExt notificationStartDiagnosticExt = 
+                        			new b1.ccsds.csts.notification.pdus.NotificationStartDiagnosticExt();
                             try (ByteArrayInputStream is = new ByteArrayInputStream(ed.getData()))
                             {
                                 notificationStartDiagnosticExt.decode(is);
@@ -375,7 +384,70 @@ public abstract class MdCstsSiUserInform extends
             this.retLock.unlock();
         }
 
-        System.out.println("MdCstsSiUserInform#onStartReturn() end");
+        System.out.println("MdCstsSiUserInform#onStartReturn() end(b1)");
+    }
+    
+    private void onStartReturnB2(IStart start)
+    {
+        System.out.println("MdCstsSiUserInform#onStartReturn() begin(b2)");
+
+        this.retLock.lock();
+
+        try
+        {
+            if (start.getResult() == OperationResult.NEGATIVE)
+            {
+                onReturn(start, () -> {
+                    StartDiagnostic sd = start.getStartDiagnostic();
+                    if (sd.getType() == StartDiagnosticType.EXTENDED)
+                    {
+                        EmbeddedData ed = sd.getDiagnosticExtension();
+                        if (ed.getOid().equals(OIDs.crStartDiagExt))
+                        {
+                        	b2.ccsds.csts.cyclic.report.pdus.CyclicReportStartDiagnosticExt cyclicReportStartDiagnosticExt = 
+                        			new b2.ccsds.csts.cyclic.report.pdus.CyclicReportStartDiagnosticExt();
+                            try (ByteArrayInputStream is = new ByteArrayInputStream(ed.getData()))
+                            {
+                                cyclicReportStartDiagnosticExt.decode(is);
+                            }
+                            catch (IOException e)
+                            {
+                                e.printStackTrace();
+                            }
+                            return CyclicReportStartDiagnostics.decode(cyclicReportStartDiagnosticExt)
+                                    .getListOfParametersDiagnostics().toString();
+                        }
+                        else if (ed.getOid().equals(OIDs.nStartDiagExt))
+                        {
+                        	b2.ccsds.csts.notification.pdus.NotificationStartDiagnosticExt notificationStartDiagnosticExt = 
+                        			new b2.ccsds.csts.notification.pdus.NotificationStartDiagnosticExt();
+                            try (ByteArrayInputStream is = new ByteArrayInputStream(ed.getData()))
+                            {
+                                notificationStartDiagnosticExt.decode(is);
+                            }
+                            catch (IOException e)
+                            {
+                                e.printStackTrace();
+                            }
+                            return notificationStartDiagnosticExt.getCommon().toString();
+                        }
+                    }
+                    return start.getStartDiagnostic().getType().name();
+                });
+            }
+            else
+            {
+                onReturn(start, () -> {
+                    return start.getStartDiagnostic().getType().name();
+                });
+            }
+        }
+        finally
+        {
+            this.retLock.unlock();
+        }
+
+        System.out.println("MdCstsSiUserInform#onStartReturn() end(b2)");
     }
 
     /**

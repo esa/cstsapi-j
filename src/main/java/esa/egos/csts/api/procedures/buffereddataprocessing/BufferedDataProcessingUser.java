@@ -7,7 +7,7 @@ import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.states.UserStateInactive;
 
-public class BufferedDataProcessingUser extends AbstractBufferedDataProcessing {
+public class BufferedDataProcessingUser extends AbstractBufferedDataProcessingB2 {
 
 	@Override
 	protected void initializeState() {

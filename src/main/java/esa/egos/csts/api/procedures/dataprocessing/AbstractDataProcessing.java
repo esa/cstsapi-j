@@ -10,19 +10,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 import com.beanit.jasn1.ber.types.BerNull;
 
-import b1.ccsds.csts.common.types.DataUnitId;
-import b1.ccsds.csts.common.types.TimeCCSDSMilli;
-import b1.ccsds.csts.common.types.TimeCCSDSPico;
-import b1.ccsds.csts.data.processing.pdus.DataProcNotifyInvocExt;
-import b1.ccsds.csts.data.processing.pdus.DataProcProcDataInvocExt;
-import b1.ccsds.csts.data.processing.pdus.DataProcessingPdu;
-import b1.ccsds.csts.data.processing.pdus.DataProcessingStartTime;
-import b1.ccsds.csts.data.processing.pdus.DataProcNotifyInvocExt.DataUnitIdLastOk;
-import b1.ccsds.csts.data.processing.pdus.DataProcNotifyInvocExt.DataUnitIdLastProcessed;
-import b1.ccsds.csts.data.processing.pdus.DataProcNotifyInvocExt.ProductionStatus;
-import b1.ccsds.csts.data.processing.pdus.DataProcNotifyInvocExt.DataUnitIdLastProcessed.DataUnitLastProcessed;
-import b1.ccsds.csts.data.processing.pdus.DataProcNotifyInvocExt.DataUnitIdLastProcessed.DataUnitLastProcessed.DataProcessingStatus;
-import b1.ccsds.csts.data.processing.pdus.DataProcProcDataInvocExt.ProcessCompletionReport;
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.enumerations.EventValueType;
 import esa.egos.csts.api.enumerations.OperationType;
@@ -48,8 +35,7 @@ import esa.egos.csts.api.types.Time;
 public abstract class AbstractDataProcessing extends AbstractStatefulProcedure implements IDataProcessingInternal {
 
 	private static final ProcedureType TYPE = ProcedureType.of(OIDs.dataProcessing);
-	
-	private static final int VERSION = 1;
+
 
 	private BlockingQueue<IProcessData> queue;
 	private HashSet<Long> toBeReported;
@@ -80,10 +66,6 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 		return TYPE;
 	}
 	
-	@Override
-	public int getVersion() {
-		return VERSION;
-	}
 
 	protected void initOperationTypes() {
 		addSupportedOperationType(OperationType.START);
@@ -132,6 +114,10 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 
 	public ProductionState isProductionStatusNotified() {
 		return productionStatusNotified;
+	}
+	
+	protected void setProductionStatusNotified(ProductionState productionStatusNotified) {
+		this.productionStatusNotified = productionStatusNotified;
 	}
 	
 	@Override
@@ -358,104 +344,18 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 		return doInitiateOperationInvoke(operation);
 	}
 
-	protected EmbeddedData encodeProcessDataInvocationExtension() {
+	protected abstract EmbeddedData encodeProcessDataInvocationExtension(); 
+	
 
-		DataProcProcDataInvocExt invocationExtension = new DataProcProcDataInvocExt();
-		ProcessCompletionReport processCompletionReport = new ProcessCompletionReport();
-		if (produceReport) {
-			processCompletionReport.setProduceReport(new BerNull());
-		} else {
-			processCompletionReport.setDoNotProduceReport(new BerNull());
-		}
-		invocationExtension.setProcessCompletionReport(processCompletionReport);
-		invocationExtension.setDataProcProcDataInvocExtExtension(encodeProcDataInvocationExtExtension().encode());
-
-		// encode with a resizable output stream and an initial capacity of 128 bytes
-		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
-			invocationExtension.encode(os);
-			invocationExtension.code = os.getArray();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return EmbeddedData.of(OIDs.dpProcDataInvocExt, invocationExtension.code);
-	}
 
 	protected Extension encodeProcDataInvocationExtExtension() {
 		return Extension.notUsed();
 	}
+	
+	
+	protected abstract EmbeddedData encodeNotifyInvocationExtension(boolean svcProductionStatusChange); 
 
-	protected EmbeddedData encodeNotifyInvocationExtension(boolean svcProductionStatusChange) {
 
-		DataProcNotifyInvocExt invocationExtension = new DataProcNotifyInvocExt();
-
-		DataUnitIdLastProcessed dataUnitIdLastProcessed = new DataUnitIdLastProcessed();
-		DataUnitIdLastOk dataUnitIdLastOk = new DataUnitIdLastOk();
-
-		if (lastProcessedDataUnitId < 0) {
-			dataUnitIdLastProcessed.setNoDataProcessed(new BerNull());
-			dataUnitIdLastOk.setNoSuccessfulProcessing(new BerNull());
-		} else {
-
-			DataUnitLastProcessed dataUnitLastProcessed = new DataUnitLastProcessed();
-			dataUnitLastProcessed.setDataUnitId(new DataUnitId(lastProcessedDataUnitId));
-			DataProcessingStatus dataProcessingStatus = new DataProcessingStatus();
-			DataProcessingStartTime dataProcessingStartTime = new DataProcessingStartTime();
-			if (lastProcessedDataUnitTime.getType() == TimeType.MILLISECONDS) {
-				dataProcessingStartTime.setCcsdsFormatMilliseconds(new TimeCCSDSMilli(lastProcessedDataUnitTime.toArray()));
-			} else if (lastProcessedDataUnitTime.getType() == TimeType.PICOSECONDS) {
-				dataProcessingStartTime.setCcsdsFormatPicoseconds(new TimeCCSDSPico(lastProcessedDataUnitTime.toArray()));
-			}
-			switch (lastProcessedDataUnitStatus) {
-			case PROCESSING_INTERRUPTED:
-				dataProcessingStatus.setProcessingInterrupted(dataProcessingStartTime);
-				break;
-			case PROCESSING_STARTED:
-				dataProcessingStatus.setProcessingStarted(dataProcessingStartTime);
-				break;
-			case SUCCESSFULLY_PROCESSED:
-				dataProcessingStatus.setSuccessfullyProcessed(dataProcessingStartTime);
-				break;
-			case EXTENDED:
-				dataProcessingStatus.setDataProcessingStatusExtension(encodeDataProcessingStatusExtension().encode());
-				break;
-			}
-			dataUnitLastProcessed.setDataProcessingStatus(dataProcessingStatus);
-			dataUnitIdLastProcessed.setDataUnitLastProcessed(dataUnitLastProcessed);
-
-			if (lastSuccessfullyProcessDataUnitId < 0) {
-				dataUnitIdLastOk.setNoSuccessfulProcessing(new BerNull());
-			} else {
-				b1.ccsds.csts.data.processing.pdus.DataProcNotifyInvocExt.DataUnitIdLastOk.DataUnitId dataUnitId =
-						new b1.ccsds.csts.data.processing.pdus.DataProcNotifyInvocExt.DataUnitIdLastOk.DataUnitId();
-				dataUnitId.setDataUnitId(new DataUnitId(lastSuccessfullyProcessDataUnitId));
-				dataUnitId.setDataProcessingStopTime(lastSuccessfullyProcessDataUnitTime.encode());
-				dataUnitIdLastOk.setDataUnitId(dataUnitId);
-			}
-		}
-
-		ProductionStatus productionStatus = new ProductionStatus();
-		if (svcProductionStatusChange) {
-			productionStatus.setProductionStatusChange(new BerNull());
-		} else {
-			productionStatus.setAnyOtherEvent(getServiceInstance().getProductionStatus().encode());
-		}
-
-		invocationExtension.setDataUnitIdLastProcessed(dataUnitIdLastProcessed);
-		invocationExtension.setDataUnitIdLastOk(dataUnitIdLastOk);
-		invocationExtension.setProductionStatus(productionStatus);
-		invocationExtension.setDataProcNotifyInvocExtExtension(encodeNotifyInvocationExtExtension().encode());
-
-		// encode with a resizable output stream and an initial capacity of 128 bytes
-		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
-			invocationExtension.encode(os);
-			invocationExtension.code = os.getArray();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		return EmbeddedData.of(OIDs.dpNotifyInvocExt, invocationExtension.code);
-	}
 
 	protected EmbeddedData encodeDataProcessingStatusExtension() {
 		// override if status is set to be extended
@@ -467,44 +367,8 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 	}
 
 	@Override
-	public byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException {
-
-		byte[] encodedOperation;
-		DataProcessingPdu pdu = new DataProcessingPdu();
-
-		if (operation.getType() == OperationType.START) {
-			IStart start = (IStart) operation;
-			if (isInvoke) {
-				pdu.setStartInvocation(start.encodeStartInvocation());
-			} else {
-				pdu.setStartReturn(start.encodeStartReturn());
-			}
-		} else if (operation.getType() == OperationType.STOP) {
-			IStop stop = (IStop) operation;
-			if (isInvoke) {
-				pdu.setStopInvocation(stop.encodeStopInvocation());
-			} else {
-				pdu.setStopReturn(stop.encodeStopReturn());
-			}
-		} else if (operation.getType() == OperationType.PROCESS_DATA) {
-			IProcessData processData = (IProcessData) operation;
-			if (isInvoke) {
-				pdu.setProcessDataInvocation(processData.encodeProcessDataInvocation());
-			}
-		} else if (operation.getType() == OperationType.NOTIFY) {
-			INotify notify = (INotify) operation;
-			if (isInvoke) {
-				pdu.setNotifyInvocation(notify.encodeNotifyInvocation());
-			}
-		}
-
-		try (ReverseByteArrayOutputStream berBAOStream = new ReverseByteArrayOutputStream(10, true)) {
-			pdu.encode(berBAOStream);
-			encodedOperation = berBAOStream.getArray();
-		}
-
-		return encodedOperation;
-	}
+	public abstract byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException;
+	
 
 	@Override
 	public CstsResult informOperationInvoke(IOperation operation) {
@@ -521,96 +385,15 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 		return doInformOperationInvoke(operation);
 	}
 
-	protected void decodeProcessDataInvocationExtension(Extension extension) {
-		if (extension.isUsed() && extension.getEmbeddedData().getOid().equals(OIDs.dpProcDataInvocExt)) {
-			DataProcProcDataInvocExt invocationExtension = new DataProcProcDataInvocExt();
-			try (ByteArrayInputStream is = new ByteArrayInputStream(extension.getEmbeddedData().getData())) {
-				invocationExtension.decode(is);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			produceReport = invocationExtension.getProcessCompletionReport().getProduceReport() != null;
-			decodeProcessDataInvocationExtExtension(Extension.decode(invocationExtension.getDataProcProcDataInvocExtExtension()));
-		}
-	}
+	protected abstract void decodeProcessDataInvocationExtension(Extension extension);
+	
 
 	protected void decodeProcessDataInvocationExtExtension(Extension extension) {
 
 	}
 
-	protected void decodeNotifyInvocationExtension(Extension extension) {
-		if (extension.isUsed() && extension.getEmbeddedData().getOid().equals(OIDs.dpNotifyInvocExt)) {
-
-			DataProcNotifyInvocExt invocationExtension = new DataProcNotifyInvocExt();
-			try (ByteArrayInputStream is = new ByteArrayInputStream(extension.getEmbeddedData().getData())) {
-				invocationExtension.decode(is);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-			DataUnitIdLastProcessed dataUnitIdLastProcessed = invocationExtension.getDataUnitIdLastProcessed();
-			if (dataUnitIdLastProcessed.getNoDataProcessed() != null) {
-				lastProcessedDataUnitId = -1;
-				lastProcessedDataUnitTime = null;
-			} else if (dataUnitIdLastProcessed.getDataUnitLastProcessed() != null) {
-				DataUnitLastProcessed dataUnitLastProcessed = dataUnitIdLastProcessed.getDataUnitLastProcessed();
-				lastProcessedDataUnitId = dataUnitLastProcessed.getDataUnitId().longValue();
-				DataProcessingStartTime startTime;
-				if (dataUnitLastProcessed.getDataProcessingStatus().getProcessingInterrupted() != null) {
-					lastProcessedDataUnitStatus = ProcessingStatus.PROCESSING_INTERRUPTED;
-					startTime = dataUnitLastProcessed.getDataProcessingStatus().getProcessingInterrupted();
-					if (startTime.getCcsdsFormatMilliseconds() != null) {
-						lastProcessedDataUnitTime = Time.of(startTime.getCcsdsFormatMilliseconds().value);
-					} else if (startTime.getCcsdsFormatMilliseconds() != null) {
-						lastProcessedDataUnitTime = Time.of(startTime.getCcsdsFormatPicoseconds().value);
-					}
-				} else if (dataUnitLastProcessed.getDataProcessingStatus().getProcessingStarted() != null) {
-					lastProcessedDataUnitStatus = ProcessingStatus.PROCESSING_STARTED;
-					startTime = dataUnitLastProcessed.getDataProcessingStatus().getProcessingStarted();
-					if (startTime.getCcsdsFormatMilliseconds() != null) {
-						lastProcessedDataUnitTime = Time.of(startTime.getCcsdsFormatMilliseconds().value);
-					} else if (startTime.getCcsdsFormatMilliseconds() != null) {
-						lastProcessedDataUnitTime = Time.of(startTime.getCcsdsFormatPicoseconds().value);
-					}
-				} else if (dataUnitLastProcessed.getDataProcessingStatus().getSuccessfullyProcessed() != null) {
-					lastProcessedDataUnitStatus = ProcessingStatus.SUCCESSFULLY_PROCESSED;
-					startTime = dataUnitLastProcessed.getDataProcessingStatus().getSuccessfullyProcessed();
-					if (startTime.getCcsdsFormatMilliseconds() != null) {
-						lastProcessedDataUnitTime = Time.of(startTime.getCcsdsFormatMilliseconds().value);
-					} else if (startTime.getCcsdsFormatMilliseconds() != null) {
-						lastProcessedDataUnitTime = Time.of(startTime.getCcsdsFormatPicoseconds().value);
-					}
-				} else if (dataUnitLastProcessed.getDataProcessingStatus().getDataProcessingStatusExtension() != null) {
-					lastProcessedDataUnitStatus = ProcessingStatus.EXTENDED;
-					decodeDataProcessingStatusExtension(EmbeddedData.decode(dataUnitLastProcessed.getDataProcessingStatus().getDataProcessingStatusExtension()));
-				}
-			}
-
-			DataUnitIdLastOk dataUnitIdLastOk = invocationExtension.getDataUnitIdLastOk();
-			if (dataUnitIdLastOk.getNoSuccessfulProcessing() != null) {
-				lastSuccessfullyProcessDataUnitId = -1;
-				lastSuccessfullyProcessDataUnitTime = null;
-			} else if (dataUnitIdLastOk.getNoSuccessfulProcessing() != null) {
-				lastSuccessfullyProcessDataUnitId = dataUnitIdLastOk.getDataUnitId().getDataUnitId().longValue();
-				b1.ccsds.csts.common.types.Time stopTime = dataUnitIdLastOk.getDataUnitId().getDataProcessingStopTime();
-				if (stopTime.getCcsdsFormatMilliseconds() != null) {
-					lastSuccessfullyProcessDataUnitTime = Time.of(stopTime.getCcsdsFormatMilliseconds().value);
-				} else if (stopTime.getCcsdsFormatPicoseconds() != null) {
-					lastSuccessfullyProcessDataUnitTime = Time.of(stopTime.getCcsdsFormatPicoseconds().value);
-				}
-			}
-
-			if (invocationExtension.getProductionStatus().getProductionStatusChange() != null) {
-				productionStatusNotified = null;
-			} else {
-				productionStatusNotified = esa.egos.csts.api.productionstatus.ProductionStatus
-						.decode(invocationExtension.getProductionStatus().getAnyOtherEvent()).getCurrentState();
-			}
-
-			decodeNotifyInvocationExtExtension(Extension.decode(invocationExtension.getDataProcNotifyInvocExtExtension()));
-			
-		}
-	}
+	protected abstract void decodeNotifyInvocationExtension(Extension extension);
+	
 
 	protected void decodeDataProcessingStatusExtension(EmbeddedData embeddedData) {
 
@@ -621,42 +404,8 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 	}
 
 	@Override
-	public IOperation decodeOperation(byte[] encodedPdu) throws IOException {
-
-		DataProcessingPdu pdu = new DataProcessingPdu();
-		try (ByteArrayInputStream is = new ByteArrayInputStream(encodedPdu)) {
-			pdu.decode(is);
-		}
-
-		IOperation operation = null;
-
-		if (pdu.getStartInvocation() != null) {
-			IStart start = createStart();
-			start.decodeStartInvocation(pdu.getStartInvocation());
-			operation = start;
-		} else if (pdu.getStartReturn() != null) {
-			IStart start = createStart();
-			start.decodeStartReturn(pdu.getStartReturn());
-			operation = start;
-		} else if (pdu.getStopInvocation() != null) {
-			IStop stop = createStop();
-			stop.decodeStopInvocation(pdu.getStopInvocation());
-			operation = stop;
-		} else if (pdu.getStopReturn() != null) {
-			IStop stop = createStop();
-			stop.decodeStopReturn(pdu.getStopReturn());
-			operation = stop;
-		} else if (pdu.getProcessDataInvocation() != null) {
-			IProcessData processData = createProcessData();
-			processData.decodeProcessDataInvocation(pdu.getProcessDataInvocation());
-			operation = processData;
-		} else if (pdu.getNotifyInvocation() != null) {
-			INotify notify = createNotify();
-			notify.decodeNotifyInvocation(pdu.getNotifyInvocation());
-			operation = notify;
-		}
-
-		return operation;
-	}
+	public abstract IOperation decodeOperation(byte[] encodedPdu) throws IOException; 
+	
+	
 
 }

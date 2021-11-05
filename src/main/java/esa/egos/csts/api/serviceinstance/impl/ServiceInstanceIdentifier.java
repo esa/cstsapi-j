@@ -2,8 +2,6 @@ package esa.egos.csts.api.serviceinstance.impl;
 
 import java.util.Arrays;
 
-import b1.ccsds.csts.common.types.IntUnsigned;
-import b1.ccsds.csts.common.types.PublishedIdentifier;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceIdentifier;
 
@@ -56,18 +54,24 @@ public class ServiceInstanceIdentifier implements IServiceInstanceIdentifier {
 		return false;
 	}
 
-	@Override
-	public b1.ccsds.csts.service.instance.id.ServiceInstanceIdentifier encode() {
-		b1.ccsds.csts.service.instance.id.ServiceInstanceIdentifier id = new b1.ccsds.csts.service.instance.id.ServiceInstanceIdentifier();
-		id.setFacilityId(new PublishedIdentifier(getFacilityIdentifier().toArray()));
-		id.setServiceType(new PublishedIdentifier(getCstsTypeIdentifier().toArray()));
-		id.setSpacecraftId(new PublishedIdentifier(getSpacecraftIdentifier().toArray()));
-		id.setServiceInstanceNumber(new IntUnsigned(getServiceInstanceNumber()));
-		return id;
-	}
-
 	public static IServiceInstanceIdentifier decode(
 			b1.ccsds.csts.service.instance.id.ServiceInstanceIdentifier serviceInstanceIdentifier) {
+
+		IServiceInstanceIdentifier siid = null;
+
+		ObjectIdentifier spacecraftIdentifier = ObjectIdentifier.of(serviceInstanceIdentifier.getSpacecraftId().value);
+		ObjectIdentifier facilityIdentifier = ObjectIdentifier.of(serviceInstanceIdentifier.getFacilityId().value);
+		ObjectIdentifier typeIdentifier = ObjectIdentifier.of(serviceInstanceIdentifier.getServiceType().value);
+		int serviceInstanceNumber = serviceInstanceIdentifier.getServiceInstanceNumber().intValue();
+
+		siid = new ServiceInstanceIdentifier(spacecraftIdentifier, facilityIdentifier, typeIdentifier,
+				serviceInstanceNumber);
+
+		return siid;
+	}
+	
+	public static IServiceInstanceIdentifier decode(
+			b2.ccsds.csts.service.instance.id.ServiceInstanceIdentifier serviceInstanceIdentifier) {
 
 		IServiceInstanceIdentifier siid = null;
 
@@ -133,6 +137,26 @@ public class ServiceInstanceIdentifier implements IServiceInstanceIdentifier {
 	public String toAscii() {
 		return "spacecraft=" + Arrays.toString(spacecraftIdentifier.toArray()) + ". facility=" + Arrays.toString(facilityIdentifier.toArray())
 				+ ". type=" + Arrays.toString(typeIdentifier.toArray()) + ". serviceinstance=" + serviceInstanceNumber;
+	}
+
+	@Override
+	public b1.ccsds.csts.service.instance.id.ServiceInstanceIdentifier encode(
+			b1.ccsds.csts.service.instance.id.ServiceInstanceIdentifier sid) {
+		sid.setFacilityId(new b1.ccsds.csts.common.types.PublishedIdentifier(getFacilityIdentifier().toArray()));
+		sid.setServiceType(new b1.ccsds.csts.common.types.PublishedIdentifier(getCstsTypeIdentifier().toArray()));
+		sid.setSpacecraftId(new b1.ccsds.csts.common.types.PublishedIdentifier(getSpacecraftIdentifier().toArray()));
+		sid.setServiceInstanceNumber(new b1.ccsds.csts.common.types.IntUnsigned(getServiceInstanceNumber()));
+		return sid;
+	}
+
+	@Override
+	public b2.ccsds.csts.service.instance.id.ServiceInstanceIdentifier encode(
+			b2.ccsds.csts.service.instance.id.ServiceInstanceIdentifier sid) {
+		sid.setFacilityId(new b2.ccsds.csts.common.types.PublishedIdentifier(getFacilityIdentifier().toArray()));
+		sid.setServiceType(new b2.ccsds.csts.common.types.PublishedIdentifier(getCstsTypeIdentifier().toArray()));
+		sid.setSpacecraftId(new b2.ccsds.csts.common.types.PublishedIdentifier(getSpacecraftIdentifier().toArray()));
+		sid.setServiceInstanceNumber(new b2.ccsds.csts.common.types.IntUnsigned(getServiceInstanceNumber()));
+		return sid;
 	}
 
 }

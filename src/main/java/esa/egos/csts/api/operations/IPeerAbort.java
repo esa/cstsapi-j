@@ -1,6 +1,7 @@
 package esa.egos.csts.api.operations;
 
-import b1.ccsds.csts.association.control.types.PeerAbortInvocation;
+import com.beanit.jasn1.ber.types.BerType;
+
 import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.proxy.enums.AbortOriginator;
 
@@ -42,13 +43,13 @@ public interface IPeerAbort extends IOperation {
 	 * 
 	 * @return this operation encoded into a CCSDS PeerAbortInvocation
 	 */
-	PeerAbortInvocation encodePeerAbortInvocation();
+	BerType encodePeerAbortInvocation();
 
 	/**
 	 * Decodes a specified CCSDS PeerAbortInvocation into this operation.
 	 * 
 	 * @param peerAbortInvocation the specified CCSDS PeerAbortInvocation
 	 */
-	void decodePeerAbortInvocation(PeerAbortInvocation peerAbortInvocation);
+	void decodePeerAbortInvocation(BerType peerAbortInvocation);
 
 }

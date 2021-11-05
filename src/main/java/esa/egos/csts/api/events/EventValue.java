@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.beanit.jasn1.ber.types.BerNull;
 
-import b1.ccsds.csts.common.types.SequenceOfQualifiedValues;
 import esa.egos.csts.api.enumerations.EventValueType;
 import esa.egos.csts.api.events.impl.FunctionalResourceEvent;
 import esa.egos.csts.api.extensions.EmbeddedData;
@@ -90,13 +89,12 @@ public class EventValue {
 	 * 
 	 * @return the CCSDS EventValue type representing this object
 	 */
-	public b1.ccsds.csts.common.types.EventValue encode() {
-		b1.ccsds.csts.common.types.EventValue eventValue = new b1.ccsds.csts.common.types.EventValue();
+	public b1.ccsds.csts.common.types.EventValue encode(b1.ccsds.csts.common.types.EventValue eventValue) {
 		switch (type) {
 		case QUALIFIED_VALUES:
-			SequenceOfQualifiedValues qualifiedValues = new SequenceOfQualifiedValues();
+			b1.ccsds.csts.common.types.SequenceOfQualifiedValues qualifiedValues = new b1.ccsds.csts.common.types.SequenceOfQualifiedValues();
 			for (QualifiedValues qualifiedValue : this.qualifiedValues) {
-				qualifiedValues.getQualifiedValues().add(qualifiedValue.encode());
+				qualifiedValues.getQualifiedValues().add(qualifiedValue.encode(new b1.ccsds.csts.common.types.QualifiedValues()));
 			}
 			eventValue.setQualifiedValues(qualifiedValues);
 			break;
@@ -104,7 +102,28 @@ public class EventValue {
 			eventValue.setEmpty(new BerNull());
 			break;
 		case EXTENDED:
-			eventValue.setEventValueExtension(embeddedData.encode());
+			eventValue.setEventValueExtension(embeddedData.encode(
+					new b1.ccsds.csts.common.types.Embedded()));
+			break;
+		}
+		return eventValue;
+	}
+	
+	public b2.ccsds.csts.common.types.EventValue encode(b2.ccsds.csts.common.types.EventValue eventValue) {
+		switch (type) {
+		case QUALIFIED_VALUES:
+			b2.ccsds.csts.common.types.SequenceOfQualifiedValue qualifiedValues = new b2.ccsds.csts.common.types.SequenceOfQualifiedValue();
+			for (QualifiedValues qualifiedValue : this.qualifiedValues) {
+				qualifiedValues.getQualifiedValue().add(qualifiedValue.encode(new b2.ccsds.csts.common.types.QualifiedValue()));
+			}
+			eventValue.setQualifiedValues(qualifiedValues);
+			break;
+		case EMPTY:
+			eventValue.setEmpty(new BerNull());
+			break;
+		case EXTENDED:
+			eventValue.setEventValueExtension(embeddedData.encode(
+					new b2.ccsds.csts.common.types.Embedded()));
 			break;
 		}
 		return eventValue;
@@ -129,6 +148,31 @@ public class EventValue {
 			if (value.getQualifiedValues().getQualifiedValues() != null) {
 				eventValue = new EventValue(EventValueType.QUALIFIED_VALUES);
 				for (b1.ccsds.csts.common.types.QualifiedValues qualifiedValues : value.getQualifiedValues().getQualifiedValues()) {
+					eventValue.getQualifiedValues().add(QualifiedValues.decode(qualifiedValues));
+				}
+			}
+		}
+
+		if (value.getEventValueExtension() != null) {
+			eventValue = new EventValue(EventValueType.EXTENDED);
+			eventValue.setExtension(EmbeddedData.decode(value.getEventValueExtension()));
+		}
+
+		return eventValue;
+	}
+	
+	public static EventValue decode(b2.ccsds.csts.common.types.EventValue value) {
+
+		EventValue eventValue = null;
+
+		if (value.getEmpty() != null) {
+			eventValue = new EventValue(EventValueType.EMPTY);
+		}
+
+		if (value.getQualifiedValues() != null) {
+			if (value.getQualifiedValues().getQualifiedValue() != null) {
+				eventValue = new EventValue(EventValueType.QUALIFIED_VALUES);
+				for (b2.ccsds.csts.common.types.QualifiedValue qualifiedValues : value.getQualifiedValues().getQualifiedValue()) {
 					eventValue.getQualifiedValues().add(QualifiedValues.decode(qualifiedValues));
 				}
 			}

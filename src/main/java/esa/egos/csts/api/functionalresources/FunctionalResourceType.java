@@ -1,6 +1,9 @@
 package esa.egos.csts.api.functionalresources;
 
+import com.beanit.jasn1.ber.types.BerType;
+
 import esa.egos.csts.api.oids.ObjectIdentifier;
+import esa.egos.csts.api.types.SfwVersion;
 
 /**
  * This class represents a Functional Resource Type.
@@ -40,8 +43,12 @@ public class FunctionalResourceType {
 	 * 
 	 * @return the CCSDS FunctionalResourceType type representing this object
 	 */
-	public b1.ccsds.csts.common.types.FunctionalResourceType encode() {
-		return new b1.ccsds.csts.common.types.FunctionalResourceType(objectIdentifier.toArray());
+	public BerType encode(SfwVersion sfwVersion) {
+		switch(sfwVersion) {
+		case B1: return new b1.ccsds.csts.common.types.FunctionalResourceType(objectIdentifier.toArray());
+		case B2: return new b2.ccsds.csts.common.types.FunctionalResourceType(objectIdentifier.toArray());
+		default: return null;
+		}
 	}
 
 	/**
@@ -54,6 +61,11 @@ public class FunctionalResourceType {
 	public static FunctionalResourceType decode(b1.ccsds.csts.common.types.FunctionalResourceType functionalResourceType) {
 		return new FunctionalResourceType(ObjectIdentifier.of(functionalResourceType.value));
 	}
+	
+	public static FunctionalResourceType decode(b2.ccsds.csts.common.types.FunctionalResourceType functionalResourceType) {
+		return new FunctionalResourceType(ObjectIdentifier.of(functionalResourceType.value));
+	}
+
 
 	@Override
 	public int hashCode() {

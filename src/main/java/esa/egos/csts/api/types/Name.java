@@ -1,7 +1,5 @@
 package esa.egos.csts.api.types;
 
-import b1.ccsds.csts.common.types.FRorProcedureName;
-import b1.ccsds.csts.common.types.PublishedIdentifier;
 import esa.egos.csts.api.enumerations.ResourceIdentifier;
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.oids.ObjectIdentifier;
@@ -105,16 +103,34 @@ public class Name {
 	 * 
 	 * @return the CCSDS Name type representing this object
 	 */
-	public b1.ccsds.csts.common.types.Name encode() {
-		b1.ccsds.csts.common.types.Name name = new b1.ccsds.csts.common.types.Name();
-		name.setParamOrEventOrDirectiveId(new PublishedIdentifier(identifier.toArray()));
-		FRorProcedureName funcResOrProc = new FRorProcedureName();
+	public b1.ccsds.csts.common.types.Name encode(b1.ccsds.csts.common.types.Name name) {
+		name.setParamOrEventOrDirectiveId(new b1.ccsds.csts.common.types.PublishedIdentifier(identifier.toArray()));
+		b1.ccsds.csts.common.types.FRorProcedureName funcResOrProc = new b1.ccsds.csts.common.types.FRorProcedureName();
 		switch (resourceIdentifier) {
 		case FUNCTIONAL_RESOURCE_NAME:
-			funcResOrProc.setFunctionalResourceName(functionalResourceName.encode());
+			funcResOrProc.setFunctionalResourceName(functionalResourceName.encode(
+					new b1.ccsds.csts.common.types.FunctionalResourceName()));
 			break;
 		case PROCEDURE_INSTANCE_IDENTIFIER:
-			funcResOrProc.setProcedureInstanceId(procedureInstanceIdentifier.encode());
+			funcResOrProc.setProcedureInstanceId(procedureInstanceIdentifier.encode(
+					new b1.ccsds.csts.common.types.ProcedureInstanceId()));
+			break;
+		}
+		name.setFRorProcedureName(funcResOrProc);
+		return name;
+	}
+	
+	public b2.ccsds.csts.common.types.Name encode(b2.ccsds.csts.common.types.Name name) {
+		name.setParamOrEventOrDirectiveId(new b2.ccsds.csts.common.types.PublishedIdentifier(identifier.toArray()));
+		b2.ccsds.csts.common.types.FRorProcedureName funcResOrProc = new b2.ccsds.csts.common.types.FRorProcedureName();
+		switch (resourceIdentifier) {
+		case FUNCTIONAL_RESOURCE_NAME:
+			funcResOrProc.setFunctionalResourceName(functionalResourceName.encode(
+					new b2.ccsds.csts.common.types.FunctionalResourceName()));
+			break;
+		case PROCEDURE_INSTANCE_IDENTIFIER:
+			funcResOrProc.setProcedureName(procedureInstanceIdentifier.encode(
+					new b2.ccsds.csts.common.types.ProcedureName()));
 			break;
 		}
 		name.setFRorProcedureName(funcResOrProc);
@@ -139,6 +155,23 @@ public class Name {
 				} else if (name.getFRorProcedureName().getProcedureInstanceId() != null) {
 					newName = new Name(OID,
 							ProcedureInstanceIdentifier.decode(name.getFRorProcedureName().getProcedureInstanceId()));
+				}
+			}
+		}
+		return newName;
+	}
+	
+	public static Name decode(b2.ccsds.csts.common.types.Name name) {
+		Name newName = null;
+		if (name != null) {
+			ObjectIdentifier OID = ObjectIdentifier.of(name.getParamOrEventOrDirectiveId().value);
+			if (name.getFRorProcedureName() != null) {
+				if (name.getFRorProcedureName().getFunctionalResourceName() != null) {
+					newName = new Name(OID,
+							FunctionalResourceName.decode(name.getFRorProcedureName().getFunctionalResourceName()));
+				} else if (name.getFRorProcedureName().getProcedureName() != null) {
+					newName = new Name(OID,
+							ProcedureInstanceIdentifier.decode(name.getFRorProcedureName().getProcedureName()));
 				}
 			}
 		}

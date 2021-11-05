@@ -4,8 +4,6 @@ import java.io.IOException;
 
 import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 
-import b1.ccsds.csts.common.operations.pdus.StartDiagnosticExt;
-import b1.ccsds.csts.common.types.AdditionalText;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.util.impl.CSTSUtils;
 
@@ -101,19 +99,48 @@ public class StartDiagnostic {
 	 * 
 	 * @return the CCSDS StartDiagnosticExt type representing this Diagnostic
 	 */
-	public StartDiagnosticExt encode() {
-
-		StartDiagnosticExt startDiagnosticExt = new StartDiagnosticExt();
-
+	public b1.ccsds.csts.common.operations.pdus.StartDiagnosticExt encode(
+			b1.ccsds.csts.common.operations.pdus.StartDiagnosticExt startDiagnosticExt) {
 		switch (type) {
 		case EXTENDED:
-			startDiagnosticExt.setStartDiagnosticExtExtension(diagnosticExtension.encode());
+			startDiagnosticExt.setStartDiagnosticExtExtension(diagnosticExtension.encode(
+					new b1.ccsds.csts.common.types.Embedded()));
 			break;
 		case OUT_OF_SERVICE:
-			startDiagnosticExt.setOutOfService(new AdditionalText(CSTSUtils.encodeString(message)));
+			startDiagnosticExt.setOutOfService(
+					new b1.ccsds.csts.common.types.AdditionalText(CSTSUtils.encodeString(message)));
 			break;
 		case UNABLE_TO_COMPLY:
-			startDiagnosticExt.setUnableToComply(new AdditionalText(CSTSUtils.encodeString(message)));
+			startDiagnosticExt.setUnableToComply(
+					new b1.ccsds.csts.common.types.AdditionalText(CSTSUtils.encodeString(message)));
+			break;
+		}
+
+		// encode with a resizable output stream and an initial capacity of 128 bytes
+		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
+			startDiagnosticExt.encode(os);
+			startDiagnosticExt.code = os.getArray();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return startDiagnosticExt;
+	}
+	
+	public b2.ccsds.csts.common.operations.pdus.StartDiagnosticExt encode(
+			b2.ccsds.csts.common.operations.pdus.StartDiagnosticExt startDiagnosticExt) {
+		switch (type) {
+		case EXTENDED:
+			startDiagnosticExt.setStartDiagnosticExtExtension(diagnosticExtension.encode(
+					new b2.ccsds.csts.common.types.Embedded()));
+			break;
+		case OUT_OF_SERVICE:
+			startDiagnosticExt.setOutOfService(
+					new b2.ccsds.csts.common.types.AdditionalText(CSTSUtils.encodeString(message)));
+			break;
+		case UNABLE_TO_COMPLY:
+			startDiagnosticExt.setUnableToComply(
+					new b2.ccsds.csts.common.types.AdditionalText(CSTSUtils.encodeString(message)));
 			break;
 		}
 
@@ -135,7 +162,30 @@ public class StartDiagnostic {
 	 * @return a new START Diagnostic decoded from the specified CCSDS
 	 *         StartDiagnosticExt type
 	 */
-	public static StartDiagnostic decode(StartDiagnosticExt diagnostic) {
+	public static StartDiagnostic decode(b1.ccsds.csts.common.operations.pdus.StartDiagnosticExt diagnostic) {
+
+		StartDiagnostic newDiagnostic = null;
+		if (diagnostic.getUnableToComply() != null) {
+			newDiagnostic = new StartDiagnostic(StartDiagnosticType.UNABLE_TO_COMPLY,
+					CSTSUtils.decodeString(diagnostic.getUnableToComply().value));
+		} else if (diagnostic.getOutOfService() != null) {
+			newDiagnostic = new StartDiagnostic(StartDiagnosticType.OUT_OF_SERVICE,
+					CSTSUtils.decodeString(diagnostic.getOutOfService().value));
+		} else if (diagnostic.getStartDiagnosticExtExtension() != null) {
+			newDiagnostic = new StartDiagnostic(EmbeddedData.decode(diagnostic.getStartDiagnosticExtExtension()));
+		}
+
+		return newDiagnostic;
+	}
+	
+	/**
+	 * Decodes a specified CCSDS StartDiagnosticExt type.
+	 * 
+	 * @param diagnostic the specified CCSDS StartDiagnosticExt type
+	 * @return a new START Diagnostic decoded from the specified CCSDS
+	 *         StartDiagnosticExt type
+	 */
+	public static StartDiagnostic decode(b2.ccsds.csts.common.operations.pdus.StartDiagnosticExt diagnostic) {
 
 		StartDiagnostic newDiagnostic = null;
 		if (diagnostic.getUnableToComply() != null) {

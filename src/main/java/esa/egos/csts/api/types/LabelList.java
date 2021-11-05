@@ -101,13 +101,27 @@ public class LabelList {
 	 * 
 	 * @return the CCSDS Label List type representing this object
 	 */
-	public b1.ccsds.csts.fw.procedure.parameters.events.directives.LabelList encode() {
-
-		b1.ccsds.csts.fw.procedure.parameters.events.directives.LabelList labelList = new b1.ccsds.csts.fw.procedure.parameters.events.directives.LabelList();
-
+	public b1.ccsds.csts.fw.procedure.parameters.events.directives.LabelList encode(b1.ccsds.csts.fw.procedure.parameters.events.directives.LabelList labelList ) {
+		
 		labelList.setName(new BerVisibleString(CSTSUtils.encodeString(name)));
 		labelList.setDefaultList(new BerBoolean(defaultList));
-		Labels labels = new Labels();
+	
+		b1.ccsds.csts.fw.procedure.parameters.events.directives.LabelList.Labels labels = 
+				new b1.ccsds.csts.fw.procedure.parameters.events.directives.LabelList.Labels();
+		for (Label label : this.labels) {
+			labels.getLabel().add(label.encode(new b1.ccsds.csts.common.types.Label()));
+		}
+		labelList.setLabels(labels);
+		return labelList;
+	}
+	
+	 
+	public b2.ccsds.csts.fw.procedure.parameters.events.directives.LabelList encode(b2.ccsds.csts.fw.procedure.parameters.events.directives.LabelList labelList ) {
+		
+		labelList.setName(new BerVisibleString(CSTSUtils.encodeString(name)));
+		labelList.setDefaultList(new BerBoolean(defaultList));
+		b2.ccsds.csts.fw.procedure.parameters.events.directives.LabelList.Labels labels = new 
+				b2.ccsds.csts.fw.procedure.parameters.events.directives.LabelList.Labels();
 		for (Label label : this.labels) {
 			labels.getLabel().add(label.encode());
 		}
@@ -125,6 +139,14 @@ public class LabelList {
 	public static LabelList decode(b1.ccsds.csts.fw.procedure.parameters.events.directives.LabelList labelList) {
 		LabelList newLabelList = new LabelList(CSTSUtils.decodeString(labelList.getName().value), labelList.getDefaultList().value);
 		for (b1.ccsds.csts.common.types.Label label : labelList.getLabels().getLabel()) {
+			newLabelList.getLabels().add(Label.decode(label));
+		}
+		return newLabelList;
+	}
+	
+	public static LabelList decode(b2.ccsds.csts.fw.procedure.parameters.events.directives.LabelList labelList) {
+		LabelList newLabelList = new LabelList(CSTSUtils.decodeString(labelList.getName().value), labelList.getDefaultList().value);
+		for (b2.ccsds.csts.common.types.Label label : labelList.getLabels().getLabel()) {
 			newLabelList.getLabels().add(Label.decode(label));
 		}
 		return newLabelList;

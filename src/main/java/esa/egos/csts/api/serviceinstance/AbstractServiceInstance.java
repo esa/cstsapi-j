@@ -54,6 +54,7 @@ import esa.egos.csts.api.states.service.ServiceState;
 import esa.egos.csts.api.states.service.ServiceStatus;
 import esa.egos.csts.api.states.service.ServiceSubStatus;
 import esa.egos.csts.api.types.Time;
+import esa.egos.csts.api.types.SfwVersion;
 import esa.egos.csts.api.util.CSTS_LOG;
 import esa.egos.proxy.IAssocFactory;
 import esa.egos.proxy.IProxyAdmin;
@@ -130,7 +131,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 	 */
 	private ITime stopTime;
 
-	private int version;
+	private int serviceVersion;
 
 	private boolean ppEnded;
 
@@ -287,12 +288,15 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 			throw new ApiException("Service type for bind " + bindOp.toString() + " inconsistent to service instance " + toString());
 		}
 
+		//TODO:: check here the correct version
 		// check for supported version
-		int vn = bindOp.getVersionNumber();
-		if (vn < 1 || vn > 1) {
+		int vn = bindOp.getServiceVersion();
+		if (vn == 0) {
 			bindOp.setBindDiagnostic(BindDiagnostic.VERSION_NOT_SUPPORTED);
 			throw new ApiException("Bind version not supported for service instance " + toString());
 		}
+		
+		//From service type and service version understand the framework version
 
 		if (this.ppEnded) {
 			// the user has ended the provision-period (only provider)
@@ -479,7 +483,6 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 
 		try {
-
 			this.pxySrvInit.initiateOpReturn(confOperation, false, theSeqCount);
 		} catch (ApiException e) {
 			Result rc = null;
@@ -634,7 +637,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 	@Override
 	public void setVersion(int version) {
-		this.version = version;
+		this.serviceVersion = version;
 	}
 
 	@Override
@@ -769,7 +772,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 	@Override
 	public int getVersion() {
-		return this.version;
+		return this.serviceVersion;
 	}
 
 	@Override
@@ -1027,6 +1030,11 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 						}
 					}
 				}
+			}
+			
+			if(operation instanceof IBind) {
+				IBind bind = (IBind)operation;
+				this.setSfwVersion(bind.getSfwVersion());
 			}
 			
 			// the peer abort is a pseudo-operation of only one byte. Received from the network
@@ -1300,10 +1308,12 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 		resetSequenceCount();
 
-		if (getRole() == AppRole.PROVIDER)
+		if (getRole() == AppRole.PROVIDER) {
 			setVersion(0);
+		}
 
 		clearInternalRemoteReturns();
+		
 		clearInternalLocalReturns();
 	}
 
@@ -1336,9 +1346,9 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 			procedure = clazz.newInstance();
 			procedure.setServiceInstance(this);
 		} catch (InstantiationException e) {
-			throw new ApiException("Could not instantiate class " + clazz.getName());
+			throw new ApiException("Could not instantiate class " + clazz.getName(),e);
 		} catch (IllegalAccessException e) {
-			throw new ApiException("Illegal access exception while trying to instantiate class " + clazz.getName());
+			throw new ApiException("Illegal access exception while trying to instantiate class " + clazz.getName(),e);
 		}
 
 		return procedure;

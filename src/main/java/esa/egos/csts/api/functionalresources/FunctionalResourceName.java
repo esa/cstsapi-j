@@ -1,6 +1,6 @@
 package esa.egos.csts.api.functionalresources;
 
-import b1.ccsds.csts.common.types.FunctionalResourceInstanceNumber;
+import esa.egos.csts.api.types.SfwVersion;
 
 /**
  * This class represents a Functional Resource Name.
@@ -52,12 +52,18 @@ public class FunctionalResourceName {
 	 * 
 	 * @return the CCSDS FunctionalResourceName type representing this object
 	 */
-	public b1.ccsds.csts.common.types.FunctionalResourceName encode() {
-		b1.ccsds.csts.common.types.FunctionalResourceName resourceName = new b1.ccsds.csts.common.types.FunctionalResourceName();
-		resourceName.setFunctionalResourceType(functionalResourceType.encode());
-		resourceName.setFunctionalResourceInstanceNumber(new FunctionalResourceInstanceNumber(instanceNumber));
+	public b1.ccsds.csts.common.types.FunctionalResourceName encode(b1.ccsds.csts.common.types.FunctionalResourceName resourceName) {
+		resourceName.setFunctionalResourceType((b1.ccsds.csts.common.types.FunctionalResourceType)functionalResourceType.encode(SfwVersion.B1));
+		resourceName.setFunctionalResourceInstanceNumber(new  b1.ccsds.csts.common.types.FunctionalResourceInstanceNumber(instanceNumber));
 		return resourceName;
 	}
+	
+	public b2.ccsds.csts.common.types.FunctionalResourceName encode(b2.ccsds.csts.common.types.FunctionalResourceName resourceName) {
+		resourceName.setFunctionalResourceType((b2.ccsds.csts.common.types.FunctionalResourceType)functionalResourceType.encode(SfwVersion.B2));
+		resourceName.setFunctionalResourceInstanceNumber(new  b2.ccsds.csts.common.types.FunctionalResourceInstanceNumber(instanceNumber));
+		return resourceName;
+	}
+
 
 	/**
 	 * Decodes a specified CCSDS FunctionalResourceName type.
@@ -67,6 +73,14 @@ public class FunctionalResourceName {
 	 *         FunctionalResourceName type
 	 */
 	public static FunctionalResourceName decode(b1.ccsds.csts.common.types.FunctionalResourceName functionalResourceName) {
+
+		FunctionalResourceName newFunctionalResourceName = new FunctionalResourceName(FunctionalResourceType.decode(functionalResourceName.getFunctionalResourceType()),
+				functionalResourceName.getFunctionalResourceInstanceNumber().intValue());
+
+		return newFunctionalResourceName;
+	}
+	
+	public static FunctionalResourceName decode(b2.ccsds.csts.common.types.FunctionalResourceName functionalResourceName) {
 
 		FunctionalResourceName newFunctionalResourceName = new FunctionalResourceName(FunctionalResourceType.decode(functionalResourceName.getFunctionalResourceType()),
 				functionalResourceName.getFunctionalResourceInstanceNumber().intValue());

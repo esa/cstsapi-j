@@ -11,11 +11,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 
-import b1.ccsds.csts.common.types.IntPos;
-import b1.ccsds.csts.cyclic.report.pdus.CyclicReportStartDiagnosticExt;
-import b1.ccsds.csts.cyclic.report.pdus.CyclicReportStartInvocExt;
-import b1.ccsds.csts.cyclic.report.pdus.CyclicReportTransferDataInvocDataRef;
-import b1.ccsds.csts.cyclic.report.pdus.CyclicReportTransferDataInvocDataRef.QualifiedParameters;
 import esa.egos.csts.api.diagnostics.CyclicReportStartDiagnostics;
 import esa.egos.csts.api.diagnostics.CyclicReportStartDiagnosticsType;
 import esa.egos.csts.api.diagnostics.ListOfParametersDiagnostics;
@@ -37,17 +32,16 @@ import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.procedures.unbuffereddatadelivery.AbstractUnbufferedDataDelivery;
+import esa.egos.csts.api.procedures.unbuffereddatadelivery.AbstractUnbufferedDataDeliveryB2;
 import esa.egos.csts.api.states.State;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.LabelList;
 import esa.egos.csts.api.types.Name;
 import esa.egos.csts.api.types.Time;
 
-public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDelivery implements ICyclicReportInternal {
+public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliveryB2 implements ICyclicReportInternal {
 
 	private static final ProcedureType TYPE = ProcedureType.of(OIDs.cyclicReport);
-	
-	private static final int VERSION = 1;
 
 	private ScheduledExecutorService executorService;
 
@@ -75,11 +69,6 @@ public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliver
 		return TYPE;
 	}
 	
-	@Override
-	public int getVersion() {
-		return VERSION;
-	}
-
 	@Override
 	public long getDeliveryCycle() {
 		return deliveryCycle;
@@ -434,24 +423,8 @@ public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliver
 		return doInitiateOperationInvoke(operation);
 	}
 	
-	private EmbeddedData encodeInvocationExtension() {
-
-		CyclicReportStartInvocExt invocationExtension = new CyclicReportStartInvocExt();
-		invocationExtension.setDeliveryCycle(new IntPos(deliveryCycle));
-		invocationExtension.setListOfParameters(listOfParameters.encode());
-		invocationExtension.setCyclicReportStartInvocExtExtension(encodeStartInvocationExtExtension().encode());
-
-		// encode with a resizable output stream and an initial capacity of 128 bytes
-		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
-			invocationExtension.encode(os);
-			invocationExtension.code = os.getArray();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return EmbeddedData.of(OIDs.crStartInvocExt, invocationExtension.code);
-	}
-
+	
+	protected abstract EmbeddedData encodeInvocationExtension();
 	/**
 	 * This method should be overridden to encode the extension of a derived
 	 * procedure.
@@ -464,32 +437,9 @@ public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliver
 	}
 
 	@Override
-	public EmbeddedData encodeStartDiagnosticExt() {
-		return EmbeddedData.of(OIDs.crStartDiagExt, startDiagnostic.encode().code);
-	}
+	public abstract EmbeddedData encodeStartDiagnosticExt();
 	
-	private EmbeddedData encodeDataRefinement() {
-
-		CyclicReportTransferDataInvocDataRef dataRefinement = new CyclicReportTransferDataInvocDataRef();
-		QualifiedParameters qualifiedParameters = new QualifiedParameters();
-		for (QualifiedParameter param : this.qualifiedParameters) {
-			qualifiedParameters.getQualifiedParameter().add(param.encode());
-		}
-		dataRefinement.setQualifiedParameters(qualifiedParameters);
-		dataRefinement.setCyclicReportTransferDataInvocDataRefExtension(encodeInvocDataRefExtension().encode());
-
-		// encode with a resizable output stream and an initial capacity of 128 bytes
-		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
-			dataRefinement.encode(os);
-			dataRefinement.code = os.getArray();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch(Throwable t) {
-			t.printStackTrace();
-		}
-
-		return EmbeddedData.of(OIDs.crTransferDataInvocDataRef, dataRefinement.code);
-	}
+	protected abstract EmbeddedData encodeDataRefinement();
 	
 	protected Extension encodeInvocDataRefExtension() {
 		return Extension.notUsed();
@@ -518,19 +468,7 @@ public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliver
 		return doInformOperationReturn(confOperation);
 	}
 	
-	private void decodeStartInvocationExtension(Extension extension) {
-		if (extension.isUsed() && extension.getEmbeddedData().getOid().equals(OIDs.crStartInvocExt)) {
-			CyclicReportStartInvocExt invocationExtension = new CyclicReportStartInvocExt();
-			try (ByteArrayInputStream is = new ByteArrayInputStream(extension.getEmbeddedData().getData())) {
-				invocationExtension.decode(is);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			deliveryCycle = invocationExtension.getDeliveryCycle().longValue();
-			listOfParameters = ListOfParameters.decode(invocationExtension.getListOfParameters());
-			decodeStartInvocationExtExtension(Extension.decode(invocationExtension.getCyclicReportStartInvocExtExtension()));
-		}
-	}
+	protected abstract void decodeStartInvocationExtension(Extension extension);
 
 	/**
 	 * This method should be overridden to decode the extension of a derived
@@ -544,36 +482,12 @@ public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliver
 		// do nothing on default
 	}
 
-	protected void decodeTransferDataRefinement(EmbeddedData embeddedData) {
-		if (embeddedData.getOid().equals(OIDs.crTransferDataInvocDataRef)) {
-			CyclicReportTransferDataInvocDataRef dataRefinement = new CyclicReportTransferDataInvocDataRef();
-			try (ByteArrayInputStream is = new ByteArrayInputStream(embeddedData.getData())) {
-				dataRefinement.decode(is);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			qualifiedParameters.clear();
-			for (b1.ccsds.csts.common.types.QualifiedParameter param : dataRefinement.getQualifiedParameters().getQualifiedParameter()) {
-				qualifiedParameters.add(QualifiedParameter.decode(param));
-			}
-			decodeInvocDataRefExtension(Extension.decode(dataRefinement.getCyclicReportTransferDataInvocDataRefExtension()));
-		}
-	}
+	protected abstract void decodeTransferDataRefinement(EmbeddedData embeddedData);
 
 	protected void decodeInvocDataRefExtension(Extension extension) {
 		
 	}
 
-	protected void decodeStartDiagnosticExt(EmbeddedData embeddedData) {
-		if (embeddedData.getOid().equals(OIDs.crStartDiagExt)) {
-			CyclicReportStartDiagnosticExt cyclicReportStartDiagnosticExt = new CyclicReportStartDiagnosticExt();
-			try (ByteArrayInputStream is = new ByteArrayInputStream(embeddedData.getData())) {
-				cyclicReportStartDiagnosticExt.decode(is);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			startDiagnostic = CyclicReportStartDiagnostics.decode(cyclicReportStartDiagnosticExt);
-		}
-	}
+	protected abstract void decodeStartDiagnosticExt(EmbeddedData embeddedData);
 
 }

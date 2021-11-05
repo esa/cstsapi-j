@@ -1,1 +1,28 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?><UserConfig oid_config_file="src/test/resources/OidConfig.xml" proxy_role="INITIATOR" local_id="CSTS_USER" local_password="" startup_timer="180" non_useheartbeat="true" authentication_delay="1000" transfer_type="COMPLETE" transmit_queue_size="10"><service_types><service_type srv_id="[1, 3, 112, 4, 4, 1, 2]"><srv_versions><srv_version>1</srv_version></srv_versions></service_type></service_types><remote_peers><remote_peer id="CSTS_PROVIDER" authentication_mode="NONE" password=""/></remote_peers><foreign_logical_ports><logical_port port_name="CSTS_PT1" port_heartbeat_timer="300" port_dead_factor="4" tcp_xmit_buffer_size="4096" tcp_recv_buffer_size="4096"><port_data ip_address="127.0.0.1" port_number="5018"/></logical_port></foreign_logical_ports><portlist default="ISP1"/></UserConfig>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<UserConfig
+	oid_config_file="src/test/resources/OidConfig.xml"
+	proxy_role="INITIATOR" local_id="CSTS_USER" local_password=""
+	startup_timer="180" non_useheartbeat="true" authentication_delay="1000"
+	transfer_type="COMPLETE" transmit_queue_size="10">
+	<service_types>
+		<service_type srv_id="[1, 3, 112, 4, 4, 1, 2]">
+			<srv_versions>
+				<srv_version sfw="1">1</srv_version>
+				<srv_version sfw="2">2</srv_version>
+				<srv_version sfw="2">3</srv_version>
+			</srv_versions>
+		</service_type>
+	</service_types>
+	<remote_peers>
+		<remote_peer id="CSTS_PROVIDER" authentication_mode="NONE"
+			password="" />
+	</remote_peers>
+	<foreign_logical_ports>
+		<logical_port port_name="CSTS_PT1"
+			port_heartbeat_timer="300" port_dead_factor="4"
+			tcp_xmit_buffer_size="4096" tcp_recv_buffer_size="4096">
+			<port_data ip_address="127.0.0.1" port_number="5018" />
+		</logical_port>
+	</foreign_logical_ports>
+	<portlist default="ISP1" />
+</UserConfig>
