@@ -1,16 +1,10 @@
 package esa.egos.csts.api.procedures.notification;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
-
-import b1.ccsds.csts.notification.pdus.NotificationPdu;
-import b1.ccsds.csts.notification.pdus.NotificationStartDiagnosticExt;
-import b1.ccsds.csts.notification.pdus.NotificationStartInvocExt;
 import esa.egos.csts.api.diagnostics.ListOfParametersDiagnostics;
 import esa.egos.csts.api.diagnostics.ListOfParametersDiagnosticsType;
 import esa.egos.csts.api.enumerations.CstsResult;
@@ -36,8 +30,6 @@ public abstract class AbstractNotification extends AbstractStatefulProcedure imp
 
 	private static final ProcedureType TYPE = ProcedureType.of(OIDs.notification);
 	
-	private static final int VERSION = 1;
-	
 	private Set<IEvent> subscribedEvents;
 
 	// defined by User
@@ -52,15 +44,14 @@ public abstract class AbstractNotification extends AbstractStatefulProcedure imp
 		subscribedEvents = new HashSet<>();
 		running = false;
 	}
-
-	@Override
-	public ProcedureType getType() {
-		return TYPE;
+	
+	protected ListOfParametersDiagnostics getListOfEventsDiagnostics() {
+		return listOfEventsDiagnostics;
 	}
 	
 	@Override
-	public int getVersion() {
-		return VERSION;
+	public ProcedureType getType() {
+		return TYPE;
 	}
 	
 	@Override
@@ -306,56 +297,9 @@ public abstract class AbstractNotification extends AbstractStatefulProcedure imp
 	}
 	
 	@Override
-	public byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException {
+	public abstract byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException;
 
-		byte[] encodedOperation;
-		NotificationPdu pdu = new NotificationPdu();
-
-		if (operation.getType() == OperationType.START) {
-			IStart start = (IStart) operation;
-			if (isInvoke) {
-				pdu.setStartInvocation(start.encodeStartInvocation());
-			} else {
-				pdu.setStartReturn(start.encodeStartReturn());
-			}
-		} else if (operation.getType() == OperationType.STOP) {
-			IStop stop = (IStop) operation;
-			if (isInvoke) {
-				pdu.setStopInvocation(stop.encodeStopInvocation());
-			} else {
-				pdu.setStopReturn(stop.encodeStopReturn());
-			}
-		} else if (operation.getType() == OperationType.NOTIFY) {
-			INotify notify = (INotify) operation;
-			if (isInvoke) {
-				pdu.setNotifyInvocation(notify.encodeNotifyInvocation());
-			}
-		}
-
-		try (ReverseByteArrayOutputStream berBAOStream = new ReverseByteArrayOutputStream(10, true)) {
-			pdu.encode(berBAOStream);
-			encodedOperation = berBAOStream.getArray();
-		}
-
-		return encodedOperation;
-	}
-
-	private EmbeddedData encodeInvocationExtension() {
-
-		NotificationStartInvocExt invocationExtension = new NotificationStartInvocExt();
-		invocationExtension.setListOfEvents(listOfEvents.encode());
-		invocationExtension.setNotificationStartInvocExtExtension(encodeStartInvocationExtExtension().encode());
-
-		// encode with a resizable output stream and an initial capacity of 128 bytes
-		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
-			invocationExtension.encode(os);
-			invocationExtension.code = os.getArray();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return EmbeddedData.of(OIDs.nStartInvocExt, invocationExtension.code);
-	}
+	protected abstract EmbeddedData encodeInvocationExtension();
 
 	/**
 	 * This method should be overridden to encode the extension of a derived
@@ -369,24 +313,7 @@ public abstract class AbstractNotification extends AbstractStatefulProcedure imp
 	}
 
 	@Override
-	public EmbeddedData encodeStartDiagnosticExt() {
-
-		NotificationStartDiagnosticExt diagnosticExtension = new NotificationStartDiagnosticExt();
-		if (listOfEventsDiagnostics != null) {
-			diagnosticExtension.setCommon(listOfEventsDiagnostics.encode());
-		}
-
-		// encode with a resizable output stream and an initial capacity of 128 bytes
-		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
-			diagnosticExtension.encode(os);
-			diagnosticExtension.code = os.getArray();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return EmbeddedData.of(OIDs.nStartDiagExt, diagnosticExtension.code);
-
-	}
+	public abstract EmbeddedData encodeStartDiagnosticExt();
 
 	@Override
 	public CstsResult informOperationInvoke(IOperation operation) {
@@ -409,52 +336,9 @@ public abstract class AbstractNotification extends AbstractStatefulProcedure imp
 	}
 	
 	@Override
-	public IOperation decodeOperation(byte[] encodedPdu) throws IOException {
+	public abstract IOperation decodeOperation(byte[] encodedPdu) throws IOException;
 
-		NotificationPdu pdu = new NotificationPdu();
-		try (ByteArrayInputStream is = new ByteArrayInputStream(encodedPdu)) {
-			pdu.decode(is);
-		}
-
-		IOperation operation = null;
-
-		if (pdu.getStartInvocation() != null) {
-			IStart start = createStart();
-			start.decodeStartInvocation(pdu.getStartInvocation());
-			operation = start;
-		} else if (pdu.getStartReturn() != null) {
-			IStart start = createStart();
-			start.decodeStartReturn(pdu.getStartReturn());
-			operation = start;
-		} else if (pdu.getStopInvocation() != null) {
-			IStop stop = createStop();
-			stop.decodeStopInvocation(pdu.getStopInvocation());
-			operation = stop;
-		} else if (pdu.getStopReturn() != null) {
-			IStop stop = createStop();
-			stop.decodeStopReturn(pdu.getStopReturn());
-			operation = stop;
-		} else if (pdu.getNotifyInvocation() != null) {
-			INotify notify = createNotify();
-			notify.decodeNotifyInvocation(pdu.getNotifyInvocation());
-			operation = notify;
-		}
-
-		return operation;
-	}
-
-	protected void decodeStartInvocationExtension(Extension extension) {
-		if (extension.isUsed() && extension.getEmbeddedData().getOid().equals(OIDs.nStartInvocExt)) {
-			NotificationStartInvocExt invocationExtension = new NotificationStartInvocExt();
-			try (ByteArrayInputStream is = new ByteArrayInputStream(extension.getEmbeddedData().getData())) {
-				invocationExtension.decode(is);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			listOfEvents = ListOfParameters.decode(invocationExtension.getListOfEvents());
-			decodeStartInvocationExtExtension(Extension.decode(invocationExtension.getNotificationStartInvocExtExtension()));
-		}
-	}
+	protected abstract void decodeStartInvocationExtension(Extension extension);
 
 	/**
 	 * This method should be overridden to decode the extension of a derived
@@ -468,18 +352,6 @@ public abstract class AbstractNotification extends AbstractStatefulProcedure imp
 		// do nothing on default
 	}
 
-	protected void decodeStartDiagnosticExt(EmbeddedData embeddedData) {
-		if (embeddedData.getOid().equals(OIDs.nStartDiagExt)) {
-			NotificationStartDiagnosticExt diagnosticExtension = new NotificationStartDiagnosticExt();
-			try (ByteArrayInputStream is = new ByteArrayInputStream(embeddedData.getData())) {
-				diagnosticExtension.decode(is);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			if (diagnosticExtension.getCommon() != null) {
-				listOfEventsDiagnostics = ListOfParametersDiagnostics.decode(diagnosticExtension.getCommon());
-			}
-		}
-	}
+	protected abstract void decodeStartDiagnosticExt(EmbeddedData embeddedData);
 
 }

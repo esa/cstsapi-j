@@ -14,11 +14,14 @@ import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.enumerations.ProcedureRole;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.main.CstsApi;
+import esa.egos.csts.api.main.CstsProviderApi;
+import esa.egos.csts.api.main.CstsUserApi;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
+import esa.egos.csts.api.types.SfwVersion;
 import esa.egos.csts.sim.impl.MdCstsSiConfig;
 import esa.egos.csts.sim.impl.prv.MdCollection;
 import esa.egos.csts.sim.impl.prv.MdCstsSiProvider;
@@ -31,6 +34,7 @@ import esa.egos.csts.api.TestUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 
 /**
@@ -44,6 +48,10 @@ public class GenericTest
     private ICstsApi providerApi;
 
     private ICstsApi userApi;
+    
+    private static final int serviceVersion = 1;
+    
+    private static final SfwVersion sfwVersion = SfwVersion.B1; 
 
     @BeforeClass
     public static void setUpClass() throws ApiException
@@ -69,11 +77,11 @@ public class GenericTest
         System.out.println("provider config: " + providerConfigName);
         System.out.println("user config: " + userConfigName);
 
-        this.providerApi = new CstsApi("Test Service Provider API", AppRole.PROVIDER);
+        this.providerApi = new CstsProviderApi("Test Service Provider API");
         this.providerApi.initialize(providerConfigName);
         this.providerApi.start();
 
-        this.userApi = new CstsApi("Test Service User API", AppRole.USER);
+        this.userApi = new CstsUserApi("Test Service User API");
         this.userApi.initialize(userConfigName);
         this.userApi.start();
 
@@ -135,7 +143,7 @@ public class GenericTest
             MdCstsSiProvider providerSi = new MdCstsSiProvider(this.providerApi, mdSiProviderConfig);
 
             // create user SI
-            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, mdSiUserConfig, 1);
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, mdSiUserConfig, 3);
 
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");
@@ -211,7 +219,7 @@ public class GenericTest
             MdCstsSiProvider providerSi = new MdCstsSiProvider(this.providerApi, mdSiProviderConfig);
 
             // create user SI
-            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, mdSiUserConfig, 1);
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, mdSiUserConfig,  serviceVersion);
 
             // create FR parameters and attach them to the provider SI
             MdCollection mdCollection = MdCollection.createSimpleMdCollection();
@@ -289,7 +297,7 @@ public class GenericTest
             MdCstsSiProvider providerSi = new MdCstsSiProvider(this.providerApi, mdSiProviderConfig);
 
             // create user SI
-            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, mdSiUserConfig, 1);
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, mdSiUserConfig,  3);
 
             // create FR parameters and attach them to the provider SI
             MdCollection mdCollection = MdCollection.createSimpleMdCollection();
@@ -368,7 +376,7 @@ public class GenericTest
             MdCstsSiProvider providerSi = new MdCstsSiProvider(this.providerApi, mdSiProviderConfig);
 
             // create user SI
-            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, mdSiUserConfig, 1);
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, mdSiUserConfig,  serviceVersion);
 
             // create FR parameters and attach them to the provider SI
             MdCollection mdCollection = MdCollection.createSimpleMdCollection();

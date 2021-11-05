@@ -193,24 +193,24 @@ public class RespondingAssoc extends Association
                 else
                 {
                     // set the version number
-                    this.version = pBind.getVersionNumber();
+                	this.version = pBind.getServiceVersion();
                     // check if the version is supported
                     int indexMax = pSrvType.getServiceVersion().size();
                     int versionNumber = -1;
-                    int versionNumberBind = pBind.getVersionNumber();
+                    
                     boolean found = false;
 
                     for (int index = 0; index < indexMax; index++)
                     {
-                        versionNumber = pSrvType.getServiceVersion().get(index);
+                        versionNumber = pSrvType.getServiceVersion().get(index).value;
                         if (versionNumber != -1)
                         {
-                            if (versionNumber == versionNumberBind)
+                            if (versionNumber == this.version)
                             {
                                 found = true;
                                 break;
                             }
-                            else if (versionNumber > versionNumberBind)
+                            else if (versionNumber > this.version)
                             {
                                 break;
                             }
@@ -242,6 +242,7 @@ public class RespondingAssoc extends Association
                                 // send the bind invoke to the service instance
                                 try
                                 {
+                                	
                                     pSrvInform.informOpInvoke(pBind, seqCount);
                                 }
                                 catch (ApiException e)

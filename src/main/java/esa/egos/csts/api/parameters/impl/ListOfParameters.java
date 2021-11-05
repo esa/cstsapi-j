@@ -7,9 +7,6 @@ import java.util.List;
 import com.beanit.jasn1.ber.types.BerNull;
 import com.beanit.jasn1.ber.types.string.BerVisibleString;
 
-import b1.ccsds.csts.common.types.ListOfParametersEvents;
-import b1.ccsds.csts.common.types.ListOfParametersEvents.ParamEventLabels;
-import b1.ccsds.csts.common.types.ListOfParametersEvents.ParamEventNames;
 import esa.egos.csts.api.enumerations.ListOfParamatersType;
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
@@ -17,6 +14,7 @@ import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.Name;
+import esa.egos.csts.api.types.SfwVersion;
 import esa.egos.csts.api.util.impl.CSTSUtils;
 
 /**
@@ -242,8 +240,8 @@ public class ListOfParameters {
 	 * 
 	 * @return the encoded CCSDS ListOfParametersEvents type
 	 */
-	public ListOfParametersEvents encode() {
-		ListOfParametersEvents listOfParametersEvents = new ListOfParametersEvents();
+	public b1.ccsds.csts.common.types.ListOfParametersEvents encode(b1.ccsds.csts.common.types.ListOfParametersEvents listOfParametersEvents) {
+
 		switch (type) {
 		case EMPTY:
 			listOfParametersEvents.setEmpty(new BerNull());
@@ -252,34 +250,76 @@ public class ListOfParameters {
 			listOfParametersEvents.setListName(new BerVisibleString(CSTSUtils.encodeString(listName)));
 			break;
 		case FUNCTIONAL_RESOURCE_TYPE:
-			listOfParametersEvents.setFunctionalResourceType(functionalResourceType.encode());
+			listOfParametersEvents.setFunctionalResourceType(
+					(b1.ccsds.csts.common.types.FunctionalResourceType)functionalResourceType.encode(SfwVersion.B1));
 			break;
 		case FUNCTIONAL_RESOURCE_NAME:
-			listOfParametersEvents.setFunctionalResourceName(functionalResourceName.encode());
+			listOfParametersEvents.setFunctionalResourceName(functionalResourceName.encode(new b1.ccsds.csts.common.types.FunctionalResourceName()));
 			break;
 		case PROCEDURE_TYPE:
-			listOfParametersEvents.setProcedureType(procedureType.encode());
+			listOfParametersEvents.setProcedureType((b1.ccsds.csts.common.types.ProcedureType)procedureType.encode(SfwVersion.B1));
 			break;
 		case PROCEDURE_INSTANCE_IDENTIFIER:
-			listOfParametersEvents.setProcedureInstanceId(procedureInstanceIdentifier.encode());
+			listOfParametersEvents.setProcedureInstanceId(procedureInstanceIdentifier.encode(new b1.ccsds.csts.common.types.ProcedureInstanceId()));
 			break;
 		case LABELS_SET:
-			ParamEventLabels labels = new ParamEventLabels();
+			b1.ccsds.csts.common.types.ListOfParametersEvents.ParamEventLabels labels = new b1.ccsds.csts.common.types.ListOfParametersEvents.ParamEventLabels();
 			for (Label label : parameterLabels) {
-				labels.getLabel().add(label.encode());
+				labels.getLabel().add(label.encode(new b1.ccsds.csts.common.types.Label()));
 			}
 			listOfParametersEvents.setParamEventLabels(labels);
 			break;
 		case NAMES_SET:
-			ParamEventNames names = new ParamEventNames();
+			b1.ccsds.csts.common.types.ListOfParametersEvents.ParamEventNames names = new b1.ccsds.csts.common.types.ListOfParametersEvents.ParamEventNames();
 			for (Name name : parameterNames) {
-				names.getName().add(name.encode());
+				names.getName().add(name.encode(new b1.ccsds.csts.common.types.Name()));
 			}
 			listOfParametersEvents.setParamEventNames(names);
 			break;
 		}
 		return listOfParametersEvents;
 	}
+	
+	public b2.ccsds.csts.common.types.ListOfParametersEvents encode(b2.ccsds.csts.common.types.ListOfParametersEvents listOfParametersEvents) {
+
+		switch (type) {
+		case EMPTY:
+			listOfParametersEvents.setEmpty(new BerNull());
+			break;
+		case LIST_NAME:
+			listOfParametersEvents.setListName(new BerVisibleString(CSTSUtils.encodeString(listName)));
+			break;
+		case FUNCTIONAL_RESOURCE_TYPE:
+			listOfParametersEvents.setFunctionalResourceType(
+					(b2.ccsds.csts.common.types.FunctionalResourceType)functionalResourceType.encode(SfwVersion.B1));
+			break;
+		case FUNCTIONAL_RESOURCE_NAME:
+			listOfParametersEvents.setFunctionalResourceName(functionalResourceName.encode(new b2.ccsds.csts.common.types.FunctionalResourceName()));
+			break;
+		case PROCEDURE_TYPE:
+			listOfParametersEvents.setProcedureType((b2.ccsds.csts.common.types.ProcedureType)procedureType.encode(SfwVersion.B1));
+			break;
+		case PROCEDURE_INSTANCE_IDENTIFIER:
+			listOfParametersEvents.setProcedureName(procedureInstanceIdentifier.encode(new b2.ccsds.csts.common.types.ProcedureName()));
+			break;
+		case LABELS_SET:
+			b2.ccsds.csts.common.types.ListOfParametersEvents.ParamEventLabels labels = new b2.ccsds.csts.common.types.ListOfParametersEvents.ParamEventLabels();
+			for (Label label : parameterLabels) {
+				labels.getLabel().add(label.encode());
+			}
+			listOfParametersEvents.setParamEventLabels(labels);
+			break;
+		case NAMES_SET:
+			b2.ccsds.csts.common.types.ListOfParametersEvents.ParamEventNames names = new b2.ccsds.csts.common.types.ListOfParametersEvents.ParamEventNames();
+			for (Name name : parameterNames) {
+				names.getName().add(name.encode(new b2.ccsds.csts.common.types.Name()));
+			}
+			listOfParametersEvents.setParamEventNames(names);
+			break;
+		}
+		return listOfParametersEvents;
+	}
+	
 
 	/**
 	 * Decodes a specified CCSDS ListOfParametersEvents type.
@@ -288,7 +328,7 @@ public class ListOfParameters {
 	 * @return a new ListOfParameters decoded from the specified CCSDS
 	 *         ListOfParametersEvents type
 	 */
-	public static ListOfParameters decode(ListOfParametersEvents params) {
+	public static ListOfParameters decode(b1.ccsds.csts.common.types.ListOfParametersEvents params) {
 
 		ListOfParameters list = null;
 
@@ -304,6 +344,31 @@ public class ListOfParameters {
 			list = new ListOfParameters(ProcedureType.decode(params.getProcedureType()));
 		} else if (params.getProcedureInstanceId() != null) {
 			list = new ListOfParameters(ProcedureInstanceIdentifier.decode(params.getProcedureInstanceId()));
+		} else if (params.getParamEventLabels() != null) {
+			list = new ListOfParameters(params.getParamEventLabels().getLabel().stream().map(Label::decode).toArray(Label[]::new));
+		} else if (params.getParamEventNames() != null) {
+			list = new ListOfParameters(params.getParamEventNames().getName().stream().map(Name::decode).toArray(Name[]::new));
+		}
+
+		return list;
+	}
+	
+	public static ListOfParameters decode(b2.ccsds.csts.common.types.ListOfParametersEvents params) {
+
+		ListOfParameters list = null;
+
+		if (params.getEmpty() != null) {
+			list = new ListOfParameters();
+		} else if (params.getListName() != null) {
+			list = new ListOfParameters(CSTSUtils.decodeString(params.getListName().value));
+		} else if (params.getFunctionalResourceType() != null) {
+			list = new ListOfParameters(FunctionalResourceType.decode(params.getFunctionalResourceType()));
+		} else if (params.getFunctionalResourceName() != null) {
+			list = new ListOfParameters(FunctionalResourceName.decode(params.getFunctionalResourceName()));
+		} else if (params.getProcedureType() != null) {
+			list = new ListOfParameters(ProcedureType.decode(params.getProcedureType()));
+		} else if (params.getProcedureName() != null) {
+			list = new ListOfParameters(ProcedureInstanceIdentifier.decode(params.getProcedureName()));
 		} else if (params.getParamEventLabels() != null) {
 			list = new ListOfParameters(params.getParamEventLabels().getLabel().stream().map(Label::decode).toArray(Label[]::new));
 		} else if (params.getParamEventNames() != null) {

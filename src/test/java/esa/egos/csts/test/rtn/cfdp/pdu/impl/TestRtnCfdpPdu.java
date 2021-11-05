@@ -14,6 +14,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
@@ -25,9 +26,12 @@ import esa.egos.csts.api.enumerations.AppRole;
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.main.CstsApi;
+import esa.egos.csts.api.main.CstsProviderApi;
+import esa.egos.csts.api.main.CstsUserApi;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.states.service.ServiceStatus;
+import esa.egos.csts.api.types.SfwVersion;
 import esa.egos.csts.api.types.Time;
 import esa.egos.csts.api.util.CSTS_LOG;
 import esa.egos.csts.app.si.SiConfig;
@@ -75,11 +79,11 @@ public class TestRtnCfdpPdu {
 		System.out.println("provider config: "  + providerConfigName);
 		System.out.println("user config: "  + userConfigName);
 		
-		providerApi = new CstsApi("Test Service Provider API", AppRole.PROVIDER);
+		providerApi = new CstsProviderApi("Test Service Provider API");
 		providerApi.initialize(providerConfigName);
 		providerApi.start();
 
-		userApi = new CstsApi("Test Service User API", AppRole.USER);
+		userApi = new CstsUserApi("Test Service User API");
 		userApi.initialize(userConfigName);
 		userApi.start();
 		
@@ -97,6 +101,7 @@ public class TestRtnCfdpPdu {
 	}
 	
 	@Test
+	@Ignore
 	public void testRtnCfdpPduDataTransfer2() {
 		testRtnCfdpPduDataTransfer();
 		testRtnCfdpPduDataTransfer();
@@ -227,6 +232,7 @@ public class TestRtnCfdpPdu {
 	}
 
 	@Test
+	@Ignore
 	public void testRtnCfdpPduDataNoInitialConnect() {
 			RtnCfdpPduDeliveryProcedureConfig rtnCfdpProcedureConfig = new RtnCfdpPduDeliveryProcedureConfig();
 			rtnCfdpProcedureConfig.setLatencyLimit(1);
@@ -345,6 +351,7 @@ public class TestRtnCfdpPdu {
 	}	
 	
 	@Test
+	@Ignore
 	public void testHeartBeat() {
 		RtnCfdpPduDeliveryProcedureConfig rtnCfdpProcedureConfig = new RtnCfdpPduDeliveryProcedureConfig();
 		rtnCfdpProcedureConfig.setLatencyLimit(1);

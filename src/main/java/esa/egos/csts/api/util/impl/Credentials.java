@@ -130,10 +130,20 @@ public class Credentials implements ICredentials{
         return dumpStr.toString();
 	}
 
-	@Override
-	public b1.ccsds.csts.common.types.Credentials encode() {
+	public b1.ccsds.csts.common.types.Credentials encode(b1.ccsds.csts.common.types.Credentials cred) {
 		
-		b1.ccsds.csts.common.types.Credentials cred = new b1.ccsds.csts.common.types.Credentials();
+		if (getRandomNumber() != 0){
+		    BerOctetString string = new BerOctetString();
+			string.value = getProtected(); // TODO check
+			cred.setUsed(string);
+		} else {
+			cred.setUnused(new BerNull());
+		}
+
+		return cred;
+	}
+	
+	public b2.ccsds.csts.common.types.Credentials encode(b2.ccsds.csts.common.types.Credentials cred) {
 		
 		if (getRandomNumber() != 0){
 		    BerOctetString string = new BerOctetString();
@@ -146,12 +156,22 @@ public class Credentials implements ICredentials{
 		return cred;
 	}
 
+
 	/**
 	 * Transforms ccsds.csts.common.types.Credentials into internal credentials.
 	 * @param ccsds.csts.common.types.Credentials performerCredentials
 	 * @return
 	 */
 	public static ICredentials decode(b1.ccsds.csts.common.types.Credentials performerCredentials) {
+		Credentials cred = new Credentials();
+		
+		if(performerCredentials.getUsed() != null)
+			cred.setProtected(performerCredentials.getUsed().value);
+		
+		return cred;
+	}
+	
+	public static ICredentials decode(b2.ccsds.csts.common.types.Credentials performerCredentials) {
 		Credentials cred = new Credentials();
 		
 		if(performerCredentials.getUsed() != null)

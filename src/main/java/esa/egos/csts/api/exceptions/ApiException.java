@@ -16,6 +16,10 @@ public class ApiException extends Exception {
 	public ApiException(String message) {
 		super(message);
 	}
+	
+	public ApiException(String message, Exception e) {
+		super(message,e);
+	}
 
 	/**
 	 * Returns the string representing the object.

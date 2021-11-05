@@ -1,5 +1,7 @@
 package esa.egos.csts.api.operations;
 
+import com.beanit.jasn1.ber.types.BerType;
+
 import b1.ccsds.csts.common.operations.pdus.StartInvocation;
 import b1.ccsds.csts.common.operations.pdus.StartReturn;
 import esa.egos.csts.api.diagnostics.StartDiagnostic;
@@ -44,27 +46,27 @@ public interface IStart extends IConfirmedOperation {
 	 * 
 	 * @return this operation encoded into a CCSDS StartInvocation
 	 */
-	StartInvocation encodeStartInvocation();
+	BerType encodeStartInvocation();
 
 	/**
 	 * Decodes a specified CCSDS StartInvocation into this operation.
 	 * 
 	 * @param startInvocation the specified CCSDS StartInvocation
 	 */
-	void decodeStartInvocation(StartInvocation startInvocation);
+	void decodeStartInvocation(BerType startInvocation);
 
 	/**
 	 * Encodes this operation into a CCSDS StartReturn.
 	 * 
 	 * @return this operation encoded into a CCSDS StartReturn
 	 */
-	StartReturn encodeStartReturn();
+	BerType encodeStartReturn();
 
 	/**
 	 * Decodes a specified CCSDS StartReturn into this operation.
 	 * 
 	 * @param startReturn the specified CCSDS StartReturn
 	 */
-	void decodeStartReturn(StartReturn startReturn);
+	void decodeStartReturn(BerType startReturn);
 
 }

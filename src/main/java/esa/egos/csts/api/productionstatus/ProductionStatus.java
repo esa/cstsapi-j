@@ -1,5 +1,6 @@
 package esa.egos.csts.api.productionstatus;
 
+import java.io.IOException;
 import java.util.Observable;
 
 import com.beanit.jasn1.ber.types.BerInteger;
@@ -107,9 +108,19 @@ public class ProductionStatus extends Observable {
 	 * 
 	 * @return the CCSDS ProductionStatus representing this object
 	 */
-	public b1.ccsds.csts.common.types.ProductionStatus encode() {
-		b1.ccsds.csts.common.types.ProductionStatus productionStatus = new b1.ccsds.csts.common.types.ProductionStatus();
+	public b1.ccsds.csts.common.types.ProductionStatus encode(b1.ccsds.csts.common.types.ProductionStatus productionStatus) {
 		productionStatus.getBerInteger().add(new BerInteger(state.getCode()));
+		return productionStatus;
+	}
+	
+	public b2.ccsds.csts.common.types.ProductionStatus encode(b2.ccsds.csts.common.types.ProductionStatus productionStatus) {
+		//productionStatus.getBerInteger().add(new BerInteger(state.getCode()));
+		try {
+			productionStatus.encodeAndSave((int)state.getCode());
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+		
 		return productionStatus;
 	}
 
@@ -122,6 +133,12 @@ public class ProductionStatus extends Observable {
 	 */
 	public static ProductionStatus decode(b1.ccsds.csts.common.types.ProductionStatus productionStatus) {
 		ProductionState state = ProductionState.getProductionStateByCode(productionStatus.getBerInteger().get(0).longValue());
+		ProductionStatus status = new ProductionStatus(state);
+		return status;
+	}
+	
+	public static ProductionStatus decode(b2.ccsds.csts.common.types.ProductionStatus productionStatus) {
+		ProductionState state = ProductionState.getProductionStateByCode(productionStatus.longValue());
 		ProductionStatus status = new ProductionStatus(state);
 		return status;
 	}

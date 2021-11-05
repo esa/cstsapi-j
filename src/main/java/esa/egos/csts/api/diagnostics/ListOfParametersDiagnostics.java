@@ -5,16 +5,13 @@ import java.util.List;
 
 import com.beanit.jasn1.ber.types.string.BerVisibleString;
 
-import b1.ccsds.csts.common.types.AdditionalText;
-import b1.ccsds.csts.common.types.ListOfParamEventsDiagnostics;
-import b1.ccsds.csts.common.types.ListOfParamEventsDiagnostics.UnknownParamEventIdentifier;
-import b1.ccsds.csts.common.types.ListOfParamEventsDiagnostics.UnknownParamEventIdentifier.CHOICE;
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.Name;
+import esa.egos.csts.api.types.SfwVersion;
 import esa.egos.csts.api.util.impl.CSTSUtils;
 
 /**
@@ -195,28 +192,30 @@ public class ListOfParametersDiagnostics {
 	 * @return the CCSDS ListOfParamEventsDiagnostics type representing this
 	 *         Diagnostic
 	 */
-	public ListOfParamEventsDiagnostics encode() {
-		ListOfParamEventsDiagnostics diagnostics = new ListOfParamEventsDiagnostics();
+	public b1.ccsds.csts.common.types.ListOfParamEventsDiagnostics encode(b1.ccsds.csts.common.types.ListOfParamEventsDiagnostics diagnostics) {
+
 		switch (type) {
 		case UNDEFINED_DEFAULT:
-			diagnostics.setUndefinedDefault(new AdditionalText(CSTSUtils.encodeString(undefinedDefault)));
+			diagnostics.setUndefinedDefault(new  b1.ccsds.csts.common.types.AdditionalText(CSTSUtils.encodeString(undefinedDefault)));
 			break;
 		case UNKNOWN_FUNCTIONAL_RESOURCE_NAME:
-			diagnostics.setUnknownFunctionalResourceName(unknownFunctionalResourceName.encode());
+			diagnostics.setUnknownFunctionalResourceName(unknownFunctionalResourceName.encode(new b1.ccsds.csts.common.types.FunctionalResourceName()));
 			break;
 		case UNKNOWN_FUNCTIONAL_RESOURCE_TYPE:
-			diagnostics.setUnknownFunctionalResourceType(unknownFunctionalResourceType.encode());
+			diagnostics.setUnknownFunctionalResourceType((b1.ccsds.csts.common.types.FunctionalResourceType)unknownFunctionalResourceType.encode(SfwVersion.B1));
 			break;
 		case UNKNOWN_PARAMETER_IDENTIFIER:
-			diagnostics.setUnknownParamEventIdentifier(new UnknownParamEventIdentifier());
+			diagnostics.setUnknownParamEventIdentifier(new b1.ccsds.csts.common.types.ListOfParamEventsDiagnostics.UnknownParamEventIdentifier());
 			for (Label label : unknownParameterLabels) {
-				CHOICE type = new CHOICE();
-				type.setParamEventLabel(label.encode());
+				b1.ccsds.csts.common.types.ListOfParamEventsDiagnostics.UnknownParamEventIdentifier.CHOICE type = new 
+						b1.ccsds.csts.common.types.ListOfParamEventsDiagnostics.UnknownParamEventIdentifier.CHOICE();
+				type.setParamEventLabel(label.encode(new b1.ccsds.csts.common.types.Label()));
 				diagnostics.getUnknownParamEventIdentifier().getCHOICE().add(type);
 			}
 			for (Name name : unknownParameterNames) {
-				CHOICE type = new CHOICE();
-				type.setParamEventName(name.encode());
+				b1.ccsds.csts.common.types.ListOfParamEventsDiagnostics.UnknownParamEventIdentifier.CHOICE type = 
+						new b1.ccsds.csts.common.types.ListOfParamEventsDiagnostics.UnknownParamEventIdentifier.CHOICE();
+				type.setParamEventName(name.encode(new b1.ccsds.csts.common.types.Name()));
 				diagnostics.getUnknownParamEventIdentifier().getCHOICE().add(type);
 			}
 			break;
@@ -224,10 +223,52 @@ public class ListOfParametersDiagnostics {
 			diagnostics.setUnknownListName(new BerVisibleString(CSTSUtils.encodeString(unknownListName)));
 			break;
 		case UNKNOWN_PROCEDURE_INSTANCE_IDENTIFIER:
-			diagnostics.setUnknownProcedureInstanceId(unknownProcedureInstanceIdentifier.encode());
+			diagnostics.setUnknownProcedureInstanceId(unknownProcedureInstanceIdentifier.encode(new b1.ccsds.csts.common.types.ProcedureInstanceId()));
 			break;
 		case UNKNOWN_PROCEDURE_TYPE:
-			diagnostics.setUnknownProcedureType(unknownProcedureType.encode());
+			diagnostics.setUnknownProcedureType(
+					(b1.ccsds.csts.common.types.ProcedureType)unknownProcedureType.encode(SfwVersion.B1));
+			break;
+		}
+		return diagnostics;
+	}
+	
+	public b2.ccsds.csts.common.types.ListOfParamEventsDiagnostics encode(b2.ccsds.csts.common.types.ListOfParamEventsDiagnostics diagnostics) {
+
+		switch (type) {
+		case UNDEFINED_DEFAULT:
+			diagnostics.setUndefinedDefault(new  b2.ccsds.csts.common.types.AdditionalText(CSTSUtils.encodeString(undefinedDefault)));
+			break;
+		case UNKNOWN_FUNCTIONAL_RESOURCE_NAME:
+			diagnostics.setUnknownFunctionalResourceName(unknownFunctionalResourceName.encode(new b2.ccsds.csts.common.types.FunctionalResourceName()));
+			break;
+		case UNKNOWN_FUNCTIONAL_RESOURCE_TYPE:
+			diagnostics.setUnknownFunctionalResourceType((b2.ccsds.csts.common.types.FunctionalResourceType)unknownFunctionalResourceType.encode(SfwVersion.B2));
+			break;
+		case UNKNOWN_PARAMETER_IDENTIFIER:
+			diagnostics.setUnknownParamEventIdentifier(new b2.ccsds.csts.common.types.ListOfParamEventsDiagnostics.UnknownParamEventIdentifier());
+			for (Label label : unknownParameterLabels) {
+				b2.ccsds.csts.common.types.ListOfParamEventsDiagnostics.UnknownParamEventIdentifier.CHOICE type = new 
+						b2.ccsds.csts.common.types.ListOfParamEventsDiagnostics.UnknownParamEventIdentifier.CHOICE();
+				type.setParamEventLabel(label.encode());
+				diagnostics.getUnknownParamEventIdentifier().getCHOICE().add(type);
+			}
+			for (Name name : unknownParameterNames) {
+				b2.ccsds.csts.common.types.ListOfParamEventsDiagnostics.UnknownParamEventIdentifier.CHOICE type = 
+						new b2.ccsds.csts.common.types.ListOfParamEventsDiagnostics.UnknownParamEventIdentifier.CHOICE();
+				type.setParamEventName(name.encode(new b2.ccsds.csts.common.types.Name()));
+				diagnostics.getUnknownParamEventIdentifier().getCHOICE().add(type);
+			}
+			break;
+		case UNKNOWN_LIST_NAME:
+			diagnostics.setUnknownListName(new BerVisibleString(CSTSUtils.encodeString(unknownListName)));
+			break;
+		case UNKNOWN_PROCEDURE_INSTANCE_IDENTIFIER:
+			diagnostics.setUnknownProcedureName(unknownProcedureInstanceIdentifier.encode(new b2.ccsds.csts.common.types.ProcedureName()));
+			break;
+		case UNKNOWN_PROCEDURE_TYPE:
+			diagnostics.setUnknownProcedureType(
+					(b2.ccsds.csts.common.types.ProcedureType)unknownProcedureType.encode(SfwVersion.B2));
 			break;
 		}
 		return diagnostics;
@@ -241,7 +282,7 @@ public class ListOfParametersDiagnostics {
 	 * @return a new Diagnostic decoded from the specified CCSDS
 	 *         ListOfParamEventsDiagnostics type
 	 */
-	public static ListOfParametersDiagnostics decode(ListOfParamEventsDiagnostics diagnostics) {
+	public static ListOfParametersDiagnostics decode(b1.ccsds.csts.common.types.ListOfParamEventsDiagnostics diagnostics) {
 		
 		ListOfParametersDiagnostics newDiagnostics = null;
 
@@ -265,7 +306,43 @@ public class ListOfParametersDiagnostics {
 			newDiagnostics.setUnknownProcedureType(ProcedureType.decode(diagnostics.getUnknownProcedureType()));
 		} else if (diagnostics.getUnknownParamEventIdentifier().getCHOICE() != null) {
 			newDiagnostics = new ListOfParametersDiagnostics(ListOfParametersDiagnosticsType.UNKNOWN_PARAMETER_IDENTIFIER);
-			for (CHOICE type : diagnostics.getUnknownParamEventIdentifier().getCHOICE()) {
+			for (b1.ccsds.csts.common.types.ListOfParamEventsDiagnostics.UnknownParamEventIdentifier.CHOICE type : diagnostics.getUnknownParamEventIdentifier().getCHOICE()) {
+				if (type.getParamEventLabel() != null) {
+					newDiagnostics.unknownParameterLabels.add(Label.decode(type.getParamEventLabel()));
+				} else if (type.getParamEventName() != null) {
+					newDiagnostics.unknownParameterNames.add(Name.decode(type.getParamEventName()));
+				}
+			}
+		}
+
+		return newDiagnostics;
+	}
+	
+	public static ListOfParametersDiagnostics decode(b2.ccsds.csts.common.types.ListOfParamEventsDiagnostics diagnostics) {
+		
+		ListOfParametersDiagnostics newDiagnostics = null;
+
+		if (diagnostics.getUndefinedDefault() != null) {
+			newDiagnostics = new ListOfParametersDiagnostics(ListOfParametersDiagnosticsType.UNDEFINED_DEFAULT);
+			newDiagnostics.setUndefinedDefault(CSTSUtils.decodeString(diagnostics.getUndefinedDefault().value));
+		} else if (diagnostics.getUnknownFunctionalResourceName() != null) {
+			newDiagnostics = new ListOfParametersDiagnostics(ListOfParametersDiagnosticsType.UNKNOWN_FUNCTIONAL_RESOURCE_NAME);
+			newDiagnostics.setUnknownFunctionalResourceName(FunctionalResourceName.decode(diagnostics.getUnknownFunctionalResourceName()));
+		} else if (diagnostics.getUnknownFunctionalResourceType() != null) {
+			newDiagnostics = new ListOfParametersDiagnostics(ListOfParametersDiagnosticsType.UNKNOWN_FUNCTIONAL_RESOURCE_TYPE);
+			newDiagnostics.setUnknownFunctionalResourceType(FunctionalResourceType.decode(diagnostics.getUnknownFunctionalResourceType()));
+		} else if (diagnostics.getUnknownListName() != null) {
+			newDiagnostics = new ListOfParametersDiagnostics(ListOfParametersDiagnosticsType.UNKNOWN_LIST_NAME);
+			newDiagnostics.setUnknownListName(CSTSUtils.decodeString(diagnostics.getUnknownListName().value));
+		} else if (diagnostics.getUnknownProcedureName() != null) {
+			newDiagnostics = new ListOfParametersDiagnostics(ListOfParametersDiagnosticsType.UNKNOWN_PROCEDURE_INSTANCE_IDENTIFIER);
+			newDiagnostics.setUnknownProcedureInstanceIdentifier(ProcedureInstanceIdentifier.decode(diagnostics.getUnknownProcedureName()));
+		} else if (diagnostics.getUnknownProcedureType() != null) {
+			newDiagnostics = new ListOfParametersDiagnostics(ListOfParametersDiagnosticsType.UNKNOWN_PROCEDURE_TYPE);
+			newDiagnostics.setUnknownProcedureType(ProcedureType.decode(diagnostics.getUnknownProcedureType()));
+		} else if (diagnostics.getUnknownParamEventIdentifier().getCHOICE() != null) {
+			newDiagnostics = new ListOfParametersDiagnostics(ListOfParametersDiagnosticsType.UNKNOWN_PARAMETER_IDENTIFIER);
+			for (b2.ccsds.csts.common.types.ListOfParamEventsDiagnostics.UnknownParamEventIdentifier.CHOICE type : diagnostics.getUnknownParamEventIdentifier().getCHOICE()) {
 				if (type.getParamEventLabel() != null) {
 					newDiagnostics.unknownParameterLabels.add(Label.decode(type.getParamEventLabel()));
 				} else if (type.getParamEventName() != null) {

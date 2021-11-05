@@ -18,8 +18,11 @@ import esa.egos.csts.api.procedures.associationcontrol.IAssociationControl;
 import esa.egos.csts.api.procedures.associationcontrol.IAssociationControlInternal;
 import esa.egos.csts.api.serviceinstance.AbstractServiceInstance;
 import esa.egos.csts.api.serviceinstance.IServiceInform;
+import esa.egos.csts.api.types.SfwVersion;
 
 public class ServiceInstanceUser extends AbstractServiceInstance {
+	
+	private SfwVersion sfwVersion;
 
 	/**
 	 * The information whether or not an association object has been created
@@ -29,6 +32,7 @@ public class ServiceInstanceUser extends AbstractServiceInstance {
 	public ServiceInstanceUser(CstsApi api, IServiceInform serviceInform, /* ServiceType serviceType, */ IAssociationControl associationControlProcedure) throws ApiException {
 		super(api, serviceInform, AppRole.USER, /* serviceType, */ associationControlProcedure);
 		// this.assocCreated = false;
+		sfwVersion = SfwVersion.NOT_DEF;
 	}
 
 	@Override
@@ -182,6 +186,17 @@ public class ServiceInstanceUser extends AbstractServiceInstance {
 		 * 
 		 * super.prepareRelease();
 		 */
+	}
+
+	@Override
+	public SfwVersion getSfwVersion() {
+		return sfwVersion;
+	}
+
+	@Override
+	public void setSfwVersion(SfwVersion sfwVersion) {
+		this.sfwVersion = sfwVersion;
+		
 	}
 
 }

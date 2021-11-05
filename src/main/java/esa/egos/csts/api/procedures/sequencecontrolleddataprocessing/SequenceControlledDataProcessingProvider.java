@@ -9,7 +9,7 @@ import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.parameters.impl.IntegerConfigurationParameter;
 import esa.egos.csts.api.states.sequencecontrolleddataprocessing.Inactive;
 
-public class SequenceControlledDataProcessingProvider extends AbstractSequenceControlledDataProcessing {
+public class SequenceControlledDataProcessingProvider extends AbstractSequenceControlledDataProcessingB2 {
 
 	@Override
 	protected void initializeState() {

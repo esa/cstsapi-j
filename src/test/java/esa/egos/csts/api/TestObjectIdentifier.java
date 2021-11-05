@@ -15,4 +15,12 @@ public class TestObjectIdentifier {
 		
 		Assert.assertEquals(oneTwoThreeFour, ObjectIdentifier.of(1, 2, 3, 4)); // test against integer creator
 	}
+	
+	@Test
+	public void testOidFromSerializedString() {
+		
+		ObjectIdentifier oneTwoThreeFour = ObjectIdentifier.of("[1,2,3, 4]",",");
+		
+		Assert.assertEquals(oneTwoThreeFour, ObjectIdentifier.of(1, 2, 3, 4)); // test against integer creator
+	}
 }

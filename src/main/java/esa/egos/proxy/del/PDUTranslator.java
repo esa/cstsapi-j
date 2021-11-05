@@ -19,10 +19,11 @@ import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IPeerAbort;
 import esa.egos.csts.api.operations.IUnbind;
-import esa.egos.csts.api.operations.impl.PeerAbort;
+import esa.egos.csts.api.operations.impl.OpsFactory;
 import esa.egos.csts.api.procedures.IProcedureInternal;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceInternal;
+import esa.egos.csts.api.types.SfwVersion;
 import esa.egos.proxy.enums.AbortOriginator;
 import esa.egos.proxy.util.impl.Reference;
 
@@ -52,17 +53,35 @@ public class PDUTranslator implements ITranslator {
 	public IOperation decode(byte[] data, Reference<Boolean> isInvoke) throws ApiException, IOException {
 
 		IOperation operation = null;
-
-		InputStream is = new ByteArrayInputStream(data);
-		CstsFrameworkPdu pdu = new CstsFrameworkPdu();
-		pdu.decode(is);
-
-		operation = decodeOperation(pdu, data, isInvoke);
+		
+		if(serviceInstance!=null && serviceInstance.getSfwVersion()==SfwVersion.B1) {
+			b1.ccsds.csts.pdus.CstsFrameworkPdu pdu = new b1.ccsds.csts.pdus.CstsFrameworkPdu();
+			pdu.decode(new ByteArrayInputStream(data));
+			operation = decodeOperation(pdu, data, isInvoke);
+		}
+		else if (serviceInstance!=null && serviceInstance.getSfwVersion()==SfwVersion.B2) {
+			b2.ccsds.csts.pdus.CstsFrameworkPdu pdu = new b2.ccsds.csts.pdus.CstsFrameworkPdu();
+			pdu.decode(new ByteArrayInputStream(data));
+			operation = decodeOperation(pdu, data, isInvoke);
+		}
+		else {
+			
+			try {
+				b1.ccsds.csts.pdus.CstsFrameworkPdu pdu = new b1.ccsds.csts.pdus.CstsFrameworkPdu();
+				pdu.decode(new ByteArrayInputStream(data));
+				operation = decodeOperation(pdu, data, isInvoke);
+			} catch (Exception ee) {
+				b2.ccsds.csts.pdus.CstsFrameworkPdu pdu = new b2.ccsds.csts.pdus.CstsFrameworkPdu();
+				pdu.decode(new ByteArrayInputStream(data));
+				operation = decodeOperation(pdu, data, isInvoke);
+			}
+		}
+		
 
 		return operation;
 	}
 
-	private IOperation decodeOperation(CstsFrameworkPdu pdu, byte[] data, Reference<Boolean> isInvoke) throws ApiException, IOException {
+	private IOperation decodeOperation(b1.ccsds.csts.pdus.CstsFrameworkPdu pdu, byte[] data, Reference<Boolean> isInvoke) throws ApiException, IOException {
 
 		IOperation operation = null;
 		ProcedureInstanceIdentifier identifier = null;
@@ -141,7 +160,7 @@ public class PDUTranslator implements ITranslator {
 		}
 		if (pdu.getPeerAbortInvocation() != null) {
 			isInvoke.setReference(true);
-			return decode(-1, pdu.getPeerAbortInvocation().getDiagnostic(), AbortOriginator.INTERNAL);
+			return decode(-1, AbortOriginator.INTERNAL);
 		}
 		// BindReturn
 		if (pdu.getBindReturn() != null) {
@@ -208,6 +227,158 @@ public class PDUTranslator implements ITranslator {
 			operation = procedure.decodeOperation(data);
 		}
 
+		
+		return operation;
+	}
+	
+	
+	private IOperation decodeOperation(b2.ccsds.csts.pdus.CstsFrameworkPdu pdu, byte[] data, Reference<Boolean> isInvoke) throws ApiException, IOException {
+
+		IOperation operation = null;
+		ProcedureInstanceIdentifier identifier = null;
+
+		// bindinvoke
+		if (pdu.getBindInvocation() != null) {
+			isInvoke.setReference(true);
+			if (this.serviceInstance != null)
+				identifier = ProcedureInstanceIdentifier.decode(pdu.getBindInvocation().getStandardInvocationHeader().getProcedureName());
+			else
+				return AssocTranslator.decodeBindInvocation(pdu);
+		}
+		// unbindinvoke
+		if (pdu.getUnbindInvocation() != null) {
+			isInvoke.setReference(true);
+			if (this.serviceInstance != null)
+				identifier = ProcedureInstanceIdentifier.decode(pdu.getUnbindInvocation().getStandardInvocationHeader().getProcedureName());
+			else
+				return AssocTranslator.decodeUnbindInvocation(pdu);
+		}
+		// getinvoke
+		if (pdu.getGetInvocation() != null) {
+			isInvoke.setReference(true);
+			if (this.serviceInstance != null)
+				identifier = ProcedureInstanceIdentifier.decode(pdu.getGetInvocation().getStandardInvocationHeader().getProcedureName());
+			else
+				return AssocTranslator.decodeGetInvocation(pdu);
+		}
+		// execeutedirectiveinvoke
+		if (pdu.getExecuteDirectiveInvocation() != null) {
+			isInvoke.setReference(true);
+			if (this.serviceInstance != null)
+				identifier = ProcedureInstanceIdentifier.decode(pdu.getExecuteDirectiveInvocation().getStandardInvocationHeader().getProcedureName());
+			else
+				return AssocTranslator.decodeExecuteDirectiveInvocation(pdu);
+		}
+		// notifyinvoke
+		if (pdu.getNotifyInvocation() != null) {
+			isInvoke.setReference(true);
+			if (this.serviceInstance != null)
+				identifier = ProcedureInstanceIdentifier.decode(pdu.getNotifyInvocation().getStandardInvocationHeader().getProcedureName());
+			else
+				return AssocTranslator.decodeNotifyInvocation(pdu);
+		}
+		// processdateinvoke
+		if (pdu.getProcessDataInvocation() != null) {
+			isInvoke.setReference(true);
+			if (this.serviceInstance != null)
+				identifier = ProcedureInstanceIdentifier.decode(pdu.getProcessDataInvocation().getStandardInvocationHeader().getProcedureName());
+			else
+				return AssocTranslator.decodeProcessDataInvocation(pdu);
+		}
+		// startinvoke
+		if (pdu.getStartInvocation() != null) {
+			isInvoke.setReference(true);
+			if (this.serviceInstance != null)
+				identifier = ProcedureInstanceIdentifier.decode(pdu.getStartInvocation().getStandardInvocationHeader().getProcedureName());
+			else
+				return AssocTranslator.decodeStartInvocation(pdu);
+		}
+		// stopinvoke
+		if (pdu.getStopInvocation() != null) {
+			isInvoke.setReference(true);
+			if (this.serviceInstance != null)
+				identifier = ProcedureInstanceIdentifier.decode(pdu.getStopInvocation().getStandardInvocationHeader().getProcedureName());
+			else
+				return AssocTranslator.decodeStopInvocation(pdu);
+		}
+		// transferdatainvoke
+		if (pdu.getTransferDataInvocation() != null) {
+			isInvoke.setReference(true);
+			if (this.serviceInstance != null)
+				identifier = ProcedureInstanceIdentifier.decode(pdu.getTransferDataInvocation().getStandardInvocationHeader().getProcedureName());
+			else
+				return AssocTranslator.decodeTransferDataInvocation(pdu);
+		}
+		if (pdu.getPeerAbortInvocation() != null) {
+			isInvoke.setReference(true);
+			return decode(-1,  AbortOriginator.INTERNAL);
+		}
+		// BindReturn
+		if (pdu.getBindReturn() != null) {
+			isInvoke.setReference(false);
+			return AssocTranslator.decodeBindReturn(getBindReturnOp(), pdu);
+		}
+		// GetReturn
+		if (pdu.getGetReturn() != null) {
+			isInvoke.setReference(false);
+			return AssocTranslator.decodeGetReturn(getReturnOp(pdu.getGetReturn().getInvokeId()), pdu);
+		}
+
+		// TODO Milena check if this is suitable
+		// ExecuteDirectiveAcknowledgment
+		if (pdu.getExecuteDirectiveAcknowledge() != null)
+			return AssocTranslator.decodeExecuteDirectiveAcknowledgement(peekReturnOp(pdu.getExecuteDirectiveAcknowledge().getInvokeId()), pdu);
+
+		// ExecuteDirectiveReturn
+		if (pdu.getExecuteDirectiveReturn() != null)
+			return AssocTranslator.decodeExecuteDirectiveReturn(getReturnOp(pdu.getExecuteDirectiveReturn().getInvokeId()), pdu);
+		// ProcessDataReturn
+		if (pdu.getProcessDataReturn() != null) {
+			isInvoke.setReference(false);
+			return AssocTranslator.decodeProcessDataReturn(getReturnOp(pdu.getProcessDataReturn().getInvokeId()), pdu);
+		}
+		// StartReturn
+		if (pdu.getStartReturn() != null) {
+			isInvoke.setReference(false);
+			return AssocTranslator.decodeStartReturn(getReturnOp(pdu.getStartReturn().getInvokeId()), pdu);
+		}
+		// StopReturn
+		if (pdu.getStopReturn() != null) {
+			isInvoke.setReference(false);
+			return AssocTranslator.decodeStopReturn(getReturnOp(pdu.getStopReturn().getInvokeId()), pdu);
+		}
+		// UnbindReturn
+		if (pdu.getUnbindReturn() != null) {
+			isInvoke.setReference(false);
+			return AssocTranslator.decodeUnbindReturn(getUnbindReturnOp(), pdu);
+		}
+
+		if (pdu.getReturnBuffer() != null) {
+			isInvoke.setReference(true);
+			if (this.serviceInstance != null)
+				if (pdu.getReturnBuffer().getTransferDataOrNotification().get(0).getTransferDataInvocation() != null) {
+					identifier = ProcedureInstanceIdentifier.decode(
+							pdu.getReturnBuffer().getTransferDataOrNotification().get(0).getTransferDataInvocation().getStandardInvocationHeader().getProcedureName());
+				} else if (pdu.getReturnBuffer().getTransferDataOrNotification().get(0).getNotifyInvocation() != null) {
+					identifier = ProcedureInstanceIdentifier
+							.decode(pdu.getReturnBuffer().getTransferDataOrNotification().get(0).getNotifyInvocation().getStandardInvocationHeader().getProcedureName());
+				}
+		}
+
+		if (pdu.getForwardBuffer() != null) {
+			isInvoke.setReference(true);
+			if (this.serviceInstance != null)
+				identifier = ProcedureInstanceIdentifier.decode(pdu.getForwardBuffer().getProcessDataInvocation().get(0).getStandardInvocationHeader().getProcedureName());
+		}
+
+		// we are from within the API, so we know the service instance and relay
+		if (identifier != null) {
+
+			IProcedureInternal procedure = this.serviceInstance.getProcedureInternal(identifier);
+			operation = procedure.decodeOperation(data);
+		}
+
+		
 		return operation;
 	}
 
@@ -237,17 +408,31 @@ public class PDUTranslator implements ITranslator {
 		return unbindOp;
 	}
 
-	private IOperation getReturnOp(InvokeId invokeId) throws ApiException {
+	private IOperation getReturnOp(b1.ccsds.csts.common.types.InvokeId invokeId) throws ApiException {
+		try {
+			return getReturnOp(invokeId.intValue());
+		} catch(ApiException ae) {
+			throw new ApiException(ae.getMessage()+invokeId);
+		}
+	}
+	
+	private IOperation getReturnOp(b2.ccsds.csts.common.types.InvokeId invokeId) throws ApiException {
+		try {
+			return getReturnOp(invokeId.intValue());
+		} catch(ApiException ae) {
+			throw new ApiException(ae.getMessage()+invokeId);
+		}
+	}
+	
+	private IOperation getReturnOp(int index ) throws ApiException  {
 		IConfirmedOperation op = null;
-
-		int index = invokeId.intValue();
-
+		
 		this.accessPendingReturn.lock();
 		// take the operation in the map
 		op = this.pendingReturn.get(index);
 		if (op == null) {
 			// no pending return
-			throw new ApiException("No pending return for invoke id " + invokeId);
+			throw new ApiException("No pending return for invoke id ");
 		} else {
 			// remove the pending return
 			this.pendingReturn.remove(index);
@@ -256,18 +441,33 @@ public class PDUTranslator implements ITranslator {
 
 		return op;
 	}
+	
 
-	private IOperation peekReturnOp(InvokeId invokeId) throws ApiException {
+	private IOperation peekReturnOp(b1.ccsds.csts.common.types.InvokeId invokeId) throws ApiException {
+		try {
+			return peekReturnOp(invokeId.intValue());
+		} catch(ApiException ae) {
+			throw new ApiException(ae.getMessage()+invokeId);
+		}
+	}
+	
+	private IOperation peekReturnOp(b2.ccsds.csts.common.types.InvokeId invokeId) throws ApiException {
+		try {
+			return peekReturnOp(invokeId.intValue());
+		} catch(ApiException ae) {
+			throw new ApiException(ae.getMessage()+invokeId);
+		}
+	}
+	
+	private IOperation peekReturnOp(int index) throws ApiException {
 		IConfirmedOperation op = null;
-
-		int index = invokeId.intValue();
 
 		this.accessPendingReturn.lock();
 		// take the operation in the map
 		op = this.pendingReturn.get(index);
 		if (op == null) {
 			// no pending return
-			throw new ApiException("No pending return for invoke id " + invokeId);
+			throw new ApiException("No pending return for invoke id ");
 		} else {
 			IAcknowledgedOperation acknowledgedOperation = (IAcknowledgedOperation) op;
 			if (acknowledgedOperation.isAcknowledgement() && acknowledgedOperation.getResult() == OperationResult.NEGATIVE) {
@@ -281,12 +481,12 @@ public class PDUTranslator implements ITranslator {
 	}
 
 	@Override
-	public IOperation decode(int diagnostic, PeerAbortDiagnostic peerAbortDiagnostic, AbortOriginator abortOriginator) throws ApiException {
+	public IOperation decode(int diagnostic, AbortOriginator abortOriginator) throws ApiException {
 
 		if (this.serviceInstance == null)
 			throw new ApiResultException("serviceInstance in the translator has not been initialised.");
 
-		PeerAbort op = new PeerAbort();
+		IPeerAbort op = OpsFactory.createPeerAbort(this.serviceInstance.getSfwVersion());
 		op.setAbortOriginator(abortOriginator);
 		op.setPeerAbortDiagnostic(PeerAbortDiagnostics.getPeerAbortDiagnosticByCode(diagnostic));
 		
@@ -304,6 +504,7 @@ public class PDUTranslator implements ITranslator {
 		ProcedureInstanceIdentifier identifier = operation.getProcedureInstanceIdentifier();
 
 		IProcedureInternal procedure = this.serviceInstance.getProcedureInternal(identifier);
+
 		output = procedure.encodeOperation(operation, invoke);
 
 		if (operation.isConfirmed() && invoke) {

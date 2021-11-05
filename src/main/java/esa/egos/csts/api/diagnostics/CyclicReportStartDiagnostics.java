@@ -4,8 +4,6 @@ import java.io.IOException;
 
 import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 
-import b1.ccsds.csts.common.types.AdditionalText;
-import b1.ccsds.csts.cyclic.report.pdus.CyclicReportStartDiagnosticExt;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.util.impl.CSTSUtils;
 
@@ -129,19 +127,46 @@ public class CyclicReportStartDiagnostics {
 	 * @return the CCSDS CyclicReportStartDiagnosticExt type representing this
 	 *         Diagnostic
 	 */
-	public CyclicReportStartDiagnosticExt encode() {
-
-		CyclicReportStartDiagnosticExt cyclicReportStartDiagnosticExt = new CyclicReportStartDiagnosticExt();
+	public b1.ccsds.csts.cyclic.report.pdus.CyclicReportStartDiagnosticExt encode(
+			b1.ccsds.csts.cyclic.report.pdus.CyclicReportStartDiagnosticExt cyclicReportStartDiagnosticExt) {
 
 		switch (type) {
 		case COMMON:
-			cyclicReportStartDiagnosticExt.setCommon(listOfParametersDiagnostics.encode());
+			cyclicReportStartDiagnosticExt.setCommon(listOfParametersDiagnostics.encode(new b1.ccsds.csts.common.types.ListOfParamEventsDiagnostics()));
 			break;
 		case EXTENDED:
-			cyclicReportStartDiagnosticExt.setCyclicReportStartDiagnosticExtExtension(diagnosticExtension.encode());
+			cyclicReportStartDiagnosticExt.setCyclicReportStartDiagnosticExtExtension(diagnosticExtension.encode(
+					new b1.ccsds.csts.common.types.Embedded()));
 			break;
 		case OUT_OF_RANGE:
-			cyclicReportStartDiagnosticExt.setOutOfRange(new AdditionalText(CSTSUtils.encodeString(message)));
+			cyclicReportStartDiagnosticExt.setOutOfRange(new b1.ccsds.csts.common.types.AdditionalText(CSTSUtils.encodeString(message)));
+			break;
+		}
+
+		// encode with a resizable output stream and an initial capacity of 128 bytes
+		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
+			cyclicReportStartDiagnosticExt.encode(os);
+			cyclicReportStartDiagnosticExt.code = os.getArray();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return cyclicReportStartDiagnosticExt;
+	}
+	
+	public b2.ccsds.csts.cyclic.report.pdus.CyclicReportStartDiagnosticExt encode(
+			b2.ccsds.csts.cyclic.report.pdus.CyclicReportStartDiagnosticExt cyclicReportStartDiagnosticExt ) {
+
+		switch (type) {
+		case COMMON:
+			cyclicReportStartDiagnosticExt.setCommon(listOfParametersDiagnostics.encode(new b2.ccsds.csts.common.types.ListOfParamEventsDiagnostics()));
+			break;
+		case EXTENDED:
+			cyclicReportStartDiagnosticExt.setCyclicReportStartDiagnosticExtExtension(diagnosticExtension.encode(
+					new b2.ccsds.csts.common.types.Embedded()));
+			break;
+		case OUT_OF_RANGE:
+			cyclicReportStartDiagnosticExt.setOutOfRange(new b2.ccsds.csts.common.types.AdditionalText(CSTSUtils.encodeString(message)));
 			break;
 		}
 
@@ -164,7 +189,22 @@ public class CyclicReportStartDiagnostics {
 	 * @return a new Cyclic Report START Diagnostic decoded from the specified CCSDS
 	 *         CyclicReportStartDiagnostic type
 	 */
-	public static CyclicReportStartDiagnostics decode(CyclicReportStartDiagnosticExt diagnostic) {
+	public static CyclicReportStartDiagnostics decode(b1.ccsds.csts.cyclic.report.pdus.CyclicReportStartDiagnosticExt diagnostic) {
+		CyclicReportStartDiagnostics newDiagnostic = null;
+		if (diagnostic.getCommon() != null) {
+			newDiagnostic = new CyclicReportStartDiagnostics(CyclicReportStartDiagnosticsType.COMMON);
+			newDiagnostic.setListOfParametersDiagnostics(ListOfParametersDiagnostics.decode(diagnostic.getCommon()));
+		} else if (diagnostic.getOutOfRange() != null) {
+			newDiagnostic = new CyclicReportStartDiagnostics(CyclicReportStartDiagnosticsType.OUT_OF_RANGE,
+					CSTSUtils.decodeString(diagnostic.getOutOfRange().value));
+		} else if (diagnostic.getCyclicReportStartDiagnosticExtExtension() != null) {
+			newDiagnostic = new CyclicReportStartDiagnostics(
+					EmbeddedData.decode(diagnostic.getCyclicReportStartDiagnosticExtExtension()));
+		}
+		return newDiagnostic;
+	}
+	
+	public static CyclicReportStartDiagnostics decode(b2.ccsds.csts.cyclic.report.pdus.CyclicReportStartDiagnosticExt diagnostic) {
 		CyclicReportStartDiagnostics newDiagnostic = null;
 		if (diagnostic.getCommon() != null) {
 			newDiagnostic = new CyclicReportStartDiagnostics(CyclicReportStartDiagnosticsType.COMMON);

@@ -23,6 +23,7 @@ import esa.egos.csts.api.parameters.impl.ParameterValue;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 import esa.egos.csts.api.parameters.impl.QualifiedValues;
 import esa.egos.csts.api.states.service.ServiceStatus;
+import esa.egos.csts.api.types.SfwVersion;
 import esa.egos.csts.app.si.SiConfig;
 import esa.egos.csts.monitored.data.procedures.IOnChangeCyclicReport;
 
@@ -41,12 +42,12 @@ public class MdSiUser extends MdSi {
 	 * @param version			The CSTS version to use
 	 * @throws ApiException		
 	 */
-	public MdSiUser(ICstsApi api, SiConfig config, int version, List<ListOfParameters> parameterLists) throws ApiException {
+	public MdSiUser(ICstsApi api, SiConfig config, int serviceVersion, List<ListOfParameters> parameterLists) throws ApiException {
 		super(api, config, parameterLists, null, false);
 
 		this.retLock = new ReentrantLock();
 		this.retCond = retLock.newCondition();
-		getApiServiceInstance().setVersion(version);
+		//getApiServiceInstance().setVersion(version.getServiceVersion(config.ge));
 	}
 
 	/**

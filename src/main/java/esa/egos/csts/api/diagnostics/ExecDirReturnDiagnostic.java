@@ -5,8 +5,6 @@ import java.util.List;
 
 import com.beanit.jasn1.ber.types.BerNull;
 
-import b1.ccsds.csts.common.operations.pdus.ActionNotCompletedDiag;
-import b1.ccsds.csts.common.operations.pdus.ExecDirNegReturnDiagnosticExt;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.types.Name;
 
@@ -87,22 +85,43 @@ public class ExecDirReturnDiagnostic {
 	 * @return the CCSDS ExecDirNegReturnDiagnosticExt type representing this
 	 *         Diagnostic
 	 */
-	public ExecDirNegReturnDiagnosticExt encode() {
-		ExecDirNegReturnDiagnosticExt execDirNegReturnDiagnosticExt = new ExecDirNegReturnDiagnosticExt();
+	public b1.ccsds.csts.common.operations.pdus.ExecDirNegReturnDiagnosticExt encode(b1.ccsds.csts.common.operations.pdus.ExecDirNegReturnDiagnosticExt execDirNegReturnDiagnosticExt ) {
 		switch (type) {
 		case ACTION_NOT_COMPLETED:
-			ActionNotCompletedDiag actionNotCompletedDiag = new ActionNotCompletedDiag();
+			b1.ccsds.csts.common.operations.pdus.ActionNotCompletedDiag actionNotCompletedDiag = new b1.ccsds.csts.common.operations.pdus.ActionNotCompletedDiag();
 			if (names.isEmpty()) {
 				actionNotCompletedDiag.setNoParameterNames(new BerNull());
 			} else {
 				for (Name name : names) {
-					actionNotCompletedDiag.getParameterNames().getName().add(name.encode());
+					actionNotCompletedDiag.getParameterNames().getName().add(name.encode(new b1.ccsds.csts.common.types.Name()));
 				}
 			}
 			execDirNegReturnDiagnosticExt.setActionNotCompleted(actionNotCompletedDiag);
 			break;
 		case EXTENDED:
-			execDirNegReturnDiagnosticExt.setExecDirNegReturnDiagnosticExtExtension(diagnosticExtension.encode());
+			execDirNegReturnDiagnosticExt.setExecDirNegReturnDiagnosticExtExtension(diagnosticExtension.encode(
+					new b1.ccsds.csts.common.types.Embedded()));
+			break;
+		}
+		return execDirNegReturnDiagnosticExt;
+	}
+	
+	public b2.ccsds.csts.common.operations.pdus.ExecDirNegReturnDiagnosticExt encode(b2.ccsds.csts.common.operations.pdus.ExecDirNegReturnDiagnosticExt execDirNegReturnDiagnosticExt ) {
+		switch (type) {
+		case ACTION_NOT_COMPLETED:
+			b2.ccsds.csts.common.operations.pdus.ActionNotCompletedDiag actionNotCompletedDiag = new b2.ccsds.csts.common.operations.pdus.ActionNotCompletedDiag();
+			if (names.isEmpty()) {
+				actionNotCompletedDiag.setNoParameterNames(new BerNull());
+			} else {
+				for (Name name : names) {
+					actionNotCompletedDiag.getParameterNames().getName().add(name.encode(new b2.ccsds.csts.common.types.Name()));
+				}
+			}
+			execDirNegReturnDiagnosticExt.setActionNotCompleted(actionNotCompletedDiag);
+			break;
+		case EXTENDED:
+			execDirNegReturnDiagnosticExt.setExecDirNegReturnDiagnosticExtExtension(diagnosticExtension.encode(
+					new b2.ccsds.csts.common.types.Embedded()));
 			break;
 		}
 		return execDirNegReturnDiagnosticExt;
@@ -115,12 +134,27 @@ public class ExecDirReturnDiagnostic {
 	 * @return a new EXECUTE-DIRECTIVE return Diagnostic decoded from the specified
 	 *         CCSDS ExecDirReturnDiagnostic type
 	 */
-	public static ExecDirReturnDiagnostic decode(ExecDirNegReturnDiagnosticExt diagnostic) {
+	public static ExecDirReturnDiagnostic decode(b1.ccsds.csts.common.operations.pdus.ExecDirNegReturnDiagnosticExt diagnostic) {
 		ExecDirReturnDiagnostic execDirReturnDiagnostic = null;
 		if (diagnostic.getActionNotCompleted() != null) {
 			execDirReturnDiagnostic = new ExecDirReturnDiagnostic(ExecDirReturnDiagnosticType.ACTION_NOT_COMPLETED);
 			if (diagnostic.getActionNotCompleted().getParameterNames() != null) {
 				for (b1.ccsds.csts.common.types.Name name : diagnostic.getActionNotCompleted().getParameterNames().getName()) {
+					execDirReturnDiagnostic.names.add(Name.decode(name));
+				}
+			}
+		} else if (diagnostic.getExecDirNegReturnDiagnosticExtExtension() != null) {
+			execDirReturnDiagnostic = new ExecDirReturnDiagnostic(EmbeddedData.decode(diagnostic.getExecDirNegReturnDiagnosticExtExtension()));
+		}
+		return execDirReturnDiagnostic;
+	}
+	
+	public static ExecDirReturnDiagnostic decode(b2.ccsds.csts.common.operations.pdus.ExecDirNegReturnDiagnosticExt diagnostic) {
+		ExecDirReturnDiagnostic execDirReturnDiagnostic = null;
+		if (diagnostic.getActionNotCompleted() != null) {
+			execDirReturnDiagnostic = new ExecDirReturnDiagnostic(ExecDirReturnDiagnosticType.ACTION_NOT_COMPLETED);
+			if (diagnostic.getActionNotCompleted().getParameterNames() != null) {
+				for (b2.ccsds.csts.common.types.Name name : diagnostic.getActionNotCompleted().getParameterNames().getName()) {
 					execDirReturnDiagnostic.names.add(Name.decode(name));
 				}
 			}

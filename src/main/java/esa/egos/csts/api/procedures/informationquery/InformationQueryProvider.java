@@ -8,7 +8,7 @@ import esa.egos.csts.api.operations.IGet;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.parameters.impl.LabelLists;
 
-public class InformationQueryProvider extends AbstractInformationQuery {
+public class InformationQueryProvider extends AbstractInformationQueryB2 {
 
 	@Override
 	protected void initializeConfigurationParameters() {

@@ -42,11 +42,19 @@ public class ServiceType {
 		return "ServiceType [oid=" + Arrays.toString(oid.toArray()) + ", supportedVersions=" + supportedVersions + "]";
 	}
 	
-	public b1.ccsds.csts.association.control.types.ServiceType encode() {
+	public b1.ccsds.csts.association.control.types.ServiceType encodeB1() {
 		return new b1.ccsds.csts.association.control.types.ServiceType(oid.toArray());
 	}
 	
+	public b2.ccsds.csts.association.control.types.ServiceType encodeB2() {
+		return new b2.ccsds.csts.association.control.types.ServiceType(oid.toArray());
+	}
+	
 	public static ServiceType decode(b1.ccsds.csts.association.control.types.ServiceType serviceType) {
+		return new ServiceType(ObjectIdentifier.of(serviceType.value));
+	}
+	
+	public static ServiceType decode(b2.ccsds.csts.association.control.types.ServiceType serviceType) {
 		return new ServiceType(ObjectIdentifier.of(serviceType.value));
 	}
 	

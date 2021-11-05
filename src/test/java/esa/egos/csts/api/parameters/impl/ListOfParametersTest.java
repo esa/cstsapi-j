@@ -9,7 +9,6 @@ import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.oids.ObjectIdentifier;
-import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.types.Label;

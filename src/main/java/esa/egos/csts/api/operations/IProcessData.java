@@ -1,6 +1,7 @@
 package esa.egos.csts.api.operations;
 
-import b1.ccsds.csts.common.operations.pdus.ProcessDataInvocation;
+import com.beanit.jasn1.ber.types.BerType;
+
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.extensions.Extension;
 
@@ -70,13 +71,13 @@ public interface IProcessData extends IOperation {
 	 * 
 	 * @return this operation encoded into a CCSDS ProcessDataInvocation
 	 */
-	ProcessDataInvocation encodeProcessDataInvocation();
+	BerType encodeProcessDataInvocation();
 
 	/**
 	 * Decodes a specified CCSDS ProcessDataInvocation into this operation.
 	 * 
 	 * @param processDataInvocation the specified CCSDS ProcessDataInvocation
 	 */
-	void decodeProcessDataInvocation(ProcessDataInvocation processDataInvocation);
+	void decodeProcessDataInvocation(BerType processDataInvocation);
 
 }

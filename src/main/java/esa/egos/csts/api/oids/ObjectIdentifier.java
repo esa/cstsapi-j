@@ -58,9 +58,32 @@ public class ObjectIdentifier {
 	 * @throws NumberFormatException if elements of the string cannot be converted to an integer number
 	 */
 	public static ObjectIdentifier of(String str) throws NumberFormatException {
-		return ObjectIdentifier.of(Stream.of(str.split(DOT_EXPR))
-	      .map(elem -> new Integer(elem)).mapToInt(i -> i).toArray());
+		return of(str,DOT_EXPR);
 	}
+	
+	/**
+	 *   Creates an Object Identifier from the given string, with chosen separator
+	 *   
+	 * @param str
+	 * @param separator
+	 * @return The created object identifier
+	 * @throws NumberFormatException if elements of the string cannot be converted to an integer number
+	 */
+	public static ObjectIdentifier of(String str, String separator) throws NumberFormatException {
+		return ObjectIdentifier.of(Stream.of(removeBrackets(str).split(separator))
+	      .map(elem -> new Integer(elem.trim())).mapToInt(i -> i).toArray());
+	}
+	
+	/**
+	 * Transform "[abc]" into "abc"
+	 * @param str
+	 * @return
+	 */
+	private static String removeBrackets(String str) {
+		return str.replace("[", "").replace("]", "");
+	}
+	
+	
 	
 	/**
 	 * Returns a cloned array of the internal Object Identifier values. The cloning

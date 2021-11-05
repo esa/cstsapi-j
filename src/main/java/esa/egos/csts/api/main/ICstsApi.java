@@ -59,7 +59,7 @@ public interface ICstsApi {
 	 * @param serviceInform the callback interface for the service/application
 	 * @return the created Service Instance
 	 */
-	IServiceInstance createServiceInstance(IServiceInstanceIdentifier identifier, IServiceInform serviceInform);
+	IServiceInstance createServiceInstance(IServiceInstanceIdentifier identifier, int serviceVersion, IServiceInform serviceInform);
 
 	/**
 	 * Returns the Service Instance of the specified identifier.

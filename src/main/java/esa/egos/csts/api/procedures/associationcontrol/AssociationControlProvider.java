@@ -1,5 +1,7 @@
 package esa.egos.csts.api.procedures.associationcontrol;
 
+import java.io.IOException;
+
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.oids.OIDs;
@@ -12,6 +14,7 @@ import esa.egos.csts.api.serviceinstance.IServiceInstanceIdentifier;
 import esa.egos.csts.api.states.associationcontrol.Unbound;
 
 public class AssociationControlProvider extends AbstractAssociationControl {
+
 
 	@Override
 	protected void initializeConfigurationParameters() {
@@ -58,6 +61,15 @@ public class AssociationControlProvider extends AbstractAssociationControl {
 	@Override
 	protected CstsResult doInformOperationInvoke(IOperation operation) {
 		return getState().process(operation, false);
+	}
+
+	@Override
+	public IOperation decodeOperation(byte[] encodedPdu) throws IOException {
+		switch(getServiceInstance().getSfwVersion()) {
+		case B1: return decodeOperation(new b1.ccsds.csts.association.control.types.AssociationPdu(), encodedPdu);
+		case B2: return decodeOperation(new b2.ccsds.csts.association.control.types.AssociationPdu(), encodedPdu);
+		default: throw new IOException("Undefiend framework version, cannot decode opration");
+		}
 	}
 
 }

@@ -1,6 +1,9 @@
 package esa.egos.csts.api.procedures.impl;
 
+import com.beanit.jasn1.ber.types.BerType;
+
 import esa.egos.csts.api.oids.ObjectIdentifier;
+import esa.egos.csts.api.types.SfwVersion;
 
 /**
  * This class represents a Procedure type.
@@ -38,8 +41,12 @@ public class ProcedureType {
 	 * 
 	 * @return the CCSDS ProcedureType type representing this object
 	 */
-	public b1.ccsds.csts.common.types.ProcedureType encode() {
-		return new b1.ccsds.csts.common.types.ProcedureType(objectIdentifier.toArray());
+	public BerType encode(SfwVersion sfwVersion) {
+		switch(sfwVersion) {
+		case B1: return new b1.ccsds.csts.common.types.ProcedureType(objectIdentifier.toArray());
+		case B2: return new b2.ccsds.csts.common.types.ProcedureType(objectIdentifier.toArray());
+		default: return null;
+		} 
 	}
 
 	/**
@@ -50,6 +57,10 @@ public class ProcedureType {
 	 *         type
 	 */
 	public static ProcedureType decode(b1.ccsds.csts.common.types.ProcedureType procedureType) {
+		return new ProcedureType(ObjectIdentifier.of(procedureType.value));
+	}
+	
+	public static ProcedureType decode(b2.ccsds.csts.common.types.ProcedureType procedureType) {
 		return new ProcedureType(ObjectIdentifier.of(procedureType.value));
 	}
 

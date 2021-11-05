@@ -1,0 +1,2686 @@
+CCSDS-CSTS-OBJECT-IDENTIFIERS
+{	iso(1) identified-organization(3) standards-producing-organization(112)
+	ccsds(4) css(4) csts(1) framework(1) modules(1) object-identifiers(1) version(2)
+}
+
+DEFINITIONS
+IMPLICIT TAGS
+::=		BEGIN
+
+EXPORTS 	acExtProcedureParam
+,			agenciesFunctionalities
+,			bddExtProcedureParam
+,			bdpExtProcedureParam
+,			crExtProcedureParam
+,			crossSupportFunctionalities
+,			dpExtProcedureParam
+,			executeDirectiveAcknowledge
+,			executeDirectiveReturn
+,			fwProceduresFunctionalities
+,			getReturn
+,			modules
+,			nExtProcedureParam
+,			operations
+,			procedures
+,			scdpExtProcedureParam
+,			serviceGenericIdentifiers
+,			services
+,			startReturn
+,			teExtProcedureParam;
+
+css										OBJECT IDENTIFIER	::=	{1 3 112 4 4}
+
+csts									OBJECT IDENTIFIER	::=	{css 1}
+crossSupportResources					OBJECT IDENTIFIER	::=	{css 2}
+
+framework								OBJECT IDENTIFIER	::=	{csts 1}
+services								OBJECT IDENTIFIER	::=	{csts 2}
+
+-- ======================================================================
+-- FRAMEWORK OBJECT IDENTIFIERS
+
+fwProceduresFunctionalities			OBJECT IDENTIFIER	::=	{framework 4}
+modules									OBJECT IDENTIFIER	::=	{framework 1}
+operations								OBJECT IDENTIFIER	::=	{framework 2}
+procedures								OBJECT IDENTIFIER	::=	{framework 3}
+serviceGenericIdentifiers				OBJECT IDENTIFIER	::=	{framework 5}
+-- ************************************
+-- FRAMEWORK OPERATIONS IDENTIFIERS:
+bindInvocation							OBJECT IDENTIFIER	::=	{operations 1}
+bindReturn								OBJECT IDENTIFIER	::=	{operations 2}
+unbindInvocation						OBJECT IDENTIFIER	::=	{operations 3}
+unbindReturn							OBJECT IDENTIFIER	::=	{operations 4}
+peerAbortInvocation					OBJECT IDENTIFIER	::=	{operations 5}
+startInvocation 						OBJECT IDENTIFIER	::=	{operations 6}
+startReturn 							OBJECT IDENTIFIER	::=	{operations 7}
+stopInvocation 						OBJECT IDENTIFIER	::=	{operations 8}
+stopReturn 							OBJECT IDENTIFIER	::=	{operations 9}
+executeDirectiveInvocation			OBJECT IDENTIFIER	::=	{operations 10}
+executeDirectiveAcknowledge			OBJECT IDENTIFIER	::=	{operations 11}
+executeDirectiveReturn				OBJECT IDENTIFIER	::=	{operations 12}
+getInvocation 							OBJECT IDENTIFIER	::=	{operations 13}
+getReturn 								OBJECT IDENTIFIER	::=	{operations 14}
+notifyInvocation 						OBJECT IDENTIFIER	::=	{operations 15}
+transferDataInvocation 				OBJECT IDENTIFIER	::=	{operations 16}
+processDataInvocation					OBJECT IDENTIFIER ::=	{operations 17}
+processDataReturn						OBJECT IDENTIFIER ::=	{operations 18}
+
+
+-- ************************************
+-- FRAMEWORK PROCEDURES IDENTIFIERS:
+-- Identifiers to be used with the type ProcedureType
+-- This branch is used to support all extension definitions required
+-- for the operations extended by procedures.
+associationControl						OBJECT IDENTIFIER	::=	{procedures 1}
+unbufferedDataDelivery				OBJECT IDENTIFIER	::=	{procedures 2}
+bufferedDataDelivery					OBJECT IDENTIFIER	::=	{procedures 3}
+dataProcessing							OBJECT IDENTIFIER	::=	{procedures 4}
+informationQuery						OBJECT IDENTIFIER	::=	{procedures 5}
+notification							OBJECT IDENTIFIER	::=	{procedures 6}
+throwEvent								OBJECT IDENTIFIER ::=	{procedures 7}
+
+acDerivedProcedures 					OBJECT IDENTIFIER	::=	{associationControl 1}
+acExtProcedureParam					OBJECT IDENTIFIER ::=	{associationControl 2}
+uddDerivedProcedures					OBJECT IDENTIFIER ::=	{unbufferedDataDelivery 1}
+uddExtProcedureParam  				OBJECT IDENTIFIER ::=	{unbufferedDataDelivery 2}
+bddDerivedProcedures					OBJECT IDENTIFIER ::=	{bufferedDataDelivery 1}
+bddExtProcedureParam  				OBJECT IDENTIFIER ::=	{bufferedDataDelivery 2}
+dpDerivedProcedures					OBJECT IDENTIFIER	::=	{dataProcessing 1}
+dpExtProcedureParam					OBJECT IDENTIFIER	::=	{dataProcessing 2}
+iqDerivedProcedures					OBJECT IDENTIFIER ::=	{informationQuery 1}
+iqExtProcedureParam 					OBJECT IDENTIFIER ::=	{informationQuery 2}
+nDerivedProcedures						OBJECT IDENTIFIER	::=	{notification 1}
+nExtProcedureParam						OBJECT IDENTIFIER	::=	{notification 2}
+teDerivedProcedures					OBJECT IDENTIFIER	::=	{throwEvent 1}
+teExtProcedureParam					OBJECT IDENTIFIER	::=	{throwEvent 2}
+bufferedDataProcessing				OBJECT IDENTIFIER	::=	{dpDerivedProcedures 1}
+cyclicReport							OBJECT IDENTIFIER	::=	{uddDerivedProcedures 1}
+sequenceControlledDataProcessing		OBJECT IDENTIFIER	::=	{dpDerivedProcedures 2}
+
+crDerivedProcedures					OBJECT IDENTIFIER	::=	{cyclicReport 1}
+crExtProcedureParam					OBJECT IDENTIFIER	::=	{cyclicReport 2}
+
+bdpDerivedProcedures					OBJECT IDENTIFIER	::=	{bufferedDataProcessing 1}
+bdpExtProcedureParam					OBJECT IDENTIFIER	::=	{bufferedDataProcessing 2}
+
+scdpDerivedProcedures					OBJECT IDENTIFIER	::=															{sequenceControlledDataProcessing 1}
+scdpExtProcedureParam					OBJECT IDENTIFIER	::=
+											{sequenceControlledDataProcessing 2}
+
+
+
+-- ======================================================================
+-- CROSS SUPPORT RESOURCES
+crossSupportFunctionalities 			OBJECT IDENTIFIER	::=	{crossSupportResources 1}
+agenciesFunctionalities	    		OBJECT IDENTIFIER ::=	{crossSupportResources 2}
+
+END
+
+
+CCSDS-CSTS-SERVICE-INSTANCE-ID
+{	iso(1) identified-organization(3) standards-producing-organization(112)
+	ccsds(4) css(4) csts(1) framework(1) modules(1) service-instance(2)
+	version(1)
+}
+
+DEFINITIONS
+IMPLICIT TAGS
+::=		BEGIN
+
+EXPORTS		ServiceInstanceIdentifier
+;
+IMPORTS		IntUnsigned
+,			PublishedIdentifier
+	FROM CCSDS-CSTS-COMMON-TYPES
+;
+
+ServiceInstanceIdentifier		::=		SEQUENCE
+{	spacecraftId					PublishedIdentifier
+,	facilityId						PublishedIdentifier
+,	serviceType					PublishedIdentifier
+,	serviceInstanceNumber			IntUnsigned
+}
+
+
+END
+
+
+CCSDS-CSTS-COMMON-TYPES
+{	iso(1) identified-organization(3) standards-producing-organization(112)
+	ccsds(4) css(4) csts(1) framework(1) modules(1) common-types(3) version(2)
+}
+
+DEFINITIONS
+IMPLICIT TAGS
+::=		BEGIN
+
+EXPORTS		AbstractChoice
+, 			AdditionalText
+,			AuthorityIdentifier
+,			BufferSize
+,			ConditionalTime
+,			DataTransferMode
+,			DataUnitId
+,			DeliveryLatencyLimit
+,			DeliveryMode
+, 			Diagnostic
+,			Duration
+,			Embedded
+,			EventValue
+,			Extended
+,			FRorProcedureName
+,			FunctionalResourceInstanceNumber
+,			FunctionalResourceName
+,			FunctionalResourceType
+, 			IdentifierString
+, 			IntPos
+, 			IntUnsigned
+,			InvokeId
+,			Label
+,			ListOfNamesDiagnosticExt
+,			ListOfParametersEvents
+,			ListOfParamEventsDiagnostics
+,			LogicalPortName
+,			Name
+, 			PortId
+,			ProcedureName
+,			ProcessingLatencyLimit
+,			ProductionStatus
+,			PublishedIdentifier
+,			QualifiedParameter
+,			ServiceUserRespTimer
+,			StandardAcknowledgeHeader
+,			StandardInvocationHeader
+,			StandardReturnHeader
+, 			Time
+,			TypeAndValue
+,			UnknownName
+;
+
+
+-- This type is used by operations allowing the procedures using them to select two
+-- possibilities for the definition of the data parameter:
+-- 1. opaqueString: direct use, no extension required;
+-- 2. extendedData: definition of a complex type using a constructed syntax
+AbstractChoice				::=		CHOICE
+{	opaqueString				[0]		OCTET STRING
+,	extendedData				[1]		Embedded
+}
+
+-- In the event of a negative result, the value of the diagnostic
+-- is complemented by the following type (see 3.2.1.6 a)):
+AdditionalText				::=		VisibleString
+
+-- Appellation is used between the service provider and the service user.
+-- This appellation not being formally agreed can only be used for logging
+-- or tracing.
+Appellation				::=		VisibleString (SIZE (1 .. 128))
+
+AuthorityIdentifier		::=		IdentifierString (SIZE (3 .. 16))
+
+BufferSize					::=		IntPos
+
+ConditionalTime			::=		CHOICE
+{	undefined					[0]		NULL
+,	known						[1]		Time
+}
+
+-- If credentials are used, it will be necessary that the internal
+-- structure of the octet string is known to both parties. Since the
+-- structure will depend on the algorithm used, it is not specified here.
+-- However, the peer entities may use ASN.1 encoding to make the internal
+-- structure visible.
+Credentials				::=		CHOICE
+{	unused						[0]		NULL
+,	used						[1]		OCTET STRING (SIZE (8 .. 256))
+}
+
+DataTransferMode			::=		ENUMERATED
+{	undefined					(0)
+,	timely						(1)
+,	complete					(2)
+}
+
+DataUnitId					::=		IntUnsigned
+
+DeliveryLatencyLimit		::=		IntPos
+
+DeliveryMode				::=		ENUMERATED
+{	undefined					(0)
+,	realTime					(1)
+,	complete					(2)
+}
+
+-- The diagnostics defined here are to be used with all operation returns.
+-- Note:
+-- By means of the 'diagnosticExtension' CHOICE, additional values of the
+-- diagnostic parameter can be introduced if that is necessary for the
+-- negative return or acknowledgement of an operation.
+Diagnostic				::=		CHOICE
+{	invalidParameterValue	[1]		SEQUENCE
+	{	text			AdditionalText
+	,	appellation	Appellation	-- of the invalid parameter
+	}
+,	conflictingValues		[2]		SEQUENCE
+	{	text			AdditionalText
+	,	appellations	SEQUENCE OF Appellation
+	}
+,	otherReason			[3]		AdditionalText
+,	unsupportedOption		[4]		AdditionalText
+,	diagnosticExtension	[100]	Embedded
+}
+
+-- The Duration maybe expressed in seconds, milliseconds, or microseconds
+Duration				::=		CHOICE
+{	seconds					[0]		IntUnsigned
+,	milliseconds			[1]		IntUnsigned
+,	microseconds			[2]		IntUnsigned
+}
+
+Embedded				::=		EMBEDDED PDV
+
+EventValue				::=		CHOICE
+{	qualifiedValues		[1]		SequenceOfQualifiedValue
+,	empty					[2]		NULL
+,	eventValueExtension	[100]	Embedded
+}
+
+Extended 				::=		CHOICE
+{	external				[0] 	Embedded
+,	notUsed					[1] 	NULL
+}
+
+FRorProcedureName		::= 	CHOICE
+{	functionalResourceName		[0]		FunctionalResourceName
+,	procedureName					[1]		ProcedureName
+}
+
+FunctionalResourceName			::=		SEQUENCE
+{	functionalResourceType					FunctionalResourceType
+,	functionalResourceInstanceNumber			FunctionalResourceInstanceNumber
+}
+
+FunctionalResourceInstanceNumber		::=		IntPos
+
+FunctionalResourceType	::=		PublishedIdentifier
+
+IdentifierString		::=		VisibleString (FROM (ALL EXCEPT " "))
+
+-- 1 to (2^32)-1
+IntPos					::=		INTEGER (1 .. 4294967295)
+
+-- 0 to (2^32)-1
+IntUnsigned			::=		INTEGER (0 .. 4294967295)
+
+InvokeId				::=		IntUnsigned
+
+-- The Label structure is used to identify:
+-- 1. the Label of a parameter
+-- 2. the Label of an event
+Label					::=		PublishedIdentifier
+
+ListOfNamesDiagnosticExt		::=		CHOICE
+{	unknownNames					[1]		SEQUENCE OF UnknownName
+,	unknownDefault					[3]		AdditionalText
+,	diagnosticExtension			[100]	Embedded
+}
+
+-- The type ListOfParametersEvents is used by the service user to select
+-- the parameters by means of the START of the Cyclic Report procedure and
+-- by means of the GET operation. While the choices [0] to [5] relate to
+-- Cross Support Resources, the choices [6] and [7] relate to the
+-- configration parameters registered in the framework resources branch.
+ListOfParametersEvents	::=		CHOICE
+{	empty								[0]		NULL	-- signifying default list
+,	listName							[3]		VisibleString
+,	functionalResourceType			[5]		FunctionalResourceType
+,	functionalResourceName			[4]		FunctionalResourceName
+,	procedureType						[6]		ProcedureType
+,	procedureName						[7]		ProcedureName
+,	paramEventLabels					[2]		SEQUENCE OF Label
+,	paramEventNames					[1]		SEQUENCE OF Name
+}
+
+ListOfParamEventsDiagnostics		::=		CHOICE
+{	undefinedDefault					[5]		AdditionalText
+,	unknownListName					[4]		VisibleString
+,	unknownFunctionalResourceType	[2]		FunctionalResourceType
+,	unknownFunctionalResourceName	[1]		FunctionalResourceName
+,	unknownProcedureType				[6]		ProcedureType
+, 	unknownProcedureName				[7]		ProcedureName
+,	unknownParamEventIdentifier		[3]		SEQUENCE OF CHOICE
+	{	paramEventLabel					[2]		Label
+	,	paramEventName						[1]		Name
+	}
+}
+
+LogicalPortName		::=		IdentifierString (SIZE (1 .. 128))
+
+MaxFwdBufferSize		::=		IntPos
+
+-- The Name structure is used to identify:
+-- 1. the Name of a parameter
+-- 2. the Name of an event
+-- 3. the Name of a directive
+Name						::=		SEQUENCE
+{	fRorProcedureName					FRorProcedureName
+,	paramOrEventOrDirectiveId			PublishedIdentifier
+}
+
+PortId					::=		LogicalPortName
+
+ProcedureName			::=		SEQUENCE
+{	procedureType					ProcedureType
+,	procedureRole					CHOICE
+	{	primeProcedure			[1]		NULL
+	,	secondaryProcedure		[2]		IntPos
+	,	associationControl		[3]		NULL
+	}
+}
+-- The ProcedureType is an Object Identifier, the allocation of which is
+-- under control of CCSDS. It is declared in the ASN.1 module
+-- CCSDS-CSTS-OBJECT-IDENTIFIERS (see F3.1).
+ProcedureType			::=		OBJECT IDENTIFIER
+
+ProcessingLatencyLimit	::=		IntUnsigned
+
+ProductionStatus		::=		ENUMERATED
+{	configured		(0)
+,	operational	(1)
+,	interrupted	(2)
+,	halted			(3)
+}
+
+-- A PublishedIdentifier is an identifier agreed to between the service
+-- provider and the service user. The identifier is registered in SANA
+-- (See D2)
+PublishedIdentifier		::=		OBJECT IDENTIFIER
+
+-- The definition of the parameters can be found in annex C.
+QualifiedParameter		::=		SEQUENCE
+{	parameterName			Name
+,	qualifiedValues		SequenceOfQualifiedValue
+}
+
+QualifiedValue			::=		CHOICE
+{	valid					[0]		TypeAndValue -- Valid value
+,	unavailable			[1]		NULL	-- Unknown or unavailable value
+,	undefined				[2]		NULL	-- Undefined in the context
+,	error					[3]		NULL	-- Processing resulted in an error
+}
+
+SequenceOfQualifiedValue	::=		SEQUENCE OF QualifiedValue
+
+ServiceUserRespTimer	::=		IntPos
+
+StandardAcknowledgeHeader		::=		StandardReturnHeader
+
+StandardInvocationHeader	::=		SEQUENCE
+{	invokerCredentials			Credentials
+,	invokeId					InvokeId
+,	procedureName				ProcedureName
+}
+
+StandardReturnHeader	::=		SEQUENCE
+{	performerCredentials			Credentials
+,	invokeId						InvokeId
+,	result							CHOICE
+	{	positive				[0]		Extended	-- To carry the positive results
+	,	negative				[1]		SEQUENCE
+		{	diagnostic						Diagnostic
+		,	negExtension					Extended
+								-- The default value of the negExtension parameter is
+								-- 'notUsed'.
+								-- Unless a PDU that uses the StandardReturnHeader
+								-- explicitly defines an extension type to be used
+								-- as the value of negExtension for that PDU, the
+								-- value shall be 'notUsed'.
+		}
+	}
+}
+
+Time					::=		CHOICE
+{	ccsdsFormatMilliseconds		[0]		TimeCCSDSMilli
+,	ccsdsFormatPicoseconds		[1]		TimeCCSDSPico
+}
+
+TimeCCSDSMilli			::=		OCTET STRING (SIZE(8))
+-- P-field is implicit (not present, defaulted to 41 hex
+-- T-field:
+-- 2 octets: number of days since 1958/01/01 00:00:00;
+-- 4 octets: number of milliseconds of the day;
+-- 2 octets: number of microseconds of the millisecond (set to 0 if not used).
+-- This definition reflects exactly the format of the CCSDS defined
+-- time tag as used in spacelink data units (see reference [5]).
+
+
+TimeCCSDSPico			::=		OCTET STRING (SIZE(10))
+-- P-field is implicit (not present, defaulted to 42 hex)
+-- T-field:
+-- 2 octets: number of days since 1958/01/01 00:00:00;
+-- 4 octets: number of milliseconds of the day;
+-- 4 octets: number of picoseconds of the millisecond (set to 0 if not used).
+-- This definition reflects exactly the format of the CCSDS-defined
+-- time tag as used in spacelink data units (see reference [5]).
+
+
+TypeAndValue			::=		Embedded
+
+UnknownName 			::=		SEQUENCE
+{	text					AdditionalText
+,	name					Name
+}
+
+END
+
+
+CCSDS-CSTS-COMMON-OPERATIONS-PDUS
+{ 	iso(1) identified-organization(3) standards-producing-organization(112)
+	ccsds(4) css(4) csts(1) framework(1) modules(1) common-operations(4) version(2)
+}
+
+DEFINITIONS
+IMPLICIT TAGS
+::=		BEGIN
+
+EXPORTS		ExecuteDirectiveAcknowledge
+,			ExecuteDirectiveInvocation
+,			ExecuteDirectiveReturn
+,			GetInvocation
+,			GetReturn
+,			NotifyInvocation
+,			ProcessDataInvocation
+,			ProcessDataReturn
+,			StartInvocation
+,			StartReturn
+,			StopInvocation
+,			StopReturn
+,			TransferDataInvocation
+;
+
+IMPORTS		AbstractChoice
+,			AdditionalText
+,			DataUnitId
+,			EventValue
+,			Extended
+,			Embedded
+,			FunctionalResourceInstanceNumber
+,			FunctionalResourceName
+,			IntUnsigned
+,			ListOfParametersEvents
+,			ListOfParamEventsDiagnostics
+,			Name
+,			ProcedureName
+,			PublishedIdentifier
+,			QualifiedParameter
+,			StandardAcknowledgeHeader
+,			StandardInvocationHeader
+,			StandardReturnHeader
+,			Time
+,			TypeAndValue
+	FROM CCSDS-CSTS-COMMON-TYPES
+
+			executeDirectiveAcknowledge
+,			executeDirectiveReturn
+,			getReturn
+,			startReturn
+	FROM CCSDS-CSTS-OBJECT-IDENTIFIERS
+;
+
+-- =============================================================
+-- The first part of the module is left empty as there are no PDUs
+-- defined in this module.
+-- =============================================================
+
+-- =============================================================
+-- The second part of the module defines the common operations
+-- the service provider may receive.
+-- =============================================================
+
+DirectiveQualifierValues		::=		CHOICE
+{	sequenceOfParamIdsAndValues	[1]		SequenceOfParameterIdsAndValues
+,	parameterlessValues			[2]		TypeAndValue
+,	noQualifierValues				[3]		NULL
+}
+
+ExecuteDirectiveInvocation	::=		SEQUENCE
+{	standardInvocationHeader		StandardInvocationHeader
+,	directiveIdentifier			PublishedIdentifier
+,	directiveQualifier				CHOICE
+	{	localProcDirQualifier			[1]		DirectiveQualifierValues
+	,	serviceProcDirQualifier		[2]		SEQUENCE
+		{	targetProcedureName					ProcedureName
+		,	serviceProcDirQualifierValues		DirectiveQualifierValues
+		}
+	,	functResourceDirQualifier		[3]		SEQUENCE
+		{	functResourceName			FunctionalResourceName
+		,	functionalResourceQualifiers			DirectiveQualifierValues
+		}
+	,	directiveQualifierExtension	[4]		Embedded
+	}
+,	executeDirectiveInvocationExtension		Extended
+}
+
+GetInvocation			::=		SEQUENCE
+{	standardInvocationHeader		StandardInvocationHeader
+,	listOfParameters				ListOfParametersEvents	-- See 3.12.2.2.2
+,	getInvocationExtension		Extended
+}
+
+ProcessDataInvocation		::=		SEQUENCE
+{	standardInvocationHeader			StandardInvocationHeader
+,	dataUnitId							DataUnitId
+,	data								AbstractChoice	-- See 3.10.2.2.4.
+,	processDataInvocationExtension	Extended
+}
+
+SequenceOfParameterIdsAndValues	::=		SEQUENCE OF SEQUENCE
+{	parameterIdentifier		PublishedIdentifier
+,	parameterValue				TypeAndValue
+}
+
+StartInvocation		::=		SEQUENCE
+{	standardInvocationHeader		StandardInvocationHeader
+,	startInvocationExtension		Extended
+}
+
+StopInvocation			::=		SEQUENCE
+{	standardInvocationHeader		StandardInvocationHeader
+,	stopInvocationExtension		Extended
+}
+
+-- =============================================================
+-- The third part of the module defines the common operations
+-- the service provider may send.
+-- =============================================================
+
+ExecuteDirectiveAcknowledge	::=		StandardAcknowledgeHeader
+
+ExecuteDirectiveReturn	::=		StandardReturnHeader
+
+GetReturn				::=		StandardReturnHeader
+
+-- The Published Identifier part of the eventName is defined by the Object
+-- Identifiers svcProductionStatusChangeVersion1, by
+-- svcProductionConfigurationChangeVersion1, or by procedure type
+-- specific Published Identifiers (see F3.16 and F3.17).
+NotifyInvocation		::=		SEQUENCE
+{	standardInvocationHeader		StandardInvocationHeader
+,	eventTime						Time
+,	eventName						Name
+,	eventValue						EventValue
+,	notifyInvocationExtension		Extended
+}
+
+ProcessDataReturn		::=		StandardReturnHeader
+
+StartReturn			::=		StandardReturnHeader
+
+StopReturn				::=		StandardReturnHeader
+
+TransferDataInvocation	::=		SEQUENCE
+{	standardInvocationHeader				StandardInvocationHeader
+,	generationTime							Time
+,	sequenceCounter						IntUnsigned
+,	data									AbstractChoice
+,	transferDataInvocationExtension		Extended
+}
+
+-- =============================================================
+-- The fourth part of the module defines the extensions
+-- of the common operations the service provider may send.
+-- =============================================================
+
+-- *****
+-- EXECUTE-DIRECTIVE invocation
+-- The EXECUTE-DIRECTIVE invocation is not extended, i.e.,
+-- 'ExecuteDirectiveInvocation': 'executeDirectiveInvocationExtension' is
+-- set to 'notUsed'.
+
+-- EXECUTE-DIRECTIVE acknowledgement
+-- The EXECUTE-DIRECTIVE positive acknowledgement does not extend
+-- ExecuteDirectiveAcknowledge; that is, 'ExecuteDirectiveAcknowledge':
+-- 'StandardAcknowledgeHeader': 'StandardReturnHeader': 'result':
+-- 'positive' shall be set to 'notUsed'.
+-- The EXECUTE-DIRECTIVE negative acknowledgement does not extend
+-- ExecuteDirectiveAcknowledge; that is, 'ExecuteDirectiveAcknowledge':
+-- 'StandardAcknowledgeHeader': 'StandardReturnHeader': 'result':
+-- 'negative': 'negExtension'shall be set to 'notUsed'.
+-- The EXECUTE DIRECTIVE negative acknowledgement makes use of: (a) one of
+-- the common diagnostics of the StandardReturnHeader type (see diagnostic
+-- parameter defined in 3.3.2.7) except 'diagnosticExtension'; or (b) one
+-- of the diagnostic values defined by 'ExecuteDirectiveAcknowledge':
+-- 'StandardAcknowledgeHeader': 'StandardReturnHeader': 'result':
+-- 'negative': 'diagnostic': 'Diagnostic': 'diagnosticExtension':
+-- 'execDirAckDiagExt': 'ExecDirNegAckDiagnosticExt' in F3.4 except
+-- 'execDirNegAckDiagnosticExtExtension'.
+ExecDirNegAckDiagnosticExt	::=		CHOICE
+{	unknownDirective							[1]		NULL
+,	unknownQualifier							[2]		NULL
+,	invalidProcedureName						[3]		NULL
+,	invalidFunctionalResourceName			[4]		NULL
+,	invalidFunctionalResourceParameter		[5]		SET OF Name
+,	invalidProcedureParameter					[6]		SET OF Name
+,	parameterValueOutOfRange					[7]		SET OF Name
+,	execDirNegAckDiagnosticExtExtension		[100]	Embedded
+}
+
+execDirAckDiagExt		OBJECT IDENTIFIER		::=		{executeDirectiveAcknowledge 1}
+
+-- EXECUTE-DIRECTIVE return
+-- The EXECUTE-DIRECTIVE positive return does not extend
+-- ExecuteDirectiveReturn; that is, 'ExecuteDirectiveReturn':
+-- 'StandardReturnHeader': 'result': 'positive' shall be set to 'notUsed'.
+-- The EXECUTE-DIRECTIVE negative return does not extend
+-- ExecuteDirectiveReturn; that is, 'ExecuteDirectiveReturn':
+-- 'StandardReturnHeader': 'result': 'negative': 'negExtension' shall be
+-- set to 'notUsed'.
+-- The EXECUTE DIRECTIVE negative return makes use of: (a) one of the
+-- common diagnostics of 'StandardReturnHeader': 'result': 'negative':
+-- 'diagnostic': 'Diagnostic' (see 3.3.2.7 and F3.3) except
+-- 'diagnosticExtension'; or (b) one of the diagnostic values defined by
+-- 'ExecuteDirectiveReturn': 'StandardReturnHeader': 'result': 'negative':
+-- 'diagnostic': 'Diagnostic': 'diagnosticExtension':
+-- 'execDirNegReturnDiagnosticExt': 'ExecDirNegReturnDiagnosticExt' in F3.4
+-- except 'execDirNegReturnDiagnosticExtExtension'.
+ExecDirNegReturnDiagnosticExt	::=		CHOICE
+{	actionNotCompleted								[0]		ActionNotCompletedDiag
+,	execDirNegReturnDiagnosticExtExtension		[100]	Embedded
+}
+
+execDirNegReturnDiagnosticExt	OBJECT IDENTIFIER		::=
+													{executeDirectiveReturn 1}
+
+ActionNotCompletedDiag 	::=		CHOICE
+{	parameterNames				[0]		SET OF Name
+,	noParameterNames			[1]		NULL
+}
+
+-- *****
+-- GET invocation
+-- The GET invocation is not extended; that is, 'GetInvocation':
+-- 'getInvocationExtension' shall be set to 'notUsed'.
+
+-- GET Return
+-- The GET positive return extends the GetReturn by adding the parameters
+-- 'qualifiedParameters' and 'getPosReturnExtExtension' defined by
+-- 'GetReturn': 'StandardReturnHeader': 'result': 'positive':
+-- 'getPosReturnExt': 'GetPosReturnExt'. This extension only defines the
+-- 'qualifiedParameters' parameter. 'getPosReturnExtExtension' shall be set
+-- to 'notUsed'.
+GetPosReturnExt		::=		SEQUENCE
+{	qualifiedParameters			QualifiedParametersSequence
+,	getPosReturnExtExtension		Extended
+}
+
+getPosReturnExt	OBJECT IDENTIFIER		::=		{getReturn 1}
+
+-- The GET negative return does not extend GetReturn; that is, 'GetReturn':
+-- 'StandardReturnHeader': 'result': 'negative': 'negExtension' shall be
+-- set to 'notUsed'.
+-- The GET negative return makes use of: (a) one of the common diagnostics
+-- of 'StandardReturnHeader': 'result': 'negative': 'diagnostic':
+-- 'Diagnostic' (see diagnostic parameter defined in 3.3.2.7 and F3.3)
+-- except 'diagnosticExtension'; or (b) one of the additional diagnostic
+-- values defined by 'GetReturn': 'StandardReturnHeader': 'result':
+-- 'negative': 'diagnostic': 'Diagnostic': 'diagnosticExtension':
+-- 'getDiagnosticExt': 'GetDiagnosticExt' in F3.4 except
+-- 'getDiagnosticExtExtension'.
+GetDiagnosticExt		::=		CHOICE
+{	common							[0]		ListOfParamEventsDiagnostics
+,	getDiagnosticExtExtension		[100]	Embedded
+}
+
+getDiagnosticExt	OBJECT IDENTIFIER		::=		{getReturn 2}
+
+QualifiedParametersSequence	::=		SEQUENCE OF QualifiedParameter
+
+-- *****
+-- START invocation
+-- The START invocation is not extended; that is, 'StartInvocation':
+-- 'startInvocationExtension' shall be set to 'notUsed'.
+
+-- START return
+-- The START positive return does not extend StartReturn; that is,
+-- 'StartReturn': 'StandardReturnHeader': 'result': 'positive' shall be set
+-- to 'notUsed'.
+-- The START negative return does not extend StartReturn; that is,
+-- 'StartReturn': 'StandardReturnHeader': 'result': 'negative':
+-- 'negExtension' shall be set to 'notUsed'.
+-- The START negative return makes use of: (a) one of the common
+-- diagnostics of 'StandardReturnHeader': 'result': 'negative':
+-- 'diagnostic': 'Diagnostic' (see 3.3.2.7 and F3.3) except
+-- 'diagnosticExtension'; or (b) one of the additional values specified by
+-- 'StartReturn': 'StandardReturnHeader': 'result': 'negative':
+-- 'diagnostic': 'Diagnostic': 'diagnosticExtension': 'startDiagnosticExt':
+-- 'StartDiagnosticExt' in F3.4 except 'startDiagnosticExtExtension'.
+StartDiagnosticExt		::=		CHOICE
+{	unableToComply					[0]		AdditionalText
+,	outOfService					[1]		AdditionalText
+,	startDiagnosticExtExtension	[100]	Embedded
+}
+
+startDiagnosticExt		OBJECT IDENTIFIER		::=		{startReturn 1}
+
+-- *****
+-- STOP invocation
+-- The STOP invocation is not extended; that is, 'StopInvocation':
+-- 'stopInvocationExtension' shall be set to 'notUsed'.
+
+-- STOP return
+-- The STOP positive return does not extend StopReturn; that is, 'StopReturn':
+-- 'StandardReturnHeader': 'result': 'positive' shall be set to 'notUsed'.
+-- The STOP negative return does not extend StopReturn; that is, 'StopReturn':
+-- 'StandardReturnHeader': 'result': 'negative': 'negExtension' shall be
+-- set to 'notUsed'.
+-- The STOP negative return makes use of one of the common diagnostics
+-- of 'StandardReturnHeader': 'result': 'negative': 'diagnostic':
+-- 'Diagnostic' (see 3.3.2.7 and F3.3) except 'diagnosticExtension'.
+
+END
+
+
+CCSDS-CSTS-ASSOCIATION-CONTROL-TYPES
+
+{	iso(1) identified-organization(3) standards-producing-organization(112)
+	ccsds(4) css(4) csts(1) framework(1) modules(1)
+	associationControlPdus(5) version(1)
+}
+
+DEFINITIONS
+IMPLICIT TAGS
+::=		BEGIN
+
+EXPORTS		AssociationPdu
+,			BindInvocation
+,			BindReturn
+,			PeerAbortInvocation
+,			UnbindInvocation
+,			UnbindReturn
+;
+
+IMPORTS		AdditionalText
+,			AuthorityIdentifier
+,			Embedded
+,			Extended
+,			IntPos
+,			PortId
+,			PublishedIdentifier
+,			StandardInvocationHeader
+,			StandardReturnHeader
+	FROM CCSDS-CSTS-COMMON-TYPES
+
+			ServiceInstanceIdentifier
+	FROM CCSDS-CSTS-SERVICE-INSTANCE-ID
+
+			acExtProcedureParam
+	FROM CCSDS-CSTS-OBJECT-IDENTIFIERS
+
+			CstsFrameworkPdu
+	FROM CCSDS-CSTS-PDUS
+;
+
+-- =============================================================
+-- The first part of the module definition defines the PDU containing
+-- the operations used by the Association Control procedure.
+-- =============================================================
+AssociationPdu			::=		CstsFrameworkPdu (WITH COMPONENTS
+	{	bindInvocation
+	,	bindReturn
+	,	unbindInvocation
+	,	unbindReturn
+	,	peerAbortInvocation
+	}
+)
+
+-- =============================================================
+-- The second part of the module defines the operations
+-- of the Association Control procedure.
+-- =============================================================
+
+BindInvocation			::=		SEQUENCE
+{	standardInvocationHeader		StandardInvocationHeader
+,	initiatorIdentifier			AuthorityIdentifier
+,	responderPortIdentifier		PortId
+,	serviceType					ServiceType
+,	versionNumber					VersionNumber
+,	serviceInstanceIdentifier		ServiceInstanceIdentifier
+,	bindInvocationExtension		Extended
+}
+
+BindReturn				::=		SEQUENCE
+{	standardReturnHeader			StandardReturnHeader
+,	responderIdentifier			AuthorityIdentifier
+}
+
+PeerAbortInvocation	::=		SEQUENCE
+{	diagnostic						PeerAbortDiagnostic
+}
+
+UnbindInvocation		::=		SEQUENCE
+{	standardInvocationHeader		StandardInvocationHeader
+,	unbindInvocationExtension		Extended
+}
+
+UnbindReturn			::=		StandardReturnHeader
+
+-- =============================================================
+-- The third part contains the types used by the operations
+-- defined in the second part.
+-- =============================================================
+
+-- Peer Abort diagnostic values definition:
+-- 0-39: SLE (usage: 0-8 and 127 for all SLE services)
+-- 128-199: ISP
+-- 200-250: Application
+-- PEER-ABORT diagnostic definition:
+-- The diagnostic of the PEER-ABORT only allows to carry one
+-- octet of information (see ISP1, reference [2]).
+-- The following ASN.1 definition is a dummy definition:
+PeerAbortDiagnostic	::=		OCTET STRING (SIZE(1))
+-- The standard Association Control procedure as defined in this
+-- Recommended Standard reserves the PEER-ABORT diagnostic values from 40
+-- to 69 and 126. The values of the PEER-ABORT diagnostic defined (as
+-- integers) by the Association Control procedure (see 3.6.2.2) are:
+--		accessDenied						(40)
+--		unexpectedResponderId				(41)
+--		operationalRequirement			(42)
+--		protocolError						(43)
+--		communicationsFailure				(44)
+--		encodingError						(45)
+--		returnTimeout						(46)
+--		endOfServiceProvisionPeriod		(47)
+--		unsolicitedInvokeId				(48)
+--		duplicateInvokeId					(49)
+--		invalidProcedureName				(50)
+--		unrecognizedType					(51)
+-- 	otherReason							(126)
+-- As per 4.3.3.1.11.4, a procedure may trigger an abort of the association
+-- and passing the desired diagnostic value. Values in the range from 70 to
+-- 125 are reserved for this purpose.
+
+-- The Buffered Data Processing procedure may use the following diagnostic:
+--		forwardBufferTooLarge					(70)
+
+-- Future versions of this Recommended Standard may specify additional
+-- procedures and additional procedure-specific diagnostic values in the
+-- range 71 to 125.
+
+-- Service-type specific procedures (derived or service-original) may use
+-- diagnostic values in the range reserved for applications 200 to 250.
+-- Since the service type is known when a PEER-ABORT is received,
+-- different service types can choose the diagnostic values independently
+-- of each other.
+
+-- The Service Type is an OID, the allocation of which is
+-- under control of CCSDS. See the example in annex K.
+
+ServiceType			::=		PublishedIdentifier
+
+VersionNumber			::=		IntPos
+
+-- =============================================================
+-- The fourth part of the module definition contains the Extended
+-- types used by the operations defined in the second part.
+-- =============================================================
+
+-- *****
+-- BIND invocation
+-- The BIND invocation is not extended; that is, 'BindInvocation':
+-- 'bindInvocationExtension' shall be set to 'notUsed'.
+
+-- BIND return
+-- The BIND positive return does not extend BindReturn; that is, 'BindReturn':
+-- 'StandardReturnHeader': 'result': 'positive' shall be set to 'notUsed'.
+-- The BIND negative return does not extend BindReturn; that is, 'BindReturn':
+-- 'StandardReturnHeader': 'result': 'negative': 'negExtension' shall be
+-- set to 'notUsed'.
+-- The BIND negative return makes use of: (a) one of the common
+-- diagnostics of 'StandardReturnHeader': 'result': 'negative':
+-- 'diagnostic': 'Diagnostic' (see 3.3.2.7 and F3.3) except
+-- 'diagnosticExtension'; or (b) one of the additional diagnostics
+-- specified by 'BindReturn': 'StandardReturnHeader': 'result': 'negative':
+-- 'diagnostic': 'Diagnostic': 'diagnosticExtension': 'acBindDiagExt':
+-- 'AssocBindDiagnosticExt' in F3.5 except
+-- 'assocBindDiagnosticExtExtension'.
+AssocBindDiagnosticExt	::=		CHOICE
+{	accessDenied						[1]		AdditionalText
+,	serviceTypeNotSupported			[2]		AdditionalText
+,	versionNotSupported				[3]		AdditionalText
+,	noSuchServiceInstance				[4]		AdditionalText
+,	alreadyBound						[5]		AdditionalText
+,	siNotAccessibleToThisInitiator	[6]		AdditionalText
+,	inconsistentServiceType			[7]		AdditionalText
+,	outOfService						[8]		AdditionalText
+,	assocBindDiagnosticExtExtension	[100]	Embedded
+}
+
+acBindDiagExt	OBJECT IDENTIFIER		::=		{acExtProcedureParam 1}
+
+-- *****
+-- UNBIND invocation
+-- The UNBIND invocation is not extended; that is, 'UnbindInvocation':
+-- 'unbindInvocationExtension' shall be set to 'notUsed'.
+
+-- UNBIND return
+-- The UNBIND positive return does not extend UnbindReturn; that is,
+-- 'UnbindReturn': 'StandardReturnHeader': 'result': 'positive' shall be
+-- set to 'notUsed'.
+-- The UNBIND negative return is not used; that is, 'UnbindReturn':
+-- 'StandardReturnHeader': 'result' must not be set to 'negative'.
+
+END
+
+CCSDS-CSTS-UNBUFFERED-DATA-DELIVERY-PDUS
+{	iso(1) identified-organization(3) standards-producing-organization(112)
+	ccsds(4) css(4) csts(1) framework(1) modules(1) unbuffDataDeliveryPdus(6)
+	version(1)
+}
+
+DEFINITIONS
+IMPLICIT TAGS
+::=		BEGIN
+
+-- Main PDU exported to allow possible extension by derived procedures
+EXPORTS		UnbufferedDataDeliveryPdu
+;
+
+IMPORTS		CstsFrameworkPdu
+	FROM CCSDS-CSTS-PDUS
+;
+
+
+
+-- =============================================================
+-- The first part of the module definition defines the PDU containing
+-- the operations used by the Unbuffered Data Delivery procedure.
+-- =============================================================
+UnbufferedDataDeliveryPdu		::=		CstsFrameworkPdu (WITH COMPONENTS
+	{	startInvocation
+	,	startReturn
+	,	stopInvocation
+	,	stopReturn
+	,	transferDataInvocation
+	}
+)
+
+-- =============================================================
+-- The second part of the module defines the operations
+-- of the Unbuffered Data Delivery procedure.
+-- =============================================================
+-- All operations are defined in the module
+-- CCSDS-CSTS-COMMON-OPERATIONS-PDUS (see F3.4)
+
+-- =============================================================
+-- The third part contains the types used by the operations
+-- defined in the second part.
+-- =============================================================
+-- This procedure does not have specific definitions.
+
+-- =============================================================
+-- The fourth part of the module definition contains the Extended
+-- types used by the operations defined in the second part.
+-- =============================================================
+
+-- *****
+-- START invocation
+-- The START invocation is not extended; that is, 'StartInvocation':
+-- 'startInvocationExtension' shall be set to 'notUsed'.
+
+-- START return
+-- The START positive return does not extend StartReturn; that is,
+-- 'StartReturn': 'StandardReturnHeader': 'result': 'positive' shall be set
+-- to 'notUsed'.
+-- The START negative return does not extend StartReturn; that is,
+-- 'StartReturn': 'StandardReturnHeader': 'result': 'negative':
+-- 'negExtension' shall be set to 'notUsed'.
+-- The START negative return makes use of: (a) one of the common
+-- diagnostics of 'StandardReturnHeader': 'result': 'negative':
+-- 'diagnostic': 'Diagnostic' (see 3.3.2.7 and F3.3) except
+-- 'diagnosticExtension'; or (b) one of the additional values specified by
+-- 'StartReturn': 'StandardReturnHeader': 'result': 'negative':
+-- 'diagnostic': 'Diagnostic': 'diagnosticExtension': 'startDiagnosticExt':
+-- 'StartDiagnosticExt' in F3.6 except 'startDiagnosticExtExtension'.
+
+-- *****
+-- STOP Invocation
+-- The STOP invocation is not extended; that is, 'StopInvocation':
+-- 'stopInvocationExtension' shall be set to 'notUsed'.
+
+-- STOP return
+-- The STOP positive return does not extend StopReturn; that is, 'StopReturn':
+-- 'StandardReturnHeader': 'result': 'positive' shall be set to 'notUsed'.
+-- The STOP negative return does not extend StopReturn; that is, 'StopReturn':
+-- 'StandardReturnHeader': 'result': 'negative': 'negExtension' shall be
+-- set to 'notUsed'.
+-- The STOP negative return makes use of one of the common diagnostics
+-- of 'StandardReturnHeader': 'result': 'negative': 'diagnostic':
+-- 'Diagnostic' (see 3.3.2.7 and F3.3) except 'diagnosticExtension'.
+
+-- TRANSFER-DATA Invocation
+-- The TRANSFER-DATA invocation is not extended; that is,
+-- 'TransferDataInvocation': 'transferDataInvocationExtension' shall be set
+-- to 'notUsed'.
+
+END
+
+
+CCSDS-CSTS-BUFFERED-DATA-DELIVERY-PDUS
+{	iso(1) identified-organization(3) standards-producing-organization(112)
+	ccsds(4) css(4) csts(1) framework(1) modules(1) buffDataDeliveryPdus(7)
+	version(1)
+}
+
+DEFINITIONS
+IMPLICIT TAGS
+::=		BEGIN
+
+-- Main PDU exported to allow possible extension by derived procedures
+EXPORTS		BufferedDataDeliveryPdu
+,			ReturnBuffer
+;
+
+IMPORTS		AdditionalText
+,			ConditionalTime
+,			Embedded
+,			Extended
+	FROM CCSDS-CSTS-COMMON-TYPES
+
+			bddExtProcedureParam
+	FROM CCSDS-CSTS-OBJECT-IDENTIFIERS
+
+			NotifyInvocation
+,			TransferDataInvocation
+	FROM CCSDS-CSTS-COMMON-OPERATIONS-PDUS
+
+			CstsFrameworkPdu
+	FROM CCSDS-CSTS-PDUS
+;
+
+-- =============================================================
+-- The first part of the module definition defines the PDU containing
+-- the operations used by the Buffered Data Delivery procedure.
+-- =============================================================
+BufferedDataDeliveryPdu		::=		CstsFrameworkPdu (WITH COMPONENTS
+	{	startInvocation
+	, 	startReturn
+	,	stopInvocation
+	,	stopReturn
+	,	returnBuffer
+	}
+)
+
+-- =============================================================
+-- The second part of the module defines the operations
+-- of the Buffered Data Delivery procedure.
+-- =============================================================
+-- All operations are defined in the module
+-- CCSDS-CSTS-COMMON-OPERATIONS-PDUS (see F3.4)
+
+-- The ReturnBuffer is not an operation but is the concatenation of
+-- one or more TRANSFER-DATA and/or NOTIFY invocations.
+ReturnBuffer			::=		SEQUENCE OF TransferDataOrNotification
+
+-- =============================================================
+-- The third part contains the types used by the operations
+-- defined in the second part.
+-- =============================================================
+
+TransferDataOrNotification	::=		CHOICE
+{	transferDataInvocation				[0]		TransferDataInvocation
+,	notifyInvocation						[1]		NotifyInvocation
+}
+
+-- =============================================================
+-- The fourth part of the module definition contains the Extended
+-- types used by the operations defined in the second part.
+-- =============================================================
+
+-- *****
+-- START invocation
+-- The START invocation is extended with the additional parameters
+-- 'startGenerationTime' and 'stopGenerationTime'. This extension is
+-- defined by 'StartInvocation': 'startInvocationExtension':
+-- 'bddStartInvocExt': 'BuffDataDelStartInvocExt'. No further parameters
+-- are added; that is, 'StartInvocation': 'startInvocationExtension':
+-- 'bddStartInvocExt': 'BuffDataDelStartInvocExt':
+-- 'buffDataDelStartInvocExtExtension' shall be set to 'notUsed'.
+BuffDataDelStartInvocExt		::=		SEQUENCE
+{	startGenerationTime					ConditionalTime
+,	stopGenerationTime						ConditionalTime
+,	buffDataDelStartInvocExtExtension	Extended
+}
+
+bddStartInvocExt	OBJECT IDENTIFIER		::=		{bddExtProcedureParam 1}
+
+-- START return
+-- The START positive return does not extend StartReturn; that is,
+-- 'StartReturn': 'StandardReturnHeader': 'result': 'positive' shall be set
+-- to 'notUsed'.
+-- The START negative return does not extend StartReturn; that is,
+-- 'StartReturn': 'StandardReturnHeader': 'result': 'negative':
+-- 'negExtension' shall be set to 'notUsed'.
+-- The START negative return makes use of: (a) one of the common
+-- diagnostics of 'StandardReturnHeader': 'result': 'negative':
+-- 'diagnostic': 'Diagnostic' (see 3.3.2.7 and F3.3) except
+-- 'diagnosticExtension'; (b) one of the additional diagnostics defined
+-- by 'StartReturn': 'StandardReturnHeader': 'result': 'negative':
+-- 'diagnostic': 'Diagnostic': 'diagnosticExtension': 'startDiagnosticExt':
+-- 'StartDiagnosticExt' in F3.4 except 'startDiagnosticExtExtension'; or
+-- (c) one of the additional values defined by 'StartReturn':
+-- 'StandardReturnHeader': 'result': 'negative': 'diagnostic':
+-- 'Diagnostic': 'diagnosticExtension': 'startDiagnosticExt':
+-- 'StartDiagnosticExt': 'startDiagnosticExtExtension': 'bddStartDiagExt':
+-- 'BuffDataDelStartDiagnosticExt' in F3.7 except
+-- 'buffDataDelStartDiagnosticExtExtension'.
+BuffDataDelStartDiagnosticExt	::=		CHOICE
+{	missingTimeValue								[1]		AdditionalText
+,	invalidStartGenerationTime					[2]		AdditionalText
+,	invalidStopGenerationTime						[3]		AdditionalText
+,	inconsistentTime								[4]		AdditionalText
+,	buffDataDelStartDiagnosticExtExtension		[100]	Embedded
+}
+
+bddStartDiagExt	OBJECT IDENTIFIER		::=		{bddExtProcedureParam 2}
+
+-- *****
+-- STOP Invocation
+-- The STOP invocation is not extended; that is, 'StopInvocation':
+-- 'stopInvocationExtension' shall be set to 'notUsed'.
+
+-- STOP return
+-- The STOP positive return does not extend StopReturn; that is, 'StopReturn':
+-- 'StandardReturnHeader': 'result': 'positive' shall be set to 'notUsed'.
+-- The STOP negative return does not extend StopReturn; that is, 'StopReturn':
+-- 'StandardReturnHeader': 'result': 'negative': 'negExtension' shall be
+-- set to 'notUsed'.
+-- The STOP negative return makes use of one of the common diagnostics
+-- of 'StandardReturnHeader': 'result': 'negative': 'diagnostic':
+-- 'Diagnostic' (see 3.3.2.7 and F3.3) except 'diagnosticExtension'.
+
+-- NOTIFY:
+-- The NotifyInvocation type is defined in F3.4.
+-- NOTIFY invocation extension: 
+-- This procedure defines the additional eventName values 'data discarded due to
+-- excessive backlog', 'bdd recording buffer overflow', 'end of data' and
+-- 'buffered data delivery configuration change'(see
+-- 4.5.4.2.2.1). The associated Published Identifiers are
+-- pBDDdataDiscardedExcessBacklog, pBDDrecordingBufferOverflow,
+-- pBDDendOfData, and pBDDconfigurationChange, as defined in F3.16). 
+-- No other extension is specified; that is, 'notifyInvocationExtension' shall
+-- be set to 'notUsed'.
+
+-- TRANSFER-DATA Invocation
+-- The TRANSFER-DATA invocation is not extended; that is,
+-- 'TransferDataInvocation': 'transferDataInvocationExtension' shall be set
+-- to 'notUsed'.
+
+END
+
+
+CCSDS-CSTS-DATA-PROCESSING-PDUS
+{	iso(1) identified-organization(3) standards-producing-organization(112) ccsds(4) css(4) csts(1) framework(1) modules(1) dataProcessingPdus(8) version(1)
+}
+
+DEFINITIONS
+IMPLICIT TAGS
+::=		BEGIN
+
+-- Main PDU exported to allow possible extension by derived procedures
+EXPORTS		DataProcessingPdu
+;
+
+IMPORTS		DataUnitId
+,			Embedded
+,			Extended
+,			ProductionStatus
+,			Time
+	FROM CCSDS-CSTS-COMMON-TYPES
+
+			dpExtProcedureParam
+	FROM CCSDS-CSTS-OBJECT-IDENTIFIERS
+
+			CstsFrameworkPdu
+	FROM CCSDS-CSTS-PDUS
+;
+
+-- =============================================================
+-- The first part of the module definition defines the PDU containing
+-- the operations used by the Data Processing procedure.
+-- =============================================================
+DataProcessingPdu		::=		CstsFrameworkPdu (WITH COMPONENTS
+	{	startInvocation
+	,	startReturn
+	,	stopInvocation
+	,	stopReturn
+	,	processDataInvocation
+	,	notifyInvocation
+	}
+)
+
+-- =============================================================
+-- The second part of the module defines the operations
+-- of the Data Processing procedure.
+-- =============================================================
+-- All operations are defined in the module
+-- CCSDS-CSTS-COMMON-OPERATIONS-PDUS (see F3.4)
+
+-- =============================================================
+-- The third part contains the types used by the operations
+-- defined in the second part.
+-- =============================================================
+-- This procedure does not have specific definition.
+
+-- =============================================================
+-- The fourth part of the module definition contains the Extended
+-- types used by the operations defined in the second part.
+-- =============================================================
+
+-- *****
+-- START Invocation
+-- The START invocation is not extended; that is, 'StartInvocation':
+-- 'startInvocationExtension' shall be set to 'notUsed'.
+
+-- START return
+-- The START positive return does not extend StartReturn; that is,
+-- 'StartReturn': 'StandardReturnHeader': 'result': 'positive' shall be set
+-- to 'notUsed'.
+-- The START negative return does not extend StartReturn; that is,
+-- 'StartReturn': 'StandardReturnHeader': 'result': 'negative':
+-- 'negExtension' shall be set to 'notUsed'.
+-- The START negative return makes use of: (a) one of the common
+-- diagnostics of 'StandardReturnHeader': 'result': 'negative':
+-- 'diagnostic': 'Diagnostic' (see 3.3.2.7 and F3.3) except
+-- 'diagnosticExtension'; or (b) one of the additional values specified by
+-- 'StartReturn': 'StandardReturnHeader': 'result': 'negative':
+-- 'diagnostic': 'Diagnostic': 'diagnosticExtension': 'startDiagnosticExt':
+-- 'StartDiagnosticExt' in F3.4 except 'startDiagnosticExtExtension'.
+
+-- *****
+-- STOP Invocation
+-- The STOP invocation is not extended; that is, 'StopInvocation':
+-- 'stopInvocationExtension' shall be set to 'notUsed'.
+
+-- STOP return
+-- The STOP positive return does not extend StopReturn; that is, 'StopReturn':
+-- 'StandardReturnHeader': 'result': 'positive' shall be set to 'notUsed'.
+-- The STOP negative return does not extend StopReturn; that is, 'StopReturn':
+-- 'StandardReturnHeader': 'result': 'negative': 'negExtension' shall be
+-- set to 'notUsed'.
+-- The STOP negative return makes use of one of the common diagnostics
+-- of 'StandardReturnHeader': 'result': 'negative': 'diagnostic':
+-- 'Diagnostic' (see 3.3.2.7 and F3.3) except 'diagnosticExtension'.
+
+-- *****
+-- PROCESS-DATA Invocation
+-- The PROCESS-DATA invocation is extended with the additional parameter
+-- 'processCompletionReport'. This extension is defined by
+-- 'ProcessDataInvocation': 'processDataInvocationExtension':
+-- 'dpProcDataInvocExt': 'DataProcProcDataInvocExt':
+-- 'processCompletionReport'. No further parameters are added; that is,
+-- 'ProcessDataInvocation': 'processDataInvocationExtension':
+-- 'dpProcDataInvocExt': 'DataProcProcDataInvocExt':
+-- 'dataProcProcDataInvocExtExtension' shall be set to 'notUsed'.
+DataProcProcDataInvocExt	::=		SEQUENCE
+{	processCompletionReport			CHOICE
+	{	doNotProduceReport					[0]		NULL
+	,	produceReport						[1]		NULL
+	}
+,	dataProcProcDataInvocExtExtension	Extended
+}
+
+dpProcDataInvocExt		OBJECT IDENTIFIER		::=		{dpExtProcedureParam 1}
+
+-- *****
+-- NOTIFY:
+-- The NotifyInvocation type is defined in F3.4.
+-- NOTIFY invocation extension: 
+-- This procedure defines the additional eventName values 'data processing
+-- completed' and 'data processing configuration change'(see 4.6.4.2.3).
+-- The associated Published Identifiers are pDPdataProcessingCompleted and
+-- pDPconfigurationChange, as defined in F3.16).
+-- The NOTIFY invocation is extended with the additional parameters
+-- 'dataUnitIdLastProcessed', 'dataUnitIdLastOk', and 'productionStatus'.
+-- This extension is defined by 'NotifyInvocation':
+-- 'notifyInvocationExtension': 'dpNotifyInvocExt':
+-- 'DataProcNotifyInvocExt'. No further parameters are added; that is,
+-- 'NotifyInvocation': 'notifyInvocationExtension': 'dpNotifyInvocExt':
+-- 'DataProcNotifyInvocExt': 'dataProcNotifyInvocExtExtension' shall be set
+-- to 'notUsed'. No additional values of the 'dataProcessingSstatus'
+-- parameter are defined; that is, 'NotifyInvocation':
+-- 'notifyInvocationExtension': 'dpNotifyInvocExt':
+-- 'DataProcNotifyInvocExt': 'dataUnitIdLastProcessed':
+-- 'dataUnitLastProcessed': 'dataProcessingStatus' must not be set to
+-- 'dataProcessingStatusExtension'.
+DataProcNotifyInvocExt	::=		SEQUENCE
+{	dataUnitIdLastProcessed			CHOICE
+	{	noDataProcessed					[0]		NULL
+	,	dataUnitLastProcessed				[1]		SEQUENCE
+		{	lastProcessedDataUnitId			DataUnitId
+		,	dataProcessingStatus				CHOICE
+			{	successfullyProcessed				[0]		DataProcessingStartTime
+			,	processingInterrupted				[1]		DataProcessingStartTime
+			,	processingStarted					[2]		DataProcessingStartTime
+			,	dataProcessingStatusExtension	[100]	Embedded
+			}
+		}
+	}
+,	dataUnitIdLastOk					CHOICE
+	{	noSuccessfulProcessing			[0]		NULL
+	,	dataUnitLastOk						[1]		SEQUENCE
+		{	lastOkdataUnitId					DataUnitId
+		,	dataProcessingStopTime			Time
+		}
+	}
+,	productionStatus					CHOICE
+	{	productionStatusChange			[0]		NULL
+	,	anyOtherEvent						[1]		ProductionStatus
+	}
+,	dataProcNotifyInvocExtExtension		Extended
+}
+
+dpNotifyInvocExt	OBJECT IDENTIFIER		::=		{dpExtProcedureParam 2}
+
+-- The following type is not an extension but a type used by
+-- DataProcNotifyInvocExt
+DataProcessingStartTime	::=		Time
+
+END
+
+
+CCSDS-CSTS-BUFFERED-DATA-PROCESSING-PDUS
+{	iso(1) identified-organization(3) standards-producing-organization(112) ccsds(4) css(4) csts(1) framework(1) modules(1) bufferedDataProcessingPdus(9) version(2)
+}
+
+DEFINITIONS
+IMPLICIT TAGS
+::=		BEGIN
+
+-- Main PDU exported to allow possible extension by derived procedures
+EXPORTS		BufferedDataProcessingPdu
+,			ForwardBuffer
+;
+
+
+IMPORTS		DataProcessingPdu
+	FROM CCSDS-CSTS-DATA-PROCESSING-PDUS
+
+			ProcessDataInvocation
+	FROM CCSDS-CSTS-COMMON-OPERATIONS-PDUS;
+
+-- =============================================================
+-- The first part of the module definition defines the PDU containing
+-- the operations used by the Buffered Data Processing procedure.
+-- =============================================================
+-- The Buffered Data Processing procedure is derived from the 
+-- Data Processing procedure. Its PDU is cast as the type of the PDU
+-- defined in the Data Processing procedure: DataProcessingPdu type defined
+-- in F3.8.
+BufferedDataProcessingPdu 	::=		DataProcessingPdu
+
+-- The Buffered Data Processing Procedure uses an additional diagnostic 
+-- passed to the Association Contol Procedure in case a too large Transfer
+-- Buffer PDU is receceived. The diagnostic value 70 shall signify
+-- 'forward buffer too large'.
+-- =============================================================
+-- The second part of the module defines the operations
+-- of the Data Processing procedure.
+-- =============================================================
+-- All operations are defined in the module
+-- CCSDS-CSTS-COMMON-OPERATIONS-PDUS (see F3.4)
+
+-- =============================================================
+-- The third part contains the types used by the operations
+-- defined in the second part.
+-- =============================================================
+
+ForwardBuffer			::=		SEQUENCE OF ProcessDataInvocation
+
+-- =============================================================
+-- The fourth part of the module definition contains the Extended
+-- types used by the operations defined in the second part.
+-- =============================================================
+
+-- *****
+-- START invocation
+-- The START invocation is not extended; that is, 'StartInvocation':
+-- 'startInvocationExtension' shall be set to 'notUsed'.
+
+-- START return
+-- The START positive return does not extend StartReturn; that is,
+-- 'StartReturn': 'StandardReturnHeader': 'result': 'positive' shall be set
+-- to 'notUsed'.
+-- The START negative return does not extend StartReturn; that is,
+-- 'StartReturn': 'StandardReturnHeader': 'result': 'negative':
+-- 'negExtension' shall be set to 'notUsed'.
+-- The START negative return makes use of: (a) one of the common
+-- diagnostics of 'StandardReturnHeader': 'result': 'negative':
+-- 'diagnostic': 'Diagnostic' (see 3.3.2.7 and F3.3) except
+-- 'diagnosticExtension'; or (b) one of the additional values specified by
+-- 'StartReturn': 'StandardReturnHeader': 'result': 'negative':
+-- 'diagnostic': 'Diagnostic': 'diagnosticExtension': 'startDiagnosticExt':
+-- 'StartDiagnosticExt' in F3.4 except 'startDiagnosticExtExtension'.
+
+-- *****
+-- STOP invocation
+-- The STOP invocation is not extended; that is, 'StopInvocation':
+-- 'stopInvocationExtension' shall be set to 'notUsed'.
+
+-- STOP return
+-- The STOP positive return does not extend StopReturn; that is, 'StopReturn':
+-- 'StandardReturnHeader': 'result': 'positive' shall be set to 'notUsed'.
+-- The STOP negative return does not extend StopReturn; that is, 'StopReturn':
+-- 'StandardReturnHeader': 'result': 'negative': 'negExtension' shall be
+-- set to 'notUsed'.
+-- The STOP negative return makes use of one of the common diagnostics
+-- of 'StandardReturnHeader': 'result': 'negative': 'diagnostic':
+-- 'Diagnostic' (see 3.3.2.7 and F3.3) except 'diagnosticExtension'.
+
+-- *****
+-- PROCESS-DATA Invocation
+-- The PROCESS-DATA invocation is extended with the additional parameter
+-- 'processCompletionReport'. This extension is defined by
+-- 'ProcessDataInvocation': 'processDataInvocationExtension':
+-- 'dpProcDataInvocExt': 'DataProcProcDataInvocExt':
+-- 'processCompletionReport' inherited from the parent Data Processing
+-- procedure. No further extension is defined; that is,
+-- 'ProcessDataInvocation': 'processDataInvocationExtension':
+-- 'dpProcDataInvocExt': 'DataProcProcDataInvocExt':
+-- 'dataProcProcDataInvocExtExtension' shall be set to 'notUsed'.
+
+-- *****
+-- NOTIFY Invocation
+-- The extension of the NOTIFY invocation is inherited from the Data
+-- Processing procedure. The extension is defined in F3.8.
+
+END
+
+
+CCSDS-CSTS-SEQUENCE-CONTROLLED-DATA-PROCESSING-PDUS
+{	iso(1) identified-organization(3) standards-producing-organization(112) ccsds(4)	css(4) csts(1) framework(1) 	modules(1) sequenceControlledDataProcessingPdus(10)	version(1)
+}
+
+DEFINITIONS
+IMPLICIT TAGS
+::=		BEGIN
+
+-- Main PDU exported to allow possible extension by derived procedures
+EXPORTS		SequContrDataProcessingPdu
+;
+
+IMPORTS		ConditionalTime
+,			DataUnitId
+,			Embedded
+,			Extended
+	FROM CCSDS-CSTS-COMMON-TYPES
+
+			scdpExtProcedureParam
+	FROM CCSDS-CSTS-OBJECT-IDENTIFIERS
+
+			CstsFrameworkPdu
+	FROM CCSDS-CSTS-PDUS
+;
+
+-- =============================================================
+-- The first part of the module definition defines the PDU containing
+-- the operations used by the Sequence-Controlled Data Processing
+-- procedure.
+-- =============================================================
+SequContrDataProcessingPdu	::=		CstsFrameworkPdu (WITH COMPONENTS
+	{	startInvocation
+	,	startReturn
+	,	stopInvocation
+	,	stopReturn
+	,	processDataInvocation
+	,	processDataReturn
+	,	notifyInvocation
+	,	executeDirectiveInvocation
+	,	executeDirectiveAcknowledge
+	,	executeDirectiveReturn
+	}
+)
+
+-- =============================================================
+-- The second part of the module defines the operations
+-- of the Data Processing procedure.
+-- =============================================================
+-- All operations are defined in the module
+-- CCSDS-CSTS-COMMON-OPERATIONS-PDUS (see F3.4).
+
+-- =============================================================
+-- The third part contains the types used by the operations
+-- defined in the second part.
+-- =============================================================
+-- This procedure does not have specific definitions.
+
+-- =============================================================
+-- The fourth part of the module definition contains the Extended
+-- types used by the operations defined in the second part.
+-- =============================================================
+
+-- *****
+-- START Invocation
+-- The START invocation is extended with the additional parameter
+-- 'firstDataUnitId'. This extension is defined by 'StartInvocation':
+-- 'startInvocationExtension': 'scdpStartInvocExt':
+-- 'SequContrDataProcStartInvocExt'. No further parameters are added; that is,
+-- 'StartInvocation': 'startInvocationExtension': 'scdpStartInvocExt':
+-- 'SequContrDataProcStartInvocExt':
+-- 'sequContrDataProcStartInvocExtExtension' shall be set to 'notUsed'.
+SequContrDataProcStartInvocExt	::=		SEQUENCE
+{	firstDataUnitId								DataUnitId
+,	sequContrDataProcStartInvocExtExtension		Extended
+}
+
+scdpStartInvocExt		OBJECT IDENTIFIER		::=		{scdpExtProcedureParam 1}
+
+-- START return
+-- The START positive return does not extend StartReturn; that is,
+-- 'StartReturn': 'StandardReturnHeader': 'result': 'positive' shall be set
+-- to 'notUsed'.
+-- The START negative return does not extend StartReturn; that is,
+-- 'StartReturn': 'StandardReturnHeader': 'result': 'negative':
+-- 'negExtension' shall be set to 'notUsed'.
+-- The START negative return makes use of: (a) one of the common
+-- diagnostics of 'StandardReturnHeader': 'result': 'negative':
+-- 'diagnostic': 'Diagnostic' (see 3.3.2.7 and F3.3) except
+-- 'diagnosticExtension'; or (b) one of the additional values specified by
+-- 'StartReturn': 'StandardReturnHeader': 'result': 'negative':
+-- 'diagnostic': 'Diagnostic': 'diagnosticExtension': 'startDiagnosticExt':
+-- 'StartDiagnosticExt' in F3.4 except 'startDiagnosticExtExtension'.
+
+-- *****
+-- STOP Invocation
+-- The STOP invocation is not extended; that is, 'StopInvocation':
+-- 'stopInvocationExtension' shall be set to 'notUsed'.
+
+-- STOP return
+-- The STOP positive return does not extend StopReturn; that is, 'StopReturn':
+-- 'StandardReturnHeader': 'result': 'positive' shall be set to 'notUsed'.
+-- The STOP negative return does not extend StopReturn; that is, 'StopReturn':
+-- 'StandardReturnHeader': 'result': 'negative': 'negExtension' shall be
+-- set to 'notUsed'.
+-- The STOP negative return makes use of one of the common diagnostics
+-- of 'StandardReturnHeader': 'result': 'negative': 'diagnostic':
+-- 'Diagnostic' (see 3.3.2.7 and F3.3) except 'diagnosticExtension'.
+
+-- *****
+-- PROCESS-DATA Invocation
+-- The PROCESS-DATA invocation is extended with the additional parameter
+-- 'processCompletionReport' inherited from the parent Data Processing
+-- procedure. This extension is defined in F3.8. The PROCESS-DATA
+-- invocation is further extended with the parameters
+-- 'earliestDataProcessingTime' and 'latestDataProcessingTime' defined by
+-- 'ProcessDataInvocation': 'processDataInvocationExtension':
+-- 'dpProcDataInvocExt': 'DataProcProcDataInvocExt':
+-- 'dataProcProcDataInvocExtExtension': 'scdpProcDataInvocExt':
+-- 'SequContrDataProcProcDataInvocExt'. No further parameters are added to
+-- the PROCESS-DATA invocation; that is, 'ProcessDataInvocation':
+-- 'processDataInvocationExtension': 'dpProcDataInvocExt':
+-- 'DataProcProcDataInvocExt': 'dataProcProcDataInvocExtExtension':
+-- 'scdpProcDataInvocExt': 'SequContrDataProcProcDataInvocExt':
+-- 'sequContrDataProcDataInvocExtExtension' shall be set to 'notUsed'.
+SequContrDataProcProcDataInvocExt	::=		SEQUENCE
+{	earliestDataProcessingTime					ConditionalTime
+,	latestDataProcessingTime						ConditionalTime
+,	sequContrDataProcDataInvocExtExtension		Extended
+}
+
+scdpProcDataInvocExt		OBJECT IDENTIFIER		::=		{scdpExtProcedureParam 2}
+
+-- *****
+-- PROCESS-DATA positive return
+-- The PROCESS-DATA positive return extends ProcessDataReturn defined below
+-- by adding the parameter 'dataUnitId'. This extension is
+-- defined by 'ProcessDataReturn': 'StandardReturnHeader': 'result':
+-- 'positive': 'scdpProcDataPosReturnExt':
+-- 'SequContrDataProcProcDataPosReturnExt'. No further parameters are added
+-- to the PDU; that is, 'ProcessDataReturn': 'StandardReturnHeader': 'result':
+-- 'positive': 'scdpProcDataPosReturnExt':
+-- 'SequContrDataProcProcDataPosReturnExt':
+-- 'sequContrDataProcProcDataPosReturnExtExtension' shall be set to
+-- 'notUsed'.
+
+SequContrDataProcProcDataPosReturnExt	::=		SEQUENCE
+{	dataUnitIdPosRtn										DataUnitId
+,	sequContrDataProcProcDataPosReturnExtExtension		Extended
+}
+
+scdpProcDataPosReturnExt	OBJECT IDENTIFIER		::=		{scdpExtProcedureParam 3}
+
+-- The PROCESS-DATA negative return extends ProcessDataReturn by adding the
+-- parameter 'dataUnitId'. This extension is defined by
+-- 'ProcessDataReturn': 'StandardReturnHeader': 'result': 'negative':
+-- 'negExtension': 'scdpProcDataNegReturnExt':
+-- 'SequContrDataProcProcDataNegReturnExt'. No further parameters are added
+-- to the ProcessDataReturn; that is, 'ProcessDataReturn':
+-- 'StandardReturnHeader': 'result': 'negative': 'negExtension':
+-- 'scdpProcDataNegReturnExt': 'SequContrDataProcProcDataNegReturnExt':
+-- 'sequContrDataProcProcDataNegReturnExtExtension'shall be set to
+-- 'notUsed'.
+SequContrDataProcProcDataNegReturnExt	::=		SEQUENCE
+{	dataUnitIdNegRtn										DataUnitId
+,	sequContrDataProcProcDataNegReturnExtExtension		Extended
+}
+
+scdpProcDataNegReturnExt	OBJECT IDENTIFIER		::=		{scdpExtProcedureParam 5}
+
+-- The PROCESS-DATA negative return makes use of: (a) one of the common
+-- diagnostics of 'StandardReturnHeader': 'result': 'negative':
+-- 'diagnostic': 'Diagnostic' (see 3.3.2.7 and F3.3) except
+-- 'diagnosticExtension'; or (b) one of the additional diagnostics defined
+-- by 'ProcessDataReturn': 'StandardReturnHeader': 'result': 'negative':
+-- 'diagnostic': 'Diagnostic': 'diagnosticExtension':
+-- 'scdpProcDataDiagExt': 'SequContrDataProcProcDataDiagnosticExt' in F3.10
+-- except 'sequContrDataProcProcDataDiagnosticExtExtension'.
+SequContrDataProcProcDataDiagnosticExt		::=		CHOICE
+{	unableToProcess										[0]		NULL
+,	serviceInstanceLocked									[1]		NULL
+,	outOfSequence											[2]		NULL
+,	inconsistentTimeRange									[3]		NULL
+,	invalidTime											[4]		NULL
+,	lateData												[5]		NULL
+,	dataError												[6]		NULL
+,	unableToStore											[7]		NULL
+,	sequContrDataProcProcDataDiagnosticExtExtension	[100]	Embedded
+}
+
+scdpProcDataDiagExt	OBJECT IDENTIFIER		::=		{scdpExtProcedureParam 4}
+
+-- *****
+-- NOTIFY:
+-- The NotifyInvocation type is defined in F3.4.
+-- NOTIFY invocation extension:
+-- This procedure defines the additional eventName values 'expired' and
+-- 'locked' (see 4.8.4.3.4). The associated Published Identifiers are
+-- pSCDPexpired and pSCDPlocked as defined in F3.16.
+
+-- Further NOTIFY invocation extensions are inherited from the parent Data
+-- Processing procedure. These extensions are defined in F3.8. Additional
+-- values of the processing-status parameter are introduced by means of the
+-- extension 'NotifyInvocation': 'notifyInvocationExtension':
+-- 'dpNotifyInvocExt': 'DataProcNotifyInvocExt': 'dataUnitIdLastProcessed':
+-- 'dataUnitLastProcessed': 'dataProcessingStatus':
+-- 'dataProcessingStatusExtension': 'scdpNotifyProcStatusExt':
+-- 'SequContrDataProcStatus'. No further processing-status values are
+-- added; that is, 'NotifyInvocation': 'notifyInvocationExtension':
+-- 'dpNotifyInvocExt': 'DataProcNotifyInvocExt': 'dataUnitIdLastProcessed':
+-- 'dataUnitLastProcessed': 'dataProcessingStatus':
+-- 'dataProcessingStatusExtension': 'scdpNotifyProcStatusExt':
+-- 'SequContrDataProcStatus' must not be set to
+-- 'sequContrDataProcStatusExtension'.
+SequContrDataProcStatus	::=		CHOICE
+{	expired									[1]		NULL
+,	processingNotStarted					[2]		NULL
+,	sequContrDataProcStatusExtension		[100]	Embedded
+}
+
+scdpNotifyProcStatusExt	OBJECT IDENTIFIER		::=		{scdpExtProcedureParam 6}
+
+-- *****
+-- EXECUTE-DIRECTIVE invocation
+-- In the EXECUTE-DIRECTIVE invocation the parameter directive-identifier
+-- shall be set to 'reset'; that is, 'ExecuteDirectiveInvocation':
+-- 'directiveIdentifier' shall be set to the Published Identifier
+-- {pSCDPdirectivesId 1}.
+-- The directive-qualifier parameter is defined by
+-- 'ExecuteDirectiveInvocation': 'directiveQualifier':
+-- 'localProcDirQualifier': 'DirectiveQualifierValues':
+-- 'parameterlessValues': 
+-- 'TypeAndValue': 'Embedded': 'EMBEDDED PDV'. OID and type of this parameter are
+-- pSCDPdataUnitId and PSCDPdataUnitIdType, respectively (see F3.16).
+-- The 'directiveQualifier' parameter is not extended and must therefore not be set to 
+-- 'directiveQualifierExtension'.
+
+-- The EXECUTE-DIRECTIVE invocation is not extended; that is,
+-- 'ExecuteDirectiveInvocation': 'execute DirectiveInvocationExtension'
+-- shall be set to 'notUsed'.
+
+-- EXECUTE-DIRECTIVE acknowledgement
+-- The EXECUTE-DIRECTIVE positive acknowledgement is not extended; that is,
+-- 'ExecuteDirectiveAcknowledge': 'StandardAcknowledgeHeader':
+-- 'StandardReturnHeader': 'result': 'positive' shall be set to 'notUsed'.
+-- The EXECUTE-DIRECTIVE negative acknowledgement is not extended; that is,
+-- 'ExecuteDirectiveAcknowledge': 'StandardAcknowledgeHeader':
+-- 'StandardReturnHeader': 'result': 'negative': 'negExtension' shall be
+-- set to 'notUsed'.
+-- The EXECUTE-DIRECTIVE negative acknowledgement makes use of: (a) one of
+-- the common diagnostics of 'StandardReturnHeader': 'result': 'negative':
+-- 'diagnostic': 'Diagnostic' (see 3.3.2.7); or (b) one of the additional
+-- diagnostics defined by 'ExecuteDirectiveAcknowledge':
+-- 'StandardAcknowledgeHeader': 'StandardReturnHeader': 'result':
+-- 'negative': 'diagnostic': 'Diagnostic': 'diagnosticExtension':
+-- 'execDirAckDiagExt': 'ExecDirNegAckDiagnosticExt'. No further
+-- diagnostics are specified; that is, 'ExecuteDirectiveAcknowledge':
+-- 'StandardAcknowledgeHeader': 'StandardReturnHeader': 'result':
+-- 'negative': 'diagnostic': 'Diagnostic': 'diagnosticExtension':
+-- 'execDirAckDiagExt': 'ExecDirNegAckDiagnosticExt' must not be set to
+-- 'execDirNegAckDiagnosticExtExtension'.
+
+-- EXECUTE-DIRECTIVE return
+-- The EXECUTE-DIRECTIVE positive return is not extended; that is,
+-- 'ExecuteDirectiveReturn': 'StandardReturnHeader': 'result': 'positive'
+-- shall be set to 'notUsed'.
+-- The EXECUTE-DIRECTIVE negative return is not extended; that is,
+-- 'ExecuteDirectiveReturn': 'StandardReturnHeader': 'result': 'negative':
+-- 'negExtension' shall be set to 'notUsed'.
+-- The EXECUTE-DIRECTIVE negative return makes use of: (a) one of the
+-- common diagnostics of 'StandardReturnHeader': 'result': 'negative':
+-- 'diagnostic': 'Diagnostic' (see 3.3.2.7 and F3.3) except
+-- 'diagnosticExtension'; or (b) one of the additional diagnostics defined
+-- by 'ExecuteDirectiveReturn': 'StandardReturnHeader': 'result':
+-- 'negative': 'diagnostic': 'Diagnostic': 'diagnosticExtension':
+-- 'execDirNegReturnDiagnosticExt': 'ExecDirNegReturnDiagnosticExt'in F3.4
+-- except 'execDirNegReturnDiagnosticExtExtension'.
+
+END
+
+
+CCSDS-CSTS-INFORMATION-QUERY-PDUS
+{	iso(1) identified-organization(3) standards-producing-organization(112)
+	ccsds(4) css(4) csts(1) framework(1) modules(1) informationQueryPdus(11)
+	version(1)
+}
+
+DEFINITIONS
+IMPLICIT TAGS
+::=		BEGIN
+
+-- Main PDU exported to allow possible extension by derived procedures
+EXPORTS		InformationQueryPdu
+;
+
+IMPORTS		CstsFrameworkPdu
+	FROM CCSDS-CSTS-PDUS
+;
+
+-- =============================================================
+-- The first part of the module definition defines the PDU containing
+-- the operations used by the Information Query procedure.
+-- =============================================================
+InformationQueryPdu	::=		CstsFrameworkPdu (WITH COMPONENTS
+	{	getInvocation
+	,	getReturn
+	}
+)
+
+-- =============================================================
+-- The second part of the module defines the operations
+-- of the Information Query procedure.
+-- =============================================================
+-- All operations are defined in the module
+-- CCSDS-CSTS-COMMON-OPERATIONS-PDUS (see F3.4)
+
+-- =============================================================
+-- The third part contains the types used by the operations
+-- defined in the second part.
+-- =============================================================
+-- This procedure does not have specific definitions.
+
+-- =============================================================
+-- The fourth part of the module definition contains the Extended
+-- types used by the operations defined in the second part.
+-- =============================================================
+-- This procedure does not have specific extensions.
+
+END
+
+
+CCSDS-CSTS-CYCLIC-REPORT-PDUS
+{	iso(1) identified-organization(3) standards-producing-organization(112)
+	ccsds(4) css(4) csts(1) framework(1) modules(1) cyclicReportPdus(12) version(2)
+}
+
+DEFINITIONS
+IMPLICIT TAGS
+::=		BEGIN
+
+-- Main PDU exported to allow possible extension by derived procedures
+EXPORTS		CyclicReportPdu
+;
+
+IMPORTS		AdditionalText
+,			Embedded
+,			Extended
+,			IntPos
+,			ListOfParametersEvents
+,			ListOfParamEventsDiagnostics
+,			QualifiedParameter
+	FROM CCSDS-CSTS-COMMON-TYPES
+
+			UnbufferedDataDeliveryPdu
+	FROM CCSDS-CSTS-UNBUFFERED-DATA-DELIVERY-PDUS
+
+			crExtProcedureParam
+	FROM CCSDS-CSTS-OBJECT-IDENTIFIERS
+;
+
+-- =============================================================
+-- The first part of the module definition defines the PDU containing
+-- the operations used by the Cyclic Report procedure.
+-- =============================================================
+-- The Cyclic Report procedure is derived from the Unbuffered Data
+-- Delivery procedure. Its PDU is cast as the type of the PDU defined in
+-- the Unbuffered Data Delivery procedure: UnbufferedDataDeliveryPdu type
+-- defined in F3.6.
+
+CyclicReportPdu		::=		UnbufferedDataDeliveryPdu
+
+-- =============================================================
+-- The second part of the module defines the operations
+-- of the Cyclic Report procedure.
+-- =============================================================
+-- All operations are defined in the module
+-- CCSDS-CSTS-COMMON-OPERATIONS-PDUS (see F3.4)
+
+-- =============================================================
+-- The third part contains the types used by the operations
+-- defined in the second part.
+-- =============================================================
+-- This procedure does not have specific definitions.
+
+-- =============================================================
+-- The fourth part of the module definition contains the Extended
+-- types used by the operations defined in the second part.
+-- =============================================================
+
+-- *****
+-- START Invocation
+-- The START invocation is extended with the additional parameters
+-- 'deliveryCycle' and 'listOfParameters'. This extension is defined by
+-- 'StartInvocation': 'startInvocationExtension': 'crStartInvocExt':
+-- 'CyclicReportStartInvocExt'. No further parameters are added to
+-- StartInvocation; that is, 'StartInvocation': 'startInvocationExtension':
+-- 'crStartInvocExt': 'CyclicReportStartInvocExt':
+-- 'cyclicReportStartInvocExtExtension' shall be set to 'notUsed'.
+CyclicReportStartInvocExt		::=		SEQUENCE
+{	deliveryCycle							IntPos
+,	listOfParameters						ListOfParametersEvents
+,	cyclicReportStartInvocExtExtension	Extended
+}
+
+crStartInvocExt	OBJECT IDENTIFIER		::=		{crExtProcedureParam 1}
+
+-- START return
+-- The START positive return does not extend StartReturn; that is,
+-- 'StartReturn': 'StandardReturnHeader': 'result': 'positive' shall be set
+-- to 'notUsed'.
+-- The START negative return does not extend StartReturn; that is,
+-- 'StartReturn': 'StandardReturnHeader': 'result': 'negative':
+-- 'negExtension' shall be set to 'notUsed'.
+-- The START negative return makes use of: (a) one of the common
+-- diagnostics of 'StandardReturnHeader': 'result': 'negative':
+-- 'diagnostic': 'Diagnostic' (see 3.3.2.7 and F3.3) except
+-- 'diagnosticExtension'; (b) one of the additional
+-- diagnostics defined by 'StartReturn': 'StandardReturnHeader': 'result':
+-- 'negative': 'diagnostic': 'Diagnostic': 'diagnosticExtension':
+-- 'startDiagnosticExt': 'StartDiagnosticExt' in F3.4 except
+-- 'startDiagnosticExtExtension'; or (c) one of the additional
+-- diagnostics defined by 'StartReturn': 'StandardReturnHeader': 'result':
+-- 'negative': 'diagnostic': 'Diagnostic': 'diagnosticExtension':
+-- 'startDiagnosticExt': 'StartDiagnosticExt':
+-- 'startDiagnosticExtExtension': 'crStartDiagExt':
+-- 'CyclicReportStartDiagnosticExt' in F3.12 except
+-- 'cyclicReportStartDiagnosticExtExtension'.
+CyclicReportStartDiagnosticExt	::=		CHOICE
+{	common											[0]		ListOfParamEventsDiagnostics
+,	outOfRange										[1]		AdditionalText
+,	cyclicReportStartDiagnosticExtExtension		[100]	Embedded
+}
+
+crStartDiagExt		OBJECT IDENTIFIER		::=		{crExtProcedureParam 2}
+
+-- *****
+-- STOP Invocation
+-- The STOP invocation is not extended; that is, 'StopInvocation':
+-- 'stopInvocationExtension' shall be set to 'notUsed'.
+
+-- STOP return
+-- The STOP positive return does not extend StopReturn; that is, 'StopReturn':
+-- 'StandardReturnHeader': 'result': 'positive' shall be set to 'notUsed'.
+-- The STOP negative return does not extend StopReturn; that is, 'StopReturn':
+-- 'StandardReturnHeader': 'result': 'negative': 'negExtension' shall be
+-- set to 'notUsed'.
+-- The STOP negative return makes use of one of the common diagnostics
+-- of 'StandardReturnHeader': 'result': 'negative': 'diagnostic':
+-- 'Diagnostic' (see 3.3.2.7 and F3.3) except 'diagnosticExtension'.
+
+-- *****
+-- TRANSFER-DATA invocation
+-- The TRANSFER-DATA invocation is not extended; that is,
+-- 'TransferDataInvocation': 'transferDataInvocationExtension' shall be set
+-- to 'notUsed'.
+-- The TRANSFER-DATA invocation parameter data is refined to carry
+-- the list-of-parameters-values information and is therefore defined as
+-- follows: 'TransferDataInvocation': 'data': 'AbstractChoice':
+-- 'extendedData': 'crTransferDataInvocDataRef':
+-- 'CyclicReportTransferDataInvocDataRef'. 'TransferDataInvocation':
+-- 'data': 'AbstractChoice': 'extendedData': 'crTransferDataInvocDataRef':
+-- 'CyclicReportTransferDataInvocDataRef':
+-- 'cyclicReportTransferDataInvocDataRefExtension' shall be set to
+-- 'notUsed'.
+CyclicReportTransferDataInvocDataRef		::=		SEQUENCE
+{	qualifiedParameters									SEQUENCE OF QualifiedParameter
+,	cyclicReportTransferDataInvocDataRefExtension		Extended
+}
+
+crTransferDataInvocDataRef	OBJECT IDENTIFIER		::=		{crExtProcedureParam 3}
+
+END
+
+CCSDS-CSTS-NOTIFICATION-PDUS
+{	iso(1) identified-organization(3) standards-producing-organization(112)
+	ccsds(4) css(4) csts(1) framework(1) modules(1) notificationPdus(13)
+	version(1)
+}
+
+DEFINITIONS
+IMPLICIT TAGS
+::=		BEGIN
+
+-- Main PDU exported to allow possible extension by derived procedures
+EXPORTS		NotificationPdu
+;
+
+IMPORTS		Embedded
+,			Extended
+,			ListOfParametersEvents
+,			ListOfParamEventsDiagnostics
+	FROM CCSDS-CSTS-COMMON-TYPES
+
+			nExtProcedureParam
+	FROM CCSDS-CSTS-OBJECT-IDENTIFIERS
+
+			CstsFrameworkPdu
+	FROM CCSDS-CSTS-PDUS
+;
+
+-- =============================================================
+-- The first part of the module definition defines the PDU containing
+-- the operations used by the Notification procedure.
+-- =============================================================
+NotificationPdu		::=		CstsFrameworkPdu (WITH COMPONENTS
+	{	startInvocation
+	,	startReturn
+	,	stopInvocation
+	,	stopReturn
+	,	notifyInvocation
+	}
+)
+
+-- =============================================================
+-- The second part of the module defines the operations
+-- of the Notification procedure.
+-- =============================================================
+-- All operations are defined in the module
+-- CCSDS-CSTS-COMMON-OPERATIONS-PDUS (see F3.4)
+
+-- =============================================================
+-- The third part contains the types used by the operations
+-- defined in the second part.
+-- =============================================================
+-- This procedure does not have specific definitions.
+
+-- =============================================================
+-- The fourth part of the module definition contains the Extended
+-- types used by the operations defined in the second part.
+-- =============================================================
+
+-- *****
+-- START Invocation
+-- The START invocation is extended with the additional parameter
+-- 'listOfEvents' specifying the events that shall be notified. This
+-- extension is defined by 'StartInvocation': 'startInvocationExtension':
+-- 'nStartInvocExt': 'NotificationStartInvocExt'. No further parameters are
+-- added to StartInvocation; that is, 'StartInvocation':
+-- 'startInvocationExtension': 'nStartInvocExt':
+-- 'NotificationStartInvocExt': 'notificationStartInvocExtExtension' shall
+-- be set to 'notUsed'.
+NotificationStartInvocExt		::=		SEQUENCE
+{	listOfEvents							ListOfParametersEvents
+,	notificationStartInvocExtExtension	Extended
+}
+
+nStartInvocExt		OBJECT IDENTIFIER		::=		{nExtProcedureParam 1}
+
+-- START return
+-- The START positive return does not extend StartReturn; that is,
+-- 'StartReturn': 'StandardReturnHeader': 'result': 'positive' shall be set
+-- to 'notUsed'.
+-- The START negative return does not extend StartReturn; that is,
+-- 'StartReturn': 'StandardReturnHeader': 'result': 'negative':
+-- 'negExtension' shall be set to 'notUsed'.
+-- The START negative return makes use of: (a) one of the common
+-- diagnostics of 'StandardReturnHeader': 'result': 'negative':
+-- 'diagnostic': 'Diagnostic' (see 3.3.2.7 and F3.3) except
+-- 'diagnosticExtension'; (b) one of the additional diagnostics defined
+-- by 'StartReturn': 'StandardReturnHeader': 'result': 'negative':
+-- 'diagnostic': 'Diagnostic': 'diagnosticExtension': 'startDiagnosticExt':
+-- 'StartDiagnosticExt' in F3.4 except 'startDiagnosticExtExtension'; or
+-- (c) one of the additional diagnostics defined by 'StartReturn':
+-- 'StandardReturnHeader': 'result': 'negative': 'diagnostic':
+-- 'Diagnostic': 'diagnosticExtension': 'startDiagnosticExt':
+-- 'StartDiagnosticExt': 'startDiagnosticExtExtension': 'nStartDiagExt':
+-- 'NotificationStartDiagnosticExt' in F3.13 except
+-- 'notificationStartDiagnosticExtExtension'.
+NotificationStartDiagnosticExt	::=		CHOICE
+{	common											[0]		ListOfParamEventsDiagnostics
+,	notificationStartDiagnosticExtExtension		[100]	Embedded
+}
+
+nStartDiagExt		OBJECT IDENTIFIER		::=		{nExtProcedureParam 2}
+
+-- *****
+-- STOP Invocation
+-- The STOP invocation is not extended; that is, 'StopInvocation':
+-- 'stopInvocationExtension' shall be set to 'notUsed'.
+
+-- STOP return
+-- The STOP positive return does not extend StopReturn; that is, 'StopReturn':
+-- 'StandardReturnHeader': 'result': 'positive' shall be set to 'notUsed'.
+-- The STOP negative return does not extend StopReturn; that is, 'StopReturn':
+-- 'StandardReturnHeader': 'result': 'negative': 'negExtension' shall be
+-- set to 'notUsed'.
+-- The STOP negative return makes use of one of the common diagnostics
+-- of 'StandardReturnHeader': 'result': 'negative': 'diagnostic':
+-- 'Diagnostic' (see 3.3.2.7 and F3.3) except 'diagnosticExtension'.
+
+END
+
+
+CCSDS-CSTS-THROW-EVENT-PDUS
+{	iso(1) identified-organization(3) standards-producing-organization(112) ccsds(4)
+	css(4) csts(1) framework(1) modules(1) throwEventPdus(14) version(1)
+}
+
+DEFINITIONS
+IMPLICIT TAGS
+::=		BEGIN
+
+-- Main PDU exported to allow possible extension by derived procedures
+EXPORTS		ThrowEventPdu
+;
+
+IMPORTS		Embedded
+	FROM CCSDS-CSTS-COMMON-TYPES
+
+			teExtProcedureParam
+	FROM CCSDS-CSTS-OBJECT-IDENTIFIERS
+
+			CstsFrameworkPdu
+	FROM CCSDS-CSTS-PDUS
+;
+
+-- =============================================================
+-- The first part of the module definition defines the PDU containing
+-- the operations used by the Throw Event procedure.
+-- =============================================================
+ThrowEventPdu			::=		CstsFrameworkPdu (WITH COMPONENTS
+	{	executeDirectiveInvocation
+	,	executeDirectiveAcknowledge
+	,	executeDirectiveReturn
+	}
+)
+
+-- =============================================================
+-- The second part of the module defines the operations
+-- of the Throw Event procedure.
+-- =============================================================
+-- All operations are defined in the module
+-- CCSDS-CSTS-COMMON-OPERATIONS-PDUS (see F3.4)
+
+-- =============================================================
+-- The third part contains the types used by the operations
+-- defined in the second part.
+-- =============================================================
+-- This procedure does not have specific definition.
+
+-- =============================================================
+-- The fourth part of the module definition contains the Extended
+-- types used by the operations defined in the second part.
+-- =============================================================
+
+-- *****
+-- EXECUTE-DIRECTIVE invocation
+-- The EXECUTE-DIRECTIVE invocation is not extended; that is,
+-- 'ExecuteDirectiveInvocation': 'executeDirectiveInvocationExtension'
+-- shall be set to 'notUsed'.
+
+-- EXECUTE-DIRECTIVE acknowledgement
+-- The EXECUTE-DIRECTIVE positive acknowledgement is not extended; that is,
+-- 'ExecuteDirectiveAcknowledge': 'StandardAcknowledgeHeader':
+-- 'StandardReturnHeader': 'result': 'positive' shall be set to 'notUsed'.
+-- The EXECUTE-DIRECTIVE negative acknowledgement is not extended; that is,
+-- 'ExecuteDirectiveAcknowledge': 'StandardAcknowledgeHeader':
+-- 'StandardReturnHeader': 'result': 'negative': 'negExtension' shall be
+-- set to 'notUsed'.
+-- The EXECUTE-DIRECTIVE negative acknowledgement makes use of: (a) one of
+-- the common diagnostics of 'StandardReturnHeader': 'result': 'negative':
+-- 'diagnostic': 'Diagnostic' (see 3.3.2.7); or (b) one of the additional
+-- diagnostics defined by 'ExecuteDirectiveAcknowledge':
+-- 'StandardReturnHeader': 'result': 'negative': 'diagnostic':
+-- 'Diagnostic': 'diagnosticExtension': 'execDirAckAckDiagExt':
+-- 'ExecDirNegAckDiagnosticExt'. No further diagnostics are specified; that is, 'ExecuteDirectiveAcknowledge': 'StandardReturnHeader': 'result':
+-- 'negative': 'diagnostic': 'Diagnostic': 'diagnosticExtension':
+-- 'execDirAckAckDiagExt': 'ExecDirNegAckDiagnosticExt' must not be set to
+-- 'execDirNegAckDiagnosticExtExtension'.
+
+-- EXECUTE-DIRECTIVE return
+-- The EXECUTE-DIRECTIVE positive return is not extended; that is,
+-- 'ExecuteDirectiveReturn': 'StandardReturnHeader': 'result': 'positive'
+-- shall be set to 'notUsed'.
+-- The EXECUTE-DIRECTIVE negative return is not extended; that is,
+-- 'ExecuteDirectiveReturn': 'StandardReturnHeader': 'result': 'negative':
+-- 'negExtension' shall be set to 'notUsed'.
+-- The EXECUTE-DIRECTIVE negative return makes use of: (a) one of the
+-- common diagnostics of 'StandardReturnHeader': 'result': 'negative':
+-- 'diagnostic': 'Diagnostic' (see 3.3.2.7 and F3.3) except
+-- 'diagnosticExtension'; (b) one of the additional diagnostics defined
+-- by 'ExecuteDirectiveReturn': 'StandardReturnHeader': 'result':
+-- 'negative': 'diagnostic': 'Diagnostic': 'diagnosticExtension':
+-- 'execDirNegReturnDiagnosticExt': 'ExecDirNegReturnDiagnosticExt' in F3.4
+-- except 'execDirNegReturnDiagnosticExtExtension'; or (c) one of the
+-- additional diagnostics defined by 'ExecuteDirectiveReturn':
+-- 'StandardReturnHeader': 'result': 'negative': 'diagnostic':
+-- 'Diagnostic': 'diagnosticExtension': 'execDirNegReturnDiagnosticExt':
+-- 'ExecDirNegReturnDiagnosticExt':
+-- 'execDirNegReturnDiagnosticExtExtension': 'teExecDirDiagExt':
+-- 'TeExecDirNegReturnDiagnosticExt' in F3.14 except
+-- 'teExecDirNegReturnDiagnosticExtExtension'.
+TeExecDirNegReturnDiagnosticExt	::=		CHOICE
+{	guardConditionEvaluatedToFalse				[0]		NULL
+,	teExecDirNegReturnDiagnosticExtExtension	[100]	Embedded
+}
+
+teExecDirDiagExt	OBJECT IDENTIFIER		::=		{teExtProcedureParam 1}
+
+END
+
+
+CCSDS-CSTS-PDUS
+{	iso(1) identified-organization(3) standards-producing-organization(112)
+	ccsds(4) css(4) csts(1) framework(1) modules(1) cstsFrameworkPdus(15)
+	version(1)
+}
+
+DEFINITIONS
+IMPLICIT TAGS
+::=		BEGIN
+
+EXPORTS		CstsFrameworkPdu
+;
+
+IMPORTS		BindInvocation
+,			BindReturn
+,			PeerAbortInvocation
+,			UnbindInvocation
+,			UnbindReturn
+	FROM CCSDS-CSTS-ASSOCIATION-CONTROL-TYPES
+
+			ExecuteDirectiveAcknowledge
+,			ExecuteDirectiveInvocation
+,			ExecuteDirectiveReturn
+,			GetInvocation
+,			GetReturn
+,			NotifyInvocation
+,			ProcessDataInvocation
+,			ProcessDataReturn
+,			StartInvocation
+,			StartReturn
+,			StopInvocation
+,			StopReturn
+,			TransferDataInvocation
+	FROM CCSDS-CSTS-COMMON-OPERATIONS-PDUS
+
+			ReturnBuffer
+	FROM CCSDS-CSTS-BUFFERED-DATA-DELIVERY-PDUS
+
+			ForwardBuffer
+	FROM CCSDS-CSTS-BUFFERED-DATA-PROCESSING-PDUS
+;
+
+-- =============================================================
+-- The Pdu type lists all possible PDUs that can be exchanged between
+-- the user and the provider.
+-- =============================================================
+CstsFrameworkPdu		::=		CHOICE
+{	bindInvocation					[0]		BindInvocation
+,	bindReturn						[1]		BindReturn
+,	unbindInvocation				[2]		UnbindInvocation
+,	unbindReturn					[3]		UnbindReturn
+,	peerAbortInvocation			[4]		PeerAbortInvocation
+,	startInvocation				[10]	StartInvocation
+,	startReturn					[11]	StartReturn
+,	stopInvocation					[20]	StopInvocation
+,	stopReturn						[21]	StopReturn
+,	executeDirectiveInvocation	[30]	ExecuteDirectiveInvocation
+,	executeDirectiveAcknowledge	[31]	ExecuteDirectiveAcknowledge
+,	executeDirectiveReturn 		[32]	ExecuteDirectiveReturn
+,	getInvocation					[40]	GetInvocation
+,	getReturn						[41]	GetReturn
+,	notifyInvocation				[50]	NotifyInvocation
+,	processDataInvocation			[60]	ProcessDataInvocation
+,	processDataReturn				[61]	ProcessDataReturn
+,	forwardBuffer					[62]	ForwardBuffer
+,	transferDataInvocation		[70]	TransferDataInvocation
+,	returnBuffer					[71]	ReturnBuffer
+}
+
+-- =============================================================
+-- The CstsFrameworkTopPdu is another name for CstsFrameworkPdu.
+-- This type is added to cover the case of a compiler that does not
+-- recognize CstsFrameworkPdu as being a top level PDU.
+-- =============================================================
+CstsFrameworkTopPdu	::=		CstsFrameworkPdu
+
+END
+
+
+CCSDS-CSTS-FW-PROCEDURE-PARAMETERS-EVENTS-DIRECTIVES
+{	iso(1) identified-organization(3) standards-producing-organization(112)
+	ccsds(4) css(4) csts(1) framework(1) modules(1)
+	procedureParamEventDirective(16) version(2)
+}
+
+DEFINITIONS
+IMPLICIT TAGS
+::=		BEGIN
+
+
+
+EXPORTS		procAssociationControl
+,			pACparametersId
+,			pACeventsId
+,			pACdirectivesId
+,			pACserviceUserRespTimer
+,			PACserviceUserRespTimerType
+,			pACinitiatorId	
+,			PACinitiatorIdType
+,			pACresponderId	
+,			PACresponderIdType
+,			pACresponderPortId
+,			PACresponderPortIdType
+,			pACserviceInstanceId
+,			PACserviceInstanceIdType
+,			procUnbuffDataDelivery
+,			pUBDDparametersId
+,			pUBDDeventsId
+,			pUDDdirectivesId
+,			procBuffDataDelivery
+,			pBDDparametersId	
+,			pBDDeventsId	
+,			pBDDdirectivesId	
+,			pBDDreturnBufferSize	
+,			PBDDreturnBufferSizeType	
+,			pBDDdeliveryMode	
+,			PBDDdeliveryModeType	
+,			pBDDdeliveryLatencyLimit	
+,			PBDDdeliveryLatencyLimitType	
+,			pBDDproductionStatusChange	
+,			pBDDproductionStatusChangeEvtValue	
+,			PBDDproductionStatusChangeEvtValueType	
+,			pBDDproductionConfigurationChange	
+,			pBDDdataDiscardedExcessBacklog	
+,			pBDDrecordingBufferOverflow	
+,			pBDDendOfData		
+,			pBDDconfigurationChange	
+,			pBDDconfigurationChangeEvtValue1		
+,			PBDDconfigurationChangeEvtValue1Type	
+,			pBDDconfigurationChangeEvtValue2		
+,			PBDDconfigurationChangeEvtValue2Type		
+,			procDataProcessing		
+,			pDPparametersId		
+,			pDPeventsId	
+,			pDPdirectivesId	
+,			pDPinputQueueSize	
+,			PDPinputQueueSizeType		
+,			pDPproductionStatusChange		
+,			pDPproductionStatusChangeEvtValue	
+,			PDPproductionStatusChangeEvtValueType		
+,			pDPproductionConfigurationChange		
+,			pDPdataProcessingCompleted	
+,			pDPconfigurationChange	
+,			pDPconfigurationChangeEvtValue	
+,			PDPconfigurationChangeEvtValueType
+,			procBufferDataProcessing
+,			pBDPparametersId	
+,			pBDPeventsId	
+,			pBDPdirectivesId		
+,			pBDPdataTransferMode	
+,			PBDPdataTransferModeType		
+,			pBDPmaxForwardBufferSize	
+,			PBDPmaxForwardBufferSizeType		
+,			pBDPprocessingLatencyLimit	
+,			PBDPprocessingLatencyLimitType	
+,			pBDPproductionStatusChange	
+,			pBDPproductionStatusChangeEvtValue			
+,			PBDPproductionStatusChangeEvtValueType	
+,			pBDPproductionConfigurationChange	
+,			pBDPdataProcessingCompleted	
+,			pBDPconfigurationChange	
+,			pBDPconfigurationChangeEvtValue1				
+,			PBDPconfigurationChangeEvtValue1Type 
+,			pBDPconfigurationChangeEvtValue2		
+,			PBDPconfigurationChangeEvtValue2Type 
+,			pBDPconfigurationChangeEvtValue3		
+,			PBDPconfigurationChangeEvtValue3Type
+,			procSeqControlledDataProcess	
+,			pSCDPparametersId		
+,			pSCDPeventsId		
+,			pSCDPdirectivesId		
+,			pSCDPdataUnitId		
+,			PSCDPdataUnitId	
+,			pSCDPproductionStatusChange	
+,			pSCDPproductionStatusChangeEvtValue	
+,			PSCDPproductionStatusChangeEvtValueType		
+,			pSCDPproductionConfigurationChange	
+,			pSCDPdataProcessingCompleted		
+,			pSCDPexpired	 
+,			pSCDPlocked	
+,			pSCDPconfigurationChange		
+,			pSCDPconfigurationChangeEvtValue				
+,			PSCDPconfigurationChangeEvtValueType 
+,			pSCDPresetDirective	
+,			pSCDPresetDirectiveDirQual	
+,			PSCDPresetDirectiveDirQualType
+,			procInformationQuery	
+,			pIQparametersId		
+,			pIQeventsId	
+,			pIQdirectivesId		
+,			pIQnamedLabelLists		
+,			PIQnamedLabelListsType	
+,			pIQnamedLabelListsTypeExt	
+,			procCyclicReport	
+,			pCRparametersId		
+,			pCReventsId	
+,			pCRdirectivesId
+,			pCRnamedLabelLists
+,			pCRminimumAllowedDeliveryCycle
+,			PCRnamedLabelListsType
+,			PCRminimumAllowedDeliveryCycleType
+,			pCRnamedLabelListsTypeExt
+,			procNotification
+,			pNparametersId
+,			pNeventsId
+,			pNdirectivesId	
+,			pNnamedLabelLists
+,			PNnamedLabelListsType
+,			pNnamedLabelListsTypeExt
+,			procThrowEvent
+,			pTEparametersId
+,			pTEeventsId
+,			pTEdirectivesId
+;
+
+IMPORTS		fwProceduresFunctionalities
+	FROM CCSDS-CSTS-OBJECT-IDENTIFIERS
+
+			ServiceInstanceIdentifier
+	FROM CCSDS-CSTS-SERVICE-INSTANCE-ID
+
+
+
+			AuthorityIdentifier
+,			BufferSize
+,			DataTransferMode
+,			DataUnitId
+,			DeliveryLatencyLimit
+,			DeliveryMode
+,			IdentifierString
+,			IntPos
+,			IntUnsigned
+,			Label
+,			ProcessingLatencyLimit
+,			ServiceUserRespTimer
+	FROM CCSDS-CSTS-COMMON-TYPES
+
+			svcProductionConfigurationChangeVersion1
+,			svcProductionStatusChangeVersion1
+,			svcProductionStatusVersion1
+,			SvcProductionStatusVersion1Type
+	FROM CCSDS-CSTS-GENERIC-SERVICE-OBJECT-IDENTIFIERS
+;
+
+-- ======================================================================
+-- FRAMEWORK CROSS SUPPORT IDENTIFIERS
+
+
+-- ASSOCIATION CONTROL
+procAssociationControl	OBJECT IDENTIFIER	::=	
+												{fwProceduresFunctionalities 1}
+pACparametersId			OBJECT IDENTIFIER		::=		{procAssociationControl 1}
+pACeventsId				OBJECT IDENTIFIER		::=		{procAssociationControl 2}
+pACdirectivesId			OBJECT IDENTIFIER		::=		{procAssociationControl 3}
+pACserviceUserRespTimer	OBJECT IDENTIFIER		::=		{pACparametersId 1}
+PACserviceUserRespTimerType						::=		ServiceUserRespTimer
+pACinitiatorId				OBJECT IDENTIFIER		::=		{pACparametersId 2}
+PACinitiatorIdType									::=		AuthorityIdentifier
+pACresponderId				OBJECT IDENTIFIER		::=		{pACparametersId 3}
+PACresponderIdType									::=		AuthorityIdentifier
+pACresponderPortId			OBJECT IDENTIFIER		::=		{pACparametersId 4}
+PACresponderPortIdType							::=		IdentifierString (SIZE (3 .. 16))
+pACserviceInstanceId		OBJECT IDENTIFIER		::=		{pACparametersId 5}
+PACserviceInstanceIdType							::=		ServiceInstanceIdentifier
+
+
+-- UNBUFFERED DATA DELIVERY
+procUnbuffDataDelivery	OBJECT IDENTIFIER		::=
+													{fwProceduresFunctionalities 2}
+pUBDDparametersId			OBJECT IDENTIFIER		::=		{procUnbuffDataDelivery 1}
+pUBDDeventsId				OBJECT IDENTIFIER		::=		{procUnbuffDataDelivery 2}
+pUDDdirectivesId			OBJECT IDENTIFIER		::=		{procUnbuffDataDelivery 3}
+
+
+-- BUFFERED DATA DELIVERY
+procBuffDataDelivery		OBJECT IDENTIFIER		::=
+													{fwProceduresFunctionalities 3}
+pBDDparametersId			OBJECT IDENTIFIER		::=		{procBuffDataDelivery 1}
+pBDDeventsId				OBJECT IDENTIFIER		::=		{procBuffDataDelivery 2}
+pBDDdirectivesId			OBJECT IDENTIFIER		::=		{procBuffDataDelivery 3}
+pBDDreturnBufferSize		OBJECT IDENTIFIER		::=		{pBDDparametersId 1}
+PBDDreturnBufferSizeType							::=		BufferSize
+pBDDdeliveryMode			OBJECT IDENTIFIER		::=		{pBDDparametersId 2}
+PBDDdeliveryModeType								::=		DeliveryMode
+pBDDdeliveryLatencyLimit	OBJECT IDENTIFIER		::=		{pBDDparametersId 3}
+PBDDdeliveryLatencyLimitType						::=		DeliveryLatencyLimit
+pBDDproductionStatusChange	OBJECT IDENTIFIER	::=		{svcProductionStatusChangeVersion1}
+pBDDproductionStatusChangeEvtValue	OBJECT IDENTIFIER		::=																		{svcProductionStatusVersion1}
+PBDDproductionStatusChangeEvtValueType			::=		SvcProductionStatusVersion1Type
+pBDDproductionConfigurationChange	OBJECT IDENTIFIER		::=
+													{svcProductionConfigurationChangeVersion1}
+pBDDdataDiscardedExcessBacklog	OBJECT IDENTIFIER		::=		{pBDDeventsId 1}
+pBDDrecordingBufferOverflow	OBJECT IDENTIFIER		::=		{pBDDeventsId 2}
+pBDDendOfData				OBJECT IDENTIFIER		::=		{pBDDeventsId 3}
+pBDDconfigurationChange	OBJECT IDENTIFIER		::=		{pBDDeventsId 4}
+pBDDconfigurationChangeEvtValue1		OBJECT IDENTIFIER  ::=		{pBDDreturnBufferSize}
+PBDDconfigurationChangeEvtValue1Type				::=		PBDDreturnBufferSizeType
+pBDDconfigurationChangeEvtValue2		OBJECT IDENTIFIER  ::=		{pBDDdeliveryLatencyLimit}
+PBDDconfigurationChangeEvtValue2Type				::=		PBDDdeliveryLatencyLimitType
+
+
+-- DATA PROCESSING
+procDataProcessing		OBJECT IDENTIFIER			::=		{fwProceduresFunctionalities 4}
+pDPparametersId		OBJECT IDENTIFIER			::=		{procDataProcessing 1}
+pDPeventsId			OBJECT IDENTIFIER			::=		{procDataProcessing 2}
+pDPdirectivesId		OBJECT IDENTIFIER			::=		{procDataProcessing 3}
+pDPinputQueueSize		OBJECT IDENTIFIER			::=		{pDPparametersId 1}
+PDPinputQueueSizeType								::=		BufferSize
+pDPproductionStatusChange		OBJECT IDENTIFIER		::=	
+													{svcProductionStatusChangeVersion1}
+pDPproductionStatusChangeEvtValue	OBJECT IDENTIFIER		::=
+													{svcProductionStatusVersion1}
+PDPproductionStatusChangeEvtValueType			::=		SvcProductionStatusVersion1Type
+pDPproductionConfigurationChange	OBJECT IDENTIFIER		::=
+													{svcProductionConfigurationChangeVersion1}
+pDPdataProcessingCompleted	OBJECT IDENTIFIER		::=		{pDPeventsId 1}
+pDPconfigurationChange	OBJECT IDENTIFIER		::=		{pDPeventsId 2}
+pDPconfigurationChangeEvtValue	OBJECT IDENTIFIER	::=		{pDPinputQueueSize}
+PDPconfigurationChangeEvtValueType 					::=		PDPinputQueueSizeType 
+
+-- BUFFERED DATA PROCESSING
+procBufferDataProcessing	OBJECT IDENTIFIER		::=		{fwProceduresFunctionalities 5}
+pBDPparametersId			OBJECT IDENTIFIER		::=		{procBufferDataProcessing 1}
+pBDPeventsId				OBJECT IDENTIFIER		::=		{procBufferDataProcessing 2}
+pBDPdirectivesId			OBJECT IDENTIFIER		::=		{procBufferDataProcessing 3}
+pBDPdataTransferMode		OBJECT IDENTIFIER		::=		{pBDPparametersId 1}
+PBDPdataTransferModeType							::=		DataTransferMode
+pBDPmaxForwardBufferSize	OBJECT IDENTIFIER		::=		{pBDPparametersId 2}
+PBDPmaxForwardBufferSizeType						::=		BufferSize
+pBDPprocessingLatencyLimit	OBJECT IDENTIFIER		::=		{pBDPparametersId 3}
+PBDPprocessingLatencyLimitType					::=		ProcessingLatencyLimit
+pBDPproductionStatusChange	OBJECT IDENTIFIER		::=	
+													{svcProductionStatusChangeVersion1}
+pBDPproductionStatusChangeEvtValue	OBJECT IDENTIFIER		::=
+													{svcProductionStatusChangeVersion1}
+PBDPproductionStatusChangeEvtValueType			::=		SvcProductionStatusVersion1Type
+pBDPproductionConfigurationChange	OBJECT IDENTIFIER		::=
+													{svcProductionConfigurationChangeVersion1}
+pBDPdataProcessingCompleted	OBJECT IDENTIFIER		::=		{pDPdataProcessingCompleted}
+pBDPconfigurationChange	OBJECT IDENTIFIER		::=		{pDPconfigurationChange}
+pBDPconfigurationChangeEvtValue1		OBJECT IDENTIFIER	::=	{pBDPmaxForwardBufferSize}
+PBDPconfigurationChangeEvtValue1Type 			::=		PBDPmaxForwardBufferSizeType 
+pBDPconfigurationChangeEvtValue2		OBJECT IDENTIFIER	::=	{pDPinputQueueSize}
+PBDPconfigurationChangeEvtValue2Type 				::=		PDPinputQueueSizeType
+pBDPconfigurationChangeEvtValue3		OBJECT IDENTIFIER	::=	{pBDPprocessingLatencyLimit}
+PBDPconfigurationChangeEvtValue3Type 			::=		PBDPprocessingLatencyLimitType
+
+
+-- SEQUENCE-CONTROLLED DATA PROCESSING
+procSeqControlledDataProcess		OBJECT IDENTIFIER		::=
+													{fwProceduresFunctionalities 6}
+pSCDPparametersId					OBJECT IDENTIFIER		::=
+													{procSeqControlledDataProcess 1}
+pSCDPeventsId						OBJECT IDENTIFIER		::=
+													{procSeqControlledDataProcess 2}
+pSCDPdirectivesId					OBJECT IDENTIFIER		 ::=
+													{procSeqControlledDataProcess 3}
+pSCDPdataUnitId					OBJECT IDENTIFIER		::=		{pSCDPparametersId 1}
+PSCDPdataUnitId									::=		DataUnitId
+pSCDPproductionStatusChange	OBJECT IDENTIFIER		::=	
+													{svcProductionStatusChangeVersion1}
+pSCDPproductionStatusChangeEvtValue	OBJECT IDENTIFIER		::=
+													{svcProductionStatusVersion1}
+PSCDPproductionStatusChangeEvtValueType			::=		SvcProductionStatusVersion1Type
+pSCDPproductionConfigurationChange	OBJECT IDENTIFIER		::=
+													{svcProductionConfigurationChangeVersion1}
+pSCDPdataProcessingCompleted		OBJECT IDENTIFIER		::=																	{pDPdataProcessingCompleted}
+pSCDPexpired						OBJECT IDENTIFIER		::=		{pSCDPeventsId 1} 
+pSCDPlocked						OBJECT IDENTIFIER		::=		{pSCDPeventsId 2}
+pSCDPconfigurationChange			OBJECT IDENTIFIER		::=		{pDPconfigurationChange}
+pSCDPconfigurationChangeEvtValue		OBJECT IDENTIFIER	::=		{pDPinputQueueSize}
+PSCDPconfigurationChangeEvtValueType 					::=		PDPinputQueueSizeType
+pSCDPresetDirective				OBJECT IDENTIFIER		::=		{pSCDPdirectivesId 1}
+pSCDPresetDirectiveDirQual		OBJECT IDENTIFIER		::=		{pSCDPresetDirective 1}
+PSCDPresetDirectiveDirQualType							::=		PSCDPdataUnitId
+
+
+-- INFORMATION QUERY
+procInformationQuery				OBJECT IDENTIFIER		::=
+													{fwProceduresFunctionalities 7}
+pIQparametersId					OBJECT IDENTIFIER		::=		{procInformationQuery 1}
+pIQeventsId						OBJECT IDENTIFIER		::=		{procInformationQuery 2}
+pIQdirectivesId					OBJECT IDENTIFIER		::=		{procInformationQuery 3}
+pIQnamedLabelLists					OBJECT IDENTIFIER		::=		{pIQparametersId 1}
+-- Note: In case the service user selects a procedure type in the GET 
+-- invocation, the service provider will return the same list of
+-- parameters for each active instance of the selected procedure type.
+PIQnamedLabelListsType	::=		LabelListSet
+pIQnamedLabelListsTypeExt			OBJECT IDENTIFIER		::=		{pIQnamedLabelLists 1}
+
+
+-- CYCLIC REPORT
+procCyclicReport					OBJECT IDENTIFIER		::=
+													{fwProceduresFunctionalities 8}
+pCRparametersId					OBJECT IDENTIFIER		::=		{procCyclicReport 1}
+pCReventsId						OBJECT IDENTIFIER		::=		{procCyclicReport 2}
+pCRdirectivesId					OBJECT IDENTIFIER		::=		{procCyclicReport 3}
+pCRnamedLabelLists					OBJECT IDENTIFIER		::=		{pCRparametersId 1}
+pCRminimumAllowedDeliveryCycle	OBJECT IDENTIFIER		::=		{pCRparametersId 2}
+PCRnamedLabelListsType	::=		LabelListSet
+PCRminimumAllowedDeliveryCycleType						::=		IntPos
+pCRnamedLabelListsTypeExt			OBJECT IDENTIFIER		::=		{pCRnamedLabelLists 1}
+
+
+-- NOTIFICATION
+procNotification					OBJECT IDENTIFIER		::=
+													{fwProceduresFunctionalities 9}
+pNparametersId						OBJECT IDENTIFIER		::=		{procNotification 1}
+pNeventsId							OBJECT IDENTIFIER		::=		{procNotification 2}
+pNdirectivesId						OBJECT IDENTIFIER		::=		{procNotification 3}
+pNnamedLabelLists					OBJECT IDENTIFIER		::=		{pNparametersId 1}
+PNnamedLabelListsType		::=		LabelListSet
+pNnamedLabelListsTypeExt			OBJECT IDENTIFIER		::=		{pNnamedLabelLists 1}
+
+
+-- THROW EVENT
+procThrowEvent						OBJECT IDENTIFIER		::=
+													{fwProceduresFunctionalities 10}
+pTEparametersId					OBJECT IDENTIFIER		::=		{procThrowEvent 1}
+pTEeventsId						OBJECT IDENTIFIER		::=		{procThrowEvent 2}
+pTEdirectivesId					OBJECT IDENTIFIER		::=		{procThrowEvent 3}
+
+-- Additional types for the Framework Functional Resource
+LabelList				::=		SEQUENCE
+{	name					VisibleString
+,	defaultList			BOOLEAN
+,	labels 					SEQUENCE OF Label
+}
+
+LabelListSet			::=		SET OF LabelList
+-- Only one list in the set can be the default list.
+
+END
+
+
+CCSDS-CSTS-GENERIC-SERVICE-OBJECT-IDENTIFIERS
+{	iso(1) identified-organization(3) standards-producing-organization(112)
+	ccsds(4) css(4) csts(1) framework(1) modules(1)
+	serviceGenericIdentifiers(17) version(1)
+}
+
+DEFINITIONS
+IMPLICIT TAGS
+::=		BEGIN
+
+EXPORTS		svcProductionConfigurationChange
+,			svcProductionConfigurationChangeVersion1
+,			svcProductionStatus
+,			svcProductionStatusVersion1
+,			SvcProductionStatusVersion1Type
+,			svcProductionStatusChange
+,			svcProductionStatusChangeVersion1
+;
+
+IMPORTS		serviceGenericIdentifiers
+	FROM CCSDS-CSTS-OBJECT-IDENTIFIERS
+
+			ProductionStatus
+	FROM CCSDS-CSTS-COMMON-TYPES
+;
+
+-- ======================================================================
+-- FRAMEWORK CROSS SUPPORT SERVICE IDENTIFIERS
+
+-- Service generic Identifiers:
+
+svcParametersId					OBJECT IDENTIFIER		::=
+											{serviceGenericIdentifiers 1}
+svcEventsId						OBJECT IDENTIFIER		::=	
+											{serviceGenericIdentifiers 2}
+svcDirectivesId					OBJECT IDENTIFIER		::=	
+											{serviceGenericIdentifiers 3}
+
+svcProductionStatus				OBJECT IDENTIFIER		::=		{svcParametersId 1}
+svcProductionStatusVersion1		OBJECT IDENTIFIER		::=		{svcProductionStatus 1}
+SvcProductionStatusVersion1Type							::=		ProductionStatus
+
+svcProductionStatusChange 		OBJECT IDENTIFIER		::=		{svcEventsId 1}
+svcProductionStatusChangeVersion1	OBJECT IDENTIFIER		::=
+											{svcProductionStatusChange 1}
+SvcProductionStatusChangeVersion1EvtValue	::=		SvcProductionStatusVersion1Type	
+svcProductionConfigurationChange		OBJECT IDENTIFIER		::=	{svcEventsId 2}
+svcProductionConfigurationChangeVersion1	OBJECT IDENTIFIER	::=
+											{svcProductionConfigurationChange 1}
+
+END
+

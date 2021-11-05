@@ -1,5 +1,7 @@
 package esa.egos.csts.api.operations;
 
+import com.beanit.jasn1.ber.types.BerType;
+
 import b1.ccsds.csts.common.operations.pdus.TransferDataInvocation;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.extensions.Extension;
@@ -85,13 +87,13 @@ public interface ITransferData extends IOperation {
 	 * 
 	 * @return this operation encoded into a CCSDS TransferDataInvocation
 	 */
-	TransferDataInvocation encodeTransferDataInvocation();
+	BerType encodeTransferDataInvocation();
 
 	/**
 	 * Decodes a specified CCSDS TransferDataInvocation into this operation.
 	 * 
 	 * @param transferDataInvocation the specified CCSDS TransferDataInvocation
 	 */
-	void decodeTransferDataInvocation(TransferDataInvocation transferDataInvocation);
+	void decodeTransferDataInvocation(BerType transferDataInvocation);
 
 }

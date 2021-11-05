@@ -3,7 +3,6 @@ package esa.egos.csts.api.parameters.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import b1.ccsds.csts.common.types.SequenceOfQualifiedValues;
 import esa.egos.csts.api.types.Name;
 
 /**
@@ -48,12 +47,23 @@ public class QualifiedParameter {
 	 * 
 	 * @return the CCSDS QualifiedParameter type representing this object
 	 */
-	public b1.ccsds.csts.common.types.QualifiedParameter encode() {
-		b1.ccsds.csts.common.types.QualifiedParameter qualifiedParameter = new b1.ccsds.csts.common.types.QualifiedParameter();
-		qualifiedParameter.setParameterName(name.encode());
-		SequenceOfQualifiedValues qualifiedValues = new SequenceOfQualifiedValues();
+	public b1.ccsds.csts.common.types.QualifiedParameter encode(b1.ccsds.csts.common.types.QualifiedParameter qualifiedParameter) {
+		qualifiedParameter.setParameterName(name.encode(new b1.ccsds.csts.common.types.Name()));
+		b1.ccsds.csts.common.types.SequenceOfQualifiedValues qualifiedValues = 
+				new b1.ccsds.csts.common.types.SequenceOfQualifiedValues();
 		for (QualifiedValues value : this.qualifiedValues) {
-			qualifiedValues.getQualifiedValues().add(value.encode());
+			qualifiedValues.getQualifiedValues().add(value.encode(new b1.ccsds.csts.common.types.QualifiedValues()));
+		}
+		qualifiedParameter.setQualifiedValues(qualifiedValues);
+		return qualifiedParameter;
+	}
+	
+	public b2.ccsds.csts.common.types.QualifiedParameter encode(b2.ccsds.csts.common.types.QualifiedParameter qualifiedParameter) {
+		qualifiedParameter.setParameterName(name.encode(new b2.ccsds.csts.common.types.Name()));
+		b2.ccsds.csts.common.types.SequenceOfQualifiedValue qualifiedValues = 
+				new b2.ccsds.csts.common.types.SequenceOfQualifiedValue();
+		for (QualifiedValues value : this.qualifiedValues) {
+			qualifiedValues.getQualifiedValue().add(value.encode(new b2.ccsds.csts.common.types.QualifiedValue()));
 		}
 		qualifiedParameter.setQualifiedValues(qualifiedValues);
 		return qualifiedParameter;
@@ -74,6 +84,19 @@ public class QualifiedParameter {
 			if (qualifiedParameter.getQualifiedValues().getQualifiedValues() != null) {
 				for (b1.ccsds.csts.common.types.QualifiedValues value : qualifiedParameter.getQualifiedValues()
 						.getQualifiedValues()) {
+					newQualifiedParameter.getQualifiedValues().add(QualifiedValues.decode(value));
+				}
+			}
+		}
+		return newQualifiedParameter;
+	}
+	
+	public static QualifiedParameter decode(b2.ccsds.csts.common.types.QualifiedParameter qualifiedParameter) {
+		QualifiedParameter newQualifiedParameter = new QualifiedParameter(
+				Name.decode(qualifiedParameter.getParameterName()));
+		if (qualifiedParameter.getQualifiedValues() != null) {
+			if (qualifiedParameter.getQualifiedValues().getQualifiedValue() != null) {
+				for (b2.ccsds.csts.common.types.QualifiedValue value : qualifiedParameter.getQualifiedValues().getQualifiedValue()) {
 					newQualifiedParameter.getQualifiedValues().add(QualifiedValues.decode(value));
 				}
 			}

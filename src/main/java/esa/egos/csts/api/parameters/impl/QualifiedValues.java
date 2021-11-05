@@ -6,8 +6,6 @@ import java.util.stream.Collectors;
 
 import com.beanit.jasn1.ber.types.BerNull;
 
-import b1.ccsds.csts.common.types.TypeAndValue;
-import b1.ccsds.csts.common.types.TypeAndValueComplexQualified;
 import b1.ccsds.csts.common.types.TypeAndValueComplexQualified.ComplexSequence;
 import esa.egos.csts.api.enumerations.ParameterQualifier;
 
@@ -53,9 +51,7 @@ public class QualifiedValues {
 	 * 
 	 * @return the CCSDS QualifiedValues type representing this object
 	 */
-	public b1.ccsds.csts.common.types.QualifiedValues encode() {
-
-		b1.ccsds.csts.common.types.QualifiedValues qualifiedValues = new b1.ccsds.csts.common.types.QualifiedValues();
+	public b1.ccsds.csts.common.types.QualifiedValues encode(b1.ccsds.csts.common.types.QualifiedValues qualifiedValues) {
 
 		switch (qualifier) {
 		case ERROR:
@@ -68,17 +64,43 @@ public class QualifiedValues {
 			qualifiedValues.setUndefined(new BerNull());
 			break;
 		case VALID:
-			TypeAndValueComplexQualified typeAndValueComplexQualified = new TypeAndValueComplexQualified();
+			b1.ccsds.csts.common.types.TypeAndValueComplexQualified typeAndValueComplexQualified = new b1.ccsds.csts.common.types.TypeAndValueComplexQualified();
 			if (parameterValues.size() == 1) {
-				typeAndValueComplexQualified.setTypeAndValue(parameterValues.get(0).encode());
+				typeAndValueComplexQualified.setTypeAndValue(parameterValues.get(0).encode(new b1.ccsds.csts.common.types.TypeAndValue()));
 			} else {
 				ComplexSequence complexSequence = new ComplexSequence();
 				for (ParameterValue value : parameterValues) {
-					complexSequence.getTypeAndValue().add(value.encode());
+					complexSequence.getTypeAndValue().add(value.encode(new b1.ccsds.csts.common.types.TypeAndValue()));
 				}
 				typeAndValueComplexQualified.setComplexSequence(complexSequence);
 			}
 			qualifiedValues.setValid(typeAndValueComplexQualified);
+			// ComplexSet will remain unused, since ComplexSequence provides the same
+			// semantics in terms of Java
+			break;
+		}
+
+		return qualifiedValues;
+
+	}
+	
+	public b2.ccsds.csts.common.types.QualifiedValue encode(b2.ccsds.csts.common.types.QualifiedValue qualifiedValues) {
+		switch (qualifier) {
+		case ERROR:
+			qualifiedValues.setError(new BerNull());
+			break;
+		case UNAVAILABLE:
+			qualifiedValues.setUnavailable(new BerNull());
+			break;
+		case UNDEFINED:
+			qualifiedValues.setUndefined(new BerNull());
+			break;
+		case VALID:
+			b2.ccsds.csts.common.types.TypeAndValue typeAndValue = new b2.ccsds.csts.common.types.TypeAndValue();
+			if (parameterValues.size() == 1) {
+				parameterValues.get(0).encode(typeAndValue);
+			} 
+			qualifiedValues.setValid(typeAndValue);
 			// ComplexSet will remain unused, since ComplexSequence provides the same
 			// semantics in terms of Java
 			break;
@@ -110,13 +132,31 @@ public class QualifiedValues {
 				newQualifiedValues.getParameterValues()
 						.add(ParameterValue.decode(qualifiedValues.getValid().getTypeAndValue()));
 			} else if (qualifiedValues.getValid().getComplexSequence() != null) {
-				for (TypeAndValue value : qualifiedValues.getValid().getComplexSequence().getTypeAndValue()) {
+				for (b1.ccsds.csts.common.types.TypeAndValue value : qualifiedValues.getValid().getComplexSequence().getTypeAndValue()) {
 					newQualifiedValues.getParameterValues().add(ParameterValue.decode(value));
 				}
 			} else if (qualifiedValues.getValid().getComplexSet() != null) {
-				for (TypeAndValue value : qualifiedValues.getValid().getComplexSet().getTypeAndValue()) {
+				for (b1.ccsds.csts.common.types.TypeAndValue value : qualifiedValues.getValid().getComplexSet().getTypeAndValue()) {
 					newQualifiedValues.getParameterValues().add(ParameterValue.decode(value));
 				}
+			}
+		}
+		return newQualifiedValues;
+	}
+	
+	public static QualifiedValues decode(b2.ccsds.csts.common.types.QualifiedValue qualifiedValues) {
+		QualifiedValues newQualifiedValues = null;
+		if (qualifiedValues.getError() != null) {
+			newQualifiedValues = new QualifiedValues(ParameterQualifier.ERROR);
+		} else if (qualifiedValues.getUnavailable() != null) {
+			newQualifiedValues = new QualifiedValues(ParameterQualifier.UNAVAILABLE);
+		} else if (qualifiedValues.getUndefined() != null) {
+			newQualifiedValues = new QualifiedValues(ParameterQualifier.UNDEFINED);
+		} else if (qualifiedValues.getValid() != null) {
+			newQualifiedValues = new QualifiedValues(ParameterQualifier.VALID);
+			if (qualifiedValues.getValid()!= null) {
+				newQualifiedValues.getParameterValues()
+						.add(ParameterValue.decode(qualifiedValues.getValid()));
 			}
 		}
 		return newQualifiedValues;

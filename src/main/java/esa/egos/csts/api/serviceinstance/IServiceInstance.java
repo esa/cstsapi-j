@@ -197,7 +197,7 @@ public interface IServiceInstance extends IServiceInitiate, ISrvProxyInform, ISe
 	 * @return the current status
 	 */
 	ServiceStatus getStatus();
-
+	
 	/**
 	 * Fires the service event which indicates that the production configuration has
 	 * been changed.

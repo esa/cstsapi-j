@@ -8,7 +8,7 @@ import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.states.UserStateInactive;
 
-public class ThrowEventUser extends AbstractThrowEvent {
+public class ThrowEventUser extends AbstractThrowEventB2 {
 
 	@Override
 	protected void initializeState() {

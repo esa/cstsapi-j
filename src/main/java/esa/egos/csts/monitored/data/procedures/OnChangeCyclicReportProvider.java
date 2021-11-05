@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import b1.ccsds.on.change.option.cyclic.report.pdus.OnChangeOptCyclicReportStartInvocExt;
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.extensions.Extension;
 import esa.egos.csts.api.oids.OIDs;
@@ -19,6 +18,7 @@ import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.LabelList;
 import esa.egos.csts.api.types.Name;
+import esa.egos.csts.api.types.SfwVersion;
 
 /**
  * Implementation of the On Change Cyclic Report Procedure as per 922.1 B-1
@@ -79,19 +79,38 @@ public class OnChangeCyclicReportProvider extends CyclicReportProvider implement
     @Override
     protected void decodeStartInvocationExtExtension(Extension extension)
     {
-        if (extension.isUsed() && extension.getEmbeddedData().getOid().equals(onChangeOptCyclicReportStartInvocExt))
-        {
-            OnChangeOptCyclicReportStartInvocExt onChangeCyclicReportStartExt = new OnChangeOptCyclicReportStartInvocExt();
-            try (ByteArrayInputStream is = new ByteArrayInputStream(extension.getEmbeddedData().getData()))
+    	if(getServiceInstance().getSfwVersion().equals(SfwVersion.B2)) {
+            if (extension.isUsed() && extension.getEmbeddedData().getOid().equals(onChangeOptCyclicReportStartInvocExt))
             {
-                onChangeCyclicReportStartExt.decode(is);
-                this.onChange = onChangeCyclicReportStartExt.getOnChangeOnly().value;
+            	b2.ccsds.on.change.option.cyclic.report.pdus.OnChangeOptCyclicReportStartInvocExt onChangeCyclicReportStartExt = 
+            			new b2.ccsds.on.change.option.cyclic.report.pdus.OnChangeOptCyclicReportStartInvocExt();
+                try (ByteArrayInputStream is = new ByteArrayInputStream(extension.getEmbeddedData().getData()))
+                {
+                    onChangeCyclicReportStartExt.decode(is);
+                    this.onChange = onChangeCyclicReportStartExt.getOnChangeOnly().value;
+                }
+                catch (Exception e)
+                {
+                    LOG.log(Level.SEVERE, "Failed to decode StartInvocationExtExtension", e);
+                }
             }
-            catch (Exception e)
+    	} else {
+            if (extension.isUsed() && extension.getEmbeddedData().getOid().equals(onChangeOptCyclicReportStartInvocExt))
             {
-                LOG.log(Level.SEVERE, "Failed to decode StartInvocationExtExtension", e);
+            	b1.ccsds.on.change.option.cyclic.report.pdus.OnChangeOptCyclicReportStartInvocExt onChangeCyclicReportStartExt = 
+            			new b1.ccsds.on.change.option.cyclic.report.pdus.OnChangeOptCyclicReportStartInvocExt();
+                try (ByteArrayInputStream is = new ByteArrayInputStream(extension.getEmbeddedData().getData()))
+                {
+                    onChangeCyclicReportStartExt.decode(is);
+                    this.onChange = onChangeCyclicReportStartExt.getOnChangeOnly().value;
+                }
+                catch (Exception e)
+                {
+                    LOG.log(Level.SEVERE, "Failed to decode StartInvocationExtExtension", e);
+                }
             }
-        }
+    	}
+
     }
 
     /**

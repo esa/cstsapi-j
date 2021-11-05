@@ -19,6 +19,7 @@ import esa.egos.csts.api.parameters.IConfigurationParameter;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.serviceinstance.IServiceInstance;
+import esa.egos.csts.api.types.SfwVersion;
 
 /**
  * This Interface represents a Procedure.
@@ -106,13 +107,6 @@ public interface IProcedure extends Observer {
 	 * @return true if the Procedure is the Prime Procedure, false otherwise
 	 */
 	boolean isPrime();
-
-	/**
-	 * Returns the version of this Procedure.
-	 * 
-	 * @return the version of this Procedure
-	 */
-	int getVersion();
 
 	/**
 	 * Indicates whether this Procedure is configured. A configured Procedure has no

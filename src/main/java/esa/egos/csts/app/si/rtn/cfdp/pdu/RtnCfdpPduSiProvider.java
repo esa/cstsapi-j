@@ -7,7 +7,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 import com.beanit.jasn1.ber.types.BerOctetString;
 
-import b1.ccsds.csts.rtn.cfdp.pdu.buffered.delivery.pdus.CfdpDeliveryPduData;
 import b1.ccsds.csts.rtn.cfdp.pdu.buffered.delivery.pdus.OidValues;
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.enumerations.OperationType;
@@ -19,6 +18,7 @@ import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
+import esa.egos.csts.api.types.SfwVersion;
 import esa.egos.csts.api.types.Time;
 import esa.egos.csts.app.si.AppSi;
 import esa.egos.csts.app.si.SiConfig;
@@ -145,7 +145,32 @@ public class RtnCfdpPduSiProvider extends AppSi {
 	}
 	
 	private EmbeddedData encodeSequenceOfStrings(List<byte[]> inputData) throws IOException {
-		CfdpDeliveryPduData deliveryData = new CfdpDeliveryPduData();
+		if(this.getDeliveryProc().getServiceInstance().getSfwVersion().equals(SfwVersion.B2)) {
+			return encodeSequenceOfStrings(inputData,new b2.ccsds.csts.rtn.cfdp.pdu.buffered.delivery.pdus.CfdpDeliveryPduData());
+		} else {
+			return encodeSequenceOfStrings(inputData,new b1.ccsds.csts.rtn.cfdp.pdu.buffered.delivery.pdus.CfdpDeliveryPduData());
+		}
+	}
+	
+	
+	private EmbeddedData encodeSequenceOfStrings(List<byte[]> inputData,
+			b1.ccsds.csts.rtn.cfdp.pdu.buffered.delivery.pdus.CfdpDeliveryPduData deliveryData) throws IOException {
+		
+		for(byte[] byteString:inputData) {
+			BerOctetString octetString = new BerOctetString(byteString);
+			deliveryData.getBerOctetString().add(octetString);
+		}
+		
+		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
+			deliveryData.encode(os);
+			return EmbeddedData.of(ObjectIdentifier.of(OidValues.cfdpDeliveryPduDataId.value), os.getArray());
+		} catch (IOException e) {
+			throw e; 
+		}             
+	}
+	
+	private EmbeddedData encodeSequenceOfStrings(List<byte[]> inputData,
+			b2.ccsds.csts.rtn.cfdp.pdu.buffered.delivery.pdus.CfdpDeliveryPduData deliveryData) throws IOException {
 		
 		for(byte[] byteString:inputData) {
 			BerOctetString octetString = new BerOctetString(byteString);

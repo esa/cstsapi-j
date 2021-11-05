@@ -1,0 +1,153 @@
+CCSDS-MONITORED-DATA-OBJECT-IDENTIFIERS
+{ iso(1) identified-organization(3) standards-producing-organization(112)
+ccsds(4) css(4) csts(1) services(2) monitoredData(1)
+monitoredDataServiceModules(4) object-identifiers(1)
+}
+DEFINITIONS
+IMPLICIT TAGS
+::= BEGIN
+EXPORTS monitoredDataDerivedServices
+, monitoredDataExtendedServiceParameters
+, monitoredDataServiceProcedures
+, mdCstsProvider
+, mdCstsProviderParametersId
+, mdCstsProviderEventsId
+;
+IMPORTS services
+, crossSupportFunctionalities
+FROM CCSDS-CSTS-OBJECT-IDENTIFIERS-VERSION2
+;
+-- **********************************************************
+-- Root Object Identifiers of the Service
+monitoredData OBJECT IDENTIFIER ::= {services 1}
+monitoredDataDerivedServices OBJECT IDENTIFIER ::= {monitoredData 1}
+monitoredDataExtendedServiceParameters OBJECT IDENTIFIER ::=
+{monitoredData 2}
+monitoredDataServiceProcedures OBJECT IDENTIFIER ::=
+{monitoredData 3}
+monitoredDataServiceModules OBJECT IDENTIFIER ::= {monitoredData 4}
+-- **********************************************************
+-- Procedure Type Identifier
+ocoCyclicReport OBJECT IDENTIFIER ::= {monitoredDataServiceProcedures 1}
+-- **********************************************************
+-- Root Object Identifiers of the MD-CSTS Provider
+-- Functional Resource Type
+mdCstsProvider OBJECT IDENTIFIER ::= {crossSupportFunctionalities 17}
+mdCstsProviderParametersId OBJECT IDENTIFIER ::= {mdCstsProvider 1}
+mdCstsProviderEventsId OBJECT IDENTIFIER ::= {mdCstsProvider 2}
+mdCstsProviderDirectivesId OBJECT IDENTIFIER ::= {mdCstsProvider 3}
+END
+
+CCSDS-ON-CHANGE-OPTION-CYCLIC-REPORT-PDUS
+{iso(1) identified-organization(3) standards-producing-organization(112)
+ccsds(4) css(4) csts(1) services(2) monitoredData(1)
+monitoredDataServiceModules(4) extensions(2) ocoCyclicReportPdus(1)
+}
+DEFINITIONS
+IMPLICIT TAGS
+::= BEGIN
+IMPORTS Extended
+FROM CCSDS-CSTS-COMMON-TYPES-VERSION2
+-- CCSDS-CSTS-COMMON-TYPES is defined in the
+-- CSTS Specification Framework (reference [1])
+UnbufferedDataDeliveryPdu
+FROM CCSDS-CSTS-UNBUFFERED-DATA-DELIVERY-PDUS
+-- CCSDS-CSTS-UNBUFFERED-DATA-DELIVERY-PDUS is defined in the
+-- CSTS Specification Framework (reference [1])
+monitoredDataExtendedServiceParameters
+FROM CCSDS-MONITORED-DATA-OBJECT-IDENTIFIERS
+;
+	-- The On-Change-Option Cyclic Report procedure is derived from the CSTS
+	-- SFW Cyclic Report procedure, which in turn is derived from the
+	-- Unbuffered Data Delivery procedure. It reuses the PDU defined in the
+	-- Unbuffered Data Delivery procedure:
+	-- UnbufferedDataDeliveryPdu type defined in the
+	-- CCSDS-CSTS-UNBUFFERED-DATA-DELIVERY-PDUS module of the CSTS
+	-- Specification Framework (reference [1]).
+	-- *****
+	-- START invocation extension parameters
+	-- START invocation is extended with the on-change-option parameter. The
+	-- Cyclic Report procedure specified in reference [1] extends the
+	-- parameters of the Unbuffered Data Delivery procdure START invocation.
+	-- Therefore this extension applies to the
+	-- CyclicReportStartInvocExt: cyclicReportStartInvocExtExtension
+	-- extension parameter that is defined in the CCSDS-CSTS-CYCLIC-REPORT-PDUS
+	-- module of the CSTS Specification Framework (reference [1]).
+
+OnChangeOptCyclicReportStartInvocExt ::= SEQUENCE
+{ onChangeOnly BOOLEAN
+, onChangeOptCyclicReportStartInvocExtExtension Extended
+}
+onChangeOptCyclicReportStartInvocExt OBJECT IDENTIFIER ::=
+{monitoredDataExtendedServiceParameters 1}
+
+	-- START positive return parameters
+	-- No extension parameters are added to the START positive return. The CSTS
+	-- SFW Cyclic Report procedure does not extend the parameters of the START
+	-- positive return. Therefore
+	-- StartReturn(StandardReturnHeader): result: positive
+	-- (see CCSDS-CSTS-COMMON-OPERATIONS-PDUS module in reference [1]) is set
+	-- to ‘notUsed’.
+	-- START negative return extension parameters
+	-- No extension parameters are added to the START negative return. The CSTS
+	-- SFW Cyclic Report procedure does not extend the parameters of the START
+	-- negative return. Therefore
+	-- StartReturn(StandardReturnHeader): result: negative: negExtension
+	-- (see CCSDS-CSTS-COMMON-OPERATIONS-PDUS module in reference [1]) is set
+	-- to ‘notUsed’.
+	-- START negative return extension diagnostics
+	-- No extension diagnostics are added to the START negative return. The
+	-- Cyclic Report procedure specified in reference [1] does not extend the
+	-- diagnostic values of the START negative return. Therefore the diagnostic
+	-- extension parameter CyclicReportStartDiagnosticsExt:
+	-- cyclicReportStartDiagnosticsExtExtension
+	-- (see CCSDS-CSTS-BUFFERED-DATA-DELIVERY-PDUS module in reference [1]) is
+	-- set to ‘notUsed’.
+	-- *****
+	-- STOP Invocation extension parameters
+	-- No extension parameters are added to the STOP invocation. The Cyclic
+	-- Report procedure specified in reference [1] does not extend the
+	-- parameters of the STOP invocation. Therefore
+	-- StopInvocation: stopInvocationExtension (see CCSDS-CSTS-COMMON-
+	-- OPERATIONS-PDUS module in reference [1]) is set to ‘notUsed’.
+	-- STOP positive return extension parameters
+	-- No extension parameters are added to the STOP positive return. The CSTS
+	-- SFW Cyclic Report procedure does not extend the parameters of the STOP
+	-- positive return. Therefore
+	-- StopReturn(StandardReturnHeader): result: positive
+	-- (see CCSDS-CSTS-COMMON-OPERATIONS-PDUS module in reference [1]) is set
+	-- to ‘notUsed’.
+	-- STOP negative return extension parameters
+	-- No extension parameters are added to the STOP negative return. The CSTS
+	-- SFW Cyclic Report procedure does not extend the parameters of the STOP
+	-- negative return. Therefore
+	-- StopReturn(StandardReturnHeader): result: negative: negExtension
+	-- (see CCSDS-CSTS-COMMON-OPERATIONS-PDUS module in reference [1]) is set
+	-- to ‘notUsed’.
+	
+	-- STOP negative return extension diagnostics
+	-- No extension diagnostics added to the STOP negative return. The Cyclic
+	-- Report procedure specified in reference [1] does not extend the
+	-- diagnostic values of the STOP negative return. Therefore
+	-- StopReturn(StandardReturnHeader): result: negative: diagnostic:
+	-- diagnosticsExtension
+	-- (see CCSDS-CSTS-COMMON-OPERATIONS-PDUS module in reference [1]) is set
+	-- to ‘notUsed’.
+	-- *****
+	-- TRANSFER-DATA invocation extension parameters
+	-- No extension parameters added to the TRANSFER-DATA invocation.
+	-- The Cyclic Report procedure specified in reference [1] does not extend
+	-- the TRANSFER-DATA invocation. Therefore,
+	-- TransferDataInvocation: transferDataInvocationExtension
+	-- (see CCSDS-CSTS-COMMON-OPERATIONS-PDUS module in reference [1]) is set
+	-- to ‘notUsed’
+	-- TRANSFER-DATA invocation data parameter refinement
+	-- The Cyclic Report procedure specified in reference [1] resolves the data
+	-- parameter of the TRANSFER-DATA invocation to be of type
+	-- CyclicReportTransferDataRef. For the On-Change-Option Cyclic Report
+	-- procedure
+	-- TransferDataInvocation: data
+	-- is cast as
+	-- CyclicReportTransferDataRef: qualifiedParameters
+	-- (see the CCSDS-CSTS-CYCLIC-REPORT-PDUS module in reference [1]).
+END

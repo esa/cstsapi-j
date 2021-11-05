@@ -787,11 +787,11 @@ public class EE_APIPX_AssocPxy extends EE_APIPX_LinkAdapter implements IChannelI
 
         // check if the version number match one entry in the database
         int indexMax = pSrvType.getServiceVersion().size();
-        int versionNumberBind = bindop.getVersionNumber();
+        int versionNumberBind = bindop.getServiceVersion();
         boolean found = false;
         for (int index = 0; index < indexMax; index++)
         {
-            int versionNumber = pSrvType.getServiceVersion().get(index);
+            int versionNumber = pSrvType.getServiceVersion().get(index).value;
             if (versionNumber == versionNumberBind)
             {
                 found = true;

@@ -1,7 +1,5 @@
 package esa.egos.csts.api.types;
 
-import b1.ccsds.csts.common.types.PublishedIdentifier;
-import b1.ccsds.csts.common.types.Label.FunctionalResourceOrProcedureType;
 import esa.egos.csts.api.enumerations.ParameterType;
 import esa.egos.csts.api.enumerations.TypeIdentifier;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
@@ -33,6 +31,13 @@ public class Label {
 		typeIdentifier = TypeIdentifier.PROCEDURE_TYPE;
 		this.procedureType = procedureType;
 		functionalResourceType = null;
+	}
+	
+	private Label(ObjectIdentifier objectIdentifier) {
+		this.identifier =  objectIdentifier;
+		procedureType = null;
+		functionalResourceType = null;
+		typeIdentifier = TypeIdentifier.GENERIC;
 	}
 
 	/**
@@ -123,21 +128,29 @@ public class Label {
 	 * 
 	 * @return the CCSDS Label type representing this object
 	 */
-	public b1.ccsds.csts.common.types.Label encode() {
-		b1.ccsds.csts.common.types.Label label = new b1.ccsds.csts.common.types.Label();
-		label.setParamOrEventId(new PublishedIdentifier(identifier.toArray()));
-		FunctionalResourceOrProcedureType type = new FunctionalResourceOrProcedureType();
+	public b1.ccsds.csts.common.types.Label encode(b1.ccsds.csts.common.types.Label label) {
+		label.setParamOrEventId(new b1.ccsds.csts.common.types.PublishedIdentifier(identifier.toArray()));
+		b1.ccsds.csts.common.types.Label.FunctionalResourceOrProcedureType type = 
+				new b1.ccsds.csts.common.types.Label.FunctionalResourceOrProcedureType();
 		switch (typeIdentifier) {
 		case FUNCTIONAL_RESOURCE_TYPE:
-			type.setFunctionalResourceType(functionalResourceType.encode());
+			type.setFunctionalResourceType((b1.ccsds.csts.common.types.FunctionalResourceType)
+					functionalResourceType.encode(SfwVersion.B1));
 			break;
 		case PROCEDURE_TYPE:
-			type.setProcedureType(procedureType.encode());
+			type.setProcedureType(
+					(b1.ccsds.csts.common.types.ProcedureType)procedureType.encode(SfwVersion.B1));
 			break;
 		}
 		label.setFunctionalResourceOrProcedureType(type);
 		return label;
 	}
+	
+	public b2.ccsds.csts.common.types.Label encode() {
+		//Note: B2 label is significantly different from B2 label;
+		return new b2.ccsds.csts.common.types.Label(identifier.toArray());
+	}
+	
 
 	/**
 	 * Decodes a specified CCSDS Label type.
@@ -159,6 +172,14 @@ public class Label {
 							ProcedureType.decode(label.getFunctionalResourceOrProcedureType().getProcedureType()));
 				}
 			}
+		}
+		return newLabel;
+	}
+	public static Label decode(b2.ccsds.csts.common.types.Label label) {
+		Label newLabel = null;
+		if (label != null) {
+			ObjectIdentifier OID = ObjectIdentifier.of(label.value);
+			newLabel = new Label(OID);
 		}
 		return newLabel;
 	}

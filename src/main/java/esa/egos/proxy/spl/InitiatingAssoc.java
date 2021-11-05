@@ -428,7 +428,7 @@ public class InitiatingAssoc extends Association
             else
             {
                 // set the version number
-                this.version = pBind.getVersionNumber();
+                this.version = pBind.getServiceVersion();
                 // assign authentication mode and security attributes to the
                 // association
                 setSecurityAttributes(rspid);

@@ -1,6 +1,7 @@
 package esa.egos.csts.api.operations;
 
-import b1.ccsds.csts.common.operations.pdus.NotifyInvocation;
+import com.beanit.jasn1.ber.types.BerType;
+
 import esa.egos.csts.api.events.EventValue;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.extensions.Extension;
@@ -73,13 +74,13 @@ public interface INotify extends IOperation {
 	 * 
 	 * @return this operation encoded into a CCSDS NotifyInvocation
 	 */
-	NotifyInvocation encodeNotifyInvocation();
+	BerType encodeNotifyInvocation();
 
 	/**
 	 * Decodes a specified CCSDS NotifyInvocation into this operation.
 	 * 
 	 * @param notifyInvocation the specified CCSDS NotifyInvocation
 	 */
-	void decodeNotifyInvocation(NotifyInvocation notifyInvocation);
+	void decodeNotifyInvocation(BerType notifyInvocation);
 
 }

@@ -13,12 +13,15 @@ import esa.egos.csts.api.functionalresources.FunctionalResourceMetadata;
 import esa.egos.csts.api.functionalresources.values.ICstsValue;
 import esa.egos.csts.api.functionalresources.values.impl.CstsIntValue;
 import esa.egos.csts.api.main.CstsApi;
+import esa.egos.csts.api.main.CstsProviderApi;
+import esa.egos.csts.api.main.CstsUserApi;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.types.Label;
+import esa.egos.csts.api.types.SfwVersion;
 import esa.egos.csts.sim.impl.MdCstsSiConfig;
 import esa.egos.csts.sim.impl.prv.MdCollection;
 import esa.egos.csts.sim.impl.prv.MdCstsSiProvider;
@@ -185,11 +188,11 @@ public abstract class MdCstsTestBase
 
         System.out.println("Starting CSTS user and provider API");
 
-        this.providerApi = new CstsApi("Test Service Provider API", AppRole.PROVIDER);
+        this.providerApi = new CstsProviderApi("Test Service Provider API");
         this.providerApi.initialize(providerConfigName);
         this.providerApi.start();
 
-        this.userApi = new CstsApi("Test Service User API", AppRole.USER);
+        this.userApi = new CstsUserApi("Test Service User API");
         this.userApi.initialize(userConfigName);
         this.userApi.start();
 

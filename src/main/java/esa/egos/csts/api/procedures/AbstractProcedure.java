@@ -39,17 +39,15 @@ import esa.egos.csts.api.operations.IStart;
 import esa.egos.csts.api.operations.IStop;
 import esa.egos.csts.api.operations.ITransferData;
 import esa.egos.csts.api.operations.IUnbind;
-import esa.egos.csts.api.operations.impl.Bind;
-import esa.egos.csts.api.operations.impl.ConfirmedProcessData;
-import esa.egos.csts.api.operations.impl.ExecuteDirective;
-import esa.egos.csts.api.operations.impl.Get;
-import esa.egos.csts.api.operations.impl.Notify;
-import esa.egos.csts.api.operations.impl.PeerAbort;
-import esa.egos.csts.api.operations.impl.ProcessData;
-import esa.egos.csts.api.operations.impl.Start;
-import esa.egos.csts.api.operations.impl.Stop;
-import esa.egos.csts.api.operations.impl.TransferData;
-import esa.egos.csts.api.operations.impl.Unbind;
+import esa.egos.csts.api.operations.impl.OpsFactory;
+import esa.egos.csts.api.operations.impl.b1.ConfirmedProcessData;
+import esa.egos.csts.api.operations.impl.b1.ExecuteDirective;
+import esa.egos.csts.api.operations.impl.b1.Get;
+import esa.egos.csts.api.operations.impl.b1.Notify;
+import esa.egos.csts.api.operations.impl.b1.ProcessData;
+import esa.egos.csts.api.operations.impl.b1.Start;
+import esa.egos.csts.api.operations.impl.b1.Stop;
+import esa.egos.csts.api.operations.impl.b1.TransferData;
 import esa.egos.csts.api.parameters.IConfigurationParameter;
 import esa.egos.csts.api.parameters.IParameter;
 import esa.egos.csts.api.procedures.associationcontrol.IAssociationControl;
@@ -416,13 +414,15 @@ public abstract class AbstractProcedure implements IProcedureInternal {
 	 *         otherwise
 	 */
 	protected IBind createBind() {
-		IBind bind = new Bind();
-		bind.setServiceType(getServiceInstance().getServiceType());
+		//Framework version // Service Type
+		IBind bind = OpsFactory.createBind(getServiceInstance().getSfwVersion(),
+				getServiceInstance().getServiceType(),
+				getServiceInstance().getVersion());
 		bind.setInitiatorIdentifier(getServiceInstance().getApi().getProxySettings().getLocalId());
 		bind.setResponderIdentifier(getServiceInstance().getPeerIdentifier());
 		bind.setResponderPortIdentifier(getServiceInstance().getResponderPortIdentifier());
 		bind.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
-		bind.setVersionNumber(getServiceInstance().getVersion());
+		
 		try {
 			bind.setServiceInstanceIdentifier(getServiceInstance().getServiceInstanceIdentifier());
 		} catch (ConfigException e) {
@@ -439,7 +439,7 @@ public abstract class AbstractProcedure implements IProcedureInternal {
 	 *         otherwise
 	 */
 	protected IUnbind createUnbind() {
-		IUnbind unbind = new Unbind();
+		IUnbind unbind = OpsFactory.createUnbind(getServiceInstance().getSfwVersion());
 		unbind.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
 		try {
 			unbind.setServiceInstanceIdentifier(getServiceInstance().getServiceInstanceIdentifier());
@@ -457,7 +457,7 @@ public abstract class AbstractProcedure implements IProcedureInternal {
 	 *         null otherwise
 	 */
 	protected IPeerAbort createPeerAbort() {
-		IPeerAbort peerAbort = new PeerAbort();
+		IPeerAbort peerAbort = OpsFactory.createPeerAbort(getServiceInstance().getSfwVersion());
 		if (serviceInstance.getRole() == AppRole.USER) {
 			peerAbort.setAbortOriginator(AbortOriginator.USER);
 		} else if (serviceInstance.getRole() == AppRole.PROVIDER) {
@@ -480,7 +480,7 @@ public abstract class AbstractProcedure implements IProcedureInternal {
 	 *         otherwise
 	 */
 	protected IStart createStart() {
-		IStart start = new Start();
+		IStart start = OpsFactory.createStart(getServiceInstance().getSfwVersion());
 		start.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
 		try {
 			start.setServiceInstanceIdentifier(getServiceInstance().getServiceInstanceIdentifier());
@@ -498,7 +498,7 @@ public abstract class AbstractProcedure implements IProcedureInternal {
 	 *         otherwise
 	 */
 	protected IStop createStop() {
-		IStop stop = new Stop();
+		IStop stop = OpsFactory.createStop(getServiceInstance().getSfwVersion());
 		stop.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
 		try {
 			stop.setServiceInstanceIdentifier(getServiceInstance().getServiceInstanceIdentifier());
@@ -516,7 +516,7 @@ public abstract class AbstractProcedure implements IProcedureInternal {
 	 *         procedure, null otherwise
 	 */
 	protected ITransferData createTransferData() {
-		ITransferData transferData = new TransferData();
+		ITransferData transferData = OpsFactory.createTransferData(getServiceInstance().getSfwVersion());
 		transferData.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
 		try {
 			transferData.setServiceInstanceIdentifier(getServiceInstance().getServiceInstanceIdentifier());
@@ -535,7 +535,7 @@ public abstract class AbstractProcedure implements IProcedureInternal {
 	 *         this procedure, null otherwise
 	 */
 	protected IProcessData createProcessData() {
-		IProcessData processData = new ProcessData();
+		IProcessData processData = OpsFactory.createProcessData(getServiceInstance().getSfwVersion());
 		processData.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
 		try {
 			processData.setServiceInstanceIdentifier(getServiceInstance().getServiceInstanceIdentifier());
@@ -572,7 +572,7 @@ public abstract class AbstractProcedure implements IProcedureInternal {
 	 *         otherwise
 	 */
 	protected INotify createNotify() {
-		INotify notify = new Notify();
+		INotify notify = OpsFactory.createNotify(getServiceInstance().getSfwVersion());
 		notify.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
 		try {
 			notify.setServiceInstanceIdentifier(getServiceInstance().getServiceInstanceIdentifier());
@@ -590,7 +590,7 @@ public abstract class AbstractProcedure implements IProcedureInternal {
 	 *         otherwise
 	 */
 	protected IGet createGet() {
-		IGet get = new Get();
+		IGet get = OpsFactory.createGet(getServiceInstance().getSfwVersion());
 		get.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
 		try {
 			get.setServiceInstanceIdentifier(getServiceInstance().getServiceInstanceIdentifier());
@@ -608,7 +608,7 @@ public abstract class AbstractProcedure implements IProcedureInternal {
 	 *         procedure, null otherwise
 	 */
 	protected IExecuteDirective createExecuteDirective() {
-		IExecuteDirective executeDirective = new ExecuteDirective();
+		IExecuteDirective executeDirective = OpsFactory.createExecuteDifrective(getServiceInstance().getSfwVersion());
 		executeDirective.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
 		try {
 			executeDirective.setServiceInstanceIdentifier(getServiceInstance().getServiceInstanceIdentifier());

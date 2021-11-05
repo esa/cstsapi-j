@@ -17,11 +17,11 @@ public interface ITranslator {
 	
 	/**
 	 * Only for decoding of the PeerAbort.
-	 * @param peerabortDiag
 	 * @param abortOriginator
 	 * @return
 	 */
-	IOperation decode(int diagnostic, PeerAbortDiagnostic peerAbortDiagnostic, AbortOriginator abortOriginator) throws ApiException;
+	
+	IOperation decode(int diagnostic, AbortOriginator abortOriginator) throws ApiException;
 
 	byte[] encode(IOperation operation, boolean invoke) throws ApiException, IOException;
 

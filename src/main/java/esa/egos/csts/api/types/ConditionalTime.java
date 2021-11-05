@@ -65,10 +65,18 @@ public class ConditionalTime {
 	 * 
 	 * @return the CCSDS Conditional Time type representing this object
 	 */
-	public b1.ccsds.csts.common.types.ConditionalTime encode() {
-		b1.ccsds.csts.common.types.ConditionalTime time = new b1.ccsds.csts.common.types.ConditionalTime();
+	public b1.ccsds.csts.common.types.ConditionalTime encode(b1.ccsds.csts.common.types.ConditionalTime time) {
 		if (this.time.isPresent()) {
-			time.setKnown(this.time.get().encode());
+			time.setKnown(this.time.get().encode(new b1.ccsds.csts.common.types.Time()));
+		} else {
+			time.setUndefined(new BerNull());
+		}
+		return time;
+	}
+	
+	public b2.ccsds.csts.common.types.ConditionalTime encode(b2.ccsds.csts.common.types.ConditionalTime time) {
+		if (this.time.isPresent()) {
+			time.setKnown(this.time.get().encode(new b2.ccsds.csts.common.types.Time()));
 		} else {
 			time.setUndefined(new BerNull());
 		}
@@ -84,6 +92,16 @@ public class ConditionalTime {
 	 *         Time type
 	 */
 	public static ConditionalTime decode(b1.ccsds.csts.common.types.ConditionalTime conditionalTime) {
+		ConditionalTime newConditionalTime = null;
+		if (conditionalTime.getKnown() != null) {
+			newConditionalTime = new ConditionalTime(Time.decode(conditionalTime.getKnown()));
+		} else if (conditionalTime.getUndefined() != null) {
+			newConditionalTime = new ConditionalTime();
+		}
+		return newConditionalTime;
+	}
+	
+	public static ConditionalTime decode(b2.ccsds.csts.common.types.ConditionalTime conditionalTime) {
 		ConditionalTime newConditionalTime = null;
 		if (conditionalTime.getKnown() != null) {
 			newConditionalTime = new ConditionalTime(Time.decode(conditionalTime.getKnown()));

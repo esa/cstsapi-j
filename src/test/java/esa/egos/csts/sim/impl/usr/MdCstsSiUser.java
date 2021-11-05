@@ -21,6 +21,7 @@ import esa.egos.csts.api.procedures.notification.NotificationUser;
 import esa.egos.csts.api.serviceinstance.IServiceInstance;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceInternal;
 import esa.egos.csts.api.states.service.ServiceStatus;
+import esa.egos.csts.api.types.SfwVersion;
 import esa.egos.csts.monitored.data.procedures.OnChangeCyclicReportUser;
 import esa.egos.csts.sim.impl.MdCstsSiConfig;
 
@@ -41,13 +42,13 @@ public class MdCstsSiUser extends MdCstsSiUserInform
      * @param version The CSTS version to use
      * @throws ApiException
      */
-    public MdCstsSiUser(ICstsApi api, MdCstsSiConfig config, int version) throws ApiException
+    public MdCstsSiUser(ICstsApi api, MdCstsSiConfig config, int serviceVersion) throws ApiException
     {
-        super(api, config);
+        super(api, config,serviceVersion);
 
         System.out.println("MdCstsSiUser#MdCstsSiUser() begin");
 
-        this.serviceInstance.setVersion(version);
+        //this.serviceInstance.setVersion(serviceInstance.getServiceInstanceIdentifier().getServiceInstanceNumber());
         this.associationProcedure = (AssociationControlUser) this.serviceInstance.getAssociationControlProcedure();
 
         System.out.println("MdCstsSiUser#MdCstsSiUser() end");

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import b1.ccsds.csts.rtn.cfdp.pdu.buffered.delivery.pdus.CfdpDeliveryPduData;
 import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.enumerations.OperationType;
@@ -20,6 +19,7 @@ import esa.egos.csts.api.operations.IReturnBuffer;
 import esa.egos.csts.api.operations.ITransferData;
 import esa.egos.csts.api.operations.IPeerAbort;
 import esa.egos.csts.api.types.Time;
+import esa.egos.csts.api.types.SfwVersion;
 import esa.egos.csts.app.si.AppSiUser;
 import esa.egos.csts.app.si.SiConfig;
 import esa.egos.csts.rtn.cfdp.procedures.CfdpPduDeliveryUser;
@@ -34,12 +34,11 @@ public class RtnCfdpPduSiUser extends AppSiUser {
 	private final ICfdpPduDelivery deliveryProcedure;
 
 	public RtnCfdpPduSiUser(ICstsApi api, SiConfig config, ICfpdPduReceiver pduReceiver) throws ApiException {
-		super(api, config, RtnCfdpPduSiProvider.CSTS_RTN_CFDP_PDU_SRV);
+		super(api, config, RtnCfdpPduSiProvider.CSTS_RTN_CFDP_PDU_SRV,1);
 		this.pduReceiver = pduReceiver;
 		this.deliveryProcedure = getApiSi().createProcedure(CfdpPduDeliveryUser.class);
 		this.deliveryProcedure.setRole(ProcedureRole.PRIME, 0);
 		getApiSi().addProcedure(deliveryProcedure);
-		getApiSi().setVersion(1);
 		configure();
 	}
 
@@ -92,20 +91,37 @@ public class RtnCfdpPduSiUser extends AppSiUser {
 	}
 	
 	private void handleTransferData(ITransferData transferData) {
-		
+
 		if(Objects.nonNull((transferData).getData())) {
 			this.pduReceiver.cfdpPdu((transferData).getData());			
 		} else {
-			EmbeddedData embeddedData = (transferData).getEmbeddedData();
-			CfdpDeliveryPduData deliveryData = new CfdpDeliveryPduData();
-			
-			try (ByteArrayInputStream is = new ByteArrayInputStream(embeddedData.getData())) {
-				deliveryData.decode(is);
-				List<byte[]> data = deliveryData.getBerOctetString().stream().map(octectString -> octectString.value).collect(Collectors.toList());
-				this.pduReceiver.cfdpPdu(data);
-			} catch (IOException e) {
-				e.printStackTrace();
+			if(this.getApiSi().getSfwVersion().equals(SfwVersion.B1))
+			{
+				EmbeddedData embeddedData = (transferData).getEmbeddedData();
+				b1.ccsds.csts.rtn.cfdp.pdu.buffered.delivery.pdus.CfdpDeliveryPduData deliveryData 
+				= new  b1.ccsds.csts.rtn.cfdp.pdu.buffered.delivery.pdus.CfdpDeliveryPduData();//TODOD B1 or B2
+
+				try (ByteArrayInputStream is = new ByteArrayInputStream(embeddedData.getData())) {
+					deliveryData.decode(is);
+					List<byte[]> data = deliveryData.getBerOctetString().stream().map(octectString -> octectString.value).collect(Collectors.toList());
+					this.pduReceiver.cfdpPdu(data);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} else { //B2
+				EmbeddedData embeddedData = (transferData).getEmbeddedData();
+				b2.ccsds.csts.rtn.cfdp.pdu.buffered.delivery.pdus.CfdpDeliveryPduData deliveryData 
+				= new b2.ccsds.csts.rtn.cfdp.pdu.buffered.delivery.pdus.CfdpDeliveryPduData();//TODOD B1 or B2
+
+				try (ByteArrayInputStream is = new ByteArrayInputStream(embeddedData.getData())) {
+					deliveryData.decode(is);
+					List<byte[]> data = deliveryData.getBerOctetString().stream().map(octectString -> octectString.value).collect(Collectors.toList());
+					this.pduReceiver.cfdpPdu(data);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
+
 		}
 	}
 	

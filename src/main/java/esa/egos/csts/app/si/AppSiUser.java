@@ -22,8 +22,8 @@ public abstract class AppSiUser extends AppSi {
 	
 	private IStatefulProcedure pendingProc;
 	
-	public AppSiUser(ICstsApi api, SiConfig config, int serviceType) throws ApiException {
-		super(api, config, serviceType);
+	public AppSiUser(ICstsApi api, SiConfig config, int serviceType, int serviceVersion) throws ApiException {
+		super(api, config, serviceType,serviceVersion);
 		this.retLock = new ReentrantLock();
 		this.retCond = retLock.newCondition();
 	}

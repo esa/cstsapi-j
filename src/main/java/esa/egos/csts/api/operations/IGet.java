@@ -2,6 +2,8 @@ package esa.egos.csts.api.operations;
 
 import java.util.List;
 
+import com.beanit.jasn1.ber.types.BerType;
+
 import b1.ccsds.csts.common.operations.pdus.GetInvocation;
 import b1.ccsds.csts.common.operations.pdus.GetReturn;
 import esa.egos.csts.api.diagnostics.ListOfParametersDiagnostics;
@@ -69,27 +71,27 @@ public interface IGet extends IConfirmedOperation {
 	 * 
 	 * @return this operation encoded into a CCSDS GetInvocation
 	 */
-	GetInvocation encodeGetInvocation();
+	BerType encodeGetInvocation();
 
 	/**
 	 * Decodes a specified CCSDS GetInvocation into this operation.
 	 * 
 	 * @param getInvocation the specified CCSDS GetInvocation
 	 */
-	void decodeGetInvocation(GetInvocation getInvocation);
+	void decodeGetInvocation(BerType getInvocation);
 
 	/**
 	 * Encodes this operation into a CCSDS GetReturn.
 	 * 
 	 * @return this operation encoded into a CCSDS GetReturn
 	 */
-	GetReturn encodeGetReturn();
+	BerType encodeGetReturn();
 
 	/**
 	 * Decodes a specified CCSDS GetReturn into this operation.
 	 * 
 	 * @param getReturn the specified CCSDS GetReturn
 	 */
-	void decodeGetReturn(GetReturn getReturn);
+	void decodeGetReturn(BerType getReturn);
 
 }
