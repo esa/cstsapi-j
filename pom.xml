@@ -15,7 +15,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <jasn1.version>1.11.2</jasn1.version>
+        <jasn1.version>1.11.3</jasn1.version>
         <project.repository.id>vsdenexus</project.repository.id>
         <project.repository.url>https://vsdenexus.esoc.esa.int/nexus/content/repositories/systems-snapshots</project.repository.url>
         <project.site.id>vsdenexus</project.site.id>
@@ -46,15 +46,17 @@
     </dependencyManagement>
 
     <dependencies>
+
         <dependency>
             <groupId>com.beanit</groupId>
-            <artifactId>jasn1</artifactId>
+            <artifactId>jasn1-compiler</artifactId>
+            <version>${jasn1.version}</version>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>4.13</version>
             <scope>test</scope>
         </dependency>
 
@@ -66,7 +68,98 @@
     </dependencies>
 
     <build>
+        <!--This plugin's configuration is used to store Eclipse m2e settings 
+            only. It has no influence on the Maven build itself. -->
+        <pluginManagement>
+            <plugins>
+                <!-- add by M -->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.codehaus.mojo</groupId>
+                                        <artifactId>exec-maven-plugin</artifactId>
+                                        <goals>
+                                            <goal>exec</goal>
+                                        </goals>
+                                        <versionRange>[3.0.0,)</versionRange>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+                <!-- end ending -->
+            </plugins>
+        </pluginManagement>
+
         <plugins>
+
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>generate-b1-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>java</executable>
+                            <arguments>
+                                <argument>-classpath</argument>
+                                <classpath />
+                                <argument>com.beanit.jasn1.compiler.Compiler</argument>
+                                <argument>-o</argument>
+                                <argument>src/main/java</argument>
+                                <argument>-p</argument>
+                                <argument>b1</argument>
+                                <argument>-f</argument>
+                                <argument>src/main/resources/asn1/922.1-B-1.asn</argument>
+                                <argument>src/main/resources/asn1/922.4-W-1.asn</argument>
+                                <argument>src/main/java/esa/egos/proxy/del/921x1r2[Draft_20160901]_ASN.1.ori.asn</argument>
+                                <argument>src/main/java/esa/egos/proxy/del/ISP1-CREDENTIALS.asn</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-b2-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>java</executable>
+                            <arguments>
+                                <argument>-classpath</argument>
+                                <classpath />
+                                <argument>com.beanit.jasn1.compiler.Compiler</argument>
+                                <argument>-o</argument>
+                                <argument>src/main/java</argument>
+                                <argument>-p</argument>
+                                <argument>b2</argument>
+                                <argument>-f</argument>
+                                <argument>src/main/resources/asn1/922.1-B-1.asn</argument>
+                                <argument>src/main/resources/asn1/922.4-W-1.asn</argument>
+                                <argument>src/main/java/esa/egos/proxy/del/SFW_B2_ASN1.asn</argument>
+                                <argument>src/main/java/esa/egos/proxy/del/ISP1-CREDENTIALS.asn</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+
+            </plugin>
 
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -95,7 +188,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Bundle-SymbolicName>${groupId}.${pom.artifactId}</Bundle-SymbolicName>
+                        <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
                         <!-- How to get rid of the jasn1-1.8.0.jar in the 
                             csts.api-osgi-1.0.1.jar? Not ideal, but in line with the fat jar. -->
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
@@ -216,6 +309,41 @@
                         </configuration>
                     </execution>
                 </executions>
+
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>src/main/java/b1</directory>
+                            <includes>
+                                <include>**</include>
+                            </includes>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                        <fileset>
+                            <directory>src/main/java/b2</directory>
+                            <includes>
+                                <include>**</include>
+                            </includes>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M5</version>
+                <configuration>
+                    <rerunFailingTestsCount>3</rerunFailingTestsCount>
+                </configuration>
             </plugin>
 
         </plugins>
