@@ -17,9 +17,9 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <jasn1.version>1.11.3</jasn1.version>
         <project.repository.id>vsdenexus</project.repository.id>
-        <project.repository.url>https://vsdenexus.esoc.esa.int/nexus/content/repositories/systems-snapshots</project.repository.url>
+        <project.repository.url>https://vsdenexus.esoc.esa.int/nexus/content/sites/cda-p2-site</project.repository.url>
         <project.site.id>vsdenexus</project.site.id>
-        <project.site.url>dav:https://vsdenexus.esoc.esa.int/nexus/content/repositories/systems-snapshots/esa/egos/csts.api/repository-p2</project.site.url>
+        <project.site.url>dav:https://vsdenexus.esoc.esa.int/nexus/content/sites/cda-p2-site/esa/egos/csts.api/repository-p2-${version}</project.site.url>
     </properties>
 
     <description>Cross Support Transfer Service API</description>
