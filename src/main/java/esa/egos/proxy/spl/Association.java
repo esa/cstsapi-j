@@ -976,6 +976,7 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 			if (LOG.isLoggable(Level.FINE)) {
 				LOG.fine("Before unlocking obj mutex");
 			}
+			LOG.severe("Association#clientPreProcessing failed with " + res + " for sequence count " + seqCount + " of " + operation.print(100));
 			this.objMutex.unlock();
 			this.innerLock.unlock();
 			if (LOG.isLoggable(Level.FINE)) {

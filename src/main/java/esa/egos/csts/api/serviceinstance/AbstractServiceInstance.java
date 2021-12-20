@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -54,7 +55,6 @@ import esa.egos.csts.api.states.service.ServiceState;
 import esa.egos.csts.api.states.service.ServiceStatus;
 import esa.egos.csts.api.states.service.ServiceSubStatus;
 import esa.egos.csts.api.types.Time;
-import esa.egos.csts.api.types.SfwVersion;
 import esa.egos.csts.api.util.CSTS_LOG;
 import esa.egos.proxy.IAssocFactory;
 import esa.egos.proxy.IProxyAdmin;
@@ -91,7 +91,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 	 * The sequence-count to be used for operations that are being passed to the
 	 * proxy component.
 	 */
-	private long pxySeqCount;
+	private final AtomicLong pxySeqCount = new AtomicLong();
 
 	/**
 	 * The invocation identifier to be assigned to the next confirmed operation
@@ -192,7 +192,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 		this.role = role;
 
-		this.pxySeqCount = 0;
+		this.pxySeqCount.getAndSet(0);
 		this.invokeId = 0;
 
 		if (associationControlProcedure == null) {
@@ -378,7 +378,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 			}
 		}
 
-		this.pxySeqCount++;
+		long sequenceCoutnt = this.pxySeqCount.incrementAndGet();
 
 		if(LOG.isLoggable(Level.FINE))
 		{
@@ -396,7 +396,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 				this.remoteReturns.add(rr);
 			}
 			// #hd# take into account failed return code
-			Result res = getProxyInitiate().initiateOpInvoke(operation, reportTransmission, this.pxySeqCount);
+			Result res = getProxyInitiate().initiateOpInvoke(operation, reportTransmission, sequenceCoutnt);
 			if(res != Result.S_OK && res != Result.SLE_S_TRANSMITTED && res != Result.SLE_S_QUEUED) {
 				rc = Result.E_FAIL; 
 			}
@@ -467,9 +467,8 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 	 * PEER-ABORT operation.
 	 */
 	public Result forwardInitiatePxyOpRtn(IOperation operation, boolean b) {
-
-		this.pxySeqCount++;
-		long theSeqCount = this.pxySeqCount;
+		
+		long theSeqCount = this.pxySeqCount.incrementAndGet();
 
 		traceInitiateOperation(operation); // CSTSAPI-4
 		
@@ -508,8 +507,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 	@Override
 	public Result forwardInitiatePxyOpAck(IOperation operation, boolean b) {
-		this.pxySeqCount++;
-		long theSeqCount = this.pxySeqCount;
+		long theSeqCount = this.pxySeqCount.incrementAndGet();
 
 		traceInitiateOperation(operation); // CSTSAPI-4
 		
@@ -1211,7 +1209,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 	}
 
 	protected void resetSequenceCount() {
-		this.pxySeqCount = 0;
+		this.pxySeqCount.getAndSet(0);
 		this.invokeId = 0;
 	}
 
