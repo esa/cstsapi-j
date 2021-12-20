@@ -378,7 +378,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 			}
 		}
 
-		long sequenceCoutnt = this.pxySeqCount.incrementAndGet();
+		long theSeqCount = this.pxySeqCount.incrementAndGet();
 
 		if(LOG.isLoggable(Level.FINE))
 		{
@@ -396,7 +396,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 				this.remoteReturns.add(rr);
 			}
 			// #hd# take into account failed return code
-			Result res = getProxyInitiate().initiateOpInvoke(operation, reportTransmission, sequenceCoutnt);
+			Result res = getProxyInitiate().initiateOpInvoke(operation, reportTransmission, theSeqCount);
 			if(res != Result.S_OK && res != Result.SLE_S_TRANSMITTED && res != Result.SLE_S_QUEUED) {
 				rc = Result.E_FAIL; 
 			}
