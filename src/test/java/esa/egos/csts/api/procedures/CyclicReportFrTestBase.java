@@ -85,7 +85,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             TestUtils.verifyResult(userSi.startCyclicReport(this.piid_ocr_prime, listOfParameters, 100),
                                    "START-CYCLIC-REPORT");
 
-            Thread.sleep(300); // wait for several cyclic reports
+            this.userSi.waitTransferData(3, 500);
 
             System.out.println("Check values at user");
             index = 0;
@@ -107,7 +107,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
                 index++;
             }
 
-            Thread.sleep(300); // wait for several cyclic reports
+            this.userSi.waitTransferData(3, 500);
 
             System.out.println("Check updated values at user");
             index = 0;
@@ -200,7 +200,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_ocr_secondary_02, listOfParameters, 100, onChange_03),
                                    "START-CYCLIC-REPORT " + this.piid_ocr_secondary_02);
 
-            Thread.sleep(300); // wait for the initial complete
+            this.userSi.waitTransferData(3, 500);
 
             ProcedureInstanceIdentifier piids[] = new ProcedureInstanceIdentifier[] { this.piid_ocr_prime,
                                                                                       this.piid_ocr_secondary_01,
@@ -222,7 +222,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
                 }
             }
 
-            Thread.sleep(300); // wait for several cyclic reports
+            this.userSi.waitTransferData(3, 500);
 
             // verify that all user's procedures received all parameters updates for the first time no matter the onChange value
             assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more parameters than expected",
@@ -248,7 +248,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
                 nParams++;
             }
 
-            Thread.sleep(300); // wait for several cyclic reports
+            this.userSi.waitTransferData(3, 500);
 
             System.out.println("Check values at user for all started procedures");
             for (ProcedureInstanceIdentifier piid : piids)
@@ -266,7 +266,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
                 }
             }
 
-            Thread.sleep(300); // wait for several cyclic reports (onChange=false)
+            this.userSi.waitTransferData(3, 500);
 
             // verify that user's procedures received expected parameters updates depending on the onChange value
             assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more parameters than expected",
@@ -344,7 +344,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_ocr_prime, listOfParameters, 100),
                     "START-CYCLIC-REPORT");
 
-            Thread.sleep(300); // wait for several cyclic reports
+            this.userSi.waitTransferData(3, 500);
 
             System.out.println("Check values at user");
             index = 0;
@@ -366,7 +366,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
                 this.providerSi.setParameterValue(labels[index++], testParameter.updatedValue);
             }
 
-            Thread.sleep(300); // wait for several cyclic reports
+            this.userSi.waitTransferData(3, 500);
 
             System.out.println("Check modified values at user");
             index = 0;
@@ -453,7 +453,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_ocr_secondary_02, listOfParameters, 100, onChange_03),
                                    "START-CYCLIC-REPORT " + this.piid_ocr_secondary_02);
 
-            Thread.sleep(300); // wait for the initial complete
+            this.userSi.waitTransferData(3, 500);
 
             ProcedureInstanceIdentifier piids[] = new ProcedureInstanceIdentifier[] { this.piid_ocr_prime,
                                                                                       this.piid_ocr_secondary_01,
@@ -472,7 +472,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
                 }
             }
 
-            Thread.sleep(300); // wait for several cyclic reports
+            this.userSi.waitTransferData(3, 500);
 
             // verify that all user's procedures received all parameters updates for the first time no matter the onChange value
             assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more parameters than expected",
@@ -496,7 +496,8 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
                 nParams++;
             }
 
-            Thread.sleep(300); // wait for several cyclic reports
+
+            this.userSi.waitTransferData(3, 500);
 
             System.out.println("Check values at user for all started procedures");
             for (ProcedureInstanceIdentifier piid : piids)
@@ -510,7 +511,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
                 }
             }
 
-            Thread.sleep(300); // wait for several cyclic reports (onChange=false)
+            this.userSi.waitTransferData(3, 500);
 
             // verify that user's procedures received expected parameters updates depending on the onChange value
             assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more parameters than expected",
@@ -588,7 +589,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_ocr_prime, listOfParameters, 100),
                     "START-CYCLIC-REPORT");
 
-            Thread.sleep(300); // wait for several cyclic reports
+            this.userSi.waitTransferData(3, 500);
 
             System.out.println("Check values at user");
             Map<Name, ICstsValue> userValues = this.userSi.getParameterValues(this.piid_ocr_prime, frn);
@@ -606,7 +607,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
                 this.providerSi.setParameterValue(names[index++], testParameter.updatedValue);
             }
 
-            Thread.sleep(300); // wait for several cyclic reports
+            this.userSi.waitTransferData(3, 500);
 
             System.out.println("Check updated values at user");
             userValues = this.userSi.getParameterValues(this.piid_ocr_prime, frn);
@@ -701,7 +702,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_ocr_secondary_02, listOfParameters1, 100, onChange_03),
                                    "START-CYCLIC-REPORT " + this.piid_ocr_secondary_02);
 
-            Thread.sleep(300); // wait for several cyclic reports
+            this.userSi.waitTransferData(10, 60000);
 
             System.out.println("check values at user for all started procedures");
             Map<Name, ICstsValue> userValues;
@@ -727,7 +728,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
                 TestUtils.verifyNameValue("provider", testParameters.get(index).initValue, userValues.get(name), name);
             }
 
-            Thread.sleep(300); // wait for several cyclic reports
+            this.userSi.waitTransferData(3, 500);
 
             // verify that all user's procedures received all parameters updates for the first time no matter the onChange value
             if (testParameters.size() != this.userSi.getParameterUpdateCount(this.piid_ocr_prime))
@@ -763,7 +764,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
                 }
             }
 
-            Thread.sleep(300); // wait for several cyclic reports
+            this.userSi.waitTransferData(3, 500);
 
             System.out.println("Check updated values at user for all started procedures");
 
@@ -788,7 +789,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
                 TestUtils.verifyNameValue("user", testParameters.get(index).updatedValue, userValues.get(names1[index]), names1[index]);
             }
 
-            Thread.sleep(300); // wait for several cyclic reports (onChange=false)
+            this.userSi.waitTransferData(3, 500);
 
             // verify that user's procedures received expected parameters updates depending on the onChange value
             assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more parameters than expected",
@@ -875,7 +876,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_ocr_prime, listOfParameters, 100),
                     "START-CYCLIC-REPORT");
 
-            Thread.sleep(300); // wait for several cyclic reports
+            this.userSi.waitTransferData(3, 500);
 
             System.out.println("Check values at user for both instances");
             Map<Long, Map<Label, ICstsValue>> userValues = this.userSi.getParameterValues(this.piid_ocr_prime, getFunctionalResource());
@@ -901,7 +902,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             }
 
             System.out.println("Query updated parameters for both instances");
-            Thread.sleep(300); // wait for several cyclic reports
+            this.userSi.waitTransferData(3, 500);
 
             System.out.println("Check updated values at user for both instances");
             userValues = this.userSi.getParameterValues(this.piid_ocr_prime, getFunctionalResource());
@@ -992,13 +993,13 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             System.out.println("START-CYCLIC-REPORT " + this.piid_ocr_secondary_01 + "...");
             TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_ocr_secondary_01, listOfParameters, 100, onChange_02),
                                    "START-CYCLIC-REPORT " + this.piid_ocr_secondary_01);
-
+            
             System.out.println("START-CYCLIC-REPORT " + this.piid_ocr_secondary_02 + "...");
             TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_ocr_secondary_02, listOfParameters, 100, onChange_03),
                                    "START-CYCLIC-REPORT " + this.piid_ocr_secondary_02);
 
-            Thread.sleep(300); // wait for several cyclic reports
-
+            this.userSi.waitTransferData(3, 500);
+            
             ProcedureInstanceIdentifier piids[] = new ProcedureInstanceIdentifier[] { this.piid_ocr_prime,
                                                                                       this.piid_ocr_secondary_01,
                                                                                       this.piid_ocr_secondary_02 };
@@ -1023,7 +1024,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
                 }
             }
 
-            Thread.sleep(300); // wait for several cyclic reports
+            this.userSi.waitTransferData(3, 500);
 
             // verify that all user's procedures received all parameters updates for the first time no matter the onChange value
             assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more parameters than expected",
@@ -1047,7 +1048,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
                 nParams++;
             }
 
-            Thread.sleep(300); // wait for several cyclic reports
+            this.userSi.waitTransferData(3, 500);
 
             System.out.println("Check updated values at user for all started procedures");
             for (ProcedureInstanceIdentifier piid : piids)
@@ -1069,7 +1070,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
                 }
             }
 
-            Thread.sleep(300); // wait for several cyclic reports (onChange=false)
+            this.userSi.waitTransferData(3, 500);
 
             // verify that user's procedures received expected parameters updates depending on the onChange value
             assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more parameters than expected",
@@ -1522,7 +1523,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_ocr_prime, ListOfParameters.empty(), 100),
                     "START-CYCLIC-REPORT");
             
-            Thread.sleep(300); // wait for several cyclic reports
+            this.userSi.waitTransferData(3, 500);
 
             // check values at user
             System.out.println("Check values at user");
