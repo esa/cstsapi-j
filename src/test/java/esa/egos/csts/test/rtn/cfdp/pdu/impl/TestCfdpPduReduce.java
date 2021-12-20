@@ -1,13 +1,10 @@
 package esa.egos.csts.test.rtn.cfdp.pdu.impl;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertThat;
-
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -51,7 +48,7 @@ public class TestCfdpPduReduce {
         
         Instant start = Instant.now();
 		
-        int N = 10_000_000; //10_000_000
+        final int N = 1_000_000; 
         
         for(int i = 0; i < N;i++)
         {
@@ -64,6 +61,6 @@ public class TestCfdpPduReduce {
         
         double timeSpan = interval.getSeconds() + interval.getNano()/(1000.0*1000*1000);
         //assertTrue(reducedFiledata.length < bigFiledata.length);
-        System.out.println("Unit rate: " + N/timeSpan + " over " + timeSpan); 
+        System.out.println("Unit rate: " + N/timeSpan + " PDUs/s over " + timeSpan + "s for " + N + " PDUs"); 
 	}
 }
