@@ -2,13 +2,6 @@ package esa.egos.csts.api.procedures.cyclicreport;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-
 import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 
 import b1.ccsds.csts.common.types.IntPos;
@@ -17,31 +10,11 @@ import b1.ccsds.csts.cyclic.report.pdus.CyclicReportStartInvocExt;
 import b1.ccsds.csts.cyclic.report.pdus.CyclicReportTransferDataInvocDataRef;
 import b1.ccsds.csts.cyclic.report.pdus.CyclicReportTransferDataInvocDataRef.QualifiedParameters;
 import esa.egos.csts.api.diagnostics.CyclicReportStartDiagnostics;
-import esa.egos.csts.api.diagnostics.CyclicReportStartDiagnosticsType;
-import esa.egos.csts.api.diagnostics.ListOfParametersDiagnostics;
-import esa.egos.csts.api.diagnostics.ListOfParametersDiagnosticsType;
-import esa.egos.csts.api.enumerations.CstsResult;
-import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.extensions.Extension;
 import esa.egos.csts.api.oids.OIDs;
-import esa.egos.csts.api.operations.IConfirmedOperation;
-import esa.egos.csts.api.operations.IOperation;
-import esa.egos.csts.api.operations.IStart;
-import esa.egos.csts.api.operations.IStop;
-import esa.egos.csts.api.operations.ITransferData;
-import esa.egos.csts.api.parameters.IParameter;
-import esa.egos.csts.api.parameters.impl.IntegerConfigurationParameter;
-import esa.egos.csts.api.parameters.impl.LabelLists;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
-import esa.egos.csts.api.procedures.impl.ProcedureType;
-import esa.egos.csts.api.procedures.unbuffereddatadelivery.AbstractUnbufferedDataDelivery;
-import esa.egos.csts.api.states.State;
-import esa.egos.csts.api.types.Label;
-import esa.egos.csts.api.types.LabelList;
-import esa.egos.csts.api.types.Name;
-import esa.egos.csts.api.types.Time;
 
 public abstract class AbstractCyclicReportB1 extends AbstractCyclicReport {
 
