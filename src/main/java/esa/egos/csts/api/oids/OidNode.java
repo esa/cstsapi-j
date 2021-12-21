@@ -7,12 +7,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import javax.print.attribute.standard.MediaSize.ISO;
+
 /**
  * Maps an OID bit to OID bit label.
  */
 public class OidNode
 {
-    private static final String ISO_PREFIX = "iso(1).identifiedOrganisation(3).standard(112).ccsds(4).css(4)";
+    private static String ISO_PREFIX = "iso(1).identifiedOrganisation(3).standard(112).ccsds(4).";
+    
+    static
+    {
+    	String isoPrefix = System.getenv("ISO_PREFIX");
+    	if(isoPrefix != null)
+    	{
+    		ISO_PREFIX = isoPrefix;
+    	}
+    }
 
 	private static final boolean PRINT_UNKNOWN_NODE = true;
 
@@ -151,10 +162,10 @@ public class OidNode
             }
         }
                 
-        if(s.indexOf(ISO_PREFIX) == 0) 
+        if(s.indexOf(ISO_PREFIX) == 0 && s.length() > ISO_PREFIX.length()) 
         {
-        	String shortOid = s.substring(ISO_PREFIX.length() + 1);
-        	s.replace(0, s.length()-1, shortOid);
+        	String shortOid = s.substring(ISO_PREFIX.length());
+        	s.replace(0, s.length() - 1, shortOid);
         }
         
     }
