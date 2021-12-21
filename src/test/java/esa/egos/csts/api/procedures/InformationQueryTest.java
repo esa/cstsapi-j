@@ -388,8 +388,7 @@ public class InformationQueryTest
 
             // verify that diagnostic contains the OID of the unknown parameter
             assertTrue("missing OID of the non-existent parameter in the GET operation diagnostic",
-                       userSi.getDiagnostic().contains("iso(1).identifiedOrganisation(3).standard(112).ccsds(4).css(4)"
-                       		+ ".crossSupportResources(2).crossSupportFunctionalities(1).unknown(1)"));
+                       userSi.getDiagnostic().contains("crossSupportResources(2).crossSupportFunctionalities(1).unknown(1)"));
 
             System.out.println("UNBIND...");
             TestUtils.verifyResult(userSi.unbind(), "UNBIND");
@@ -528,8 +527,7 @@ public class InformationQueryTest
             // verify that diagnostic contains the OID of the unknown parameter
             System.out.println();
             assertTrue("missing OID of the non-existent parameter in the GET operation diagnostic",
-                       userSi.getDiagnostic().contains("iso(1).identifiedOrganisation(3).standard(112).ccsds(4).css(4)"
-                       		+ ".crossSupportResources(2).crossSupportFunctionalities(1).unknown(1)"));
+                       userSi.getDiagnostic().contains("crossSupportResources(2).crossSupportFunctionalities(1).unknown(1)"));
 
             System.out.println("UNBIND...");
             TestUtils.verifyResult(userSi.unbind(), "UNBIND");
@@ -673,8 +671,7 @@ public class InformationQueryTest
 
             // verify that diagnostic contains the OID of the unknown parameter
             assertTrue("missing OID of the non-existent parameter in the GET operation diagnostic",
-                       userSi.getDiagnostic().contains("iso(1).identifiedOrganisation(3).standard(112).ccsds(4).css(4)"
-                       		+ ".crossSupportResources(2).crossSupportFunctionalities(1).unknown(1)"));
+                       userSi.getDiagnostic().contains("crossSupportResources(2).crossSupportFunctionalities(1).unknown(1)"));
 
             System.out.println("UNBIND...");
             TestUtils.verifyResult(userSi.unbind(), "UNBIND");
@@ -1136,7 +1133,7 @@ public class InformationQueryTest
             }
 
             // wait for several cyclic reports
-            Thread.sleep(4000);
+            userSi.waitTransferData(5, 100);
 
             System.out.println("update provider's parameter value");
             mdCollection.updateIntegerParameter(mdCollection.getParameterNameSet().getParameterNames().get(0), 10);

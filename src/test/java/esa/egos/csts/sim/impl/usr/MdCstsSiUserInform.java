@@ -89,6 +89,8 @@ public abstract class MdCstsSiUserInform extends
 
     /** the diagnostic of the last failed operation */
     protected AtomicReference<String> dignostic;
+    
+    protected final AtomicReference<CyclicReportStartDiagnostics> diagnosticObject = new AtomicReference<CyclicReportStartDiagnostics>();
 
     /**
      * parameters received on the GET operation return from all query inform
@@ -289,7 +291,7 @@ public abstract class MdCstsSiUserInform extends
         {
             this.operationResult = op.getResult();
             if (this.operationResult == OperationResult.NEGATIVE)
-            {
+            {            	
                 String specialDiagnostic = specDiagFn.get();
                 if (!specialDiagnostic.equals("INVALID"))
                 {
@@ -312,7 +314,16 @@ public abstract class MdCstsSiUserInform extends
         System.out.println("MdCstsSiUserInform#onReturn() end");
     }
 
-    /**
+    private void setDiagnosticObject(CyclicReportStartDiagnostics cyclicReportStartDiagnostics) {
+		this.diagnosticObject.set(cyclicReportStartDiagnostics);
+		
+	}
+    
+    public CyclicReportStartDiagnostics getDiagnosticObject() {
+    	return this.diagnosticObject.get();
+    }
+
+	/**
      * Process a start operation return
      * 
      * @param start The returned start operation
@@ -352,6 +363,9 @@ public abstract class MdCstsSiUserInform extends
                             {
                                 e.printStackTrace();
                             }
+                            
+                            setDiagnosticObject(CyclicReportStartDiagnostics.decode(cyclicReportStartDiagnosticExt));
+                            
                             return CyclicReportStartDiagnostics.decode(cyclicReportStartDiagnosticExt)
                                     .getListOfParametersDiagnostics().toString();
                         }
@@ -415,6 +429,9 @@ public abstract class MdCstsSiUserInform extends
                             {
                                 e.printStackTrace();
                             }
+                            
+                            setDiagnosticObject(CyclicReportStartDiagnostics.decode(cyclicReportStartDiagnosticExt));
+                            
                             return CyclicReportStartDiagnostics.decode(cyclicReportStartDiagnosticExt)
                                     .getListOfParametersDiagnostics().toString();
                         }

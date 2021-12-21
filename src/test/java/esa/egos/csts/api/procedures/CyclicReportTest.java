@@ -13,14 +13,12 @@ import java.util.Optional;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
-import esa.egos.csts.api.enumerations.AppRole;
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.enumerations.ProcedureRole;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.exceptions.ConfigurationParameterNotModifiableException;
 import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
-import esa.egos.csts.api.main.CstsApi;
 import esa.egos.csts.api.main.CstsProviderApi;
 import esa.egos.csts.api.main.CstsUserApi;
 import esa.egos.csts.api.main.ICstsApi;
@@ -33,7 +31,6 @@ import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.Name;
-import esa.egos.csts.api.types.SfwVersion;
 import esa.egos.csts.sim.impl.MdCstsSiConfig;
 import esa.egos.csts.sim.impl.prv.MdCollection;
 import esa.egos.csts.sim.impl.prv.MdCstsSiProvider;
@@ -42,7 +39,7 @@ import esa.egos.csts.sim.impl.usr.MdCstsSiUser;
 import esa.egos.csts.api.CstsTestWatcher;
 import esa.egos.csts.api.TestBootstrap;
 import esa.egos.csts.api.TestUtils;
-
+import esa.egos.csts.api.diagnostics.CyclicReportStartDiagnostics;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -371,11 +368,14 @@ public class CyclicReportTest
                                    "START-CYCLIC-REPORT",
                                    CstsResult.FAILURE);
 
+            CyclicReportStartDiagnostics diag = userSi.getDiagnosticObject();
+            System.out.println("Start diagnostic: " + diag);
+            
+            FunctionalResourceName unknownFrNameDiag = diag.getListOfParametersDiagnostics().getUnknownFunctionalResourceName();
+            
             // verify that diagnostic contains the OID of the unknown parameter
-            assertTrue("missing OID of the non-existent parameter in the GET operation diagnostic",
-                       userSi.getDiagnostic().contains("iso(1).identifiedOrganisation(3).standard(112).ccsds(4).css(4)"
-                       		+ ".crossSupportResources(2).crossSupportFunctionalities(1).unknown(1)"));
-
+            assertTrue(this.nonExistentParameterName.getFunctionalResourceName().equals(unknownFrNameDiag));
+                       
             System.out.println("UNBIND...");
             TestUtils.verifyResult(userSi.unbind(), "UNBIND");
 
@@ -495,8 +495,7 @@ public class CyclicReportTest
 
             System.out.println("START-CYCLIC-REPORT...");
             TestUtils.verifyResult(userSi.startCyclicReport(piid.getInstanceNumber(),
-                                                           ListOfParameters.of(this.nonExistentParameterName
-                                                                   .getFunctionalResourceName()),
+                                                           ListOfParameters.of(this.antIdType),
                                                            100),
                                    "START-CYCLIC-REPORT",
                                    CstsResult.FAILURE);
@@ -505,9 +504,14 @@ public class CyclicReportTest
 
             // verify that diagnostic contains the OID of the unknown parameter
             System.out.println();
-            assertTrue("missing OID of the non-existent parameter in the GET operation diagnostic",
-                       userSi.getDiagnostic().contains("iso(1).identifiedOrganisation(3).standard(112).ccsds(4).css(4)"
-                       		+ ".crossSupportResources(2).crossSupportFunctionalities(1).unknown(1)"));
+ 
+            CyclicReportStartDiagnostics diag = userSi.getDiagnosticObject();
+            System.out.println("Start diagnostic: " + diag);
+            
+            FunctionalResourceType unknownFrTypeDiag = diag.getListOfParametersDiagnostics().getUnknownFunctionalResourceType();
+            
+            // verify that diagnostic contains the OID of the unknown parameter
+            assertTrue(this.antIdId.equals(unknownFrTypeDiag.getOid()));
 
             System.out.println("UNBIND...");
             TestUtils.verifyResult(userSi.unbind(), "UNBIND");
@@ -642,10 +646,13 @@ public class CyclicReportTest
 
             Thread.sleep(300); // wait for several cyclic reports
 
+            CyclicReportStartDiagnostics diag = userSi.getDiagnosticObject();
+            System.out.println("Start diagnostic: " + diag);
+            
+            Name unknownParamName = diag.getListOfParametersDiagnostics().getUnknownParameterNames().get(0);
+            
             // verify that diagnostic contains the OID of the unknown parameter
-            assertTrue("missing OID of the non-existent parameter in the GET operation diagnostic",
-                       userSi.getDiagnostic().contains("iso(1).identifiedOrganisation(3).standard(112).ccsds(4).css(4)"
-                       		+ ".crossSupportResources(2).crossSupportFunctionalities(1).unknown(1)"));
+            assertTrue(this.nonExistentParameterName.equals(unknownParamName));
 
             System.out.println("UNBIND...");
             TestUtils.verifyResult(userSi.unbind(), "UNBIND");
@@ -762,11 +769,15 @@ public class CyclicReportTest
                                    "START-CYCLIC-REPORT",
                                    CstsResult.FAILURE);
 
-            Thread.sleep(300); // wait for several cyclic reports
-
+            CyclicReportStartDiagnostics diag = userSi.getDiagnosticObject();
+            System.out.println("Start diagnostic: " + diag);
+            
+            Label unknownLabel1Diag = diag.getListOfParametersDiagnostics().getUnknownParameterLabels().get(0);
+            Label unknownLabel2Diag = diag.getListOfParametersDiagnostics().getUnknownParameterLabels().get(1);
+            
             // verify that diagnostic contains the OID of the unknown parameter
-            assertTrue("missing OID of the non-existent parameter in the GET operation diagnostic",
-                       userSi.getDiagnostic().contains("iso(1).unknown(1)"));
+            assertTrue(nonExistentParameterLabel.equals(unknownLabel1Diag));
+            assertTrue(nonExistentParameterLabel2.equals(unknownLabel2Diag));
 
             System.out.println("UNBIND...");
             TestUtils.verifyResult(userSi.unbind(), "UNBIND");
@@ -1092,7 +1103,7 @@ public class CyclicReportTest
             }
 
             // wait for several cyclic reports
-            Thread.sleep(4000);
+            userSi.waitTransferData(5, 100);
 
             System.out.println("update provider's parameter value");
             mdCollection.updateIntegerParameter(mdCollection.getParameterNameSet().getParameterNames().get(0), 10);
