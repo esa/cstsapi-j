@@ -1,15 +1,11 @@
 package esa.egos.csts.api.procedures.cyclicreport;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-
-import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 
 import esa.egos.csts.api.diagnostics.CyclicReportStartDiagnostics;
 import esa.egos.csts.api.diagnostics.CyclicReportStartDiagnosticsType;
@@ -31,7 +27,6 @@ import esa.egos.csts.api.parameters.impl.LabelLists;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
-import esa.egos.csts.api.procedures.unbuffereddatadelivery.AbstractUnbufferedDataDelivery;
 import esa.egos.csts.api.procedures.unbuffereddatadelivery.AbstractUnbufferedDataDeliveryB2;
 import esa.egos.csts.api.states.State;
 import esa.egos.csts.api.types.Label;
@@ -463,6 +458,7 @@ public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliver
 			IStart start = (IStart) confOperation;
 			if (start.getStartDiagnostic() != null) {
 				decodeStartDiagnosticExt(start.getStartDiagnostic().getDiagnosticExtension());
+				start.getStartDiagnostic().setMessage(getStartDiagnostic().toString());
 			}
 		}
 		return doInformOperationReturn(confOperation);
