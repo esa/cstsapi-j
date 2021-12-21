@@ -1085,11 +1085,11 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 				LOG.fine(msg);
 				throw new ApiException(msg);
 			}
-
-			traceRcvOperation(confOperation); // CSTSAPI-4
 			
 			doInformOpReturn(confOperation);
 
+			traceRcvOperation(confOperation); // CSTSAPI-4 trace after decoding extensions
+			
 		} catch (ApiException e) {
 			abort(PeerAbortDiagnostics.PROTOCOL_ERROR);
 			throw e;
