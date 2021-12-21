@@ -12,7 +12,9 @@ import java.util.NoSuchElementException;
  */
 public class OidNode
 {
-    private static final boolean PRINT_UNKNOWN_NODE = true;
+    private static final String ISO_PREFIX = "iso(1).identifiedOrganisation(3).standard(112).ccsds(4).css(4)";
+
+	private static final boolean PRINT_UNKNOWN_NODE = true;
 
     private static final String DOT = ".";
 
@@ -108,30 +110,16 @@ public class OidNode
     public void print(StringBuilder s, int[] oidArray, int bitPos)
     {
         if (this.oidBit == oidArray[bitPos])
-        {
-        	boolean skipIso = false;
-        	if(this.oidBit == 1 && bitPos == 0 ||
-        	   this.oidBit == 3 && bitPos == 1 ||
-        	   this.oidBit == 112 && bitPos == 2 ||
-        	   this.oidBit == 4 && bitPos == 3 ||
-        	   this.oidBit == 4 && bitPos == 4)
-        	{
-        		skipIso = true;
-        	}
-        	
-        	if(skipIso == false)
-        	{
-	            s.append(this.oidBitLabel);
-	            s.append("(");
-	            s.append(this.oidBit);
-	            s.append(")");          
-        	}
+        {	        	
+        	s.append(this.oidBitLabel);
+        	s.append("(");
+        	s.append(this.oidBit);
+        	s.append(")");          
         	
             int childOidBit = bitPos + 1;
             if (childOidBit < oidArray.length)
             {
-            	if(skipIso != true)
-            		s.append(DOT);
+            	s.append(DOT);
             	
                 OidNode node = getChildNode(oidArray[childOidBit]);
                 if (node != null)
@@ -162,6 +150,13 @@ public class OidNode
                 throwOnUnknown(oidArray, this.oidBit, s.toString());
             }
         }
+                
+        if(s.indexOf(ISO_PREFIX) == 0) 
+        {
+        	String shortOid = s.substring(ISO_PREFIX.length() + 1);
+        	s.replace(0, s.length()-1, shortOid);
+        }
+        
     }
 
     public void printCompact(StringBuilder s, int[] oidArray, int bitPos)
