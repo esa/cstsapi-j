@@ -64,11 +64,20 @@ public class Start extends AbstractConfirmedOperation implements IStart {
 
 	@Override
 	public String print(int i) {
+		String diag = "no diagnostic";
+		if(startDiagnostic != null) {
+			if(startDiagnostic.getMessage() != null) {
+				diag = startDiagnostic.getMessage();
+			} else {
+				diag = startDiagnostic.toString();
+			}
+		}
+		
 		StringBuilder sb = new StringBuilder(i);
 		sb.append("\nOperation                      : START\n");
 		sb.append(super.print(i));
 		sb.append("Confirmed Operation            : true\n");
-		sb.append("Diagnostic Type                : no diagnostic\n");
+		sb.append("Diagnostic Type                : " + diag + "\n");
 		sb.append("Common Diagnostics             : Invalid\n");
 		sb.append("Framework		              : B1\n");
 
