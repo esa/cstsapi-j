@@ -1,5 +1,6 @@
 package esa.egos.csts.api.extensions;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 import com.beanit.jasn1.ber.types.BerEmbeddedPdv.Identification;
@@ -98,8 +99,56 @@ public class EmbeddedData {
 
 	@Override
 	public String toString() {
-		return "EmbeddedData [oid=" + oid + ", data=" + Arrays.toString(data) + "]";
+		return "EmbeddedData [oid=" + oid + ", data=\n" + dumpHex(data, 1024) + "]";
 	}
+
+	/**
+     * Dumps the given byte array into the result argument
+     * 
+     * @param bytes
+     *            The bytes to dump
+     * @param numHexBytes the number of hex bytes to dump           
+     * @param result
+     *            The output parameter carrying the result
+     * @throws UnsupportedEncodingException
+     */
+    public static String dumpHex(byte[] bytes, int numHexBytes)
+    {
+    	StringBuilder result = new StringBuilder();
+    	
+        if (bytes == null || result == null)
+        {
+            return "";
+        }
+        
+		try {
+
+			// use the smaller length provided
+			final int length = numHexBytes < bytes.length ? numHexBytes : bytes.length;
+
+			final int columnWidth = 32;
+			for (int row = 0; row < length; row += columnWidth) {
+				for (int c = row; c < (columnWidth + row) && c < bytes.length; c++) {
+					result.append(String.format("%02X", bytes[c]) + " ");
+				}
+
+				result.append("\t\t");
+
+				for (int c = row; c < (columnWidth + row) && c < bytes.length; c++) {
+					String s = new String(bytes, c, 1, "UTF-8");
+					if (Character.isLetter(s.charAt(0)) == false) {
+						s = ".";
+					}
+					result.append(s);
+				}
+
+				result.append(System.lineSeparator());
+			}
+		} catch (Exception e) {
+			result.append("Exception formatting hex dump: " + e);
+		}
+        return result.toString();
+    }	
 	
 	@Override
 	public boolean equals(Object o) {
