@@ -109,14 +109,30 @@ public class OidNode
     {
         if (this.oidBit == oidArray[bitPos])
         {
-            s.append(this.oidBitLabel);
-            s.append("(");
-            s.append(this.oidBit);
-            s.append(")");
+        	boolean skipIso = false;
+        	if(this.oidBit == 1 && bitPos == 0 ||
+        	   this.oidBit == 3 && bitPos == 1 ||
+        	   this.oidBit == 112 && bitPos == 2 ||
+        	   this.oidBit == 4 && bitPos == 3 ||
+        	   this.oidBit == 4 && bitPos == 4)
+        	{
+        		skipIso = true;
+        	}
+        	
+        	if(skipIso == false)
+        	{
+	            s.append(this.oidBitLabel);
+	            s.append("(");
+	            s.append(this.oidBit);
+	            s.append(")");          
+        	}
+        	
             int childOidBit = bitPos + 1;
             if (childOidBit < oidArray.length)
             {
-                s.append(DOT);
+            	if(skipIso != true)
+            		s.append(DOT);
+            	
                 OidNode node = getChildNode(oidArray[childOidBit]);
                 if (node != null)
                 {
