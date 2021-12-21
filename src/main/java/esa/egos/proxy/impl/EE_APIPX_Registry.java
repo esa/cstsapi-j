@@ -36,7 +36,7 @@ public class EE_APIPX_Registry
      * The port is already registered. E_FAIL The registration fails due to a
      * further unspecified error.
      */
-    public Result registerPort(IServiceInstanceIdentifier psiid, String portId, Reference<Integer> regId)
+    public synchronized Result registerPort(IServiceInstanceIdentifier psiid, String portId, Reference<Integer> regId)
     {
         // check if the siid is registered
         if (this.eeAPIPXRegCard.contains(psiid))
@@ -59,7 +59,7 @@ public class EE_APIPX_Registry
      * SLE_E_UNKNOWN The port is not registered. E_FAIL The de-registration
      * fails due to a further unspecified error.
      */
-    public Result deregisterPort(int regId, Reference<String> portId)
+    public synchronized Result deregisterPort(int regId, Reference<String> portId)
     {
         // check if the reg card is registered
         boolean isRegistered = false;
@@ -88,7 +88,7 @@ public class EE_APIPX_Registry
     /**
      * Set the reference of the link used for the service instance.
      */
-    public Result setLink(EE_APIPX_Link plink, IServiceInstanceIdentifier psiid)
+    public synchronized Result setLink(EE_APIPX_Link plink, IServiceInstanceIdentifier psiid)
     {
         // check if the reg card is registered
         EE_APIPX_RegCard theRegCard = null;
@@ -117,7 +117,7 @@ public class EE_APIPX_Registry
     /**
      * Return the reference of the link used for the service instance.
      */
-    public EE_APIPX_Link getLink(IServiceInstanceIdentifier psiid)
+    public synchronized EE_APIPX_Link getLink(IServiceInstanceIdentifier psiid)
     {
         // check if the reg card is registered
         EE_APIPX_RegCard theRegCard = null;
@@ -146,7 +146,7 @@ public class EE_APIPX_Registry
      * SLE_E_UNKNOWN The port is not registered. E_FAIL The de registration
      * fails due to a further unspecified error.
      */
-    public Result deregisterPort(EE_APIPX_Link pLink, Reference<String> portId)
+    public synchronized Result deregisterPort(EE_APIPX_Link pLink, Reference<String> portId)
     {
         // check if the reg card is registered
         boolean isRegistered = false;
@@ -175,7 +175,7 @@ public class EE_APIPX_Registry
     /**
      * Return the service instance identifier used for the link.
      */
-    public IServiceInstanceIdentifier getSii(EE_APIPX_Link pLink)
+    public synchronized IServiceInstanceIdentifier getSii(EE_APIPX_Link pLink)
     {
         // check if the reg card is registered
         EE_APIPX_RegCard theRegCard = null;
@@ -195,7 +195,7 @@ public class EE_APIPX_Registry
         return sii;
     }
 
-    public int getPortRegistrationCount(String portId)
+    public synchronized int getPortRegistrationCount(String portId)
     {
         int result = 0;
 
