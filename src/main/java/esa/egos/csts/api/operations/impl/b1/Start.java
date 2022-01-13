@@ -79,7 +79,7 @@ public class Start extends AbstractConfirmedOperation implements IStart {
 		sb.append("Confirmed Operation            : true\n");
 		sb.append("Diagnostic Type                : " + diag + "\n");
 		sb.append("Common Diagnostics             : Invalid\n");
-		sb.append("Framework		              : B1\n");
+		sb.append("Framework                      : B1\n");
 
 		return sb.toString();
 	}

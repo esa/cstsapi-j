@@ -50,7 +50,7 @@ public class Unbind extends AbstractConfirmedOperation implements IUnbind {
 		sb.append("Confirmed Operation            : true\n");
 		sb.append("Diagnostic Type                : no diagnostic\n");
 		sb.append("Common Diagnostics             : Invalid\n");
-		sb.append("Framework		              : B2\n");
+		sb.append("Framework                      : B2\n");
 
 		return sb.toString();
 	}

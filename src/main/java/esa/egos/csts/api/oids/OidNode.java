@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import javax.print.attribute.standard.MediaSize.ISO;
-
 /**
  * Maps an OID bit to OID bit label.
  */
