@@ -229,7 +229,7 @@ public class GenericTest
             TestUtils.verifyResult(userSi.bind(), "BIND");
             
             System.out.println("START-CYCLIC-REPORT...");
-            TestUtils.verifyResult(userSi.startCyclicReport(piid.getInstanceNumber(), mdCollection.getParameterNameSet(), 3000), "START-CYCLIC-REPORT");
+            TestUtils.verifyResult(userSi.startCyclicReport(piid.getInstanceNumber(), mdCollection.getParameterNameSet(), 100), "START-CYCLIC-REPORT");
 
             // wait for several cyclic reports
             userSi.waitTransferData(1, 4000);
@@ -312,7 +312,7 @@ public class GenericTest
             mdCollection.fireAllEvents();
 
             // wait for notification
-            Thread.sleep(500);
+            Thread.sleep(200);
             assertTrue("no event notified", userSi.getNotifiedEventCount() > 0);
 
             System.out.println("STOP-NOTIFICATION...");
@@ -389,11 +389,11 @@ public class GenericTest
             TestUtils.verifyResult(userSi.startCyclicReport(piid.getInstanceNumber(), mdCollection.getParameterNameSet(), 3000), "START-CYCLIC-REPORT");
 
             // wait for one cyclic report
-            Thread.sleep(4000);
+            userSi.waitTransferData(1, 500);
 
             System.out.println("PEER-ABORT...");
             TestUtils.verifyResult(userSi.peerAbort(), "PEER-ABORT");
-            Thread.sleep(1000);
+            Thread.sleep(200);
 
             System.out.println("again PEER-ABORT...");
             TestUtils.verifyResult(userSi.peerAbort(), "PEER-ABORT", CstsResult.FAILURE);
@@ -402,10 +402,10 @@ public class GenericTest
             TestUtils.verifyResult(userSi.bind(), "BIND");
 
             System.out.println("START-CYCLIC-REPORT...");
-            TestUtils.verifyResult(userSi.startCyclicReport(piid.getInstanceNumber(), mdCollection.getParameterNameSet(), 3000), "START-CYCLIC-REPORT");
+            TestUtils.verifyResult(userSi.startCyclicReport(piid.getInstanceNumber(), mdCollection.getParameterNameSet(), 100), "START-CYCLIC-REPORT");
 
             // wait for one cyclic report
-            Thread.sleep(4000);
+            userSi.waitTransferData(1, 500);
 
             System.out.println("PEER-ABORT...");
             TestUtils.verifyResult(userSi.peerAbort(), "PEER-ABORT");
