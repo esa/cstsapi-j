@@ -189,7 +189,7 @@ public class CyclicReportTest
                                    CstsResult.FAILURE);
             
             // wait for several cyclic reports
-            Thread.sleep(300);
+            userSi.waitTransferData(5, 500);            
 
             // verify that empty report was returned
             System.out.println("DIAG: "+userSi.getDiagnostic());
@@ -225,7 +225,7 @@ public class CyclicReportTest
                                    "START-CYCLIC-REPORT");
 
             // wait for several cyclic reports
-            Thread.sleep(300);
+            userSi.waitTransferData(5, 500);
 
             List<QualifiedParameter> queriedParameters_01 = userSi.getLastCyclicParameters();
             assertFalse("did not get any parameters from provider", queriedParameters_01.isEmpty());
@@ -287,7 +287,7 @@ public class CyclicReportTest
                                                             100),
                                    "START-CYCLIC-REPORT");
 
-            Thread.sleep(300); // wait for several cyclic reports
+            userSi.waitTransferData(5, 500); // wait for several cyclic reports
 
             List<QualifiedParameter> queriedParameters_01 = userSi.getLastCyclicParameters();
             assertFalse("did not get any parameters from provider", queriedParameters_01.isEmpty());
@@ -302,7 +302,7 @@ public class CyclicReportTest
             System.out.println("update provider's parameter value");
             mdCollection.updateIntegerParameter(mdCollection.getParameterNameSet().getParameterNames().get(0), 5);
 
-            Thread.sleep(300); // wait for several cyclic reports
+            userSi.waitTransferData(5, 500); // wait for several cyclic reports
 
             List<QualifiedParameter> queriedParameters_02 = userSi.getLastCyclicParameters();
             assertFalse("did not get any parameters from provider", queriedParameters_02.isEmpty());
@@ -420,7 +420,7 @@ public class CyclicReportTest
                                                             100),
                                    "START-CYCLIC-REPORT");
 
-            Thread.sleep(300); // wait for several cyclic reports
+            userSi.waitTransferData(5, 500); // wait for several cyclic reports
             
             List<QualifiedParameter> queriedParameters_01 = userSi.getLastCyclicParameters();
             assertFalse("did not get any parameters from provider", queriedParameters_01.isEmpty());
@@ -435,7 +435,7 @@ public class CyclicReportTest
             System.out.println("update provider's parameter value");
             mdCollection.updateIntegerParameter(mdCollection.getParameterNameSet().getParameterNames().get(0), 10);
 
-            Thread.sleep(300); // wait for several cyclic reports
+            userSi.waitTransferData(5, 500); // wait for several cyclic reports
 
             List<QualifiedParameter> queriedParameters_02 = userSi.getLastCyclicParameters();
             assertFalse("did not get any parameters from provider", queriedParameters_02.isEmpty());
@@ -500,7 +500,7 @@ public class CyclicReportTest
                                    "START-CYCLIC-REPORT",
                                    CstsResult.FAILURE);
 
-            Thread.sleep(300); // wait for several cyclic reports
+            userSi.waitTransferData(5, 500); // wait for several cyclic reports
 
             // verify that diagnostic contains the OID of the unknown parameter
             System.out.println();
@@ -554,7 +554,7 @@ public class CyclicReportTest
                                                             100),
                                    "START-CYCLIC-REPORT");
 
-            Thread.sleep(300); // wait for several cyclic reports
+            userSi.waitTransferData(5, 500); // wait for several cyclic reports
 
             List<QualifiedParameter> queriedParameters_01 = userSi.getLastCyclicParameters();
             assertFalse("did not get any parameters from provider", queriedParameters_01.isEmpty());
@@ -572,7 +572,7 @@ public class CyclicReportTest
             System.out.println("update provider's parameter value");
             mdCollection.updateIntegerParameter(mdCollection.getParameterNameSet().getParameterNames().get(0), 20);
 
-            Thread.sleep(300); // wait for several cyclic reports
+            userSi.waitTransferData(5, 500); // wait for several cyclic reports
 
             List<QualifiedParameter> queriedParameters_02 = userSi.getLastCyclicParameters();
             assertFalse("did not get any parameters from provider", queriedParameters_02.isEmpty());
@@ -644,7 +644,7 @@ public class CyclicReportTest
                                    "START-CYCLIC-REPORT",
                                    CstsResult.FAILURE);
 
-            Thread.sleep(300); // wait for several cyclic reports
+            userSi.waitTransferData(5, 500); // wait for several cyclic reports
 
             CyclicReportStartDiagnostics diag = userSi.getDiagnosticObject();
             System.out.println("Start diagnostic: " + diag);
@@ -695,7 +695,7 @@ public class CyclicReportTest
                                                             100),
                                    "START-CYCLIC-REPORT");
 
-            Thread.sleep(300); // wait for several cyclic reports
+            userSi.waitTransferData(5, 500); // wait for several cyclic reports
 
             List<QualifiedParameter> queriedParameters_01 = userSi.getLastCyclicParameters();
             assertFalse("did not get any parameters from provider", queriedParameters_01.isEmpty());
@@ -816,7 +816,7 @@ public class CyclicReportTest
             TestUtils.verifyResult(userSi.startCyclicReport(piid.getInstanceNumber(), ListOfParameters.of(this.piid), 100),
                                    "START-CYCLIC-REPORT");
 
-            Thread.sleep(300); // wait for several cyclic reports
+            userSi.waitTransferData(5, 500); // wait for several cyclic reports
 
             List<QualifiedParameter> queriedParameters_01 = userSi.getLastCyclicParameters();
             assertFalse("did not get any parameters from provider", queriedParameters_01.isEmpty());
@@ -844,7 +844,7 @@ public class CyclicReportTest
             TestUtils.verifyResult(userSi.startCyclicReport(piid.getInstanceNumber(), ListOfParameters.of(this.piid), 100),
                                    "START-CYCLIC-REPORT");
 
-            Thread.sleep(300); // wait for several cyclic reports
+            userSi.waitTransferData(5, 500); // wait for several cyclic reports
 
             List<QualifiedParameter> queriedParameters_02 = userSi.getLastCyclicParameters();
             assertFalse("did not get any parameters from provider", queriedParameters_02.isEmpty());
@@ -900,7 +900,7 @@ public class CyclicReportTest
                                                             ListOfParameters.of(this.piid_secondary), 100),
                                    "START-CYCLIC-REPORT");
 
-            Thread.sleep(300); // wait for several cyclic reports
+            userSi.waitTransferData(5, 500); // wait for several cyclic reports
 
             List<QualifiedParameter> queriedParameters_01 = userSi.getLastCyclicParameters();
             assertFalse("did not get any parameters from provider", queriedParameters_01.isEmpty());
@@ -929,7 +929,7 @@ public class CyclicReportTest
                                                             ListOfParameters.of(this.piid_secondary), 100),
                                    "START-CYCLIC-REPORT");
 
-            Thread.sleep(300); // wait for several cyclic reports
+            userSi.waitTransferData(5, 500); // wait for several cyclic reports
 
             List<QualifiedParameter> queriedParameters_02 = userSi.getLastCyclicParameters();
             assertFalse("did not get any parameters from provider", queriedParameters_02.isEmpty());
@@ -990,7 +990,7 @@ public class CyclicReportTest
             TestUtils.verifyResult(userSi.startCyclicReport(piid.getInstanceNumber(), ListOfParameters.of(procedureType), 100),
                                    "START-CYCLIC-REPORT");
 
-            Thread.sleep(300); // wait for several cyclic reports
+            userSi.waitTransferData(5, 500); // wait for several cyclic reports
 
             List<QualifiedParameter> queriedParameters_01 = userSi.getLastCyclicParameters();
             System.out.println(queriedParameters_01.size());

@@ -232,7 +232,7 @@ public class GenericTest
             TestUtils.verifyResult(userSi.startCyclicReport(piid.getInstanceNumber(), mdCollection.getParameterNameSet(), 3000), "START-CYCLIC-REPORT");
 
             // wait for several cyclic reports
-            Thread.sleep(7000);
+            userSi.waitTransferData(1, 4000);
 
             assertTrue("no cyclic report received", userSi.getCyclicReportCount() > 0);
 

@@ -1148,7 +1148,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
 //            TestUtils.verifyResult(this.userSi.startCyclicReport(piid, listOfParameters, 100),
 //                    "START-CYCLIC-REPORT");
 //
-//            Thread.sleep(300); // wait for several cyclic reports
+//            userSi.waitTransferData(5, 500);
 //
 //            System.out.println("Check values at user for instance 0 and 1");
 //            Map<Name, ICstsValue> userValues = this.userSi.getParameterValues(piid);
@@ -1166,7 +1166,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
 //                this.providerSi.setParameterValue(names[index++], testParameter.updatedValue);
 //            }
 //
-//            Thread.sleep(300); // wait for several cyclic reports
+//            userSi.waitTransferData(5, 500);
 //
 //            System.out.println("Check updated values at user for both instances");
 //            userValues = this.userSi.getParameterValues(piid);
@@ -1254,7 +1254,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
 //            TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_ocr_secondary_02, listOfParameters2, 100, onChange_03),
 //                                   "START-CYCLIC-REPORT " + this.piid_ocr_secondary_02);
 //
-//            Thread.sleep(300); // wait for several cyclic reports
+//            userSi.waitTransferData(5, 500);
 //
 //            ProcedureInstanceIdentifier piids[] = new ProcedureInstanceIdentifier[] { this.piid_ocr_prime,
 //                                                                                      this.piid_ocr_secondary_01,
@@ -1272,7 +1272,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
 //                }
 //            }
 //
-//            Thread.sleep(300); // wait for several cyclic reports
+//            userSi.waitTransferData(5, 500);
 //
 //            // verify that all user's procedures received all parameters updates for the first time no matter the onChange value
 //            assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more parameters than expected",
@@ -1305,7 +1305,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
 //                this.providerSi.setParameterValue(names[index], testParameters.get(index).updatedValue);
 //            }
 //
-//            Thread.sleep(300); // wait for several cyclic reports
+//            userSi.waitTransferData(5, 500);
 //
 //            System.out.println("Check values at user for all started procedures");
 //            System.out.println("piid: " + piids[0]);
@@ -1327,7 +1327,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
 //                TestUtils.verifyNameValue("user", testParameters.get(index).updatedValue, userValues2.get(names[index]), names[index]);
 //            }
 //
-//            Thread.sleep(300); // wait for several cyclic reports (onChange=false)
+//            userSi.waitTransferData(5, 500); (onChange=false)
 //
 //            // verify that user's procedures received expected parameters updates depending on the onChange value
 //            assertEquals("procedure " + this.piid_ocr_prime + " started w/ onChange=true received more parameters than expected",
@@ -1405,7 +1405,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
 //            TestUtils.verifyResult(this.userSi.startCyclicReport(piid, listOfParameters, 100),
 //                    "START-CYCLIC-REPORT");
 //
-//            Thread.sleep(300); // wait for several cyclic reports
+//            userSi.waitTransferData(5, 500);
 //
 //            System.out.println("Check values at user for instance 0 and 1");
 //            Map<Name, ICstsValue> userValues = this.userSi.getParameterValues(piid);
@@ -1423,7 +1423,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
 //                this.providerSi.setParameterValue(names[index++], testParameter.updatedValue);
 //            }
 //
-//            Thread.sleep(300); // wait for several cyclic reports
+//            userSi.waitTransferData(5, 500);
 //
 //            System.out.println("Check updated values at user for both instances");
 //            userValues = this.userSi.getParameterValues(piid);

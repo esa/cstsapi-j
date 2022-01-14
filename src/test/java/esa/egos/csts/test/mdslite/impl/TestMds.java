@@ -164,12 +164,10 @@ public class TestMds {
 					Assert.assertTrue(proc.isActivationPending() == false);
 					Assert.assertTrue(proc.isDeactivationPending() == false);
 				}				
-				
-				Thread.sleep(2000); // give some time to report on data
+								
+				userSi.waitTransferData(5, 500);
 				providerSi.setAntAzimut(815, 0);
-				Thread.sleep(2000); // give some time to report on data
-				//providerSi.setAntAzimut(123, 0);
-
+				userSi.waitTransferData(5, 500);
 				
 				userSi.stopCyclicReport(0);
 				
@@ -226,7 +224,7 @@ public class TestMds {
 				boolean onChange = true;
 				userSi.startCyclicReport(1000, onChange, 0);
 				
-				Thread.sleep(2000); // give some time to report on data
+				userSi.waitTransferData(5, 500);
 	
 				System.out.println("Initiate abort by the user...");
 				userSi.getApiServiceInstance().getAssociationControlProcedure().abort(PeerAbortDiagnostics.OTHER_REASON);		
@@ -239,7 +237,6 @@ public class TestMds {
 					Assert.assertTrue(proc.isDeactivationPending() == false);
 				}
 				
-				//Thread.sleep(500); // give some time for the abort to arrive at the provider
 				providerSi.waitForAbort(60000);
 				
 				procedures = providerSi.getCyclicReportProcedures();
@@ -264,7 +261,7 @@ public class TestMds {
 
 
 	@Test
-	@Ignore
+	//@Ignore
 	public void testProtocolAbortB1() {
 		testProtocolAbort(SfwVersion.B1);
 	}
@@ -306,12 +303,12 @@ public class TestMds {
 				boolean onChange = true;
 				userSi.startCyclicReport(1000, onChange, 0);
 			
-				Thread.sleep(2000); // give some time to report on data
+				userSi.waitTransferData(1, 500);
 	
 				System.out.println("Disconnect the tcp connection to get a protocol abort...");
 				tcpForwarder.stop(); 
 				
-				Thread.sleep(200); // give some time for the provider (user) to realize the disconnect
+				Thread.sleep(500);
 				
 				Assert.assertTrue(providerSi.getApiServiceInstance().getStatus() == ServiceStatus.UNBOUND);
 			}

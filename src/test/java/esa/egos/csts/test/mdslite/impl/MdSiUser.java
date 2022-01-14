@@ -297,4 +297,34 @@ public class MdSiUser extends MdSi {
 		System.out.println("MD User received protocol abort");
 		
 	}
+	
+    /**
+     * Wait for reception of a given number transfer data unit
+     * @param numTd	the number of transfer data units to receive
+     * @param ms	the time to wait in ms for each TD
+     * @return the number of received transfer data or -1 for a timeout
+     */
+    public long waitTransferData(long numTd, long ms) {
+    	long received = 0;
+    	
+    	while(received < numTd) {
+	    	retLock.lock();
+	    	try {
+				boolean ret = this.retCond.await(ms, TimeUnit.MILLISECONDS);
+				if(ret == false) {
+					System.out.println("Timeout of " + ms + " ms. Received " + received + " transfer data operations");
+					return -1;
+				} else {
+					received++;
+				}
+			} catch (InterruptedException e) {
+				
+				e.printStackTrace();
+			} finally {
+				retLock.unlock();
+			}	    	
+    	}
+    	System.out.println("Received " + received + " transfer data operations");
+    	return received;
+    }
 }
