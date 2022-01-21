@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -19,7 +20,9 @@ import java.util.zip.ZipEntry;
  */
 public class PackageUtils
 {
-    private static final String JAVA = "java";
+    private static final String UTF_8 = "UTF-8";
+
+	private static final String JAVA = "java";
 
     private static final String CLASSES = "classes";
 
@@ -93,7 +96,8 @@ public class PackageUtils
         LOG.log(Level.INFO, "URL: " + url.getFile());
         try
         {
-            File packageDirectory = new File(url.getFile());
+        	final String fileName = URLDecoder.decode(url.getFile(), UTF_8);
+            File packageDirectory = new File(fileName);
             if (packageDirectory.exists())
             {
                 ret = getPackageClassesFromDirectory(packageDirectory, packageName, alsoNestedClasses);
@@ -145,10 +149,11 @@ public class PackageUtils
         JarFile jar = null;
 
         try
-        {
-            LOG.log(Level.INFO, "getting classes from JAR file " + url);
+        {        	
+        	final String urlDecoded = URLDecoder.decode(url.getFile(), UTF_8);
+            LOG.log(Level.INFO, "getting classes from JAR file " + urlDecoded);
             // extract the path file name from URL: file:<path file name>!/package
-            String[] split1 = url.getFile().split("file:");
+            String[] split1 = urlDecoded.split("file:");
             String[] split2 = split1[1].split("!");
             String filePath = split2[0];
             String internalPath = split2[1];
