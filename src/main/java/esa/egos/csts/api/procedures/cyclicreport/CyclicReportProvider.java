@@ -10,7 +10,7 @@ import esa.egos.csts.api.parameters.impl.IntegerConfigurationParameter;
 import esa.egos.csts.api.parameters.impl.LabelLists;
 import esa.egos.csts.api.states.cyclicreport.Inactive;
 
-public class CyclicReportProvider extends AbstractCyclicReportB2 {
+public class CyclicReportProvider extends AbstractCyclicReport {
 
 	@Override
 	protected void initializeState() {

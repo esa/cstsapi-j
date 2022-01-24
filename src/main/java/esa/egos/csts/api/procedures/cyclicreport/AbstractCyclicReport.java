@@ -27,14 +27,14 @@ import esa.egos.csts.api.parameters.impl.LabelLists;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
-import esa.egos.csts.api.procedures.unbuffereddatadelivery.AbstractUnbufferedDataDeliveryB2;
+import esa.egos.csts.api.procedures.unbuffereddatadelivery.AbstractUnbufferedDataDelivery;
 import esa.egos.csts.api.states.State;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.LabelList;
 import esa.egos.csts.api.types.Name;
 import esa.egos.csts.api.types.Time;
 
-public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliveryB2 implements ICyclicReportInternal {
+public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDelivery implements ICyclicReportInternal {
 
 	private static final ProcedureType TYPE = ProcedureType.of(OIDs.cyclicReport);
 
@@ -51,12 +51,15 @@ public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliver
 
 	private boolean running;
 	private ScheduledFuture<?> cyclicReport;
+	
+	private CyclicReportCodec cyclicReportCodec;
 
 	protected AbstractCyclicReport() {
 		executorService = Executors.newSingleThreadScheduledExecutor();
 		qualifiedParameters = new ArrayList<>();
 		sequenceCounter = 0;
 		running = false;
+		cyclicReportCodec = new CyclicReportCodec(this);
 	}
 
 	@Override
@@ -419,7 +422,9 @@ public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliver
 	}
 	
 	
-	protected abstract EmbeddedData encodeInvocationExtension();
+	protected EmbeddedData encodeInvocationExtension() {
+		return cyclicReportCodec.encodeInvocationExtension();
+	}
 	/**
 	 * This method should be overridden to encode the extension of a derived
 	 * procedure.
@@ -432,9 +437,13 @@ public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliver
 	}
 
 	@Override
-	public abstract EmbeddedData encodeStartDiagnosticExt();
+	public EmbeddedData encodeStartDiagnosticExt() {
+		return cyclicReportCodec.encodeStartDiagnosticExt();
+	}
 	
-	protected abstract EmbeddedData encodeDataRefinement();
+	protected EmbeddedData encodeDataRefinement() {
+		return cyclicReportCodec.encodeDataRefinement();
+	}
 	
 	protected Extension encodeInvocDataRefExtension() {
 		return Extension.notUsed();
@@ -464,7 +473,9 @@ public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliver
 		return doInformOperationReturn(confOperation);
 	}
 	
-	protected abstract void decodeStartInvocationExtension(Extension extension);
+	protected void decodeStartInvocationExtension(Extension extension) {
+		cyclicReportCodec.decodeStartInvocationExtension(extension);
+	}
 
 	/**
 	 * This method should be overridden to decode the extension of a derived
@@ -478,12 +489,16 @@ public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliver
 		// do nothing on default
 	}
 
-	protected abstract void decodeTransferDataRefinement(EmbeddedData embeddedData);
+	protected void decodeTransferDataRefinement(EmbeddedData embeddedData) {
+		cyclicReportCodec.decodeTransferDataRefinement(embeddedData);
+	}
 
 	protected void decodeInvocDataRefExtension(Extension extension) {
 		
 	}
 
-	protected abstract void decodeStartDiagnosticExt(EmbeddedData embeddedData);
+	protected void decodeStartDiagnosticExt(EmbeddedData embeddedData) {
+		cyclicReportCodec.decodeStartDiagnosticExt(embeddedData);
+	}
 
 }

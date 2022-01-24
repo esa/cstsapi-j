@@ -4,17 +4,17 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 
-import b1.ccsds.csts.common.operations.pdus.GetInvocation;
-import b1.ccsds.csts.common.operations.pdus.GetReturn;
-import b1.ccsds.csts.information.query.pdus.InformationQueryPdu;
+import b2.ccsds.csts.common.operations.pdus.GetInvocation;
+import b2.ccsds.csts.common.operations.pdus.GetReturn;
+import b2.ccsds.csts.information.query.pdus.InformationQueryPdu;
 import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.operations.IGet;
 import esa.egos.csts.api.operations.IOperation;
+import esa.egos.csts.api.types.SfwVersion;
 
-public abstract class AbstractInformationQueryB1 extends AbstractInformationQuery {
+public class InformationQueryCodecB2 {
 
-	@Override
-	public byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException {
+	public static byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException {
 
 		byte[] encodedOperation;
 		InformationQueryPdu pdu = new InformationQueryPdu();
@@ -35,9 +35,8 @@ public abstract class AbstractInformationQueryB1 extends AbstractInformationQuer
 
 		return encodedOperation;
 	}
-
-	@Override
-	public IOperation decodeOperation(byte[] encodedPdu) throws IOException {
+ 
+	public static IOperation decodeOperation(AbstractInformationQuery informationQuery,byte[] encodedPdu) throws IOException {
 
 		InformationQueryPdu pdu = new InformationQueryPdu();
 
@@ -45,7 +44,7 @@ public abstract class AbstractInformationQueryB1 extends AbstractInformationQuer
 			pdu.decode(is);
 		}
 
-		IGet get = createGet();
+		IGet get = informationQuery.createGet();
 
 		if (pdu.getGetInvocation() != null) {
 			get.decodeGetInvocation(pdu.getGetInvocation());

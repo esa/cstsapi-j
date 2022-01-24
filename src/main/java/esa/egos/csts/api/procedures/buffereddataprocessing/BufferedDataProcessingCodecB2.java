@@ -5,8 +5,8 @@ import java.io.IOException;
 
 import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 
-import b1.ccsds.csts.buffered.data.processing.pdus.BufferedDataProcessingPdu;
-import b1.ccsds.csts.common.operations.pdus.ProcessDataInvocation;
+import b2.ccsds.csts.buffered.data.processing.pdus.BufferedDataProcessingPdu;
+import b2.ccsds.csts.common.operations.pdus.ProcessDataInvocation;
 import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.operations.IForwardBuffer;
 import esa.egos.csts.api.operations.INotify;
@@ -14,12 +14,11 @@ import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IProcessData;
 import esa.egos.csts.api.operations.IStart;
 import esa.egos.csts.api.operations.IStop;
+import esa.egos.csts.api.types.SfwVersion;
 
-public abstract class AbstractBufferedDataProcessingB1 extends AbstractBufferedDataProcessing {
-
+public class BufferedDataProcessingCodecB2 {
 	
-	@Override
-	public byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException {
+	public static byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException {
 
 		byte[] encodedOperation;
 		BufferedDataProcessingPdu pdu = new BufferedDataProcessingPdu();
@@ -27,32 +26,32 @@ public abstract class AbstractBufferedDataProcessingB1 extends AbstractBufferedD
 		if (operation.getType() == OperationType.START) {
 			IStart start = (IStart) operation;
 			if (isInvoke) {
-				pdu.setStartInvocation((b1.ccsds.csts.common.operations.pdus.StartInvocation)start.encodeStartInvocation());
+				pdu.setStartInvocation((b2.ccsds.csts.common.operations.pdus.StartInvocation)start.encodeStartInvocation());
 			} else {
-				pdu.setStartReturn((b1.ccsds.csts.common.operations.pdus.StartReturn)start.encodeStartReturn());
+				pdu.setStartReturn((b2.ccsds.csts.common.operations.pdus.StartReturn)start.encodeStartReturn());
 			}
 		} else if (operation.getType() == OperationType.STOP) {
 			IStop stop = (IStop) operation;
 			if (isInvoke) {
-				pdu.setStopInvocation((b1.ccsds.csts.common.operations.pdus.StopInvocation)stop.encodeStopInvocation());
+				pdu.setStopInvocation((b2.ccsds.csts.common.operations.pdus.StopInvocation)stop.encodeStopInvocation());
 			} else {
-				pdu.setStopReturn((b1.ccsds.csts.common.operations.pdus.StopReturn)stop.encodeStopReturn());
+				pdu.setStopReturn((b2.ccsds.csts.common.operations.pdus.StopReturn)stop.encodeStopReturn());
 			}
 		} else if (operation.getType() == OperationType.PROCESS_DATA) {
 			IProcessData processData = (IProcessData) operation;
 			if (isInvoke) {
-				pdu.setProcessDataInvocation((b1.ccsds.csts.common.operations.pdus.ProcessDataInvocation)processData.encodeProcessDataInvocation());
+				pdu.setProcessDataInvocation((b2.ccsds.csts.common.operations.pdus.ProcessDataInvocation)processData.encodeProcessDataInvocation());
 			}
 		} else if (operation.getType() == OperationType.NOTIFY) {
 			INotify notify = (INotify) operation;
 			if (isInvoke) {
 				pdu.setNotifyInvocation(
-						(b1.ccsds.csts.common.operations.pdus.NotifyInvocation)notify.encodeNotifyInvocation());
+						(b2.ccsds.csts.common.operations.pdus.NotifyInvocation)notify.encodeNotifyInvocation());
 			}
 		} else if (operation.getType() == OperationType.FORWARD_BUFFER) {
-			b1.ccsds.csts.buffered.data.processing.pdus.ForwardBuffer forwardBuffer = new b1.ccsds.csts.buffered.data.processing.pdus.ForwardBuffer();
+			b2.ccsds.csts.buffered.data.processing.pdus.ForwardBuffer forwardBuffer = new b2.ccsds.csts.buffered.data.processing.pdus.ForwardBuffer();
 			for (IProcessData processData : ((IForwardBuffer) operation).getBuffer()) {
-				forwardBuffer.getProcessDataInvocation().add((b1.ccsds.csts.common.operations.pdus.ProcessDataInvocation)processData.encodeProcessDataInvocation());
+				forwardBuffer.getProcessDataInvocation().add((b2.ccsds.csts.common.operations.pdus.ProcessDataInvocation)processData.encodeProcessDataInvocation());
 			}
 			pdu.setForwardBuffer(forwardBuffer);
 		}
@@ -64,9 +63,9 @@ public abstract class AbstractBufferedDataProcessingB1 extends AbstractBufferedD
 
 		return encodedOperation;
 	}
+	
 
-	@Override
-	public IOperation decodeOperation(byte[] encodedPdu) throws IOException {
+	public static IOperation decodeOperation(AbstractBufferedDataProcessing bufferedDataProcessing, byte[] encodedPdu) throws IOException {
 
 		BufferedDataProcessingPdu pdu = new BufferedDataProcessingPdu();
 		try (ByteArrayInputStream is = new ByteArrayInputStream(encodedPdu)) {
@@ -76,39 +75,39 @@ public abstract class AbstractBufferedDataProcessingB1 extends AbstractBufferedD
 		IOperation operation = null;
 
 		if (pdu.getStartInvocation() != null) {
-			IStart start = createStart();
+			IStart start = bufferedDataProcessing.createStart();
 			start.decodeStartInvocation(pdu.getStartInvocation());
 			operation = start;
 		} else if (pdu.getStartReturn() != null) {
-			IStart start = createStart();
+			IStart start = bufferedDataProcessing.createStart();
 			start.decodeStartReturn(pdu.getStartReturn());
 			operation = start;
 		} else if (pdu.getStopInvocation() != null) {
-			IStop stop = createStop();
+			IStop stop = bufferedDataProcessing.createStop();
 			stop.decodeStopInvocation(pdu.getStopInvocation());
 			operation = stop;
 		} else if (pdu.getStopReturn() != null) {
-			IStop stop = createStop();
+			IStop stop = bufferedDataProcessing.createStop();
 			stop.decodeStopReturn(pdu.getStopReturn());
 			operation = stop;
 		} else if (pdu.getProcessDataInvocation() != null) {
-			IProcessData processData = createProcessData();
+			IProcessData processData = bufferedDataProcessing.createProcessData();
 			processData.decodeProcessDataInvocation(pdu.getProcessDataInvocation());
 			operation = processData;
 		} else if (pdu.getNotifyInvocation() != null) {
-			INotify notify = createNotify();
+			INotify notify = bufferedDataProcessing.createNotify();
 			notify.decodeNotifyInvocation(pdu.getNotifyInvocation());
 			operation = notify;
 		} else if (pdu.getForwardBuffer() != null) {
-			if (getForwardBuffer() == null) {
-				setForwardBuffer(createForwardBuffer());
+			if (bufferedDataProcessing.getForwardBuffer() == null) {
+				bufferedDataProcessing.setForwardBuffer(bufferedDataProcessing.createForwardBuffer());
 			}
 			for (ProcessDataInvocation processDataInvocation : pdu.getForwardBuffer().getProcessDataInvocation()) {
-				IProcessData processData = createProcessData();
+				IProcessData processData = bufferedDataProcessing.createProcessData();
 				processData.decodeProcessDataInvocation(processDataInvocation);
-				getForwardBuffer().getBuffer().add(processData);
+				bufferedDataProcessing.getForwardBuffer().getBuffer().add(processData);
 			}
-			operation = getForwardBuffer();
+			operation = bufferedDataProcessing.getForwardBuffer();
 		}
 
 		return operation;

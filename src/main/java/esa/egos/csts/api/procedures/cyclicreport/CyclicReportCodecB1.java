@@ -16,15 +16,15 @@ import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.parameters.impl.ListOfParameters;
 import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 
-public abstract class AbstractCyclicReportB1 extends AbstractCyclicReport {
+public class CyclicReportCodecB1 {
 
-	@Override
-	protected EmbeddedData encodeInvocationExtension() {
+	
+	public static EmbeddedData encodeInvocationExtension(AbstractCyclicReport cyclicReport) {
 
 		CyclicReportStartInvocExt invocationExtension = new CyclicReportStartInvocExt();
-		invocationExtension.setDeliveryCycle(new IntPos(getDeliveryCycle()));
-		invocationExtension.setListOfParameters(getListOfParameters().encode(new b1.ccsds.csts.common.types.ListOfParametersEvents()));
-		invocationExtension.setCyclicReportStartInvocExtExtension(encodeStartInvocationExtExtension().encode(
+		invocationExtension.setDeliveryCycle(new IntPos(cyclicReport.getDeliveryCycle()));
+		invocationExtension.setListOfParameters(cyclicReport.getListOfParameters().encode(new b1.ccsds.csts.common.types.ListOfParametersEvents()));
+		invocationExtension.setCyclicReportStartInvocExtExtension(cyclicReport.encodeStartInvocationExtExtension().encode(
 				new b1.ccsds.csts.common.types.Extended()));
 
 		// encode with a resizable output stream and an initial capacity of 128 bytes
@@ -39,22 +39,22 @@ public abstract class AbstractCyclicReportB1 extends AbstractCyclicReport {
 	}
 
 
-	@Override
-	public EmbeddedData encodeStartDiagnosticExt() {
-		return EmbeddedData.of(OIDs.crStartDiagExt, getStartDiagnostic().encode(
+
+	public static EmbeddedData encodeStartDiagnosticExt(AbstractCyclicReport cyclicReport) {
+		return EmbeddedData.of(OIDs.crStartDiagExt, cyclicReport.getStartDiagnostic().encode(
 				new b1.ccsds.csts.cyclic.report.pdus.CyclicReportStartDiagnosticExt()).code);
 	}
 	
-	@Override
-	protected EmbeddedData encodeDataRefinement() {
+ 
+	public static EmbeddedData encodeDataRefinement(AbstractCyclicReport cyclicReport) {
 
 		CyclicReportTransferDataInvocDataRef dataRefinement = new CyclicReportTransferDataInvocDataRef();
 		QualifiedParameters qualifiedParameters = new QualifiedParameters();
-		for (QualifiedParameter param : this.qualifiedParameters) {
+		for (QualifiedParameter param : cyclicReport.getQualifiedParameters()) {
 			qualifiedParameters.getQualifiedParameter().add(param.encode(new b1.ccsds.csts.common.types.QualifiedParameter()));
 		}
 		dataRefinement.setQualifiedParameters(qualifiedParameters);
-		dataRefinement.setCyclicReportTransferDataInvocDataRefExtension(encodeInvocDataRefExtension().encode(
+		dataRefinement.setCyclicReportTransferDataInvocDataRefExtension(cyclicReport.encodeInvocDataRefExtension().encode(
 				new b1.ccsds.csts.common.types.Extended()));
 
 		// encode with a resizable output stream and an initial capacity of 128 bytes
@@ -70,8 +70,8 @@ public abstract class AbstractCyclicReportB1 extends AbstractCyclicReport {
 		return EmbeddedData.of(OIDs.crTransferDataInvocDataRef, dataRefinement.code);
 	}
 	
-	@Override
-	protected void decodeStartInvocationExtension(Extension extension) {
+	 
+	public static void decodeStartInvocationExtension(AbstractCyclicReport cyclicReport,Extension extension) {
 		if (extension.isUsed() && extension.getEmbeddedData().getOid().equals(OIDs.crStartInvocExt)) {
 			CyclicReportStartInvocExt invocationExtension = new CyclicReportStartInvocExt();
 			try (ByteArrayInputStream is = new ByteArrayInputStream(extension.getEmbeddedData().getData())) {
@@ -79,13 +79,13 @@ public abstract class AbstractCyclicReportB1 extends AbstractCyclicReport {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			setDeliveryCycle(invocationExtension.getDeliveryCycle().longValue());
-			setListOfParameters(ListOfParameters.decode(invocationExtension.getListOfParameters()));
-			decodeStartInvocationExtExtension(Extension.decode(invocationExtension.getCyclicReportStartInvocExtExtension()));
+			cyclicReport.setDeliveryCycle(invocationExtension.getDeliveryCycle().longValue());
+			cyclicReport.setListOfParameters(ListOfParameters.decode(invocationExtension.getListOfParameters()));
+			cyclicReport.decodeStartInvocationExtExtension(Extension.decode(invocationExtension.getCyclicReportStartInvocExtExtension()));
 		}
 	}
 
-	protected void decodeTransferDataRefinement(EmbeddedData embeddedData) {
+	public static void decodeTransferDataRefinement(AbstractCyclicReport cyclicReport,EmbeddedData embeddedData) {
 		if (embeddedData.getOid().equals(OIDs.crTransferDataInvocDataRef)) {
 			CyclicReportTransferDataInvocDataRef dataRefinement = new CyclicReportTransferDataInvocDataRef();
 			try (ByteArrayInputStream is = new ByteArrayInputStream(embeddedData.getData())) {
@@ -93,15 +93,15 @@ public abstract class AbstractCyclicReportB1 extends AbstractCyclicReport {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			qualifiedParameters.clear();
+			cyclicReport.getQualifiedParameters().clear();
 			for (b1.ccsds.csts.common.types.QualifiedParameter param : dataRefinement.getQualifiedParameters().getQualifiedParameter()) {
-				qualifiedParameters.add(QualifiedParameter.decode(param));
+				cyclicReport.getQualifiedParameters().add(QualifiedParameter.decode(param));
 			}
-			decodeInvocDataRefExtension(Extension.decode(dataRefinement.getCyclicReportTransferDataInvocDataRefExtension()));
+			cyclicReport.decodeInvocDataRefExtension(Extension.decode(dataRefinement.getCyclicReportTransferDataInvocDataRefExtension()));
 		}
 	}
 
-	protected void decodeStartDiagnosticExt(EmbeddedData embeddedData) {
+	public static void decodeStartDiagnosticExt(AbstractCyclicReport cyclicReport,EmbeddedData embeddedData) {
 		if (embeddedData.getOid().equals(OIDs.crStartDiagExt)) {
 			CyclicReportStartDiagnosticExt cyclicReportStartDiagnosticExt = new CyclicReportStartDiagnosticExt();
 			try (ByteArrayInputStream is = new ByteArrayInputStream(embeddedData.getData())) {
@@ -109,7 +109,7 @@ public abstract class AbstractCyclicReportB1 extends AbstractCyclicReport {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			setStartDiagnostics(CyclicReportStartDiagnostics.decode(cyclicReportStartDiagnosticExt));
+			cyclicReport.setStartDiagnostics(CyclicReportStartDiagnostics.decode(cyclicReportStartDiagnosticExt));
 		}
 	}
 

@@ -7,7 +7,7 @@ import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.states.UserStateInactive;
 
-public class CyclicReportUser extends AbstractCyclicReportB2 {
+public class CyclicReportUser extends AbstractCyclicReport {
 
 	@Override
 	protected void initializeState() {
