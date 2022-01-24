@@ -8,7 +8,7 @@ import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.states.throwevent.Inactive;
 import esa.egos.csts.api.states.throwevent.ThrowEventState;
 
-public class ThrowEventProvider extends AbstractThrowEventB2 {
+public class ThrowEventProvider extends AbstractThrowEvent {
 
 	@Override
 	protected void initializeState() {

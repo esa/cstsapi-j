@@ -8,7 +8,7 @@ import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.states.UserStateInactive;
 
-public class SequenceControlledDataProcessingUser extends AbstractSequenceControlledDataProcessingB2 {
+public class SequenceControlledDataProcessingUser extends AbstractSequenceControlledDataProcessing {
 
 	@Override
 	protected void initializeState() {

@@ -8,7 +8,7 @@ import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.parameters.impl.LabelLists;
 import esa.egos.csts.api.states.notification.Inactive;
 
-public class NotificationProvider extends AbstractNotificationB2 {
+public class NotificationProvider extends AbstractNotification {
 
 	@Override
 	protected void initializeState() {

@@ -479,7 +479,7 @@ public abstract class AbstractProcedure implements IProcedureInternal {
 	 * @return the initialized STOP operation if supported by this procedure, null
 	 *         otherwise
 	 */
-	protected IStart createStart() {
+	public IStart createStart() {
 		IStart start = OpsFactory.createStart(getServiceInstance().getSfwVersion());
 		start.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
 		try {
@@ -497,7 +497,7 @@ public abstract class AbstractProcedure implements IProcedureInternal {
 	 * @return the initialized STOP operation if supported by this procedure, null
 	 *         otherwise
 	 */
-	protected IStop createStop() {
+	public IStop createStop() {
 		IStop stop = OpsFactory.createStop(getServiceInstance().getSfwVersion());
 		stop.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
 		try {
@@ -515,7 +515,7 @@ public abstract class AbstractProcedure implements IProcedureInternal {
 	 * @return the initialized TRANSFER-DATA operation if supported by this
 	 *         procedure, null otherwise
 	 */
-	protected ITransferData createTransferData() {
+	public ITransferData createTransferData() {
 		ITransferData transferData = OpsFactory.createTransferData(getServiceInstance().getSfwVersion());
 		transferData.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
 		try {
@@ -534,7 +534,7 @@ public abstract class AbstractProcedure implements IProcedureInternal {
 	 * @return the initialized PROCESS-DATA operation (unconfirmed) if supported by
 	 *         this procedure, null otherwise
 	 */
-	protected IProcessData createProcessData() {
+	public IProcessData createProcessData() {
 		IProcessData processData = OpsFactory.createProcessData(getServiceInstance().getSfwVersion());
 		processData.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
 		try {
@@ -553,7 +553,7 @@ public abstract class AbstractProcedure implements IProcedureInternal {
 	 * @return the initialized PROCESS-DATA operation (confirmed) if supported by
 	 *         this procedure, null otherwise
 	 */
-	protected IConfirmedProcessData createConfirmedProcessData() {
+	public IConfirmedProcessData createConfirmedProcessData() {
 		IConfirmedProcessData confirmedProcessData = new ConfirmedProcessData();
 		confirmedProcessData.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
 		try {
@@ -571,7 +571,7 @@ public abstract class AbstractProcedure implements IProcedureInternal {
 	 * @return the initialized NOTIFY operation if supported by this procedure, null
 	 *         otherwise
 	 */
-	protected INotify createNotify() {
+	public INotify createNotify() {
 		INotify notify = OpsFactory.createNotify(getServiceInstance().getSfwVersion());
 		notify.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
 		try {
@@ -589,7 +589,7 @@ public abstract class AbstractProcedure implements IProcedureInternal {
 	 * @return the initialized GET operation if supported by this procedure, null
 	 *         otherwise
 	 */
-	protected IGet createGet() {
+	public IGet createGet() {
 		IGet get = OpsFactory.createGet(getServiceInstance().getSfwVersion());
 		get.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
 		try {
@@ -607,7 +607,7 @@ public abstract class AbstractProcedure implements IProcedureInternal {
 	 * @return the initialized EXECUTE-DIRECTIVE operation if supported by this
 	 *         procedure, null otherwise
 	 */
-	protected IExecuteDirective createExecuteDirective() {
+	public IExecuteDirective createExecuteDirective() {
 		IExecuteDirective executeDirective = OpsFactory.createExecuteDifrective(getServiceInstance().getSfwVersion());
 		executeDirective.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
 		try {

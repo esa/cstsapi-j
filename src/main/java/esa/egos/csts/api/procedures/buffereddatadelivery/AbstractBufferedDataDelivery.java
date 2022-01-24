@@ -1,6 +1,5 @@
 package esa.egos.csts.api.procedures.buffereddatadelivery;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.BufferOverflowException;
 import java.util.concurrent.Executors;
@@ -8,8 +7,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
-
-import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 
 import esa.egos.csts.api.diagnostics.BufferedDataDeliveryStartDiagnostic;
 import esa.egos.csts.api.enumerations.CstsResult;
@@ -58,17 +55,28 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 	private ScheduledFuture<?> releaseTimer;
 
 	private long sequenceCounter;
+	
+	private BufferedDataDeliveryCodec bufferedDataDeliveryCodec;
 
 	protected AbstractBufferedDataDelivery() {
 		executor = Executors.newSingleThreadScheduledExecutor();
 		startGenerationTime = ConditionalTime.unknown();
 		stopGenerationTime = ConditionalTime.unknown();
 		sequenceCounter = 0;
+		bufferedDataDeliveryCodec = new BufferedDataDeliveryCodec(this);
 	}
 
 	@Override
 	public ProcedureType getType() {
 		return TYPE;
+	}
+	
+	public IReturnBuffer getReturnBuffer() {
+		return returnBuffer;
+	}
+	
+	public void setReturnBuffer(IReturnBuffer returnBuffer) {
+		this.returnBuffer = returnBuffer;
 	}
 
 
@@ -119,10 +127,18 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 	public ConditionalTime getStartGenerationTime() {
 		return startGenerationTime;
 	}
+	
+	public void setStartGenerationTime(ConditionalTime startGenerationTime) {
+		this.startGenerationTime = startGenerationTime;
+	}
 
 	@Override
 	public ConditionalTime getStopGenerationTime() {
 		return stopGenerationTime;
+	}
+	
+	public void setStopGenerationTime(ConditionalTime stopGenerationTime) {
+		this.stopGenerationTime = stopGenerationTime;
 	}
 
 	@Override
@@ -171,6 +187,10 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 	@Override
 	public void setStartDiagnostic(BufferedDataDeliveryStartDiagnostic startDiagnostic) {
 		this.startDiagnostic = startDiagnostic;
+	}
+	
+	public BufferedDataDeliveryStartDiagnostic getStartDiagnostic() {
+		return this.startDiagnostic ;
 	}
 
 	@Override
@@ -387,149 +407,13 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 
 	@Override
 	public byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException {
-
-		switch (getServiceInstance().getSfwVersion()) {
-		case B1: return encodeOperation(operation, isInvoke, new b1.ccsds.csts.buffered.data.delivery.pdus.BufferedDataDeliveryPdu());
-		case B2: return encodeOperation(operation, isInvoke, new b2.ccsds.csts.buffered.data.delivery.pdus.BufferedDataDeliveryPdu());
-		default:
-			throw new IOException("Cannot encode operation for specified service instance");
-		}
+		return bufferedDataDeliveryCodec.encodeOperation(operation, isInvoke);
 	}
 	
-	public byte[] encodeOperation(IOperation operation, boolean isInvoke,b1.ccsds.csts.buffered.data.delivery.pdus.BufferedDataDeliveryPdu pdu) throws IOException {
-
-		byte[] encodedOperation;
-
-		if (operation.getType() == OperationType.START) {
-			IStart start = (IStart) operation;
-			if (isInvoke) {
-				pdu.setStartInvocation((b1.ccsds.csts.common.operations.pdus.StartInvocation)start.encodeStartInvocation());
-			} else {
-				pdu.setStartReturn((b1.ccsds.csts.common.operations.pdus.StartReturn)start.encodeStartReturn());
-			}
-		} else if (operation.getType() == OperationType.STOP) {
-			IStop stop = (IStop) operation;
-			if (isInvoke) {
-				pdu.setStopInvocation((b1.ccsds.csts.common.operations.pdus.StopInvocation)stop.encodeStopInvocation());
-			} else {
-				pdu.setStopReturn((b1.ccsds.csts.common.operations.pdus.StopReturn)stop.encodeStopReturn());
-			}
-		} else if (operation.getType() == OperationType.RETURN_BUFFER) {
-			b1.ccsds.csts.buffered.data.delivery.pdus.ReturnBuffer returnBuffer = new b1.ccsds.csts.buffered.data.delivery.pdus.ReturnBuffer();
-			for (IOperation op : this.returnBuffer.getBuffer()) {
-				b1.ccsds.csts.buffered.data.delivery.pdus.TransferDataOrNotification transferDataOrNotification = new b1.ccsds.csts.buffered.data.delivery.pdus.TransferDataOrNotification();
-				if (op.getType() == OperationType.TRANSFER_DATA) {
-					ITransferData transferData = (ITransferData) op;
-					transferDataOrNotification.setTransferDataInvocation(
-							(b1.ccsds.csts.common.operations.pdus.TransferDataInvocation)transferData.encodeTransferDataInvocation());
-				} else if (op.getType() == OperationType.NOTIFY) {
-					INotify notify = (INotify) op;
-					transferDataOrNotification.setNotifyInvocation(
-							(b1.ccsds.csts.common.operations.pdus.NotifyInvocation)notify.encodeNotifyInvocation());
-				}
-				returnBuffer.getTransferDataOrNotification().add(transferDataOrNotification);
-			}
-			pdu.setReturnBuffer(returnBuffer);
-		}
-
-		try (ReverseByteArrayOutputStream berBAOStream = new ReverseByteArrayOutputStream(10, true)) {
-			pdu.encode(berBAOStream);
-			encodedOperation = berBAOStream.getArray();
-		}
-
-		return encodedOperation;
-	}
-	
-	public byte[] encodeOperation(IOperation operation, boolean isInvoke,b2.ccsds.csts.buffered.data.delivery.pdus.BufferedDataDeliveryPdu pdu) throws IOException {
-
-		byte[] encodedOperation;
-
-		if (operation.getType() == OperationType.START) {
-			IStart start = (IStart) operation;
-			if (isInvoke) {
-				pdu.setStartInvocation((b2.ccsds.csts.common.operations.pdus.StartInvocation)start.encodeStartInvocation());
-			} else {
-				pdu.setStartReturn((b2.ccsds.csts.common.operations.pdus.StartReturn)start.encodeStartReturn());
-			}
-		} else if (operation.getType() == OperationType.STOP) {
-			IStop stop = (IStop) operation;
-			if (isInvoke) {
-				pdu.setStopInvocation((b2.ccsds.csts.common.operations.pdus.StopInvocation)stop.encodeStopInvocation());
-			} else {
-				pdu.setStopReturn((b2.ccsds.csts.common.operations.pdus.StopReturn)stop.encodeStopReturn());
-			}
-		} else if (operation.getType() == OperationType.RETURN_BUFFER) {
-			b2.ccsds.csts.buffered.data.delivery.pdus.ReturnBuffer returnBuffer = new b2.ccsds.csts.buffered.data.delivery.pdus.ReturnBuffer();
-			for (IOperation op : this.returnBuffer.getBuffer()) {
-				b2.ccsds.csts.buffered.data.delivery.pdus.TransferDataOrNotification transferDataOrNotification = new b2.ccsds.csts.buffered.data.delivery.pdus.TransferDataOrNotification();
-				if (op.getType() == OperationType.TRANSFER_DATA) {
-					ITransferData transferData = (ITransferData) op;
-					transferDataOrNotification.setTransferDataInvocation(
-							(b2.ccsds.csts.common.operations.pdus.TransferDataInvocation)transferData.encodeTransferDataInvocation());
-				} else if (op.getType() == OperationType.NOTIFY) {
-					INotify notify = (INotify) op;
-					transferDataOrNotification.setNotifyInvocation(
-							(b2.ccsds.csts.common.operations.pdus.NotifyInvocation)notify.encodeNotifyInvocation());
-				}
-				returnBuffer.getTransferDataOrNotification().add(transferDataOrNotification);
-			}
-			pdu.setReturnBuffer(returnBuffer);
-		}
-
-		try (ReverseByteArrayOutputStream berBAOStream = new ReverseByteArrayOutputStream(10, true)) {
-			pdu.encode(berBAOStream);
-			encodedOperation = berBAOStream.getArray();
-		}
-
-		return encodedOperation;
-	}
-
 	private EmbeddedData encodeInvocationExtension() {
-		switch (getServiceInstance().getSfwVersion()) {
-		case B1: return encodeInvocationExtension(new b1.ccsds.csts.buffered.data.delivery.pdus.BuffDataDelStartInvocExt());
-		case B2: return encodeInvocationExtension(new b2.ccsds.csts.buffered.data.delivery.pdus.BuffDataDelStartInvocExt());
-		default: return null;
-		}
+		return bufferedDataDeliveryCodec.encodeInvocationExtension();
 	}
 			
-	
-	
-	private EmbeddedData encodeInvocationExtension(b1.ccsds.csts.buffered.data.delivery.pdus.BuffDataDelStartInvocExt invocationExtension) {
-
-		invocationExtension.setStartGenerationTime(startGenerationTime.encode(new b1.ccsds.csts.common.types.ConditionalTime()));
-		invocationExtension.setStopGenerationTime(stopGenerationTime.encode(new b1.ccsds.csts.common.types.ConditionalTime()));
-		invocationExtension.setBuffDataDelStartInvocExtExtension(encodeStartInvocationExtExtension().encode(
-				new b1.ccsds.csts.common.types.Extended()));
-
-		// encode with a resizable output stream and an initial capacity of 128 bytes
-		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
-			invocationExtension.encode(os);
-			invocationExtension.code = os.getArray();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return EmbeddedData.of(OIDs.bddStartInvocExt, invocationExtension.code);
-	}
-	
-	private EmbeddedData encodeInvocationExtension(b2.ccsds.csts.buffered.data.delivery.pdus.BuffDataDelStartInvocExt invocationExtension) {
-
-		invocationExtension.setStartGenerationTime(startGenerationTime.encode(new b2.ccsds.csts.common.types.ConditionalTime()));
-		invocationExtension.setStopGenerationTime(stopGenerationTime.encode(new b2.ccsds.csts.common.types.ConditionalTime()));
-		invocationExtension.setBuffDataDelStartInvocExtExtension(encodeStartInvocationExtExtension().encode(
-				new b2.ccsds.csts.common.types.Extended()));
-
-		// encode with a resizable output stream and an initial capacity of 128 bytes
-		try (ReverseByteArrayOutputStream os = new ReverseByteArrayOutputStream(128, true)) {
-			invocationExtension.encode(os);
-			invocationExtension.code = os.getArray();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return EmbeddedData.of(OIDs.bddStartInvocExt, invocationExtension.code);
-	}
-
 	/**
 	 * This method should be overridden to encode the extension of a derived
 	 * procedure.
@@ -543,12 +427,7 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 
 	@Override
 	public EmbeddedData encodeStartDiagnosticExt() {
-		switch(getServiceInstance().getSfwVersion())
-		{
-		case B1: return EmbeddedData.of(OIDs.bddStartDiagExt, startDiagnostic.encode(new b1.ccsds.csts.buffered.data.delivery.pdus.BuffDataDelStartDiagnosticExt()).code);
-		case B2: return EmbeddedData.of(OIDs.bddStartDiagExt, startDiagnostic.encode(new b2.ccsds.csts.buffered.data.delivery.pdus.BuffDataDelStartDiagnosticExt()).code);
-		default: return null;
-		}
+		return bufferedDataDeliveryCodec.encodeStartDiagnosticExt();
 	}
 
 	@Override
@@ -573,150 +452,13 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 	
 	@Override
 	public IOperation decodeOperation(byte[] encodedPdu) throws IOException {
-		switch(getServiceInstance().getSfwVersion()) {
-		case B1: return decodeOperation(encodedPdu, new b1.ccsds.csts.buffered.data.delivery.pdus.BufferedDataDeliveryPdu());
-		case B2: return decodeOperation(encodedPdu, new b2.ccsds.csts.buffered.data.delivery.pdus.BufferedDataDeliveryPdu());
-		default: throw new IOException();
-		}
+		return bufferedDataDeliveryCodec.decodeOperation(encodedPdu);
 	}
 	
-
-
-	public IOperation decodeOperation(byte[] encodedPdu,b1.ccsds.csts.buffered.data.delivery.pdus.BufferedDataDeliveryPdu pdu) throws IOException {
-
-		try (ByteArrayInputStream is = new ByteArrayInputStream(encodedPdu)) {
-			pdu.decode(is);
-		}
-
-		IOperation operation = null;
-
-		if (pdu.getStartInvocation() != null) {
-			IStart start = createStart();
-			start.decodeStartInvocation(pdu.getStartInvocation());
-			operation = start;
-		} else if (pdu.getStartReturn() != null) {
-			IStart start = createStart();
-			start.decodeStartReturn(pdu.getStartReturn());
-			operation = start;
-		} else if (pdu.getStopInvocation() != null) {
-			IStop stop = createStop();
-			stop.decodeStopInvocation(pdu.getStopInvocation());
-			operation = stop;
-		} else if (pdu.getStopReturn() != null) {
-			IStop stop = createStop();
-			stop.decodeStopReturn(pdu.getStopReturn());
-			operation = stop;
-		} else if (pdu.getTransferDataInvocation() != null) {
-			ITransferData transferData = createTransferData();
-			transferData.decodeTransferDataInvocation(pdu.getTransferDataInvocation());
-			operation = transferData;
-		} else if (pdu.getNotifyInvocation() != null) {
-			INotify notify = createNotify();
-			notify.decodeNotifyInvocation(pdu.getNotifyInvocation());
-			operation = notify;
-		} else if (pdu.getReturnBuffer() != null) {
-			for (b1.ccsds.csts.buffered.data.delivery.pdus.TransferDataOrNotification data : pdu.getReturnBuffer().getTransferDataOrNotification()) {
-				if (data.getTransferDataInvocation() != null) {
-					ITransferData transferData = createTransferData();
-					transferData.decodeTransferDataInvocation(data.getTransferDataInvocation());
-					returnBuffer.getBuffer().add(transferData);
-				} else if (data.getTransferDataInvocation() != null) {
-					INotify notify = createNotify();
-					notify.decodeNotifyInvocation(data.getNotifyInvocation());
-					returnBuffer.getBuffer().add(notify);
-				}
-			}
-			operation = returnBuffer;
-			returnBuffer = createReturnBuffer();
-		}
-
-		return operation;
-	}
-	
-	public IOperation decodeOperation(byte[] encodedPdu,b2.ccsds.csts.buffered.data.delivery.pdus.BufferedDataDeliveryPdu pdu) throws IOException {
-
-		try (ByteArrayInputStream is = new ByteArrayInputStream(encodedPdu)) {
-			pdu.decode(is);
-		}
-
-		IOperation operation = null;
-
-		if (pdu.getStartInvocation() != null) {
-			IStart start = createStart();
-			start.decodeStartInvocation(pdu.getStartInvocation());
-			operation = start;
-		} else if (pdu.getStartReturn() != null) {
-			IStart start = createStart();
-			start.decodeStartReturn(pdu.getStartReturn());
-			operation = start;
-		} else if (pdu.getStopInvocation() != null) {
-			IStop stop = createStop();
-			stop.decodeStopInvocation(pdu.getStopInvocation());
-			operation = stop;
-		} else if (pdu.getStopReturn() != null) {
-			IStop stop = createStop();
-			stop.decodeStopReturn(pdu.getStopReturn());
-			operation = stop;
-		} else if (pdu.getTransferDataInvocation() != null) {
-			ITransferData transferData = createTransferData();
-			transferData.decodeTransferDataInvocation(pdu.getTransferDataInvocation());
-			operation = transferData;
-		} else if (pdu.getNotifyInvocation() != null) {
-			INotify notify = createNotify();
-			notify.decodeNotifyInvocation(pdu.getNotifyInvocation());
-			operation = notify;
-		} else if (pdu.getReturnBuffer() != null) {
-			for (b2.ccsds.csts.buffered.data.delivery.pdus.TransferDataOrNotification data : pdu.getReturnBuffer().getTransferDataOrNotification()) {
-				if (data.getTransferDataInvocation() != null) {
-					ITransferData transferData = createTransferData();
-					transferData.decodeTransferDataInvocation(data.getTransferDataInvocation());
-					returnBuffer.getBuffer().add(transferData);
-				} else if (data.getTransferDataInvocation() != null) {
-					INotify notify = createNotify();
-					notify.decodeNotifyInvocation(data.getNotifyInvocation());
-					returnBuffer.getBuffer().add(notify);
-				}
-			}
-			operation = returnBuffer;
-			returnBuffer = createReturnBuffer();
-		}
-
-		return operation;
-	}
-
 	private void decodeStartInvocationExtension(Extension extension) {
-		if (extension.isUsed() && extension.getEmbeddedData().getOid().equals(OIDs.bddStartInvocExt)) {
-			switch (getServiceInstance().getSfwVersion()) {
-			case B1: decodeStartInvocationExtension(extension, new b1.ccsds.csts.buffered.data.delivery.pdus.BuffDataDelStartInvocExt());break;
-			case B2: decodeStartInvocationExtension(extension, new b2.ccsds.csts.buffered.data.delivery.pdus.BuffDataDelStartInvocExt());break;
-			default:
-				break;
-			}
-		}
+		bufferedDataDeliveryCodec.decodeStartInvocationExtension(extension);
 	}
 	
-	private void decodeStartInvocationExtension(Extension extension,b1.ccsds.csts.buffered.data.delivery.pdus.BuffDataDelStartInvocExt invocationExtension) {
-		try (ByteArrayInputStream is = new ByteArrayInputStream(extension.getEmbeddedData().getData())) {
-			invocationExtension.decode(is);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		startGenerationTime = ConditionalTime.decode(invocationExtension.getStartGenerationTime());
-		stopGenerationTime = ConditionalTime.decode(invocationExtension.getStopGenerationTime());
-		decodeStartInvocationExtExtension(Extension.decode(invocationExtension.getBuffDataDelStartInvocExtExtension()));
-	}
-	
-	private void decodeStartInvocationExtension(Extension extension,b2.ccsds.csts.buffered.data.delivery.pdus.BuffDataDelStartInvocExt invocationExtension) {
-		try (ByteArrayInputStream is = new ByteArrayInputStream(extension.getEmbeddedData().getData())) {
-			invocationExtension.decode(is);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		startGenerationTime = ConditionalTime.decode(invocationExtension.getStartGenerationTime());
-		stopGenerationTime = ConditionalTime.decode(invocationExtension.getStopGenerationTime());
-		decodeStartInvocationExtExtension(Extension.decode(invocationExtension.getBuffDataDelStartInvocExtExtension()));
-	}
-
 	/**
 	 * This method should be overridden to decode the extension of a derived
 	 * procedure.
@@ -729,33 +471,6 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 	}
 
 	private void decodeStartDiagnosticExt(EmbeddedData diagnosticExtension) {
-		if (diagnosticExtension.getOid().equals(OIDs.bddStartDiagExt)) {
-			switch (getServiceInstance().getSfwVersion()) {
-			case B1: decodeStartDiagnosticExt(diagnosticExtension, new b1.ccsds.csts.buffered.data.delivery.pdus.BuffDataDelStartDiagnosticExt());break;
-			case B2: decodeStartDiagnosticExt(diagnosticExtension, new b2.ccsds.csts.buffered.data.delivery.pdus.BuffDataDelStartDiagnosticExt());break;
-			default:
-				break;
-			}
-		}
-	}
-
-	private void decodeStartDiagnosticExt(EmbeddedData diagnosticExtension, b1.ccsds.csts.buffered.data.delivery.pdus.BuffDataDelStartDiagnosticExt  buffDataDelStartDiagnosticExt) {
-		try (ByteArrayInputStream is = new ByteArrayInputStream(diagnosticExtension.getData())) {
-			buffDataDelStartDiagnosticExt.decode(is);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		startDiagnostic = BufferedDataDeliveryStartDiagnostic.decode(buffDataDelStartDiagnosticExt);
-	}
-	
-	private void decodeStartDiagnosticExt(EmbeddedData diagnosticExtension, b2.ccsds.csts.buffered.data.delivery.pdus.BuffDataDelStartDiagnosticExt  buffDataDelStartDiagnosticExt) {
-		try (ByteArrayInputStream is = new ByteArrayInputStream(diagnosticExtension.getData())) {
-			buffDataDelStartDiagnosticExt.decode(is);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		startDiagnostic = BufferedDataDeliveryStartDiagnostic.decode(buffDataDelStartDiagnosticExt);
-	}
-	
-	
+		bufferedDataDeliveryCodec.decodeStartDiagnosticExt(diagnosticExtension);
+	}	
 }

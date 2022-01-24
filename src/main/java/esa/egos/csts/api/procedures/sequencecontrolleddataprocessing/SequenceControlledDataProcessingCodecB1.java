@@ -28,18 +28,19 @@ import esa.egos.csts.api.operations.IStart;
 import esa.egos.csts.api.operations.IStop;
 import esa.egos.csts.api.types.ConditionalTime;
 
-public abstract class AbstractSequenceControlledDataProcessingB1 extends  AbstractSequenceControlledDataProcessing {
+public class SequenceControlledDataProcessingCodecB1{
 	
-	public EmbeddedData encodeProcessDataDiagnosticExt() {
-		return EmbeddedData.of(OIDs.scdpProcDataDiagExt, getDiagnostics().encode(
+	public static EmbeddedData encodeProcessDataDiagnosticExt(AbstractSequenceControlledDataProcessing sequenceControlledDataProcessing) {
+		return EmbeddedData.of(OIDs.scdpProcDataDiagExt, sequenceControlledDataProcessing.getDiagnostics().encode(
 				new b1.ccsds.csts.sequence.controlled.data.processing.pdus.SequContrDataProcProcDataDiagnosticExt()).code);
 	}
 	
-	protected EmbeddedData encodeStartInvocationExtension() {
+	public static EmbeddedData encodeStartInvocationExtension(AbstractSequenceControlledDataProcessing sequenceControlledDataProcessing) {
 
 		SequContrDataProcStartInvocExt invocationExtension = new SequContrDataProcStartInvocExt();
-		invocationExtension.setFirstDataUnitId(new DataUnitId(getFirstDataUnitId()));
-		invocationExtension.setSequContrDataProcStartInvocExtExtension(encodeStartInvocationExtExtension().encode(
+		invocationExtension.setFirstDataUnitId(new DataUnitId(sequenceControlledDataProcessing.getFirstDataUnitId()));
+		invocationExtension.setSequContrDataProcStartInvocExtExtension(
+				sequenceControlledDataProcessing.encodeStartInvocationExtExtension().encode(
 				new b1.ccsds.csts.common.types.Extended()));
 
 		// encode with a resizable output stream and an initial capacity of 128 bytes
@@ -53,12 +54,15 @@ public abstract class AbstractSequenceControlledDataProcessingB1 extends  Abstra
 		return EmbeddedData.of(OIDs.scdpStartInvocExt, invocationExtension.code);
 	}
 	
-	protected Extension encodeProcDataInvocationExtExtension() {
+	public static Extension encodeProcDataInvocationExtExtension(AbstractSequenceControlledDataProcessing sequenceControlledDataProcessing) {
 
 		SequContrDataProcProcDataInvocExt invocationExtension = new SequContrDataProcProcDataInvocExt();
-		invocationExtension.setEarliestDataProcessingTime(getEarliestDataProcessingTime().encode(new b1.ccsds.csts.common.types.ConditionalTime()));
-		invocationExtension.setLatestDataProcessingTime(getLatestDataProcessingTime().encode(new b1.ccsds.csts.common.types.ConditionalTime()));
-		invocationExtension.setSequContrDataProcDataInvocExtExtension(encodeProcDataInvocationExtExtExtension().encode(
+		invocationExtension.setEarliestDataProcessingTime(
+				sequenceControlledDataProcessing.getEarliestDataProcessingTime().encode(new b1.ccsds.csts.common.types.ConditionalTime()));
+		invocationExtension.setLatestDataProcessingTime(
+				sequenceControlledDataProcessing.getLatestDataProcessingTime().encode(new b1.ccsds.csts.common.types.ConditionalTime()));
+		invocationExtension.setSequContrDataProcDataInvocExtExtension(
+				sequenceControlledDataProcessing.encodeProcDataInvocationExtExtExtension().encode(
 				new b1.ccsds.csts.common.types.Extended()));
 
 		// encode with a resizable output stream and an initial capacity of 128 bytes
@@ -72,11 +76,12 @@ public abstract class AbstractSequenceControlledDataProcessingB1 extends  Abstra
 		return Extension.of(EmbeddedData.of(OIDs.scdpProcDataInvocExt, invocationExtension.code));
 	}
 	
-	public EmbeddedData encodeProcessDataPosReturnExtension() {
+	public static EmbeddedData encodeProcessDataPosReturnExtension(AbstractSequenceControlledDataProcessing sequenceControlledDataProcessing) {
 
 		SequContrDataProcProcDataPosReturnExt returnExtension = new SequContrDataProcProcDataPosReturnExt();
-		returnExtension.setDataUnitId(new DataUnitId(getDataUnitId()));
-		returnExtension.setSequContrDataProcProcDataPosReturnExtExtension(encodeProcessDataPosReturnExtExtension().encode(
+		returnExtension.setDataUnitId(new DataUnitId(sequenceControlledDataProcessing.getDataUnitId()));
+		returnExtension.setSequContrDataProcProcDataPosReturnExtExtension(
+				sequenceControlledDataProcessing.encodeProcessDataPosReturnExtExtension().encode(
 				new b1.ccsds.csts.common.types.Extended()));
 
 		// encode with a resizable output stream and an initial capacity of 128 bytes
@@ -90,11 +95,11 @@ public abstract class AbstractSequenceControlledDataProcessingB1 extends  Abstra
 		return EmbeddedData.of(OIDs.scdpProcDataPosReturnExt, returnExtension.code);
 	}
 	
-	public EmbeddedData encodeProcessDataNegReturnExtension() {
+	public static EmbeddedData encodeProcessDataNegReturnExtension(AbstractSequenceControlledDataProcessing sequenceControlledDataProcessing) {
 
 		SequContrDataProcProcDataNegReturnExt returnExtension = new SequContrDataProcProcDataNegReturnExt();
-		returnExtension.setDataUnitId(new DataUnitId(getDataUnitId()));
-		returnExtension.setSequContrDataProcProcDataNegReturnExtExtension(encodeProcessDataNegReturnExtExtension().encode(
+		returnExtension.setDataUnitId(new DataUnitId(sequenceControlledDataProcessing.getDataUnitId()));
+		returnExtension.setSequContrDataProcProcDataNegReturnExtExtension(sequenceControlledDataProcessing.encodeProcessDataNegReturnExtExtension().encode(
 				new b1.ccsds.csts.common.types.Extended()));
 
 		// encode with a resizable output stream and an initial capacity of 128 bytes
@@ -108,9 +113,9 @@ public abstract class AbstractSequenceControlledDataProcessingB1 extends  Abstra
 		return EmbeddedData.of(OIDs.scdpProcDataNegReturnExt, returnExtension.code);
 	}
 	
-	protected EmbeddedData encodeDataProcessingStatusExtension() {
+	public static EmbeddedData encodeDataProcessingStatusExtension(AbstractSequenceControlledDataProcessing sequenceControlledDataProcessing) {
 		SequContrDataProcStatus status = new SequContrDataProcStatus();
-		switch (getDataProcessingStatus()) {
+		switch (sequenceControlledDataProcessing.getDataProcessingStatus()) {
 		case EXPIRED:
 			status.setExpired(new BerNull());
 			break;
@@ -118,14 +123,14 @@ public abstract class AbstractSequenceControlledDataProcessingB1 extends  Abstra
 			status.setProcessingNotStarted(new BerNull());
 			break;
 		case EXTENDED:
-			status.setSequContrDataProcStatusExtension(encodeDataProcessingStatusExtExtension().encode(
+			status.setSequContrDataProcStatusExtension(sequenceControlledDataProcessing.encodeDataProcessingStatusExtExtension().encode(
 					new b1.ccsds.csts.common.types.Embedded()));
 			break;
 		}
 		return EmbeddedData.of(OIDs.scdpNotifyProcStatusExt, status.code);
 	}
 
-	public byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException {
+	public static byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException {
 
 		byte[] encodedOperation;
 		SequContrDataProcessingPdu pdu = new SequContrDataProcessingPdu();
@@ -177,7 +182,7 @@ public abstract class AbstractSequenceControlledDataProcessingB1 extends  Abstra
 		return encodedOperation;
 	}
 	
-	protected void decodeStartInvocationExtension(Extension extension) {
+	public static void decodeStartInvocationExtension(AbstractSequenceControlledDataProcessing sequenceControlledDataProcessing,Extension extension) {
 		if (extension.isUsed() && extension.getEmbeddedData().getOid().equals(OIDs.scdpStartInvocExt)) {
 			SequContrDataProcStartInvocExt invocationExtension = new SequContrDataProcStartInvocExt();
 			try (ByteArrayInputStream is = new ByteArrayInputStream(extension.getEmbeddedData().getData())) {
@@ -186,12 +191,15 @@ public abstract class AbstractSequenceControlledDataProcessingB1 extends  Abstra
 				e.printStackTrace();
 			}
 			
-			setFirstDataUnitId(invocationExtension.getFirstDataUnitId().longValue());
-			decodeStartInvocationExtExtension(Extension.decode(invocationExtension.getSequContrDataProcStartInvocExtExtension()));
+			sequenceControlledDataProcessing
+				.setFirstDataUnitId(invocationExtension.getFirstDataUnitId().longValue());
+			sequenceControlledDataProcessing
+				.decodeStartInvocationExtExtension(Extension.decode(invocationExtension.getSequContrDataProcStartInvocExtExtension()));
 		}
 	}
 	
-	protected void decodeProcessDataInvocationExtExtension(Extension extension) {
+	public static void decodeProcessDataInvocationExtExtension(AbstractSequenceControlledDataProcessing sequenceControlledDataProcessing,
+			Extension extension) {
 		if (extension.isUsed() && extension.getEmbeddedData().getOid().equals(OIDs.scdpProcDataInvocExt)) {
 			SequContrDataProcProcDataInvocExt invocationExtension = new SequContrDataProcProcDataInvocExt();
 			try (ByteArrayInputStream is = new ByteArrayInputStream(extension.getEmbeddedData().getData())) {
@@ -199,13 +207,14 @@ public abstract class AbstractSequenceControlledDataProcessingB1 extends  Abstra
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			setEarliestDataProcessingTime(ConditionalTime.decode(invocationExtension.getEarliestDataProcessingTime()));
-			setLatestDataProcessingTime(ConditionalTime.decode(invocationExtension.getLatestDataProcessingTime()));
-			decodeProcessDataInvocationExtExtExtension(Extension.decode(invocationExtension.getSequContrDataProcDataInvocExtExtension()));
+			sequenceControlledDataProcessing.setEarliestDataProcessingTime(ConditionalTime.decode(invocationExtension.getEarliestDataProcessingTime()));
+			sequenceControlledDataProcessing.setLatestDataProcessingTime(ConditionalTime.decode(invocationExtension.getLatestDataProcessingTime()));
+			sequenceControlledDataProcessing.decodeProcessDataInvocationExtExtExtension(Extension.decode(invocationExtension.getSequContrDataProcDataInvocExtExtension()));
 		}
 	}
 
-	protected void decodeProcessDataPosReturnExtension(Extension extension) {
+	public static void decodeProcessDataPosReturnExtension(AbstractSequenceControlledDataProcessing sequenceControlledDataProcessing,
+			Extension extension) {
 		if (extension.isUsed() && extension.getEmbeddedData().getOid().equals(OIDs.scdpProcDataPosReturnExt)) {
 			SequContrDataProcProcDataPosReturnExt returnExtension = new SequContrDataProcProcDataPosReturnExt();
 			try (ByteArrayInputStream is = new ByteArrayInputStream(extension.getEmbeddedData().getData())) {
@@ -213,12 +222,15 @@ public abstract class AbstractSequenceControlledDataProcessingB1 extends  Abstra
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			setDataUnitId(returnExtension.getDataUnitId().longValue());
-			decodeProcessDataPosReturnExtExtension(Extension.decode(returnExtension.getSequContrDataProcProcDataPosReturnExtExtension()));
+			sequenceControlledDataProcessing
+				.setDataUnitId(returnExtension.getDataUnitId().longValue());
+			sequenceControlledDataProcessing
+				.decodeProcessDataPosReturnExtExtension(Extension.decode(returnExtension.getSequContrDataProcProcDataPosReturnExtExtension()));
 		}
 	}
 	
-	protected void decodeProcessDataDiagnosticExt(EmbeddedData embeddedData) {
+	public static void decodeProcessDataDiagnosticExt(AbstractSequenceControlledDataProcessing sequenceControlledDataProcessing,
+			EmbeddedData embeddedData) {
 		if (embeddedData.getOid().equals(OIDs.scdpProcDataDiagExt)) {
 			SequContrDataProcProcDataDiagnosticExt diagnostics = new SequContrDataProcProcDataDiagnosticExt();
 			try (ByteArrayInputStream is = new ByteArrayInputStream(embeddedData.getData())) {
@@ -226,11 +238,12 @@ public abstract class AbstractSequenceControlledDataProcessingB1 extends  Abstra
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			setDiagnostics(SeqControlledDataProcDiagnostics.decode(diagnostics));
+			sequenceControlledDataProcessing.setDiagnostics(SeqControlledDataProcDiagnostics.decode(diagnostics));
 		}
 	}
 	
-	protected void decodeProcessDataNegReturnExtension(Extension extension) {
+	public static void decodeProcessDataNegReturnExtension(AbstractSequenceControlledDataProcessing sequenceControlledDataProcessing,
+			Extension extension) {
 		if (extension.isUsed() && extension.getEmbeddedData().getOid().equals(OIDs.scdpProcDataNegReturnExt)) {
 			SequContrDataProcProcDataNegReturnExt returnExtension = new SequContrDataProcProcDataNegReturnExt();
 			try (ByteArrayInputStream is = new ByteArrayInputStream(extension.getEmbeddedData().getData())) {
@@ -238,12 +251,15 @@ public abstract class AbstractSequenceControlledDataProcessingB1 extends  Abstra
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			setDataUnitId(returnExtension.getDataUnitId().longValue());
-			decodeProcessDataNegReturnExtExtension(Extension.decode(returnExtension.getSequContrDataProcProcDataNegReturnExtExtension()));
+			sequenceControlledDataProcessing
+				.setDataUnitId(returnExtension.getDataUnitId().longValue());
+			sequenceControlledDataProcessing
+				.decodeProcessDataNegReturnExtExtension(Extension.decode(returnExtension.getSequContrDataProcProcDataNegReturnExtExtension()));
 		}
 	}
 	
-	protected void decodeDataProcessingStatusExtension(EmbeddedData embeddedData) {
+	public static void decodeDataProcessingStatusExtension(AbstractSequenceControlledDataProcessing sequenceControlledDataProcessing,
+			EmbeddedData embeddedData) {
 
 		SequContrDataProcStatus status = new SequContrDataProcStatus();
 		try (ByteArrayInputStream is = new ByteArrayInputStream(embeddedData.getData())) {
@@ -253,18 +269,18 @@ public abstract class AbstractSequenceControlledDataProcessingB1 extends  Abstra
 		}
 
 		if (status.getExpired() != null) {
-			setDataProcessingStatus(DataProcessingStatus.EXPIRED);
+			sequenceControlledDataProcessing.setDataProcessingStatus(DataProcessingStatus.EXPIRED);
 		} else if (status.getProcessingNotStarted() != null) {
-			setDataProcessingStatus(DataProcessingStatus.PROCESSING_NOT_STARTED);
+			sequenceControlledDataProcessing.setDataProcessingStatus(DataProcessingStatus.PROCESSING_NOT_STARTED);
 		} else if (status.getSequContrDataProcStatusExtension() != null) {
-			setDataProcessingStatus(DataProcessingStatus.EXTENDED);
-			decodeDataProcessingStatusExtExtension(EmbeddedData.decode(status.getSequContrDataProcStatusExtension()));
+			sequenceControlledDataProcessing.setDataProcessingStatus(DataProcessingStatus.EXTENDED);
+			sequenceControlledDataProcessing.decodeDataProcessingStatusExtExtension(
+					EmbeddedData.decode(status.getSequContrDataProcStatusExtension()));
 		}
 	}
 	
 
-	@Override
-	public IOperation decodeOperation(byte[] encodedPdu) throws IOException {
+	public static IOperation decodeOperation(AbstractSequenceControlledDataProcessing sequenceControlledDataProcessing,byte[] encodedPdu) throws IOException {
 
 		SequContrDataProcessingPdu pdu = new SequContrDataProcessingPdu();
 		try (ByteArrayInputStream is = new ByteArrayInputStream(encodedPdu)) {
@@ -274,43 +290,43 @@ public abstract class AbstractSequenceControlledDataProcessingB1 extends  Abstra
 		IOperation operation = null;
 
 		if (pdu.getStartInvocation() != null) {
-			IStart start = createStart();
+			IStart start = sequenceControlledDataProcessing.createStart();
 			start.decodeStartInvocation(pdu.getStartInvocation());
 			operation = start;
 		} else if (pdu.getStartReturn() != null) {
-			IStart start = createStart();
+			IStart start = sequenceControlledDataProcessing.createStart();
 			start.decodeStartReturn(pdu.getStartReturn());
 			operation = start;
 		} else if (pdu.getStopInvocation() != null) {
-			IStop stop = createStop();
+			IStop stop = sequenceControlledDataProcessing.createStop();
 			stop.decodeStopInvocation(pdu.getStopInvocation());
 			operation = stop;
 		} else if (pdu.getStopReturn() != null) {
-			IStop stop = createStop();
+			IStop stop = sequenceControlledDataProcessing.createStop();
 			stop.decodeStopReturn(pdu.getStopReturn());
 			operation = stop;
 		} else if (pdu.getProcessDataInvocation() != null) {
-			IConfirmedProcessData processData = createConfirmedProcessData();
+			IConfirmedProcessData processData = sequenceControlledDataProcessing.createConfirmedProcessData();
 			processData.decodeProcessDataInvocation(pdu.getProcessDataInvocation());
 			operation = processData;
 		} else if (pdu.getProcessDataReturn() != null) {
-			IConfirmedProcessData processData = createConfirmedProcessData();
+			IConfirmedProcessData processData = sequenceControlledDataProcessing.createConfirmedProcessData();
 			processData.decodeProcessDataReturn(pdu.getProcessDataReturn());
 			operation = processData;
 		} else if (pdu.getNotifyInvocation() != null) {
-			INotify notify = createNotify();
+			INotify notify = sequenceControlledDataProcessing.createNotify();
 			notify.decodeNotifyInvocation(pdu.getNotifyInvocation());
 			operation = notify;
 		} else if (pdu.getExecuteDirectiveInvocation() != null) {
-			IExecuteDirective executeDirective = createExecuteDirective();
+			IExecuteDirective executeDirective = sequenceControlledDataProcessing.createExecuteDirective();
 			executeDirective.decodeExecuteDirectiveInvocation(pdu.getExecuteDirectiveInvocation());
 			operation = executeDirective;
 		} else if (pdu.getExecuteDirectiveAcknowledge() != null) {
-			IExecuteDirective executeDirective = createExecuteDirective();
+			IExecuteDirective executeDirective = sequenceControlledDataProcessing.createExecuteDirective();
 			executeDirective.decodeExecuteDirectiveAcknowledge(pdu.getExecuteDirectiveAcknowledge());
 			operation = executeDirective;
 		} else if (pdu.getExecuteDirectiveReturn() != null) {
-			IExecuteDirective executeDirective = createExecuteDirective();
+			IExecuteDirective executeDirective = sequenceControlledDataProcessing.createExecuteDirective();
 			executeDirective.decodeExecuteDirectiveReturn(pdu.getExecuteDirectiveReturn());
 			operation = executeDirective;
 		}

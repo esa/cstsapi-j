@@ -19,10 +19,9 @@ import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.types.Time;
 import esa.egos.csts.api.types.SfwVersion;
 
-public abstract class AbstractUnbufferedDataDeliveryB1 extends AbstractUnbufferedDataDelivery {
+public class UnbufferedDataDeliveryCodecB1 {
 
-	@Override
-	public byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException {
+	public static byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException {
 
 		byte[] encodedOperation;
 		UnbufferedDataDeliveryPdu pdu = new UnbufferedDataDeliveryPdu();
@@ -57,8 +56,8 @@ public abstract class AbstractUnbufferedDataDeliveryB1 extends AbstractUnbuffere
 		return encodedOperation;
 	}
 
-	@Override
-	public IOperation decodeOperation(byte[] encodedPdu) throws IOException {
+	
+	public static IOperation decodeOperation(AbstractUnbufferedDataDelivery unbufferedDataDelivery, byte[] encodedPdu) throws IOException {
 
 		UnbufferedDataDeliveryPdu pdu = new UnbufferedDataDeliveryPdu();
 
@@ -69,23 +68,23 @@ public abstract class AbstractUnbufferedDataDeliveryB1 extends AbstractUnbuffere
 		IOperation operation = null;
 
 		if (pdu.getStartInvocation() != null) {
-			IStart start = createStart();
+			IStart start = unbufferedDataDelivery.createStart();
 			start.decodeStartInvocation(pdu.getStartInvocation());
 			operation = start;
 		} else if (pdu.getStartReturn() != null) {
-			IStart start = createStart();
+			IStart start = unbufferedDataDelivery.createStart();
 			start.decodeStartReturn(pdu.getStartReturn());
 			operation = start;
 		} else if (pdu.getStopInvocation() != null) {
-			IStop stop = createStop();
+			IStop stop = unbufferedDataDelivery.createStop();
 			stop.decodeStopInvocation(pdu.getStopInvocation());
 			operation = stop;
 		} else if (pdu.getStopReturn() != null) {
-			IStop stop = createStop();
+			IStop stop = unbufferedDataDelivery.createStop();
 			stop.decodeStopReturn(pdu.getStopReturn());
 			operation = stop;
 		} else if (pdu.getTransferDataInvocation() != null) {
-			ITransferData transferData = createTransferData();
+			ITransferData transferData = unbufferedDataDelivery.createTransferData();
 			transferData.decodeTransferDataInvocation(pdu.getTransferDataInvocation());
 			operation = transferData;
 		}

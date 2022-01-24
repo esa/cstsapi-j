@@ -5,7 +5,7 @@ import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 
-public class InformationQueryUser extends AbstractInformationQueryB2 {
+public class InformationQueryUser extends AbstractInformationQuery {
 
 	@Override
 	protected CstsResult doInitiateOperationInvoke(IOperation operation) {

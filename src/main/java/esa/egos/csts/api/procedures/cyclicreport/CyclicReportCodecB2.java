@@ -19,23 +19,15 @@ import esa.egos.csts.api.parameters.impl.QualifiedParameter;
 import esa.egos.csts.api.types.SfwVersion;
 
 
-public abstract class AbstractCyclicReportB2 extends AbstractCyclicReportB1 {
+public class CyclicReportCodecB2 {
 
-	@Override
-	protected EmbeddedData encodeInvocationExtension() {
-		if(getServiceInstance().getSfwVersion().equals(SfwVersion.B2)) {
-			return encodeInvocationExtensionImpl();
-		} else {
-			return super.encodeInvocationExtension();
-		}
-	}
-	
-	private EmbeddedData encodeInvocationExtensionImpl() {
+
+	public static EmbeddedData encodeInvocationExtension(AbstractCyclicReport cyclicReport) {
 
 		CyclicReportStartInvocExt invocationExtension = new CyclicReportStartInvocExt();
-		invocationExtension.setDeliveryCycle(new IntPos(getDeliveryCycle()));
-		invocationExtension.setListOfParameters(getListOfParameters().encode(new b2.ccsds.csts.common.types.ListOfParametersEvents()));
-		invocationExtension.setCyclicReportStartInvocExtExtension(encodeStartInvocationExtExtension().encode(
+		invocationExtension.setDeliveryCycle(new IntPos(cyclicReport.getDeliveryCycle()));
+		invocationExtension.setListOfParameters(cyclicReport.getListOfParameters().encode(new b2.ccsds.csts.common.types.ListOfParametersEvents()));
+		invocationExtension.setCyclicReportStartInvocExtExtension(cyclicReport.encodeStartInvocationExtExtension().encode(
 				new b2.ccsds.csts.common.types.Extended()));
 
 		// encode with a resizable output stream and an initial capacity of 128 bytes
@@ -49,38 +41,20 @@ public abstract class AbstractCyclicReportB2 extends AbstractCyclicReportB1 {
 		return EmbeddedData.of(OIDs.crStartInvocExt, invocationExtension.code);
 	}
 	
-	@Override
-	public EmbeddedData encodeStartDiagnosticExt() {
-		if(getServiceInstance().getSfwVersion().equals(SfwVersion.B2)) {
-			return encodeStartDiagnosticExtImpl();
-		} else {
-			return super.encodeStartDiagnosticExt();
-		}
-	}
-
-	private EmbeddedData encodeStartDiagnosticExtImpl() {
-		return EmbeddedData.of(OIDs.crStartDiagExt, getStartDiagnostic().encode(
+	public static EmbeddedData encodeStartDiagnosticExt(AbstractCyclicReport cyclicReport) {
+		return EmbeddedData.of(OIDs.crStartDiagExt, cyclicReport.getStartDiagnostic().encode(
 				new b2.ccsds.csts.cyclic.report.pdus.CyclicReportStartDiagnosticExt()).code);
 	}
-	
-	@Override
-	protected EmbeddedData encodeDataRefinement() {
-		if(getServiceInstance().getSfwVersion().equals(SfwVersion.B2)) {
-			return encodeDataRefinementImpl();
-		} else {
-			return super.encodeDataRefinement();
-		}
-	}
-	
-	private EmbeddedData encodeDataRefinementImpl() {
+	 
+	public static EmbeddedData encodeDataRefinement(AbstractCyclicReport cyclicReport) {
 
 		CyclicReportTransferDataInvocDataRef dataRefinement = new CyclicReportTransferDataInvocDataRef();
 		QualifiedParameters qualifiedParameters = new QualifiedParameters();
-		for (QualifiedParameter param : this.qualifiedParameters) {
+		for (QualifiedParameter param : cyclicReport.getQualifiedParameters()) {
 			qualifiedParameters.getQualifiedParameter().add(param.encode(new b2.ccsds.csts.common.types.QualifiedParameter()));
 		}
 		dataRefinement.setQualifiedParameters(qualifiedParameters);
-		dataRefinement.setCyclicReportTransferDataInvocDataRefExtension(encodeInvocDataRefExtension().encode(
+		dataRefinement.setCyclicReportTransferDataInvocDataRefExtension(cyclicReport.encodeInvocDataRefExtension().encode(
 				new b2.ccsds.csts.common.types.Extended()));
 
 		// encode with a resizable output stream and an initial capacity of 128 bytes
@@ -96,16 +70,9 @@ public abstract class AbstractCyclicReportB2 extends AbstractCyclicReportB1 {
 		return EmbeddedData.of(OIDs.crTransferDataInvocDataRef, dataRefinement.code);
 	}
 	
-	@Override
-	protected void decodeStartInvocationExtension(Extension extension) {
-		if(getServiceInstance().getSfwVersion().equals(SfwVersion.B2)) {
-			decodeStartInvocationExtensionImpl(extension);
-		} else {
-			super.decodeStartInvocationExtension(extension);
-		}
-	}
-	
-	private void decodeStartInvocationExtensionImpl(Extension extension) {
+
+	public static void decodeStartInvocationExtension(AbstractCyclicReport cyclicReport,Extension extension) {
+
 		if (extension.isUsed() && extension.getEmbeddedData().getOid().equals(OIDs.crStartInvocExt)) {
 			CyclicReportStartInvocExt invocationExtension = new CyclicReportStartInvocExt();
 			try (ByteArrayInputStream is = new ByteArrayInputStream(extension.getEmbeddedData().getData())) {
@@ -113,22 +80,15 @@ public abstract class AbstractCyclicReportB2 extends AbstractCyclicReportB1 {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			setDeliveryCycle(invocationExtension.getDeliveryCycle().longValue());
-			setListOfParameters(ListOfParameters.decode(invocationExtension.getListOfParameters()));
-			decodeStartInvocationExtExtension(Extension.decode(invocationExtension.getCyclicReportStartInvocExtExtension()));
+			cyclicReport.setDeliveryCycle(invocationExtension.getDeliveryCycle().longValue());
+			cyclicReport.setListOfParameters(ListOfParameters.decode(invocationExtension.getListOfParameters()));
+			cyclicReport.decodeStartInvocationExtExtension(Extension.decode(invocationExtension.getCyclicReportStartInvocExtExtension()));
 		}
 	}
 	
-	@Override
-	protected void decodeTransferDataRefinement(EmbeddedData embeddedData) {
-		if(getServiceInstance().getSfwVersion().equals(SfwVersion.B2)) {
-			decodeTransferDataRefinementImpl(embeddedData);
-		} else {
-			super.decodeTransferDataRefinement(embeddedData);
-		}
-	}
 
-	private void decodeTransferDataRefinementImpl(EmbeddedData embeddedData) {
+	public static void decodeTransferDataRefinement(AbstractCyclicReport cyclicReport,EmbeddedData embeddedData) {
+
 		if (embeddedData.getOid().equals(OIDs.crTransferDataInvocDataRef)) {
 			CyclicReportTransferDataInvocDataRef dataRefinement = new CyclicReportTransferDataInvocDataRef();
 			try (ByteArrayInputStream is = new ByteArrayInputStream(embeddedData.getData())) {
@@ -136,24 +96,17 @@ public abstract class AbstractCyclicReportB2 extends AbstractCyclicReportB1 {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			qualifiedParameters.clear();
+			cyclicReport.getQualifiedParameters().clear();
 			for (b2.ccsds.csts.common.types.QualifiedParameter param : dataRefinement.getQualifiedParameters().getQualifiedParameter()) {
-				qualifiedParameters.add(QualifiedParameter.decode(param));
+				cyclicReport.getQualifiedParameters().add(QualifiedParameter.decode(param));
 			}
-			decodeInvocDataRefExtension(Extension.decode(dataRefinement.getCyclicReportTransferDataInvocDataRefExtension()));
+			cyclicReport.decodeInvocDataRefExtension(Extension.decode(dataRefinement.getCyclicReportTransferDataInvocDataRefExtension()));
 		}
 	}
 	
-	@Override
-	protected void decodeStartDiagnosticExt(EmbeddedData embeddedData) {
-		if(getServiceInstance().getSfwVersion().equals(SfwVersion.B2)) {
-			decodeStartDiagnosticExtImpl(embeddedData);
-		} else {
-			super.decodeStartDiagnosticExt(embeddedData);
-		}
-	}
 
-	private void decodeStartDiagnosticExtImpl(EmbeddedData embeddedData) {
+	public static void decodeStartDiagnosticExt(AbstractCyclicReport cyclicReport,EmbeddedData embeddedData) {
+
 		if (embeddedData.getOid().equals(OIDs.crStartDiagExt)) {
 			CyclicReportStartDiagnosticExt cyclicReportStartDiagnosticExt = new CyclicReportStartDiagnosticExt();
 			try (ByteArrayInputStream is = new ByteArrayInputStream(embeddedData.getData())) {
@@ -161,7 +114,7 @@ public abstract class AbstractCyclicReportB2 extends AbstractCyclicReportB1 {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			setStartDiagnostics(CyclicReportStartDiagnostics.decode(cyclicReportStartDiagnosticExt));
+			cyclicReport.setStartDiagnostics(CyclicReportStartDiagnostics.decode(cyclicReportStartDiagnosticExt));
 		}
 	}
 

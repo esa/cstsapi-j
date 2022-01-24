@@ -53,12 +53,15 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 	private boolean processing;
 
 	private boolean produceReport;
+	
+	private DataProcessingCodec dataProcessingCodec;
 
 	protected AbstractDataProcessing() {
 		queue = new LinkedBlockingQueue<>();
 		toBeReported = new HashSet<>();
 		lastProcessedDataUnitId = -1;
 		lastSuccessfullyProcessDataUnitId = -1;
+		dataProcessingCodec = new DataProcessingCodec(this);
 	}
 
 	@Override
@@ -344,19 +347,18 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 		return doInitiateOperationInvoke(operation);
 	}
 
-	protected abstract EmbeddedData encodeProcessDataInvocationExtension(); 
+	protected EmbeddedData encodeProcessDataInvocationExtension() {
+		return dataProcessingCodec.encodeProcessDataInvocationExtension();
+	}
 	
-
-
 	protected Extension encodeProcDataInvocationExtExtension() {
 		return Extension.notUsed();
 	}
 	
+	protected EmbeddedData encodeNotifyInvocationExtension(boolean svcProductionStatusChange) {
+		return dataProcessingCodec.encodeNotifyInvocationExtension(svcProductionStatusChange);
+	}
 	
-	protected abstract EmbeddedData encodeNotifyInvocationExtension(boolean svcProductionStatusChange); 
-
-
-
 	protected EmbeddedData encodeDataProcessingStatusExtension() {
 		// override if status is set to be extended
 		return null;
@@ -367,9 +369,10 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 	}
 
 	@Override
-	public abstract byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException;
+	public byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException {
+		return dataProcessingCodec.encodeOperation(operation, isInvoke);
+	}
 	
-
 	@Override
 	public CstsResult informOperationInvoke(IOperation operation) {
 		if (operation.getType() == OperationType.PROCESS_DATA) {
@@ -385,14 +388,17 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 		return doInformOperationInvoke(operation);
 	}
 
-	protected abstract void decodeProcessDataInvocationExtension(Extension extension);
+	protected void decodeProcessDataInvocationExtension(Extension extension) {
+		dataProcessingCodec.decodeProcessDataInvocationExtension(extension);
+	}
 	
-
 	protected void decodeProcessDataInvocationExtExtension(Extension extension) {
-
+		dataProcessingCodec.decodeProcessDataInvocationExtension(extension);
 	}
 
-	protected abstract void decodeNotifyInvocationExtension(Extension extension);
+	protected void decodeNotifyInvocationExtension(Extension extension) {
+		dataProcessingCodec.decodeNotifyInvocationExtension(extension);
+	}
 	
 
 	protected void decodeDataProcessingStatusExtension(EmbeddedData embeddedData) {
@@ -404,8 +410,7 @@ public abstract class AbstractDataProcessing extends AbstractStatefulProcedure i
 	}
 
 	@Override
-	public abstract IOperation decodeOperation(byte[] encodedPdu) throws IOException; 
-	
-	
-
+	public IOperation decodeOperation(byte[] encodedPdu) throws IOException {
+		return dataProcessingCodec.decodeOperation(encodedPdu);
+	}
 }
