@@ -29,8 +29,11 @@ public abstract class AbstractThrowEvent extends AbstractStatefulProcedure imple
 	
 	private ThrowEventDiagnostic diagnostic;
 	
+	private ThrowEventCodec throwEventCodec;
+	
 	public AbstractThrowEvent() {
 		queue = new LinkedList<>();
+		throwEventCodec = new ThrowEventCodec(this);
 	}
 	
 	@Override
@@ -127,14 +130,22 @@ public abstract class AbstractThrowEvent extends AbstractStatefulProcedure imple
 		return doInformOperationReturn(confOperation);
 	}
 	
-	public abstract EmbeddedData encodeExecuteDirectiveDiagnosticExt();
+	public EmbeddedData encodeExecuteDirectiveDiagnosticExt() {
+		return throwEventCodec.encodeExecuteDirectiveDiagnosticExt();
+	}
 	
-	protected abstract void decodeExecDirNegReturnDiagnosticExt(EmbeddedData embeddedData);
+	protected void decodeExecDirNegReturnDiagnosticExt(EmbeddedData embeddedData) {
+		throwEventCodec.decodeExecDirNegReturnDiagnosticExt(embeddedData);
+	}
 	
 	@Override
-	public abstract byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException;
+	public byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException {
+		return throwEventCodec.encodeOperation(operation, isInvoke);
+	}
 
 	@Override
-	public abstract IOperation decodeOperation(byte[] encodedPdu) throws IOException;
+	public IOperation decodeOperation(byte[] encodedPdu) throws IOException {
+		return throwEventCodec.decodeOperation(encodedPdu); 
+	}
 
 }

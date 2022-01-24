@@ -2,38 +2,28 @@ package esa.egos.csts.api.procedures.throwevent;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.Queue;
 
 import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
 
 import b1.ccsds.csts.throw_.event.pdus.TeExecDirNegReturnDiagnosticExt;
 import b1.ccsds.csts.throw_.event.pdus.ThrowEventPdu;
 import esa.egos.csts.api.diagnostics.ThrowEventDiagnostic;
-import esa.egos.csts.api.directives.DirectiveQualifier;
-import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.enumerations.OperationType;
 import esa.egos.csts.api.extensions.EmbeddedData;
 import esa.egos.csts.api.oids.OIDs;
-import esa.egos.csts.api.oids.ObjectIdentifier;
-import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IExecuteDirective;
 import esa.egos.csts.api.operations.IOperation;
-import esa.egos.csts.api.procedures.AbstractStatefulProcedure;
-import esa.egos.csts.api.procedures.impl.ProcedureType;
-import esa.egos.csts.api.states.throwevent.Inactive;
-import esa.egos.csts.api.states.throwevent.ThrowEventState;
+import esa.egos.csts.api.types.SfwVersion;
 
 
-public abstract class AbstractThrowEventB1 extends AbstractThrowEvent{
-
+public class ThrowEventCodecB2 {
 	
-	public EmbeddedData encodeExecuteDirectiveDiagnosticExt() {
-		return EmbeddedData.of(OIDs.teExecDirDiagExt, getThrowEventDiagnostic().encode(new b1.ccsds.csts.throw_.event.pdus.TeExecDirNegReturnDiagnosticExt()).code);
+	public static EmbeddedData encodeExecuteDirectiveDiagnosticExt(AbstractThrowEvent throwEvent) {
+		return EmbeddedData.of(OIDs.teExecDirDiagExt, throwEvent.getThrowEventDiagnostic().encode(
+				new b2.ccsds.csts.throw_.event.pdus.TeExecDirNegReturnDiagnosticExt()).code);
 	}
-	
-	
-	protected void decodeExecDirNegReturnDiagnosticExt(EmbeddedData embeddedData) {
+
+	public static void decodeExecDirNegReturnDiagnosticExt(AbstractThrowEvent throwEvent,EmbeddedData embeddedData) {
 		if (embeddedData.getOid().equals(OIDs.teExecDirDiagExt)) {
 			TeExecDirNegReturnDiagnosticExt teExecDirNegReturnDiagnosticExt = new TeExecDirNegReturnDiagnosticExt();
 			try (ByteArrayInputStream is = new ByteArrayInputStream(embeddedData.getData())) {
@@ -41,12 +31,11 @@ public abstract class AbstractThrowEventB1 extends AbstractThrowEvent{
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			setThrowEventDiagnostic(ThrowEventDiagnostic.decode(teExecDirNegReturnDiagnosticExt));
+			throwEvent.setThrowEventDiagnostic(ThrowEventDiagnostic.decode(teExecDirNegReturnDiagnosticExt));
 		}
 	}
 	
-	@Override
-	public byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException {
+	public static byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException {
 		
 		byte[] encodedOperation;
 		ThrowEventPdu pdu = new ThrowEventPdu();
@@ -72,9 +61,7 @@ public abstract class AbstractThrowEventB1 extends AbstractThrowEvent{
 		return encodedOperation;
 	}
 
-	@Override
-	public IOperation decodeOperation(byte[] encodedPdu) throws IOException {
-		
+	public static IOperation decodeOperation(AbstractThrowEvent throwEvent,byte[] encodedPdu) throws IOException {
 
 		ThrowEventPdu pdu = new ThrowEventPdu();
 		
@@ -82,7 +69,7 @@ public abstract class AbstractThrowEventB1 extends AbstractThrowEvent{
 			pdu.decode(is);
 		}
 		
-		IExecuteDirective executeDirective = createExecuteDirective();
+		IExecuteDirective executeDirective = throwEvent.createExecuteDirective();
 		
 		if (pdu.getExecuteDirectiveInvocation() != null) {
 			executeDirective.decodeExecuteDirectiveInvocation(pdu.getExecuteDirectiveInvocation());

@@ -7,7 +7,7 @@ import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.states.UserStateInactive;
 
-public class UnbufferedDataDeliveryUser extends AbstractUnbufferedDataDeliveryB2 {
+public class UnbufferedDataDeliveryUser extends AbstractUnbufferedDataDelivery {
 
 	@Override
 	protected void initializeState() {

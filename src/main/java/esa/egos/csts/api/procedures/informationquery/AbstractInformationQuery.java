@@ -26,6 +26,13 @@ public abstract class AbstractInformationQuery extends AbstractProcedure impleme
 
 	private static final ProcedureType TYPE = ProcedureType.of(OIDs.informationQuery);
 	
+	private InformationQueryCodec informationQueryCodec;
+	
+	public AbstractInformationQuery() {
+		super();
+		informationQueryCodec = new InformationQueryCodec(this);
+	}
+	
 	@Override
 	public ProcedureType getType() {
 		return TYPE;
@@ -237,8 +244,12 @@ public abstract class AbstractInformationQuery extends AbstractProcedure impleme
 	}
 	
 	@Override
-	public abstract byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException;
+	public byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException {
+		return informationQueryCodec.encodeOperation(operation, isInvoke);
+	}
 
 	@Override
-	public abstract IOperation decodeOperation(byte[] encodedPdu) throws IOException;
+	public IOperation decodeOperation(byte[] encodedPdu) throws IOException {
+		return informationQueryCodec.decodeOperation(encodedPdu);
+	}
 }

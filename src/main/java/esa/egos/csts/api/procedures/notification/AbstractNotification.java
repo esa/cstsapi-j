@@ -39,10 +39,13 @@ public abstract class AbstractNotification extends AbstractStatefulProcedure imp
 	private ListOfParametersDiagnostics listOfEventsDiagnostics;
 	
 	private boolean running;
+	
+	private NotificationCodec notificationCodec;
 
 	protected AbstractNotification() {
 		subscribedEvents = new HashSet<>();
 		running = false;
+		notificationCodec = new NotificationCodec(this);
 	}
 	
 	protected ListOfParametersDiagnostics getListOfEventsDiagnostics() {
@@ -297,9 +300,13 @@ public abstract class AbstractNotification extends AbstractStatefulProcedure imp
 	}
 	
 	@Override
-	public abstract byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException;
+	public byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException {
+		return notificationCodec.encodeOperation(operation, isInvoke);
+	}
 
-	protected abstract EmbeddedData encodeInvocationExtension();
+	protected EmbeddedData encodeInvocationExtension() {
+		return notificationCodec.encodeInvocationExtension();
+	}
 
 	/**
 	 * This method should be overridden to encode the extension of a derived
@@ -313,7 +320,9 @@ public abstract class AbstractNotification extends AbstractStatefulProcedure imp
 	}
 
 	@Override
-	public abstract EmbeddedData encodeStartDiagnosticExt();
+	public EmbeddedData encodeStartDiagnosticExt() {
+		return notificationCodec.encodeStartDiagnosticExt();
+	}
 
 	@Override
 	public CstsResult informOperationInvoke(IOperation operation) {
@@ -336,9 +345,13 @@ public abstract class AbstractNotification extends AbstractStatefulProcedure imp
 	}
 	
 	@Override
-	public abstract IOperation decodeOperation(byte[] encodedPdu) throws IOException;
+	public IOperation decodeOperation(byte[] encodedPdu) throws IOException {
+		return notificationCodec.decodeOperation(encodedPdu);
+	}
 
-	protected abstract void decodeStartInvocationExtension(Extension extension);
+	protected void decodeStartInvocationExtension(Extension extension) {
+		notificationCodec.decodeStartInvocationExtension(extension);
+	}
 
 	/**
 	 * This method should be overridden to decode the extension of a derived
@@ -352,6 +365,8 @@ public abstract class AbstractNotification extends AbstractStatefulProcedure imp
 		// do nothing on default
 	}
 
-	protected abstract void decodeStartDiagnosticExt(EmbeddedData embeddedData);
+	protected void decodeStartDiagnosticExt(EmbeddedData embeddedData) {
+		notificationCodec.decodeStartDiagnosticExt(embeddedData);
+	}
 
 }

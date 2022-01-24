@@ -23,6 +23,14 @@ public abstract class AbstractUnbufferedDataDelivery extends AbstractStatefulPro
 
 	private long sequenceCounter;
 	
+	private UnbufferedDataDeliveryCodec unbufferedDataDeliveryCodec;
+	
+	
+	public AbstractUnbufferedDataDelivery() {
+		super();
+		unbufferedDataDeliveryCodec = new UnbufferedDataDeliveryCodec(this);
+	}
+	
 	@Override
 	public ProcedureType getType() {
 		return TYPE;
@@ -81,9 +89,13 @@ public abstract class AbstractUnbufferedDataDelivery extends AbstractStatefulPro
 	}
 	
 	@Override
-	public abstract byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException;
+	public byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException {
+		return unbufferedDataDeliveryCodec.encodeOperation(operation, isInvoke);
+	}
 
 	@Override
-	public abstract IOperation decodeOperation(byte[] encodedPdu) throws IOException;
+	public IOperation decodeOperation(byte[] encodedPdu) throws IOException {
+		return unbufferedDataDeliveryCodec.decodeOperation(encodedPdu);
+	}
 	
 }

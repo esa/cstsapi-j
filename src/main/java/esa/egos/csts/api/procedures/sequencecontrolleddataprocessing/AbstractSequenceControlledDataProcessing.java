@@ -33,15 +33,13 @@ import esa.egos.csts.api.operations.IStart;
 import esa.egos.csts.api.operations.IStop;
 import esa.egos.csts.api.parameters.impl.ParameterValue;
 import esa.egos.csts.api.procedures.dataprocessing.AbstractDataProcessing;
-import esa.egos.csts.api.procedures.dataprocessing.AbstractDataProcessingB2;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.productionstatus.ProductionState;
 import esa.egos.csts.api.states.sequencecontrolleddataprocessing.ActiveLocked;
 import esa.egos.csts.api.types.ConditionalTime;
 import esa.egos.csts.api.types.Time;
-import esa.egos.csts.api.types.SfwVersion;
 
-public abstract class AbstractSequenceControlledDataProcessing extends AbstractDataProcessingB2 implements ISequenceControlledDataProcessingInternal {
+public abstract class AbstractSequenceControlledDataProcessing extends AbstractDataProcessing implements ISequenceControlledDataProcessingInternal {
 
 	private static final ProcedureType TYPE = ProcedureType.of(OIDs.sequenceControlledDataProcessing);
 
@@ -64,6 +62,8 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 	private Semaphore waitForOperational;
 
 	private SeqControlledDataProcDiagnostics diagnostics;
+	
+	private SequenceControlledDataProcessingCodec sequenceControlledDataProcessingCodec;
 
 	public AbstractSequenceControlledDataProcessing() {
 		super();
@@ -75,6 +75,7 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 		waitingForOperational = false;
 		waitForOperational = new Semaphore(0);
 		setLastProcessedDataUnitStatus(ProcessingStatus.EXTENDED);
+		sequenceControlledDataProcessingCodec= new SequenceControlledDataProcessingCodec(this);
 	}
 
 	@Override
@@ -431,58 +432,61 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 		return doInitiateOperationInvoke(operation);
 	}
 	
-	protected abstract EmbeddedData encodeStartInvocationExtension();
+	protected EmbeddedData encodeStartInvocationExtension() {
+		return sequenceControlledDataProcessingCodec.encodeStartInvocationExtension();
+	}
 
 	
 	protected Extension encodeStartInvocationExtExtension() {
 		return Extension.notUsed();
 	}
 	
-	protected abstract Extension encodeProcDataInvocationExtExtension();
-
-
+	protected Extension encodeProcDataInvocationExtExtension() {
+		return sequenceControlledDataProcessingCodec.encodeProcDataInvocationExtExtension();
+	}
 
 	protected Extension encodeProcDataInvocationExtExtExtension() {
 		return Extension.notUsed();
 	}
 
 	@Override
-	public abstract EmbeddedData encodeProcessDataPosReturnExtension();
-	
-	
+	public EmbeddedData encodeProcessDataPosReturnExtension() {
+		return sequenceControlledDataProcessingCodec.encodeProcessDataPosReturnExtension();
+	}
 	
 	protected Extension encodeProcessDataPosReturnExtExtension() {
 		return Extension.notUsed();
 	}
 
 	@Override
-	public abstract EmbeddedData encodeProcessDataNegReturnExtension();
+	public EmbeddedData encodeProcessDataNegReturnExtension() {
+		return sequenceControlledDataProcessingCodec.encodeProcessDataNegReturnExtension();
+	}
 	
-
-
 	protected Extension encodeProcessDataNegReturnExtExtension() {
 		return Extension.notUsed();
 	}
 
 	@Override
-	public abstract EmbeddedData encodeProcessDataDiagnosticExt(); 
-
+	public EmbeddedData encodeProcessDataDiagnosticExt() {
+		return sequenceControlledDataProcessingCodec.encodeProcessDataDiagnosticExt();
+	}
 
 	@Override
-	protected abstract EmbeddedData encodeDataProcessingStatusExtension();
+	protected EmbeddedData encodeDataProcessingStatusExtension() {
+		return sequenceControlledDataProcessingCodec.encodeDataProcessingStatusExtension();
+	}
 	
-
-
 	protected EmbeddedData encodeDataProcessingStatusExtExtension() {
 		// override if status extension is set to be extended
 		return null;
 	}
 
 	@Override
-	public abstract byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException;
+	public byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException {
+		return sequenceControlledDataProcessingCodec.encodeOperation(operation, isInvoke);
+	}
 	
-	
-
 	@Override
 	public CstsResult informOperationInvoke(IOperation operation) {
 		if (operation.getType() == OperationType.START) {
@@ -511,10 +515,10 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 		return doInformOperationReturn(confOperation);
 	}
 	
-	protected abstract void decodeStartInvocationExtension(Extension extension);
+	protected void decodeStartInvocationExtension(Extension extension) {
+		sequenceControlledDataProcessingCodec.decodeStartInvocationExtension(extension);
+	}
 	
-
-
 	/**
 	 * This method should be overridden to decode the extension of a derived
 	 * procedure.
@@ -526,7 +530,9 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 		// do nothing on default
 	}
 	
-	protected abstract void decodeProcessDataInvocationExtExtension(Extension extension);
+	protected void decodeProcessDataInvocationExtExtension(Extension extension) {
+		sequenceControlledDataProcessingCodec.decodeProcessDataInvocationExtExtension(extension);
+	}
 
 
 	/**
@@ -540,7 +546,9 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 		// do nothing on default
 	}
 
-	protected abstract void decodeProcessDataPosReturnExtension(Extension extension);
+	protected void decodeProcessDataPosReturnExtension(Extension extension) {
+		sequenceControlledDataProcessingCodec.decodeProcessDataPosReturnExtension(extension);
+	}
 	
 
 	/**
@@ -554,13 +562,14 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 		// do nothing on default
 	}
 	
-	protected abstract void decodeProcessDataDiagnosticExt(EmbeddedData embeddedData);
+	protected void decodeProcessDataDiagnosticExt(EmbeddedData embeddedData) {
+		sequenceControlledDataProcessingCodec.decodeProcessDataDiagnosticExt(embeddedData);
+	}
 
-
-	protected abstract void decodeProcessDataNegReturnExtension(Extension extension);
+	protected void decodeProcessDataNegReturnExtension(Extension extension) {
+		sequenceControlledDataProcessingCodec.decodeProcessDataNegReturnExtension(extension);
+	}
 	
-
-
 	/**
 	 * This method should be overridden to decode the extension of a derived
 	 * procedure.
@@ -573,7 +582,9 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 	}
 
 	@Override
-	protected abstract void decodeDataProcessingStatusExtension(EmbeddedData embeddedData);
+	protected void decodeDataProcessingStatusExtension(EmbeddedData embeddedData) {
+		sequenceControlledDataProcessingCodec.decodeDataProcessingStatusExtension(embeddedData);
+	}
 	
 	
 	protected void decodeDataProcessingStatusExtExtension(EmbeddedData embeddedData) {
@@ -581,7 +592,9 @@ public abstract class AbstractSequenceControlledDataProcessing extends AbstractD
 	}
 	
 	@Override
-	public abstract IOperation decodeOperation(byte[] encodedPdu) throws IOException;
+	public IOperation decodeOperation(byte[] encodedPdu) throws IOException {
+		return sequenceControlledDataProcessingCodec.decodeOperation(encodedPdu);
+	}
 
 
 }

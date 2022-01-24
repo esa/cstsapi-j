@@ -33,12 +33,11 @@ import esa.egos.csts.api.operations.impl.ForwardBuffer;
 import esa.egos.csts.api.parameters.IConfigurationParameter;
 import esa.egos.csts.api.parameters.impl.IntegerConfigurationParameter;
 import esa.egos.csts.api.procedures.dataprocessing.AbstractDataProcessing;
-import esa.egos.csts.api.procedures.dataprocessing.AbstractDataProcessingB2;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.types.Time;
 import esa.egos.csts.api.types.SfwVersion;
 
-public abstract class AbstractBufferedDataProcessing extends AbstractDataProcessingB2 implements IBufferedDataProcessingInternal {
+public abstract class AbstractBufferedDataProcessing extends AbstractDataProcessing implements IBufferedDataProcessingInternal {
 
 	private static final ProcedureType TYPE = ProcedureType.of(OIDs.bufferedDataProcessing);
 
@@ -52,11 +51,24 @@ public abstract class AbstractBufferedDataProcessing extends AbstractDataProcess
 
 	// set by provider
 	private boolean readingSuspended;
+	
+	private final BufferedDataProcessingCodec codec;
 
 	public AbstractBufferedDataProcessing() {
 		latencyTimers = new HashMap<>();
 		executorService = Executors.newSingleThreadScheduledExecutor();
 		suspend = new Semaphore(0);
+		codec = new BufferedDataProcessingCodec(this);
+	}
+	
+	@Override
+	public byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException {
+		return codec.encodeOperation(operation, isInvoke);
+	}
+	
+	@Override
+	public IOperation decodeOperation(byte[] encodedPdu) throws IOException {
+		return codec.decodeOperation(encodedPdu);
 	}
 
 	@Override
@@ -314,11 +326,4 @@ public abstract class AbstractBufferedDataProcessing extends AbstractDataProcess
 
 		getState().process(notify);
 	}
-
-	@Override
-	public abstract byte[] encodeOperation(IOperation operation, boolean isInvoke) throws IOException;
-	
-	@Override
-	public abstract IOperation decodeOperation(byte[] encodedPdu) throws IOException;
-	
 }
