@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -21,7 +20,9 @@ import java.util.zip.ZipEntry;
  */
 public class PackageUtils
 {
-    private static final String JAVA = "java";
+    private static final String UTF_8 = "UTF-8";
+
+	private static final String JAVA = "java";
 
     private static final String CLASSES = "classes";
 
@@ -92,10 +93,11 @@ public class PackageUtils
         {
             throw new IllegalArgumentException("Could not find package " + packageName);
         }
-        LOG.log(Level.INFO, "JAR file: " + url.getFile());
+        LOG.log(Level.INFO, "URL: " + url.getFile());
         try
         {
-            File packageDirectory = new File(url.getFile());
+        	final String fileName = URLDecoder.decode(url.getFile(), UTF_8);
+            File packageDirectory = new File(fileName);
             if (packageDirectory.exists())
             {
                 ret = getPackageClassesFromDirectory(packageDirectory, packageName, alsoNestedClasses);
@@ -145,83 +147,55 @@ public class PackageUtils
     {
         List<Class<?>> ret = new ArrayList<Class<?>>();
         JarFile jar = null;
-        String file  = url.getFile();
-        final int packageNameSegmentCount = getDotCount(packageName);
-        
+
         try
-        {
-            file = URLDecoder.decode(file.split("file:")[0], "UTF-8"); // Blanks would be %20 - does not work file File class
-            
-        	Enumeration<? extends JarEntry> enumeration;
-        	
-        	if(file != null && new File(file).isFile() == true) {
-	            LOG.log(Level.INFO, "getting classes from JAR file " + url);            
-	            // extract the path file name from URL: file:<path file name>!/package
-	            //String[] split1 = url.getFile().split("file:");
-	            String[] split2 = file.split("!");
-	            String filePath = split2[0];
-	            String internalPath = split2[1];
-	
-	            LOG.log(Level.INFO, "filePath: " + filePath);
-	            LOG.log(Level.INFO, "internalPath: " + internalPath);
-	
-	            if (internalPath.charAt(0) == '/')
-	            {
-	                // cut off the very first slash
-	                internalPath = internalPath.substring(1);
-	            }
-	            
-	            jar = new JarFile(filePath);
-	
-	            // Getting jar's entries
-	            enumeration = jar.entries();
-        	
-	            // iterates over jar's entries
-	            while (enumeration.hasMoreElements())
-	            {
-	                ZipEntry zipEntry = enumeration.nextElement();
-	                LOG.log(Level.INFO, "zipEntry: " + zipEntry.getName());
-	
-	                // take the classes stored at the certain path in the jar only
-	                if (zipEntry.getName().contains(internalPath) && zipEntry.getName().endsWith(CLASS_FILE_SUFFIX))
-	                {
-	                    // the relative path of file in the jar.
-	                    String fileName = zipEntry.getName();
-	
-	                    // build the class name
-	                    Class<?> clazz = Class.forName(fileName.replace("/", ".").replace(CLASS_FILE_SUFFIX, ""));
-	                    if (!alsoNestedClasses)
-	                    {
-	                        if ((packageNameSegmentCount + 1) != getDotCount(clazz.getCanonicalName()))
-	                        {
-	                            // ignore nested classes
-	                            continue;
-	                        }
-	                    }
-	                    ret.add(clazz);
-	                }
-	            }
-        	} else if(file != null && new File(file).isDirectory() == true) { 
-        		LOG.log(Level.INFO, "getting FRM classes from Directory " + file);
-        		Files.list(new File(file).toPath()).forEach(f -> {        			
-        			try {
-        				String fileName = f.toString().replace("/", ".").replace(CLASS_FILE_SUFFIX, "");
-        			
-        				// remove everything before the package name starts
-        				fileName = fileName.substring(fileName.indexOf(packageName));
-        			
-        				// build the class name
-	                    Class<?> clazz = Class.forName(fileName.replace("/", ".").replace(CLASS_FILE_SUFFIX, ""));
-	                    if (alsoNestedClasses || (packageNameSegmentCount + 1) == getDotCount(clazz.getCanonicalName()))
-	                    {
-	                        ret.add(clazz);
-	                    }
-        			}
-        			catch(Exception e) {
-        				LOG.log(Level.SEVERE, "Exception creating FRM class  " + e);        				
-        			}
-        		});
-        	}
+        {        	
+        	final String urlDecoded = URLDecoder.decode(url.getFile(), UTF_8);
+            LOG.log(Level.INFO, "getting classes from JAR file " + urlDecoded);
+            // extract the path file name from URL: file:<path file name>!/package
+            String[] split1 = urlDecoded.split("file:");
+            String[] split2 = split1[1].split("!");
+            String filePath = split2[0];
+            String internalPath = split2[1];
+
+            LOG.log(Level.INFO, "filePath: " + filePath);
+            LOG.log(Level.INFO, "internalPath: " + internalPath);
+
+            if (internalPath.charAt(0) == '/')
+            {
+                // cut off the very first slash
+                internalPath = internalPath.substring(1);
+            }
+            int packageNameSegmentCount = getDotCount(packageName);
+            jar = new JarFile(filePath);
+
+            // Getting jar's entries
+            Enumeration<? extends JarEntry> enumeration = jar.entries();
+            // iterates over jar's entries
+            while (enumeration.hasMoreElements())
+            {
+                ZipEntry zipEntry = enumeration.nextElement();
+                LOG.log(Level.INFO, "zipEntry: " + zipEntry.getName());
+
+                // take the classes stored at the certain path in the jar only
+                if (zipEntry.getName().contains(internalPath) && zipEntry.getName().endsWith(CLASS_FILE_SUFFIX))
+                {
+                    // the relative path of file in the jar.
+                    String fileName = zipEntry.getName();
+
+                    // build the class name
+                    Class<?> clazz = Class.forName(fileName.replace("/", ".").replace(CLASS_FILE_SUFFIX, ""));
+                    if (!alsoNestedClasses)
+                    {
+                        if ((packageNameSegmentCount + 1) != getDotCount(clazz.getCanonicalName()))
+                        {
+                            // ignore nested classes
+                            continue;
+                        }
+                    }
+                    ret.add(clazz);
+                }
+            }
         }
         catch (Exception e)
         {
