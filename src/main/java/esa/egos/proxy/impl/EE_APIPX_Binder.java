@@ -149,7 +149,8 @@ public class EE_APIPX_Binder implements IBinder
         // remove the AssocPxy from the link
         for (Iterator<EE_APIPX_AssocPxy> it = this.eeAPIPXAssocPxyList.iterator(); it.hasNext();)
         {
-            if (it.next().equals(pAssocPxy))
+             EE_APIPX_AssocPxy currenteeAPIPXAssocPxy = it.next();
+             if (currenteeAPIPXAssocPxy.equals(pAssocPxy))
             {
                 it.remove();
             }

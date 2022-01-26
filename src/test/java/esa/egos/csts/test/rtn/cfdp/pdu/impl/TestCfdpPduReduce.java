@@ -34,6 +34,7 @@ public class TestCfdpPduReduce {
 	
 	
 	@Test
+	@Ignore
 	public void testCfdpPduReductionWithChecksum1M()
 	{
 		CfdpPduReduce cfdpPduReduce = new CfdpPduReduce();
