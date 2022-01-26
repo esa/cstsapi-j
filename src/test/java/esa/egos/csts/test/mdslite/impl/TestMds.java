@@ -106,7 +106,6 @@ public class TestMds {
 	}
 	
 	@Test
-	@Ignore
 	public void testMdB2() {
 		testMd(2);
 	}
@@ -261,18 +260,16 @@ public class TestMds {
 
 
 	@Test
-	//@Ignore
 	public void testProtocolAbortB1() {
-		testProtocolAbort(SfwVersion.B1);
+		testProtocolAbort(1);
 	}
 	
 	@Test
-	@Ignore
 	public void testProtocolAbortB2() {
-		testProtocolAbort(SfwVersion.B2);
+		testProtocolAbort(2);
 	}
 	
-	private void testProtocolAbort(SfwVersion version) {
+	private void testProtocolAbort(int version) {
 		try {
 			SiConfig mdSiProviderConfig = new SiConfig(ObjectIdentifier.of(1,3,112,4,7,0),
 											ObjectIdentifier.of(1,3,112,4,6,0),
@@ -292,7 +289,7 @@ public class TestMds {
 			paramLists.add(paramList);
 			
 			MdSiProvider providerSi = new MdSiProvider(providerApi, mdSiProviderConfig, paramLists, labelList);
-			MdSiUser userSi = new MdSiUser(userApi, mdSiUserConfig, 1, paramLists);
+			MdSiUser userSi = new MdSiUser(userApi, mdSiUserConfig, version, paramLists);
 		
 			for(int testRun=1; testRun<3; testRun++) {
 				TCPForwardServer tcpForwarder = new TCPForwardServer(5020, 5019, "localhost");
@@ -326,13 +323,11 @@ public class TestMds {
 	}	
 	
 	@Test
-	@Ignore
 	public void testAbortByProviderB1() {
 		testAbortByProvider(SfwVersion.B1);
 	}
 	
 	@Test
-	@Ignore
 	public void testAbortByProviderB2() {
 		testAbortByProvider(SfwVersion.B2);
 	}

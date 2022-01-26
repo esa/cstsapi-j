@@ -37,7 +37,7 @@
 				<srv_version sfw="2">2</srv_version>
 			</srv_versions>
 		</service_type>
-		
+
 	</service_types>
 	<remote_peers>
 		<remote_peer authentication_mode="NONE"

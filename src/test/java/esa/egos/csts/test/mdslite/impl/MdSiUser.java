@@ -47,7 +47,8 @@ public class MdSiUser extends MdSi {
 
 		this.retLock = new ReentrantLock();
 		this.retCond = retLock.newCondition();
-		//getApiServiceInstance().setVersion(version.getServiceVersion(config.ge));
+		SfwVersion sfwVersion = (serviceVersion == 2) ? SfwVersion.B2 : SfwVersion.B1;
+		getApiServiceInstance().setSfwVersion(sfwVersion);
 	}
 
 	/**
