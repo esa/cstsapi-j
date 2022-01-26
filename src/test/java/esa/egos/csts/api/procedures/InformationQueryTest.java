@@ -636,7 +636,6 @@ public class InformationQueryTest
     
     
     @Test
-    @Ignore
     public void testQueryInformationWithNameSetWithNonExistentNameB2()
     {
     	testQueryInformationWithNameSetWithNonExistentName(2);
@@ -764,7 +763,6 @@ public class InformationQueryTest
     
     
     @Test
-    @Ignore
     public void testQueryInformationWithLabelSetWithNonExistentLabelB2()
     {
     	testQueryInformationWithLabelSetWithNonExistentLabel(2);

@@ -117,21 +117,21 @@ public class MdCollection
         FunctionalResourceIntegerParameter antActualAzimuth =
                 new FunctionalResourceIntegerParameter(antActualAzimuthId, antActualAzimuthName);
         ret.addParameter(antActualAzimuth);
-
+        
         ObjectIdentifier antMeanWindSpeedId = ObjectIdentifier.of(new int[] { 1, 3, 112, 4, 4, 2, 1, 1000, 1, 18, 1});
         FunctionalResourceType antMeanWindSpeedType = FunctionalResourceType.of(antMeanWindSpeedId);
         FunctionalResourceName antMeanWindSpeedName = FunctionalResourceName.of(antMeanWindSpeedType, 1);
         FunctionalResourceIntegerParameter antMeanWindSpeed =
                 new FunctionalResourceIntegerParameter(antMeanWindSpeedId, antMeanWindSpeedName);
         ret.addParameter(antMeanWindSpeed);
-
+        
         // event
         ObjectIdentifier antWindSpeedWarningId = ObjectIdentifier.of(new int[] { 1, 3, 112, 4, 4, 2, 1, 1000, 2, 3, 1});
         FunctionalResourceType antWindSpeedWarningType = FunctionalResourceType.of(antWindSpeedWarningId);
         FunctionalResourceName antWindSpeedWarningName = FunctionalResourceName.of(antWindSpeedWarningType, 1);
         Event antWindSpeedWarning = new Event(antWindSpeedWarningId, antWindSpeedWarningName);
         ret.addEvent(antWindSpeedWarning);
-
+        
         return ret;
     }
 

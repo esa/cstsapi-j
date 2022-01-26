@@ -363,7 +363,6 @@ public abstract class CstsApi implements IApi, ILocator {
 
 			// TODO serviceInstance.destroy();
 			// serviceInstance.getAssociationControlProcedure().releaseAssoc(); ?
-			
 			// #hd# give a chance to remove ports
 			if(serviceInstance instanceof IServiceInstanceInternal)
 			{
