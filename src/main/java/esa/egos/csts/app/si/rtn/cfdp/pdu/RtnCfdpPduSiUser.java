@@ -33,8 +33,8 @@ public class RtnCfdpPduSiUser extends AppSiUser {
 	private final ICfpdPduReceiver pduReceiver;
 	private final ICfdpPduDelivery deliveryProcedure;
 
-	public RtnCfdpPduSiUser(ICstsApi api, SiConfig config, ICfpdPduReceiver pduReceiver) throws ApiException {
-		super(api, config, RtnCfdpPduSiProvider.CSTS_RTN_CFDP_PDU_SRV,1);
+	public RtnCfdpPduSiUser(ICstsApi api, SiConfig config, ICfpdPduReceiver pduReceiver, int sfwVersion) throws ApiException {
+		super(api, config, RtnCfdpPduSiProvider.CSTS_RTN_CFDP_PDU_SRV, sfwVersion);
 		this.pduReceiver = pduReceiver;
 		this.deliveryProcedure = getApiSi().createProcedure(CfdpPduDeliveryUser.class);
 		this.deliveryProcedure.setRole(ProcedureRole.PRIME, 0);

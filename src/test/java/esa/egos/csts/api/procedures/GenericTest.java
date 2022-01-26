@@ -49,10 +49,10 @@ public class GenericTest
 
     private ICstsApi userApi;
     
-    private static final int serviceVersion = 1;
+    private static final int SERVICE_VERSION_SFW_B1 = 1; 
     
-    private static final SfwVersion sfwVersion = SfwVersion.B1; 
-
+    private static final int SERVICE_VERSION_SFW_B2 = 2; 
+    
     @BeforeClass
     public static void setUpClass() throws ApiException
     {
@@ -99,12 +99,25 @@ public class GenericTest
         System.out.println("CSTS user and provider API stopped");
     }
 
-
     /**
-     * Test association procedure and its bind and unbind operations
+     * Test association procedure and its bind and unbind operations B1 standard
      */
     @Test
-    public void testAssociation()
+    public void testAssociationB1()
+    {
+         testAssociation(SERVICE_VERSION_SFW_B1);
+    }
+    
+    @Test
+    public void testAssociationB2()
+    {
+         testAssociation(SERVICE_VERSION_SFW_B2);
+    }
+    
+    /**
+     * Method to test association procedure and its bind and unbind operations for a supported sfw version
+     */
+    public void testAssociation(int sfwVersion)
     {
         try
         {
@@ -143,7 +156,7 @@ public class GenericTest
             MdCstsSiProvider providerSi = new MdCstsSiProvider(this.providerApi, mdSiProviderConfig);
 
             // create user SI
-            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, mdSiUserConfig, 3);
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, mdSiUserConfig, sfwVersion);
 
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");
@@ -174,12 +187,23 @@ public class GenericTest
         }
     }
 
-    
+
     /**
-     * Test the Cyclic report procedure
+     * Test the Cyclic report procedure for B1 standard
+     * (Cyclic Report Test for B2 is in Test 
+     * src/test/java/esa/egos/csts/test/mdslite/impl/TestMds.java#testMd())
      */
     @Test
     public void testCyclicReport()
+    {
+         testCyclicReport(SERVICE_VERSION_SFW_B1);
+    }
+    
+
+    /**
+     * Test the Cyclic report procedure
+     */
+    public void testCyclicReport(int sfwVersion)
     {
         try
         {
@@ -219,7 +243,7 @@ public class GenericTest
             MdCstsSiProvider providerSi = new MdCstsSiProvider(this.providerApi, mdSiProviderConfig);
 
             // create user SI
-            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, mdSiUserConfig,  serviceVersion);
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, mdSiUserConfig, sfwVersion);
 
             // create FR parameters and attach them to the provider SI
             MdCollection mdCollection = MdCollection.createSimpleMdCollection();
@@ -229,6 +253,7 @@ public class GenericTest
             TestUtils.verifyResult(userSi.bind(), "BIND");
             
             System.out.println("START-CYCLIC-REPORT...");
+
             TestUtils.verifyResult(userSi.startCyclicReport(piid.getInstanceNumber(), mdCollection.getParameterNameSet(), 100), "START-CYCLIC-REPORT");
 
             // wait for several cyclic reports
@@ -252,12 +277,30 @@ public class GenericTest
             fail(e.getMessage());
         }
     }
+    
 
     /**
-     * Test the Notification procedure
+     * Test the Notification procedure for B1 standard
      */
     @Test
-    public void testNotification()
+    public void testNotificationB1()
+    {
+         testNotification(SERVICE_VERSION_SFW_B1);
+    }
+    
+    /**
+     * Test the Notification procedure for B2 standard
+     */
+    @Test
+    public void testNotificationB2()
+    {
+         testNotification(SERVICE_VERSION_SFW_B2);
+    }
+    
+    /**
+     * Method to test the Notification procedure for a supported sfw version
+     */
+    public void testNotification(int sfwVersion)
     {
         try
         {
@@ -297,7 +340,7 @@ public class GenericTest
             MdCstsSiProvider providerSi = new MdCstsSiProvider(this.providerApi, mdSiProviderConfig);
 
             // create user SI
-            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, mdSiUserConfig,  3);
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, mdSiUserConfig, sfwVersion);
 
             // create FR parameters and attach them to the provider SI
             MdCollection mdCollection = MdCollection.createSimpleMdCollection();
@@ -333,10 +376,28 @@ public class GenericTest
     }
 
     /**
-     * Test the peer abort operation
+     * Test the peer abort operation for B1 standard
      */
     @Test
-    public void testPeerAbort()
+    public void testPeerAbortB1()
+    {
+         testPeerAbort(SERVICE_VERSION_SFW_B1);
+    }
+    
+    
+    /**
+     * Test the peer abort operation for B2 standard
+     */
+   @Test
+   public void testPeerAbortB2()
+    {
+         testPeerAbort(SERVICE_VERSION_SFW_B2);
+    }
+    
+    /**
+     * Test the peer abort operation
+     */
+    public void testPeerAbort(int sfwVersion)
     {
         try
         {
@@ -346,7 +407,7 @@ public class GenericTest
             ObjectIdentifier facilityId = ObjectIdentifier.of(1, 3, 112, 4, 6, 0);
 
             // cyclic report procedure identifier
-            ProcedureInstanceIdentifier piid = ProcedureInstanceIdentifier.of(ProcedureType.of(OIDs.ocoCyclicReport),
+            ProcedureInstanceIdentifier piid = ProcedureInstanceIdentifier.of(ProcedureType.of(OIDs.notification),
                                                                               ProcedureRole.PRIME,
                                                                               0);
 
@@ -376,7 +437,7 @@ public class GenericTest
             MdCstsSiProvider providerSi = new MdCstsSiProvider(this.providerApi, mdSiProviderConfig);
 
             // create user SI
-            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, mdSiUserConfig,  serviceVersion);
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, mdSiUserConfig, sfwVersion);
 
             // create FR parameters and attach them to the provider SI
             MdCollection mdCollection = MdCollection.createSimpleMdCollection();
@@ -385,15 +446,18 @@ public class GenericTest
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");
 
-            System.out.println("START-CYCLIC-REPORT...");
-            TestUtils.verifyResult(userSi.startCyclicReport(piid.getInstanceNumber(), mdCollection.getParameterNameSet(), 3000), "START-CYCLIC-REPORT");
+            System.out.println("START-NOTIFICATION...");
+            TestUtils.verifyResult(userSi.startNotification(piid.getInstanceNumber(), mdCollection.getEventNames()), "START-NOTIFICATION");
 
-            // wait for one cyclic report
-            userSi.waitTransferData(1, 500);
+            // wait for one notifications
+            userSi.waitTransferData(500, 500);
 
+            
             System.out.println("PEER-ABORT...");
             TestUtils.verifyResult(userSi.peerAbort(), "PEER-ABORT");
-            Thread.sleep(200);
+
+            Thread.sleep(500);
+
 
             System.out.println("again PEER-ABORT...");
             TestUtils.verifyResult(userSi.peerAbort(), "PEER-ABORT", CstsResult.FAILURE);
@@ -401,14 +465,16 @@ public class GenericTest
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");
 
-            System.out.println("START-CYCLIC-REPORT...");
-            TestUtils.verifyResult(userSi.startCyclicReport(piid.getInstanceNumber(), mdCollection.getParameterNameSet(), 100), "START-CYCLIC-REPORT");
+            System.out.println("START-NOTIFICATION...");
+            TestUtils.verifyResult(userSi.startNotification(piid.getInstanceNumber(), mdCollection.getEventNames()), "START-NOTIFICATION");
 
-            // wait for one cyclic report
-            userSi.waitTransferData(1, 500);
-
+            // wait for one notifications
+            userSi.waitTransferData(500, 500);
+            
             System.out.println("PEER-ABORT...");
             TestUtils.verifyResult(userSi.peerAbort(), "PEER-ABORT");
+            
+            Thread.sleep(1000);
 
             providerSi.destroy();
             userSi.destroy();
