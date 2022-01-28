@@ -164,6 +164,10 @@ public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliver
 		}
 		return tmp;
 	}
+	
+	public synchronized String printStartDiagnostic() {
+		return startDiagnostic.toString();
+	}
 
 	/**
 	 * Processes the List of Parameters extension in the START invocation, returns

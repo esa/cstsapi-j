@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.sql.rowset.spi.SyncResolver;
+
 import esa.egos.csts.api.diagnostics.ListOfParametersDiagnostics;
 import esa.egos.csts.api.diagnostics.ListOfParametersDiagnosticsType;
 import esa.egos.csts.api.enumerations.CstsResult;
@@ -101,6 +103,10 @@ public abstract class AbstractNotification extends AbstractStatefulProcedure imp
 		IStart start = createStart();
 		start.setInvocationExtension(encodeInvocationExtension());
 		return forwardInvocationToProxy(start);
+	}
+	
+	public synchronized String printStartDiagnostic() {
+		return listOfEventsDiagnostics.toString();
 	}
 	
 	@Override
