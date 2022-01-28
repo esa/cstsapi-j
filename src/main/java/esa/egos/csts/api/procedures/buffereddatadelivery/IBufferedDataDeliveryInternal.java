@@ -32,6 +32,8 @@ public interface IBufferedDataDeliveryInternal extends IBufferedDataDelivery, IS
 
 	EmbeddedData encodeStartDiagnosticExt();
 	
+	String printStartDiagnostic();
+	
 	void initializeReturnBuffer();
 
 	void initializeReturnBufferSize();

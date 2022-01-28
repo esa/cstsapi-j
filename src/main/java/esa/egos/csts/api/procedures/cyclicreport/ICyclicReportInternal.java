@@ -15,5 +15,8 @@ public interface ICyclicReportInternal extends ICyclicReport, IUnbufferedDataDel
 	EmbeddedData encodeStartDiagnosticExt();
 
 	void startCyclicReport();
+	
+	String printStartDiagnostic();
+	
 
 }

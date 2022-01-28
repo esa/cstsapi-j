@@ -15,5 +15,7 @@ public interface INotificationInternal extends INotification, IStatefulProcedure
 	EmbeddedData encodeStartDiagnosticExt();
 
 	void startNotification();
+	
+	String printStartDiagnostic();
 
 }

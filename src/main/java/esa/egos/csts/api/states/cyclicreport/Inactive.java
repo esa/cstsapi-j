@@ -39,18 +39,14 @@ public class Inactive extends State<ICyclicReportInternal> {
 			if (procedure.getDeliveryCycle() < procedure.getMinimumAllowedDeliveryCycle().getValue()) {
 				procedure.setStartDiagnostics(new CyclicReportStartDiagnostics(
 						CyclicReportStartDiagnosticsType.OUT_OF_RANGE, "Delivery cycle is shorter than limit"));
-				start.setStartDiagnostic(new StartDiagnostic(procedure.encodeStartDiagnosticExt()));
+				start.setStartDiagnostic(new StartDiagnostic(procedure.encodeStartDiagnosticExt(),procedure.printStartDiagnostic()));
 			} else if (procedure.checkListOfParameters()) {
 				start.setPositiveResult();
 				procedure.forwardInvocationToApplication(start);
 				procedure.setState(new Active(procedure));
 			} else {
 				// Diagnostics will be implicitly present in this branch
-				start.setStartDiagnostic(new StartDiagnostic(procedure.encodeStartDiagnosticExt()));
-				if(procedure instanceof AbstractCyclicReport) {
-					start.getStartDiagnostic().setMessage(((AbstractCyclicReport)procedure).getStartDiagnostic().toString());
-				}
-				
+				start.setStartDiagnostic(new StartDiagnostic(procedure.encodeStartDiagnosticExt(),procedure.printStartDiagnostic()));				
 			}
 			return procedure.forwardReturnToProxy(start);
 		} else {

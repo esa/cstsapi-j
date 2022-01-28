@@ -9,6 +9,7 @@ import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.operations.IConfirmedOperation;
+import esa.egos.csts.api.operations.IStart;
 import esa.egos.csts.api.procedures.IStatefulProcedure;
 import esa.egos.csts.api.states.service.ServiceStatus;
 import esa.egos.csts.api.util.CSTS_LOG;
@@ -120,6 +121,18 @@ public abstract class AppSiUser extends AppSi {
 						
 			this.retLock.unlock();
 		}
+		
+		if(operation instanceof IStart) {
+			informStartOpReturn((IStart)operation);
+		}
+	}
+	
+	/**
+	 * Override to implement
+	 * @param startOperation the start operation
+	 */
+	public void informStartOpReturn(IStart startOperation) {
+		
 	}
 	
 	/**
