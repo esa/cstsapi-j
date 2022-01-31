@@ -57,6 +57,11 @@ public class NotificationTest
     private ICstsApi providerApi;
 
     private ICstsApi userApi;
+    
+    private static final int SERVICE_VERSION_SFW_B1 = 1; 
+    
+    private static final int SERVICE_VERSION_SFW_B2 = 2; 
+    
 
     // S/C identifier
     private ObjectIdentifier scId = ObjectIdentifier.of(1, 3, 112, 4, 7, 0);
@@ -148,12 +153,31 @@ public class NotificationTest
         this.userApi.stop();
         System.out.println("CSTS user and provider API stopped");
     }
-
+    
+    /**
+     * Test notification procedure and its GET operation w/ default list => ListOfParameter /w type EMPTY
+     * For B1 standard
+     */
+    @Test
+    public void testNotificationWithDefaultLabelListB1()
+    {
+         testNotificationWithDefaultLabelList(SERVICE_VERSION_SFW_B1);
+    }
+    
+    /**
+     * Test notification procedure and its GET operation w/ default list => ListOfParameter /w type EMPTY
+     * For B1 standard
+     */
+    @Test
+    public void testNotificationWithDefaultLabelListB2()
+    {
+         testNotificationWithDefaultLabelList(SERVICE_VERSION_SFW_B2);
+    }
+    
     /**
      * Test notification procedure and its GET operation w/ default list => ListOfParameter /w type EMPTY
      */
-    @Test
-    public void testNotificationWithDefaultLabelList()
+    public void testNotificationWithDefaultLabelList(int sfwVersion)
     {
         try
         {
@@ -165,7 +189,7 @@ public class NotificationTest
             providerSi.setMdCollection(mdCollection);
 
             // create user SI
-            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig,1);
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, sfwVersion);
 
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");
@@ -194,12 +218,31 @@ public class NotificationTest
             fail(e.getMessage());
         }
     }
-
+    
+    /**
+     * Test notification procedure and its GET operation w/ FUNCTIONAL_RESOURCE_NAME
+     * For B1 standard
+     */
+    @Test
+    public void testNotificationWithFunctionalResourceNameB1()
+    {
+         testNotificationWithFunctionalResourceName(SERVICE_VERSION_SFW_B1);
+    }
+    
+    /**
+     * Test notification procedure and its GET operation w/ FUNCTIONAL_RESOURCE_NAME
+     * For B2 standard
+     */
+    @Test
+    public void testNotificationWithFunctionalResourceNameB2()
+    {
+         testNotificationWithFunctionalResourceName(SERVICE_VERSION_SFW_B2);
+    }
+    
     /**
      * Test notification procedure and its GET operation w/ FUNCTIONAL_RESOURCE_NAME
      */
-    @Test
-    public void testNotificationWithFunctionalResourceName()
+    public void testNotificationWithFunctionalResourceName(int sfwVersion)
     {
         try
         {
@@ -211,7 +254,7 @@ public class NotificationTest
             providerSi.setMdCollection(mdCollection);
 
             // create user SI
-            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, 1);
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, sfwVersion);
 
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");
@@ -250,12 +293,30 @@ public class NotificationTest
             fail(e.getMessage());
         }
     }
-
+    
+    /**
+     * Test notification procedure and its GET operation w/ non-existent FUNCTIONAL_RESOURCE_NAME 
+     * For B1 standard
+     */
+    @Test
+    public void testNotificationWithNonExistentFunctionalResourceNameB1()
+    {
+         testNotificationWithNonExistentFunctionalResourceName(SERVICE_VERSION_SFW_B1);
+    }
+    
+    /**
+     * Test notification procedure and its GET operation w/ non-existent FUNCTIONAL_RESOURCE_NAME 
+     * For B2 standard
+     */
+    @Test
+    public void testNotificationWithNonExistentFunctionalResourceNameB2()
+    {
+         testNotificationWithNonExistentFunctionalResourceName(SERVICE_VERSION_SFW_B2);
+    }
     /**
      * Test notification procedure and its GET operation w/ non-existent FUNCTIONAL_RESOURCE_NAME 
      */
-    @Test
-    public void testNotificationWithNonExistentFunctionalResourceName()
+    public void testNotificationWithNonExistentFunctionalResourceName(int sfwVersion)
     {
         try
         {
@@ -267,7 +328,7 @@ public class NotificationTest
             providerSi.setMdCollection(mdCollection);
 
             // create user SI
-            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, 1);
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, sfwVersion);
 
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");
@@ -359,9 +420,28 @@ public class NotificationTest
 
     /**
      * Test notification procedure and its GET operation w/ non-existent FUNCTIONAL_RESOURCE_TYPE
+     * For B1 standard
      */
     @Test
-    public void testNotificationWithNonExistentFunctionalResourceType()
+    public void testNotificationWithNonExistentFunctionalResourceTypeB1()
+    {
+         testNotificationWithNonExistentFunctionalResourceType(SERVICE_VERSION_SFW_B1);
+    }
+    
+    /**
+     * Test notification procedure and its GET operation w/ non-existent FUNCTIONAL_RESOURCE_TYPE
+     * For B2 standard
+     */
+    @Test
+    public void testNotificationWithNonExistentFunctionalResourceTypeB2()
+    {
+         testNotificationWithNonExistentFunctionalResourceType(SERVICE_VERSION_SFW_B2);
+    }
+    
+    /**
+     * Test notification procedure and its GET operation w/ non-existent FUNCTIONAL_RESOURCE_TYPE
+     */
+    public void testNotificationWithNonExistentFunctionalResourceType(int sfwVersion)
     {
         try
         {
@@ -373,7 +453,7 @@ public class NotificationTest
             providerSi.setMdCollection(mdCollection);
 
             // create user SI
-            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, 1);
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, sfwVersion);
 
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");
@@ -463,9 +543,28 @@ public class NotificationTest
 
     /**
      * Test notification procedure and its GET operation w/ LABEL_SET w/ non-existent LABEL"
+     * For B1 standard
      */
     @Test
-    public void testNotificationWithLabelSetWithNonExistentLabel()
+    public void testNotificationWithLabelSetWithNonExistentLabelB1()
+    {
+         testNotificationWithLabelSetWithNonExistentLabel(SERVICE_VERSION_SFW_B1);
+    }
+    
+    /**
+     * Test notification procedure and its GET operation w/ LABEL_SET w/ non-existent LABEL"
+     * For B1 standard
+     */
+    @Test
+    public void testNotificationWithLabelSetWithNonExistentLabelB2()
+    {
+         testNotificationWithLabelSetWithNonExistentLabel(SERVICE_VERSION_SFW_B2);
+    }
+    
+    /**
+     * Test notification procedure and its GET operation w/ LABEL_SET w/ non-existent LABEL"
+     */
+    public void testNotificationWithLabelSetWithNonExistentLabel(int sfwVersion)
     {
         try
         {
@@ -477,7 +576,7 @@ public class NotificationTest
             providerSi.setMdCollection(mdCollection);
 
             // create user SI
-            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, 1);
+            MdCstsSiUser userSi = new MdCstsSiUser(this.userApi, this.mdSiUserConfig, sfwVersion);
 
             System.out.println("BIND...");
             TestUtils.verifyResult(userSi.bind(), "BIND");
