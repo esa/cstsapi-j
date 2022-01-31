@@ -1476,4 +1476,9 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 		}		
 	}
 	
+	@Override
+	public String toString() {
+		return "Service Instance for Identifier: " + serviceInstanceIdentifier.toString();
+	}
+	
 }

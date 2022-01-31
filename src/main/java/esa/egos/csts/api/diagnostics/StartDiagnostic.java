@@ -200,5 +200,14 @@ public class StartDiagnostic {
 
 		return newDiagnostic;
 	}
+	
+	@Override
+	public String toString() {
+		if(message != null) {
+			return message;
+		} else {
+			return type.name();
+		}
+	}
 
 }
