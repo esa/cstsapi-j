@@ -237,5 +237,21 @@ public class BufferedDataDeliveryStartDiagnostic {
 		return newDiagnostics;
 	}
 
+	@Override
+	public String toString() {
+		StringBuffer diag = new StringBuffer();
+		if(type != null) {
+			diag.append("Diagnostic Type: " + type);
+		}
+		
+		if(message != null) {
+			diag.append(" " + message);
+		}
+		if(diagnosticExtension != null) {
+			diag.append("Diagnostic extension: " + diagnosticExtension);
+		}
+		
+		return diag.toString();
+	}
 
 }
