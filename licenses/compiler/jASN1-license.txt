@@ -1,4 +1,14 @@
+Name: jaSN1 (com.beanit.jasn1)
+Version: 1.11.2 / 1.11.3.SNAPSHOT
+License: Apache License 2.0
+Usage:	COMPONENT_DYNAMIC_LIBRARY for the jASN runtime jar  
+		/ Compiler: the jasn1-compiler.jar is used as a compiler at development time.
+This component is released under a permissive software license. It is used unmodified 
+and dynamically linked against ESA software. 
+In such conditions, its license has no effect on ESA software license.
 
+
+------------------------------------------------------------------------
                                  Apache License
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/
