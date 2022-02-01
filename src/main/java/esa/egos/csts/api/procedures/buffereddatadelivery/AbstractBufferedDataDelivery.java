@@ -78,6 +78,10 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 	public void setReturnBuffer(IReturnBuffer returnBuffer) {
 		this.returnBuffer = returnBuffer;
 	}
+	
+	public synchronized String printStartDiagnostic() {
+		return this.startDiagnostic.toString();
+	}
 
 
 	@Override

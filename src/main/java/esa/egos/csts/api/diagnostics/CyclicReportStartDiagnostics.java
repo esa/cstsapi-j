@@ -223,7 +223,7 @@ public class CyclicReportStartDiagnostics {
 	public String toString() {
 		StringBuffer diag = new StringBuffer();
 		if(type != null) {
-			diag.append("Diagnonstic Type: " + type);
+			diag.append("Diagnostic Type: " + type);
 		}
 		if(listOfParametersDiagnostics != null) {
 			diag.append(" list of parameter diag: " + listOfParametersDiagnostics);
@@ -233,7 +233,7 @@ public class CyclicReportStartDiagnostics {
 			diag.append(" " + message);
 		}
 		if(diagnosticExtension != null) {
-			diag.append("Diagnonstic extension: " + diagnosticExtension);
+			diag.append("Diagnostic extension: " + diagnosticExtension);
 		}
 		
 		return diag.toString();

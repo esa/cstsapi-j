@@ -39,7 +39,7 @@ public class Inactive extends State<INotificationInternal> {
 				procedure.setState(new Active(procedure));
 			} else {
 				// List of Events Diagnostics will be present here
-				start.setStartDiagnostic(new StartDiagnostic(procedure.encodeStartDiagnosticExt()));
+				start.setStartDiagnostic(new StartDiagnostic(procedure.encodeStartDiagnosticExt(),procedure.printStartDiagnostic()));
 			}
 			return procedure.forwardReturnToProxy(start);
 		} else {

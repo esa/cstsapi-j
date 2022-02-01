@@ -43,10 +43,12 @@ public class StartDiagnostic {
 	 * Instantiates a new extended START Diagnostic.
 	 * 
 	 * @param diagnosticExtension the START Diagnostic extension
+	 * @param a string message equivalent to the embedded data for logging purposes
 	 */
-	public StartDiagnostic(EmbeddedData diagnosticExtension) {
+	public StartDiagnostic(EmbeddedData diagnosticExtension, String message) {
 		type = StartDiagnosticType.EXTENDED;
 		this.diagnosticExtension = diagnosticExtension;
+		this.message = message;
 	}
 
 	/**
@@ -172,7 +174,7 @@ public class StartDiagnostic {
 			newDiagnostic = new StartDiagnostic(StartDiagnosticType.OUT_OF_SERVICE,
 					CSTSUtils.decodeString(diagnostic.getOutOfService().value));
 		} else if (diagnostic.getStartDiagnosticExtExtension() != null) {
-			newDiagnostic = new StartDiagnostic(EmbeddedData.decode(diagnostic.getStartDiagnosticExtExtension()));
+			newDiagnostic = new StartDiagnostic(EmbeddedData.decode(diagnostic.getStartDiagnosticExtExtension()),diagnostic.toString());
 		}
 
 		return newDiagnostic;
@@ -195,10 +197,19 @@ public class StartDiagnostic {
 			newDiagnostic = new StartDiagnostic(StartDiagnosticType.OUT_OF_SERVICE,
 					CSTSUtils.decodeString(diagnostic.getOutOfService().value));
 		} else if (diagnostic.getStartDiagnosticExtExtension() != null) {
-			newDiagnostic = new StartDiagnostic(EmbeddedData.decode(diagnostic.getStartDiagnosticExtExtension()));
+			newDiagnostic = new StartDiagnostic(EmbeddedData.decode(diagnostic.getStartDiagnosticExtExtension()),diagnostic.toString());
 		}
 
 		return newDiagnostic;
+	}
+	
+	@Override
+	public String toString() {
+		if(message != null) {
+			return message;
+		} else {
+			return type.name();
+		}
 	}
 
 }
