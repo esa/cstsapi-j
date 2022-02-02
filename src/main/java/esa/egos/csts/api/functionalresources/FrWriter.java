@@ -6,12 +6,16 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Creates FR types class file with FR parameters and FR events OIDs
  */
 public class FrWriter
 {
+    /** The logger */
+    private static final Logger LOG = Logger.getLogger(FrWriter.class.getName());
+
     private static final String INDENTATION = "    ";
 
     /** the class name */
@@ -156,6 +160,6 @@ public class FrWriter
         sb.append(".java");
         String fileName = sb.toString();
         Files.write(Paths.get(fileName), this.fileLines, StandardCharsets.UTF_8);
-        System.out.println("created file: " + fileName);
+        LOG.info("created file: " + fileName);
     }
 }
