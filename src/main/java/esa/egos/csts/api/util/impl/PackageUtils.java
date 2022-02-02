@@ -2,6 +2,7 @@ package esa.egos.csts.api.util.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -51,7 +52,7 @@ public class PackageUtils
             {
                 try
                 {
-                    if (new File(url.getPath() + "/" + directoryChild).isDirectory())
+                    if (new File(URLDecoder.decode(url.getPath(), UTF_8) + "/" + directoryChild).isDirectory())
                     {
                         StringBuilder sb = new StringBuilder(packageName);
                         sb.append(".");
@@ -149,8 +150,8 @@ public class PackageUtils
         JarFile jar = null;
 
         try
-        {        	
-        	final String urlDecoded = URLDecoder.decode(url.getFile(), UTF_8);
+        {
+            final String urlDecoded = URLDecoder.decode(url.getFile(), UTF_8);
             LOG.log(Level.INFO, "getting classes from JAR file " + urlDecoded);
             // extract the path file name from URL: file:<path file name>!/package
             String[] split1 = urlDecoded.split("file:");
@@ -221,16 +222,17 @@ public class PackageUtils
      * @return the list of found classes in the package
      * @throws ClassNotFoundException
      * @throws MalformedURLException
+     * @throws UnsupportedEncodingException 
      */
     public static List<Class<?>> getClasses(URL url,
-                                            boolean alsoNestedClasses) throws MalformedURLException
+                                            boolean alsoNestedClasses) throws MalformedURLException, UnsupportedEncodingException
     {
         if (url == null)
         {
             throw new NullPointerException("Could not find classes from URL is null");
         }
 
-        String packageName = getPackageName(url.getPath());
+        String packageName = getPackageName(URLDecoder.decode(url.getPath(), UTF_8));
 
         List<Class<?>> ret = new ArrayList<Class<?>>();
         File packageDirectory = new File(url.getFile());
@@ -262,11 +264,11 @@ public class PackageUtils
                     LOG.log(Level.SEVERE, "Failed to provide classes from " + url + ". ", e);
                 }
             }
-            System.out.println("packageDirectory " + url.getPath() + " exist");
+            LOG.info("packageDirectory " + url.getPath() + " exist");
         }
         else
         {
-            System.out.println("packageDirectory " + url.getPath() + " does not exist");
+            LOG.info("packageDirectory " + url.getPath() + " does not exist");
         }
 
         return ret;
@@ -279,15 +281,16 @@ public class PackageUtils
      * @return the list of found classes in the package
      * @throws ClassNotFoundException
      * @throws MalformedURLException
+     * @throws UnsupportedEncodingException 
      */
-    public static List<Class<?>> getSourceClasses(URL url) throws MalformedURLException
+    public static List<Class<?>> getSourceClasses(URL url) throws MalformedURLException, UnsupportedEncodingException
     {
         if (url == null)
         {
             throw new IllegalArgumentException("Could not find classes from URL " + url);
         }
 
-        String packageName = getPackageName(url.getPath());
+        String packageName = getPackageName(URLDecoder.decode(url.getPath(), UTF_8));
 
         List<Class<?>> ret = new ArrayList<Class<?>>();
         File packageDirectory = new File(url.getFile());
