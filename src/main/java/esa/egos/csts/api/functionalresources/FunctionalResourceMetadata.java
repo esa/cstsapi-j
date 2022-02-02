@@ -776,7 +776,7 @@ public class FunctionalResourceMetadata
             if (classesUrl != null && (outputOidConfigFileName != null || outputFrDirectoryName != null))
             {
                 // load FR meta data from jASN.1 compiler generated classes
-                FunctionalResourceMetadata.getInstance().loadFromBinaryClasses(classesUrl);
+                FunctionalResourceMetadata.getInstance().loadFromSourceClasses(classesUrl);
 
                 if (outputOidConfigFileName != null)
                 {
