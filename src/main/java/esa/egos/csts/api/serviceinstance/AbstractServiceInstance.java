@@ -91,7 +91,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 	 * The sequence-count to be used for operations that are being passed to the
 	 * proxy component.
 	 */
-	private final AtomicLong pxySeqCount = new AtomicLong();
+	private long pxySeqCount;
 
 	/**
 	 * The invocation identifier to be assigned to the next confirmed operation
@@ -192,7 +192,8 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 		this.role = role;
 
-		this.pxySeqCount.getAndSet(0);
+		this.pxySeqCount = 0;
+		
 		this.invokeId = 0;
 
 		if (associationControlProcedure == null) {
@@ -378,7 +379,8 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 			}
 		}
 
-		long theSeqCount = this.pxySeqCount.incrementAndGet();
+		this.pxySeqCount++;
+		long theSeqCount = this.pxySeqCount; 
 
 		if(LOG.isLoggable(Level.FINE))
 		{
@@ -468,7 +470,8 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 	 */
 	public synchronized Result forwardInitiatePxyOpRtn(IOperation operation, boolean b) {
 		
-		long theSeqCount = this.pxySeqCount.incrementAndGet();
+		this.pxySeqCount++;
+		long theSeqCount = this.pxySeqCount; ;
 
 		traceInitiateOperation(operation); // CSTSAPI-4
 		
@@ -507,7 +510,8 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 	@Override
 	public synchronized Result forwardInitiatePxyOpAck(IOperation operation, boolean b) {
-		long theSeqCount = this.pxySeqCount.incrementAndGet();
+		this.pxySeqCount++;
+		long theSeqCount = this.pxySeqCount; 
 
 		traceInitiateOperation(operation); // CSTSAPI-4
 		
@@ -1211,7 +1215,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 	}
 
 	protected synchronized void resetSequenceCount() {
-		this.pxySeqCount.getAndSet(0);
+		this.pxySeqCount = 0;
 		this.invokeId = 0;
 	}
 
