@@ -248,7 +248,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
                 nParams++;
             }
 
-            this.userSi.waitTransferData(5, 500);
+            this.userSi.waitTransferData(10, 500);
 
             System.out.println("Check values at user for all started procedures");
             for (ProcedureInstanceIdentifier piid : piids)
@@ -496,8 +496,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
                 nParams++;
             }
 
-
-            this.userSi.waitTransferData(5, 500);
+            this.userSi.waitTransferData(10, 500);
 
             System.out.println("Check values at user for all started procedures");
             for (ProcedureInstanceIdentifier piid : piids)
@@ -607,7 +606,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
                 this.providerSi.setParameterValue(names[index++], testParameter.updatedValue);
             }
 
-            this.userSi.waitTransferData(5, 500);
+            this.userSi.waitTransferData(10, 500);
 
             System.out.println("Check updated values at user");
             userValues = this.userSi.getParameterValues(this.piid_ocr_prime, frn);
@@ -763,8 +762,8 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
                     nParams1++;
                 }
             }
-
-            this.userSi.waitTransferData(5, 500);
+            
+            this.userSi.waitTransferData(10, 500);
 
             System.out.println("Check updated values at user for all started procedures");
 
@@ -1048,7 +1047,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
                 nParams++;
             }
 
-            this.userSi.waitTransferData(5, 500);
+            this.userSi.waitTransferData(10, 500);
 
             System.out.println("Check updated values at user for all started procedures");
             for (ProcedureInstanceIdentifier piid : piids)
