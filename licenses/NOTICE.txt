@@ -1,0 +1,23 @@
+CSTS-API-Java
+Copyright 2022, European Space Agency (ESA) - https://www.esa.int/
+
+CSTS-API-Java is a free and open source software distributed under:
+ESA Public License (ESA-PL) Weak Copyleft (Type 2), v2.4
+https://essr.esa.int/license/european-space-agency-public-license-v2-4-weak-copyleft-type-2
+
+This software includes code from the ANTLR v4 project:
+https://www.antlr.org/
+Copyright (c) 2012-2022 The ANTLRa Project.
+ANTLR is released under 3-Clause BSD License (aka "New BSD License"
+or "Modified BSD License"):
+https://github.com/antlr/antlr4/blob/master/LICENSE.txt
+
+This software includes code from the ASN1bean (formely known as jASN1)
+project:
+https://www.openmuc.org/de/asn1/
+https://www.beanit.com/asn1/
+Up to and including version 1.10, jASN1 was released under the
+Mozilla Public License (MPL), v2.0.
+Starting with version 1.11, ASN1bean is released under the Apache
+license, v2.0.
+https://github.com/beanit/asn1bean/blob/master/LICENSE.txt

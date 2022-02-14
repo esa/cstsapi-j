@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -20,7 +21,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OidConfig {
 
-	@XmlAttribute(name = "number_oids", required = false)
+    /** The logger */
+    private static final Logger LOG = Logger.getLogger(OidConfig.class.getName());
+
+    @XmlAttribute(name = "number_oids", required = false)
 	protected Integer numOids;
 
 	@XmlAttribute(name = "number_fr_oids", required = false)
@@ -130,9 +134,10 @@ public class OidConfig {
 			fos = new FileOutputStream(pathFileName);
 			JAXBContext context = JAXBContext.newInstance(obj.getClass());
 			Marshaller marshaller = context.createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			marshaller.marshal(obj, fos);
 
-			System.out.println("created file: " + pathFileName);
+			LOG.info("created file: " + pathFileName);
 		} catch (Exception e) {
 			throw new Exception("Failed to create file " + pathFileName, e);
 		} finally {

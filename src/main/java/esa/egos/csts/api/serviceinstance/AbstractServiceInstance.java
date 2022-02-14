@@ -363,7 +363,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 	}
 
 	@Override
-	public Result forwardInitiatePxyOpInv(IOperation operation, boolean reportTransmission) {
+	public synchronized Result forwardInitiatePxyOpInv(IOperation operation, boolean reportTransmission) {
 
 		IConfirmedOperation confOp = null;
 
@@ -466,7 +466,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 	 * return-code indicates that the transmission-queue is full, it generates a
 	 * PEER-ABORT operation.
 	 */
-	public Result forwardInitiatePxyOpRtn(IOperation operation, boolean b) {
+	public synchronized Result forwardInitiatePxyOpRtn(IOperation operation, boolean b) {
 		
 		long theSeqCount = this.pxySeqCount.incrementAndGet();
 
@@ -506,7 +506,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 	}
 
 	@Override
-	public Result forwardInitiatePxyOpAck(IOperation operation, boolean b) {
+	public synchronized Result forwardInitiatePxyOpAck(IOperation operation, boolean b) {
 		long theSeqCount = this.pxySeqCount.incrementAndGet();
 
 		traceInitiateOperation(operation); // CSTSAPI-4
@@ -548,6 +548,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 	@Override
 	public Result forwardInformAplOpInv(IOperation operation) {
+		synchronized(this) {
 		if (operation.isConfirmed()) {
 			IConfirmedOperation confOp = (IConfirmedOperation) operation;
 			this.localReturns.add(confOp);
@@ -555,12 +556,13 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 		if(LOG.isLoggable(Level.FINE)) {
 			LOG.fine(operation.toString() + " invocation is beeing passed to the application ");
 		}
+		}
 		getApplicationServiceInform().informOpInvocation(operation);
 		return Result.S_OK;
 	}
 
 	@Override
-	public Result forwardInformAplOpRtn(IConfirmedOperation cop) {
+	public synchronized Result forwardInformAplOpRtn(IConfirmedOperation cop) {
 		if(LOG.isLoggable(Level.FINE)) {
 			LOG.fine(cop.toString() + " return is beeing passed to the application ");
 		}
@@ -569,7 +571,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 	}
 
 	@Override
-	public Result forwardInformAplOpAck(IAcknowledgedOperation aop) {
+	public synchronized Result forwardInformAplOpAck(IAcknowledgedOperation aop) {
 		if(LOG.isLoggable(Level.FINE)) {
 			LOG.fine(aop.toString() + " acknowledgement is beeing passed to the application ");
 		}
@@ -1208,7 +1210,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 		return this.proxy;
 	}
 
-	protected void resetSequenceCount() {
+	protected synchronized void resetSequenceCount() {
 		this.pxySeqCount.getAndSet(0);
 		this.invokeId = 0;
 	}
