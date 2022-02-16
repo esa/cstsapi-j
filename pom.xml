@@ -128,8 +128,8 @@
                                 <argument>-f</argument>
                                 <argument>src/main/resources/asn1/922.1-B-1.asn</argument>
                                 <argument>src/main/resources/asn1/922.4-W-1.asn</argument>
-                                <argument>src/main/java/esa/egos/proxy/del/921x1r2[Draft_20160901]_ASN.1.ori.asn</argument>
-                                <argument>src/main/java/esa/egos/proxy/del/ISP1-CREDENTIALS.asn</argument>
+                                <argument>src/main/resources/asn1/921x1r2[Draft_20160901]_ASN.1.ori.asn</argument>
+                                <argument>src/main/resources/asn1/ISP1-CREDENTIALS.asn</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -152,8 +152,8 @@
                                 <argument>-f</argument>
                                 <argument>src/main/resources/asn1/922.1-B-1.asn</argument>
                                 <argument>src/main/resources/asn1/922.4-W-1.asn</argument>
-                                <argument>src/main/java/esa/egos/proxy/del/SFW_B2_ASN1.asn</argument>
-                                <argument>src/main/java/esa/egos/proxy/del/ISP1-CREDENTIALS.asn</argument>
+								<argument>src/main/resources/asn1/ISP1-CREDENTIALS.asn</argument>
+                                <argument>src/main/resources/asn1_b2/SFW_B2_ASN1.asn</argument>
                             </arguments>
                         </configuration>
                     </execution>
