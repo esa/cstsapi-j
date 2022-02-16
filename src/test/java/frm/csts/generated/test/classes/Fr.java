@@ -214,8 +214,8 @@ public class Fr
             public static final ObjectIdentifier ccsds401CarrierXmitPolarizationParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 5, 1, 1);
             public static final ObjectIdentifier ccsds401CarrierXmitEirpParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 4, 1, 1);
             public static final ObjectIdentifier ccsds401CarrierXmitNominalCarrierFreqParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 7, 1, 1);
-            public static final ObjectIdentifier ccsds401CarrierXmitActualCarrierFreqParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 6, 1, 1);
             public static final ObjectIdentifier ccsds401CarrierXmitSweepProcStatParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 9, 1, 1);
+            public static final ObjectIdentifier ccsds401CarrierXmitActualCarrierFreqParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 6, 1, 1);
             public static final ObjectIdentifier ccsds401CarrierXmitReferenceFreqLockParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 8, 1, 1);
             public static final ObjectIdentifier ccsds401CarrierXmitResourceStatParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 1, 1, 1);
         }
@@ -249,8 +249,8 @@ public class Fr
             public static final ObjectIdentifier cfdpConsignedTransactionIdValueOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 50200, 2, 12, 1, 1);
             public static final ObjectIdentifier cfdpFaultIndicationValueOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 50200, 2, 9, 1, 1);
             public static final ObjectIdentifier cfdpResumedIndicationValueOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 50200, 2, 8, 1, 1);
-            public static final ObjectIdentifier cfdpAbandonedIndicationValueOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 50200, 2, 10, 1, 1);
             public static final ObjectIdentifier cfdpSuspendedIndicationValueOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 50200, 2, 7, 1, 1);
+            public static final ObjectIdentifier cfdpAbandonedIndicationValueOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 50200, 2, 10, 1, 1);
         }
     }
 
