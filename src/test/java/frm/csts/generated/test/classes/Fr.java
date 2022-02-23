@@ -214,8 +214,8 @@ public class Fr
             public static final ObjectIdentifier ccsds401CarrierXmitPolarizationParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 5, 1, 1);
             public static final ObjectIdentifier ccsds401CarrierXmitEirpParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 4, 1, 1);
             public static final ObjectIdentifier ccsds401CarrierXmitNominalCarrierFreqParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 7, 1, 1);
-            public static final ObjectIdentifier ccsds401CarrierXmitActualCarrierFreqParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 6, 1, 1);
             public static final ObjectIdentifier ccsds401CarrierXmitSweepProcStatParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 9, 1, 1);
+            public static final ObjectIdentifier ccsds401CarrierXmitActualCarrierFreqParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 6, 1, 1);
             public static final ObjectIdentifier ccsds401CarrierXmitReferenceFreqLockParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 8, 1, 1);
             public static final ObjectIdentifier ccsds401CarrierXmitResourceStatParamOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 20100, 1, 1, 1, 1);
         }
