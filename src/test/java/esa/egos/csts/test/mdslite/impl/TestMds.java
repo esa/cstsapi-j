@@ -305,8 +305,9 @@ public class TestMds {
 				System.out.println("Disconnect the tcp connection to get a protocol abort...");
 				tcpForwarder.stop(); 
 				
-				Thread.sleep(500);
-				
+
+                    userSi.waitTransferData(500, 500);
+
 				Assert.assertTrue(providerSi.getApiServiceInstance().getStatus() == ServiceStatus.UNBOUND);
 			}
 			
@@ -370,7 +371,8 @@ public class TestMds {
 					Assert.assertTrue(proc.isDeactivationPending() == false);
 				}
 				
-				Thread.sleep(1000); // give some time to report on data
+				// give some time to report on data
+				userSi.waitTransferData(10, 1000);
 	
 				System.out.println("Initiate abort by the provider...");
 				providerSi.getApiServiceInstance().getAssociationControlProcedure().abort(PeerAbortDiagnostics.OPERATIONAL_REQUIREMENT);		
@@ -383,9 +385,8 @@ public class TestMds {
 					Assert.assertTrue(proc.isDeactivationPending() == false);
 				}
 				
-				//Thread.sleep(500); // give some time for the abort to arrive at the provider
-				//userSi.waitForAbort(60000);
-				Thread.sleep(500);
+				// give some time for the abort to arrive at the provider
+				userSi.waitTransferData(500, 500);
 				
 				procedures = userSi.getCyclicReportProcedures();
 				for(IOnChangeCyclicReport proc : procedures) {

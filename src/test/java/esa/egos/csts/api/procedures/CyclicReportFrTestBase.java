@@ -366,7 +366,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
                 this.providerSi.setParameterValue(labels[index++], testParameter.updatedValue);
             }
 
-            this.userSi.waitTransferData(5, 500);
+            this.userSi.waitTransferData(10, 500);
 
             System.out.println("Check modified values at user");
             index = 0;
