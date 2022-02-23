@@ -100,7 +100,6 @@ public class ProtocolAbortMultipleProviderAbortTest {
       */
      
      @Test
-     @Ignore
      public void testMultipleProviderAbortB1() throws InterruptedException {
           testMultipleProviderAbort(SERVICE_VERSION_SFW_B1);
      }

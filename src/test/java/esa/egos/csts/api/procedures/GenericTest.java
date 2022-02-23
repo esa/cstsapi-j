@@ -355,7 +355,7 @@ public class GenericTest
             mdCollection.fireAllEvents();
 
             // wait for notification
-            Thread.sleep(200);
+            userSi.waitTransferData(5, 200);
             assertTrue("no event notified", userSi.getNotifiedEventCount() > 0);
 
             System.out.println("STOP-NOTIFICATION...");
@@ -450,14 +450,13 @@ public class GenericTest
             TestUtils.verifyResult(userSi.startNotification(piid.getInstanceNumber(), mdCollection.getEventNames()), "START-NOTIFICATION");
 
             // wait for one notifications
-            userSi.waitTransferData(500, 500);
+            userSi.waitTransferData(1, 500);
 
             
             System.out.println("PEER-ABORT...");
             TestUtils.verifyResult(userSi.peerAbort(), "PEER-ABORT");
 
-            Thread.sleep(500);
-
+            userSi.waitTransferData(500, 500);
 
             System.out.println("again PEER-ABORT...");
             TestUtils.verifyResult(userSi.peerAbort(), "PEER-ABORT", CstsResult.FAILURE);
@@ -468,14 +467,14 @@ public class GenericTest
             System.out.println("START-NOTIFICATION...");
             TestUtils.verifyResult(userSi.startNotification(piid.getInstanceNumber(), mdCollection.getEventNames()), "START-NOTIFICATION");
 
-            // wait for one notifications
-            userSi.waitTransferData(500, 500);
+            // wait for one notification
+            userSi.waitTransferData(1, 500);
             
             System.out.println("PEER-ABORT...");
             TestUtils.verifyResult(userSi.peerAbort(), "PEER-ABORT");
             
-            Thread.sleep(1000);
-
+            userSi.waitTransferData(1000, 1000);
+            
             providerSi.destroy();
             userSi.destroy();
         }

@@ -247,10 +247,10 @@ public class Fr
             public static final ObjectIdentifier cfdpTransactionTransactionIdValueOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 50200, 2, 1, 1, 1);
             public static final ObjectIdentifier cfdpEofRcvdTransactionIdValueOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 50200, 2, 11, 1, 1);
             public static final ObjectIdentifier cfdpConsignedTransactionIdValueOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 50200, 2, 12, 1, 1);
-            public static final ObjectIdentifier cfdpFaultIndicationValueOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 50200, 2, 9, 1, 1);
             public static final ObjectIdentifier cfdpResumedIndicationValueOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 50200, 2, 8, 1, 1);
-            public static final ObjectIdentifier cfdpAbandonedIndicationValueOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 50200, 2, 10, 1, 1);
+            public static final ObjectIdentifier cfdpFaultIndicationValueOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 50200, 2, 9, 1, 1);
             public static final ObjectIdentifier cfdpSuspendedIndicationValueOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 50200, 2, 7, 1, 1);
+            public static final ObjectIdentifier cfdpAbandonedIndicationValueOid = ObjectIdentifier.of(OIDs.crossSupportFunctionalities, 50200, 2, 10, 1, 1);
         }
     }
 
