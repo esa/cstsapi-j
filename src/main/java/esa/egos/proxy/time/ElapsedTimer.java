@@ -6,9 +6,11 @@ package esa.egos.proxy.time;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Logger;
 
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.proxy.util.ITimeoutProcessor;
+import esa.egos.proxy.tml.Channel;
 
 /**
  * Class provides an elapsed time timer. Client of this class should not call
@@ -20,6 +22,7 @@ import esa.egos.proxy.util.ITimeoutProcessor;
  */
 public class ElapsedTimer
 {
+    private static final Logger LOG = Logger.getLogger(Channel.class.getName());
 
     private Timer timer = new Timer();;
 
@@ -49,8 +52,14 @@ public class ElapsedTimer
                     throw new ApiException("can't synchronize timer. A task already exists.");
                 }
                 RemindTask rt = new RemindTask(argtimeoutproc, invocationId);
-
-                this.timer.schedule(rt, argexpiry.getSeconds() * 1000);
+                
+                try {
+                     this.timer.schedule(rt, argexpiry.getSeconds() * 1000);
+                }
+                catch(IllegalStateException exception) {
+                     LOG.warning("Timer already cancelled due to protocol abort");
+                }
+                
                 this.currentTask = rt;
             }
         }

@@ -124,16 +124,14 @@ public class FunctionalResourceParameterEx<T extends BerType, V extends Function
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    public void setCstsValue(ICstsValue value) throws NoSuchFieldException,
+    public synchronized void setCstsValue(ICstsValue value) throws NoSuchFieldException,
                                                IllegalArgumentException,
                                                IllegalAccessException,
                                                InstantiationException
     {
-        synchronized (this)
-        {
-            this.value.setCstsValue(value);
-        }
-
+        
+         this.value.setCstsValue(value);
+         
         // indicate the change
         setChanged();
         notifyObservers();

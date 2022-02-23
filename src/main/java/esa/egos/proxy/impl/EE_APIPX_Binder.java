@@ -114,10 +114,10 @@ public class EE_APIPX_Binder implements IBinder
         pChannelInform = (IChannelInform) pAssocPxy;
 
         // insert the new aAssocPxy in the list
-        this.eeMutex.lock();
-        this.eeAPIPXAssocPxyList.add(pAssocPxy);
-        this.eeMutex.unlock();
-
+        synchronized(this) {
+             this.eeAPIPXAssocPxyList.add(pAssocPxy);
+        }
+        
         pAssocPxy.setChannelInitiate(pChannelInitiate);
         pChannelInitiate.setChannelInform(pChannelInform);
 
@@ -130,7 +130,7 @@ public class EE_APIPX_Binder implements IBinder
      * parameter. Moreover, check if some AssocPxy not longer used have to be
      * deleted.
      */
-    public void cleanupAssocPxy()
+    public synchronized void cleanupAssocPxy()
     {
         for (Iterator<EE_APIPX_AssocPxy> it = this.eeAPIPXAssocPxyList.iterator(); it.hasNext();)
         {
@@ -144,7 +144,7 @@ public class EE_APIPX_Binder implements IBinder
     /**
      * Delete an AssocPxy object from the list.
      */
-    public void cleanAssoc(EE_APIPX_AssocPxy pAssocPxy)
+    public synchronized void cleanAssoc(EE_APIPX_AssocPxy pAssocPxy)
     {
         // remove the AssocPxy from the link
         for (Iterator<EE_APIPX_AssocPxy> it = this.eeAPIPXAssocPxyList.iterator(); it.hasNext();)
