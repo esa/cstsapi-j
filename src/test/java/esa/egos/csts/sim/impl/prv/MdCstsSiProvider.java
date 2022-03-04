@@ -49,12 +49,6 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
         System.out.println("MdCstsSiProvider#MdCstsSiProvider() begin");
         System.out.println("MdCstsSiProvider#MdCstsSiProvider() end");
     }
-
-    // getter only for test purpose to simulate a peer abort
-    public IServiceInstance getServiceInstance() 
-    {
-    	return serviceInstance;
-    }
     
     @Override
     protected void addProcedure(IProcedure procedure,
@@ -88,7 +82,7 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
     }
 
     public void setDefaultLabelList(ProcedureInstanceIdentifier piid, List<Label> defaultLabeList) throws Exception {
-    	IProcedure procedure = this.serviceInstance.getProcedure(piid);
+    	IProcedure procedure = this.getApiSi().getProcedure(piid);
     	if (procedure instanceof CyclicReportProvider) {
     		updateDefaultLabelList(((CyclicReportProvider) procedure).getLabelLists(), defaultLabeList);
     		
@@ -155,42 +149,42 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
     @Override
     protected InformationQueryProvider createInformationQueryProcedure() throws ApiException
     {
-        return this.serviceInstance.createProcedure(InformationQueryProvider.class);
+        return this.getApiSi().createProcedure(InformationQueryProvider.class);
     }
 
     @Override
     protected OnChangeCyclicReportProvider createOnChangeCyclicReportProcedure() throws ApiException
     {
-        return this.serviceInstance.createProcedure(OnChangeCyclicReportProvider.class);
+        return this.getApiSi().createProcedure(OnChangeCyclicReportProvider.class);
     }
 
     @Override
     protected NotificationProvider createNotificationProcedure() throws ApiException
     {
-        return this.serviceInstance.createProcedure(NotificationProvider.class);
+        return this.getApiSi().createProcedure(NotificationProvider.class);
     }
 
     private void clearFunctionaResources()
     {
-        if (this.serviceInstance.isBound())
+        if (this.getApiSi().isBound())
         {
             throw new UnsupportedOperationException("Cannot change functional resource types in the bound state");
         }
 
         // remove all external parameters
-        List<IParameter> parameters = this.serviceInstance.gatherParameters();
-        parameters.forEach(p -> this.serviceInstance.removeExternalParameter(p));
+        List<IParameter> parameters = this.getApiSi().gatherParameters();
+        parameters.forEach(p -> this.getApiSi().removeExternalParameter(p));
 
         // remove all external events
-        List<IEvent> events = this.serviceInstance.gatherEvents();
-        events.forEach(e -> this.serviceInstance.removeExternalEvent(e));
+        List<IEvent> events = this.getApiSi().gatherEvents();
+        events.forEach(e -> this.getApiSi().removeExternalEvent(e));
     }
 
     public void setMdCollection(MdCollection mdCollection)
     {
         clearFunctionaResources();
-        mdCollection.getParameters().stream().forEach(this.serviceInstance::addExternalParameter);
-        mdCollection.getEvents().stream().forEach(this.serviceInstance::addExternalEvent);
+        mdCollection.getParameters().stream().forEach(this.getApiSi()::addExternalParameter);
+        mdCollection.getEvents().stream().forEach(this.getApiSi()::addExternalEvent);
     }
 
     public void setFunctionalResources(FunctionalResourceType... functionalResourceTypes) throws Exception
@@ -234,13 +228,13 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
     @Override
     public FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> getParameter(Name name)
     {
-        Optional<IParameter> op = this.serviceInstance.gatherParameters().stream()
+        Optional<IParameter> op = this.getApiSi().gatherParameters().stream()
                 .filter(p -> (p instanceof FunctionalResourceParameterEx && p.getName().equals(name))).findFirst();
 
         if (!op.isPresent())
         {
             throw new IllegalArgumentException("Parameter " + name + " is not available in "
-                                               + this.serviceInstance.getServiceInstanceIdentifier());
+                                               + this.getApiSi().getServiceInstanceIdentifier());
         }
 
         return (FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>) op.get();
@@ -250,13 +244,13 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
     @Override
     public FunctionalResourceEvent<?, FunctionalResourceValue<?>> getEvent(Name name)
     {
-        Optional<IEvent> op = this.serviceInstance.gatherEvents().stream()
+        Optional<IEvent> op = this.getApiSi().gatherEvents().stream()
                 .filter(e -> (e instanceof FunctionalResourceEvent && e.getName().equals(name))).findFirst();
 
         if (!op.isPresent())
         {
             throw new IllegalArgumentException("Event " + name + " is not availeble in "
-                                               + this.serviceInstance.getServiceInstanceIdentifier());
+                                               + this.getApiSi().getServiceInstanceIdentifier());
         }
 
         return (FunctionalResourceEvent<?, FunctionalResourceValue<?>>) op.get();
@@ -266,7 +260,7 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
     @Override
     public List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> getParameters(Label label)
     {
-        return this.serviceInstance.gatherParameters().stream()
+        return this.getApiSi().gatherParameters().stream()
                 .filter(p -> (p instanceof FunctionalResourceParameterEx && p.getLabel().equals(label)))
                 .map(p -> (FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>)p)
                 .collect(Collectors.toList());
@@ -276,7 +270,7 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
     @Override
     public List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> getParameters(FunctionalResourceName frn)
     {
-        return this.serviceInstance.gatherParameters().stream()
+        return this.getApiSi().gatherParameters().stream()
                 .filter(p -> (p instanceof FunctionalResourceParameterEx && p.getName().getFunctionalResourceName().equals(frn)))
                 .map(p -> (FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>)p)
                 .collect(Collectors.toList());
@@ -286,7 +280,7 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
     @Override
     public List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> getParameters(FunctionalResourceType frt)
     {
-        return this.serviceInstance.gatherParameters().stream()
+        return this.getApiSi().gatherParameters().stream()
                 .filter(p -> (p instanceof FunctionalResourceParameterEx && p.getLabel().getFunctionalResourceType().equals(frt)))
                 .map(p -> (FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>)p)
                 .collect(Collectors.toList());
@@ -296,7 +290,7 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
     @Override
     public List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> getParameters(ProcedureInstanceIdentifier piid)
     {
-        return this.serviceInstance.gatherParameters().stream()
+        return this.getApiSi().gatherParameters().stream()
                 .filter(p -> (p instanceof FunctionalResourceParameterEx && p.getName().getProcedureInstanceIdentifier().equals(piid)))
                 .map(p -> (FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>)p)
                 .collect(Collectors.toList());
@@ -306,7 +300,7 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
     @Override
     public List<FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> getParameters(ProcedureType procTyp)
     {
-        return this.serviceInstance.gatherParameters().stream()
+        return this.getApiSi().gatherParameters().stream()
                 .filter(p -> (p instanceof FunctionalResourceParameterEx && p.getLabel().getProcedureType().equals(procTyp)))
                 .map(p -> (FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>)p)
                 .collect(Collectors.toList());

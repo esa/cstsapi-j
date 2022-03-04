@@ -56,6 +56,7 @@ public class TCPForwardServer implements Runnable {
 				this.acceptConnThread.join();
 			} catch (InterruptedException e) {				
 				e.printStackTrace();
+				Thread.currentThread().interrupt();
 			}
 		}
 	}

@@ -36,9 +36,7 @@ public class RtnCfdpPduSiUser extends AppSiUser {
 	public RtnCfdpPduSiUser(ICstsApi api, SiConfig config, ICfpdPduReceiver pduReceiver, int sfwVersion) throws ApiException {
 		super(api, config, RtnCfdpPduSiProvider.CSTS_RTN_CFDP_PDU_SRV, sfwVersion);
 		this.pduReceiver = pduReceiver;
-		this.deliveryProcedure = getApiSi().createProcedure(CfdpPduDeliveryUser.class);
-		this.deliveryProcedure.setRole(ProcedureRole.PRIME, 0);
-		getApiSi().addProcedure(deliveryProcedure);
+		this.deliveryProcedure = getApiSi().createProcedure(CfdpPduDeliveryUser.class,ProcedureRole.PRIME, 0);
 		configure();
 	}
 
@@ -48,7 +46,7 @@ public class RtnCfdpPduSiUser extends AppSiUser {
 	 */
 	public CstsResult requestDataDelivery() {
 		this.deliveryProcedure.requestDataDelivery();
-		return waitForProcedureReturn(this.deliveryProcedure, true);
+		return waitForStatefulProcedureReturn(this.deliveryProcedure, true);
 	}
 	
 	/**
@@ -57,7 +55,7 @@ public class RtnCfdpPduSiUser extends AppSiUser {
 	 */
 	public CstsResult requestDataDelivery(Time startGenerationTime, Time stopGenerationTime) {
 		this.deliveryProcedure.requestDataDelivery(startGenerationTime, stopGenerationTime);
-		return waitForProcedureReturn(this.deliveryProcedure, true);
+		return waitForStatefulProcedureReturn(this.deliveryProcedure, true);
 	}	
 
 	/**
@@ -66,7 +64,7 @@ public class RtnCfdpPduSiUser extends AppSiUser {
 	 */
 	public CstsResult endDataDelivery() {
 		this.deliveryProcedure.endDataDelivery();
-		return waitForProcedureReturn(this.deliveryProcedure, false);
+		return waitForStatefulProcedureReturn(this.deliveryProcedure, false);
 	}	
 	
 	@Override

@@ -29,57 +29,29 @@ import esa.egos.csts.api.serviceinstance.impl.ServiceInstanceIdentifier;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.Name;
 import esa.egos.csts.api.types.SfwVersion;
+import esa.egos.csts.app.si.AppSi;
 
 /**
  * Base class for MD-CSTS service instance (SI)
  */
 public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQuery, C extends ICyclicReport, N extends INotification>
-                              implements IServiceInform
-{
-    /** The SI identifier */ 
-    private static final ObjectIdentifier SIOID = ObjectIdentifier.of(1, 3, 112, 4, 4, 1, 2);
-
-    /** CSTS API IF */
-    protected final ICstsApi api;
-
-    /** CSTS SI IF*/
-    protected IServiceInstance serviceInstance;
-
-    /** CSTS SI IF*/
-    protected K config;
-
+                              extends AppSi
+{  
+    private static int SERVICE_TYPE_ID = 2;
 
     public MdCstsSi(ICstsApi api, K config, int serviceVersion) throws ApiException
     {
-        super();
+        super(api, config,SERVICE_TYPE_ID,serviceVersion);
 
         System.out.println("MdCstsSi#MdCstsSi() begin");
 
-        this.api = api;
-        this.config = config;
-
-        IServiceInstanceIdentifier identifier = new ServiceInstanceIdentifier(config.getScId(),
-                                                                              config.getFacilityId(),
-                                                                              SIOID,
-                                                                              config.getInstanceNumber());
-
-        this.serviceInstance = api.createServiceInstance(identifier,serviceVersion, this);
-        System.out.println("created service instance " + identifier);
-
         createProcedures(config);
 
-        // the application needs to make sure that it chooses valid values from
-        // the proxy configuration
-        this.serviceInstance.setPeerIdentifier(config.getPeerIdentifier());
-        this.serviceInstance.setResponderPortIdentifier(config.getResponderPortIdentifier());
-        this.serviceInstance.configure();
+        configure();
 
         System.out.println("MdCstsSi#MdCstsSi() end");
     }
-    
-    protected SfwVersion getSfwVersion() {
-    	return this.serviceInstance.getSfwVersion();
-    }
+   
 
     protected void createProcedures(K config) throws ApiException
     {
@@ -116,20 +88,16 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
     protected void addProcedure(IProcedure procedure, ProcedureInstanceIdentifier pii, K config) throws ApiException
     {
         procedure.setRole(pii.getRole(), new Long(pii.getInstanceNumber()).intValue());
-        this.serviceInstance.addProcedure(procedure);
+        getApiSi().addProcedure(procedure);
 
         System.out.println("added procedure " + procedure.getProcedureInstanceIdentifier());
     }
 
     protected ProcedureInstanceIdentifier getPrimeProcedureIdentifier()
     {
-        return this.serviceInstance.getPrimeProcedure().getProcedureInstanceIdentifier();
+        return getApiSi().getPrimeProcedure().getProcedureInstanceIdentifier();
     }
 
-    public void destroy() throws ApiException
-    {
-        this.api.destroyServiceInstance(this.serviceInstance);
-    }
 
     public abstract FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> getParameter(Name name);
     public abstract FunctionalResourceEvent<?, FunctionalResourceValue<?>> getEvent(Name name);
@@ -274,7 +242,7 @@ public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQ
     }
 
     public boolean isBound() {
-        return this.serviceInstance.isBound();
+        return getApiSi().isBound();
     }
 
 }

@@ -22,6 +22,11 @@ public class CstsProviderApi extends CstsApi {
 		super(name, AppRole.PROVIDER);
 
 	}
+	
+	public CstsProviderApi(String name,String configFile) throws ApiException {
+		super(name, AppRole.PROVIDER);
+		initialize(configFile);
+	}
 
 	@Override
 	protected void initialize(InputStream configFileStream) throws ApiException  {

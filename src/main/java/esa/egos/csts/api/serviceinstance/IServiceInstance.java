@@ -3,6 +3,7 @@ package esa.egos.csts.api.serviceinstance;
 import java.util.List;
 import java.util.Optional;
 
+import esa.egos.csts.api.enumerations.ProcedureRole;
 import esa.egos.csts.api.events.EventValue;
 import esa.egos.csts.api.events.IEvent;
 import esa.egos.csts.api.exceptions.ApiException;
@@ -39,6 +40,21 @@ public interface IServiceInstance extends IServiceInitiate, ISrvProxyInform, ISe
 	 * @throws ApiException if the class could not be created
 	 */
 	<T extends IProcedure> T createProcedure(Class<T> cls) throws ApiException;
+	
+	
+	/**
+	 *  Creates a new procedure of the specified class object.
+	 *  Sets the role and instance number of this Procedure,
+	 *  and sets the role and instance number of this Procedure.
+	 * @param <T>
+	 * @param cls the specified class object
+	 * @param procedureRole
+	 * @param instanceNumber
+	 * @return the new procedure of the specified class object
+	 * @throws ApiException if the class could not be created
+	 */
+	<T extends IProcedure> T createProcedure(Class<T> cls, ProcedureRole procedureRole, int instanceNumber) throws ApiException;
+	
 
 	/**
 	 * Adds and initializes a new procedure to the service instance.

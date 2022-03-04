@@ -329,7 +329,7 @@ public abstract class MdCstsSiUserInform extends
      * @param start The returned start operation
      */
     private void onStartReturn(IStart start) {
-    	if(this.getSfwVersion().equals(SfwVersion.B2)) {
+    	if(this.getApiSi().getSfwVersion().equals(SfwVersion.B2)) {
     		onStartReturnB2(start);
     	} else {
     		onStartReturnB1(start);
@@ -768,7 +768,7 @@ public abstract class MdCstsSiUserInform extends
 
         ProcedureInstanceIdentifier piid = transferData.getProcedureInstanceIdentifier();
 
-        List<QualifiedParameter> params = ((OnChangeCyclicReportUser) this.serviceInstance.getProcedure(piid))
+        List<QualifiedParameter> params = ((OnChangeCyclicReportUser) this.getApiSi().getProcedure(piid))
                 .getQualifiedParameters();
 
         synchronized (this.cyclicParameters)
@@ -1021,7 +1021,7 @@ public abstract class MdCstsSiUserInform extends
         if (ret == null)
         {
             throw new IllegalArgumentException(piid + " is not supported by "
-                                               + this.serviceInstance.getServiceInstanceIdentifier());
+                                               + this.getApiSi().getServiceInstanceIdentifier());
         }
 
         return ret;
@@ -1039,7 +1039,7 @@ public abstract class MdCstsSiUserInform extends
         if (ret == null)
         {
             throw new IllegalArgumentException(piid + " is not supported by "
-                                               + this.serviceInstance.getServiceInstanceIdentifier());
+                                               + this.getApiSi().getServiceInstanceIdentifier());
         }
 
         return ret;

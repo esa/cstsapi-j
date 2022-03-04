@@ -417,9 +417,14 @@ public class EE_APIPX_Link
             InetAddress address = InetAddress.getByName("localhost");
             this.socket = new Socket(address, Integer.parseInt(ipcAddress));
         }
-        catch (NumberFormatException | IOException e1)
+        catch (NumberFormatException nfe)
         {
-            LOG.log(Level.FINE, "NumberFormatException or IOException:", e1);
+            LOG.log(Level.FINE, "NumberFormatException:", nfe);
+            return Result.E_FAIL;
+        }
+        catch (IOException ioe)
+        {
+            LOG.log(Level.FINE, "IOException:" + ioe.getMessage(), ioe);
             return Result.E_FAIL;
         }
 
