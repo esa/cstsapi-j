@@ -19,6 +19,7 @@ public abstract class AppSi implements IServiceInform {
 	private final IServiceInstance apiServiceInstance;
 	
 	/**
+	 * Constructor for creating a Server App Si
 	 * Creates an Application SI for the given arguments
 	 * @param api			The CSTS API instance to use
 	 * @param config		The configuration to use
@@ -29,6 +30,14 @@ public abstract class AppSi implements IServiceInform {
 		this(api,config,serviceType,0);
 	}
 	
+	/**
+	 * Constructor for creating a User App Si
+	 * @param api			The CSTS API instance to use
+	 * @param config		The configuration to use
+	 * @param serviceType 	The CSTS service type as part of the OID: 1.3.112.4.4.1.<systemType> 
+	 * @param serviceVersion
+	 * @throws ApiException
+	 */
 	public AppSi(ICstsApi api, SiConfig config, int serviceType, int serviceVersion) throws ApiException {
 		this.api = api;
 		
@@ -45,6 +54,7 @@ public abstract class AppSi implements IServiceInform {
 	}
 
 	/**
+	 * Configure method has to be called after all the required procedures have been created and configured
 	 * @throws ApiException 
 	 * @throws ConfigException 
 	 */

@@ -49,16 +49,11 @@ public class MdCstsSiUser extends MdCstsSiUserInform
         System.out.println("MdCstsSiUser#MdCstsSiUser() begin");
 
         //this.serviceInstance.setVersion(serviceInstance.getServiceInstanceIdentifier().getServiceInstanceNumber());
-        this.associationProcedure = (AssociationControlUser) this.serviceInstance.getAssociationControlProcedure();
+        this.associationProcedure = (AssociationControlUser) this.getApiSi().getAssociationControlProcedure();
 
         System.out.println("MdCstsSiUser#MdCstsSiUser() end");
     }
 
-    // getter only for test purpose to simulate a peer abort
-    public IServiceInstance getServiceInstance() 
-    {
-    	return serviceInstance;
-    }
     
     /**
      * Create InformationQueryUser procedure
@@ -68,7 +63,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
     @Override
     protected InformationQueryUser createInformationQueryProcedure() throws ApiException
     {
-        return this.serviceInstance.createProcedure(InformationQueryUser.class);
+        return this.getApiSi().createProcedure(InformationQueryUser.class);
     }
 
     /**
@@ -79,7 +74,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
     @Override
     protected OnChangeCyclicReportUser createOnChangeCyclicReportProcedure() throws ApiException
     {
-        return this.serviceInstance.createProcedure(OnChangeCyclicReportUser.class);
+        return this.getApiSi().createProcedure(OnChangeCyclicReportUser.class);
     }
 
     /**
@@ -90,7 +85,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
     @Override
     protected NotificationUser createNotificationProcedure() throws ApiException
     {
-        return this.serviceInstance.createProcedure(NotificationUser.class);
+        return this.getApiSi().createProcedure(NotificationUser.class);
     }
 
     /**
@@ -220,10 +215,10 @@ public class MdCstsSiUser extends MdCstsSiUserInform
         try
         {
             // check whether this service instance is bound
-            if (this.serviceInstance.getStatus() == ServiceStatus.BOUND)
+            if (this.getApiSi().getStatus() == ServiceStatus.BOUND)
             {
                 // get the cyclic report procedure from the instance number
-                OnChangeCyclicReportUser onChangeCyclicReport = (OnChangeCyclicReportUser) this.serviceInstance.getProcedure(piid);
+                OnChangeCyclicReportUser onChangeCyclicReport = (OnChangeCyclicReportUser) this.getApiSi().getProcedure(piid);
                 if (!onChangeCyclicReport.isActive())
                 {
                     // reset the operation result and diagnostic
@@ -357,10 +352,10 @@ public class MdCstsSiUser extends MdCstsSiUserInform
         try
         {
             // check whether this service instance is bound
-            if (this.serviceInstance.getStatus() == ServiceStatus.BOUND)
+            if (this.getApiSi().getStatus() == ServiceStatus.BOUND)
             {
                 // get the cyclic report procedure from the instance number
-                CyclicReportUser cyclicReport = (CyclicReportUser) this.serviceInstance.getProcedure(piid);
+                CyclicReportUser cyclicReport = (CyclicReportUser) this.getApiSi().getProcedure(piid);
                 if (cyclicReport.isActive())
                 {
                     // reset the operation result and diagnostic
@@ -438,10 +433,10 @@ public class MdCstsSiUser extends MdCstsSiUserInform
         try
         {
             // check whether this service instance is bound
-            if (this.serviceInstance.getStatus() == ServiceStatus.BOUND)
+            if (this.getApiSi().getStatus() == ServiceStatus.BOUND)
             {
                 // get the cyclic report procedure from the instance number
-                NotificationUser notification = (NotificationUser) this.serviceInstance.getProcedure(piid);
+                NotificationUser notification = (NotificationUser) this.getApiSi().getProcedure(piid);
                 if (!notification.isActive())
                 {
                     // reset the operation result and diagnostic
@@ -520,10 +515,10 @@ public class MdCstsSiUser extends MdCstsSiUserInform
         try
         {
             // check whether this service instance is bound
-            if (this.serviceInstance.getStatus() == ServiceStatus.BOUND)
+            if (this.getApiSi().getStatus() == ServiceStatus.BOUND)
             {
                 // get the notification procedure from the instance number
-                NotificationUser notification = (NotificationUser) this.serviceInstance.getProcedure(piid);
+                NotificationUser notification = (NotificationUser) this.getApiSi().getProcedure(piid);
                 if (notification.isActive())
                 {
                     // reset the operation result and diagnostic
@@ -601,10 +596,10 @@ public class MdCstsSiUser extends MdCstsSiUserInform
         try
         {
             // check whether this service instance is bound
-            if (this.serviceInstance.getStatus() == ServiceStatus.BOUND)
+            if (this.getApiSi().getStatus() == ServiceStatus.BOUND)
             {
                 // get the information query procedure from the instance number
-                InformationQueryUser informationQuery = (InformationQueryUser) this.serviceInstance.getProcedure(piid);
+                InformationQueryUser informationQuery = (InformationQueryUser) this.getApiSi().getProcedure(piid);
 
                     // reset the operation result and diagnostic
                     resetOperationResult();
@@ -665,7 +660,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
         {
             System.out.println(waitMsg);
 
-            boolean signalled = this.retCond.await(this.serviceInstance.getReturnTimeout(), TimeUnit.SECONDS);
+            boolean signalled = this.retCond.await(this.getApiSi().getReturnTimeout(), TimeUnit.SECONDS);
             if (signalled == false)
             {
                 // return timeout, the operation return has not been received
@@ -730,7 +725,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
             ProcedureInstanceIdentifier piid = ProcedureInstanceIdentifier
                     .of(getProcedureTypeFromClass(clazz), procedureRole, new Long(instanceNumber).intValue());
 
-            ret = clazz.cast(this.serviceInstance.getProcedure(piid));
+            ret = clazz.cast(this.getApiSi().getProcedure(piid));
         }
         catch (Exception e)
         {
@@ -775,7 +770,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
     private boolean isAnyStartableProcedureActive() {
         boolean ret = false;
 
-        List<IProcedure> procedures = ((IServiceInstanceInternal) this.serviceInstance).getProcedures();
+        List<IProcedure> procedures = ((IServiceInstanceInternal) this.getApiSi()).getProcedures();
         for (IProcedure procedure : procedures) {
             if (procedure instanceof OnChangeCyclicReportUser) {
                 if (((OnChangeCyclicReportUser) procedure).isActive()) {

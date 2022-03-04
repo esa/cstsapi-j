@@ -99,6 +99,8 @@ public abstract class FunctionalResourceParameter extends AbstractParameter
     public void setValue(double value)
     {
         this.value = value;
+        this.setChanged();
+        this.notifyObservers();
     }
 
     public String getUnit()

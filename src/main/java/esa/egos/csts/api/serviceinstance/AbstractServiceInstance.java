@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -1357,6 +1356,15 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 		return procedure;
 	}
+	
+	
+	public <T extends IProcedure> T createProcedure(Class<T> clazz,ProcedureRole procedureRole, int instanceNumber) throws ApiException {
+		T procedure = createProcedure(clazz);	
+		procedure.setRole(procedureRole, instanceNumber);
+		addProcedure(procedure);
+		return procedure;
+	}
+	
 
 	@Override
 	public IApi getApi() {

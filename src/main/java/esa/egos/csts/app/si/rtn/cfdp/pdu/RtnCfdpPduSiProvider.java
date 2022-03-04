@@ -42,9 +42,7 @@ public class RtnCfdpPduSiProvider extends AppSi {
 		super(api, siConfig, CSTS_RTN_CFDP_PDU_SRV);
 		
 		this.production.set(null);
-		this.deliveryProcedure = getApiSi().createProcedure(CfdpPduDeliveryProvider.class);	
-		this.deliveryProcedure.setRole(ProcedureRole.PRIME, 0);
-		getApiSi().addProcedure(deliveryProcedure);
+		this.deliveryProcedure = getApiSi().createProcedure(CfdpPduDeliveryProvider.class,ProcedureRole.PRIME, 0);	
 		
 		procedureConfig.configureCfdpDeliveryProcedure(this.deliveryProcedure);
 		configure();
@@ -54,9 +52,7 @@ public class RtnCfdpPduSiProvider extends AppSi {
 		super(api, siConfig, CSTS_RTN_CFDP_PDU_SRV);
 		
 		this.production.set(production);
-		this.deliveryProcedure = getApiSi().createProcedure(CfdpPduDeliveryProvider.class);	
-		this.deliveryProcedure.setRole(ProcedureRole.PRIME, 0);
-		getApiSi().addProcedure(deliveryProcedure);
+		this.deliveryProcedure = getApiSi().createProcedure(CfdpPduDeliveryProvider.class,ProcedureRole.PRIME, 0);	
 		
 		procedureConfig.configureCfdpDeliveryProcedure(this.deliveryProcedure);
 		configure();

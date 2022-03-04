@@ -163,7 +163,7 @@ public class ProtocolAbortMultipleProviderAbortTest {
 
                // simulate protocol aborts from user
                for (int indexOfProviderUser = 0; indexOfProviderUser < numberOfProvidersUsers; indexOfProviderUser++) {
-                    mdCstsSiUsers.get(indexOfProviderUser).getServiceInstance().protocolAbort();
+                    mdCstsSiUsers.get(indexOfProviderUser).getApiSi().protocolAbort();
                }
 
                // Wait for protocol abort threads

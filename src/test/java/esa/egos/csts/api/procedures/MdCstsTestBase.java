@@ -188,12 +188,10 @@ public abstract class MdCstsTestBase
 
         System.out.println("Starting CSTS user and provider API");
 
-        this.providerApi = new CstsProviderApi("Test Service Provider API");
-        this.providerApi.initialize(providerConfigName);
+        this.providerApi = new CstsProviderApi("Test Service Provider API",providerConfigName);
         this.providerApi.start();
 
-        this.userApi = new CstsUserApi("Test Service User API");
-        this.userApi.initialize(userConfigName);
+        this.userApi = new CstsUserApi("Test Service User API",userConfigName);
         this.userApi.start();
 
         System.out.println("CSTS user and provider API started");

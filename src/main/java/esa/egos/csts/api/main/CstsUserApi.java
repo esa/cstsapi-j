@@ -22,6 +22,11 @@ public class CstsUserApi extends CstsApi {
 	public CstsUserApi(String name) {
 		super(name, AppRole.USER);
 	}
+	
+	public CstsUserApi(String name, String configFile) throws ApiException {
+		super(name, AppRole.USER);
+		initialize(configFile);
+	}
 
 	@Override
 	protected void initialize(InputStream configFileStream) throws ApiException  {

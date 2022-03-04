@@ -7,23 +7,13 @@ import java.util.List;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
+import esa.egos.csts.app.si.SiConfig;
 
 /**
  * Encapsulate the SI configuration
  */
-public class MdCstsSiConfig
+public class MdCstsSiConfig extends SiConfig
 {
-
-    private final ObjectIdentifier scId;
-
-    private final ObjectIdentifier facilityId;
-
-    private final int instanceNumber;
-
-    private final String peerIdentifier;
-
-    private final String responderPortIdentifier;
-
     private final List<ProcedureInstanceIdentifier> proceduresIdentifiers;
 
     private final List<FunctionalResourceType> functionalResourceTypes;
@@ -47,11 +37,7 @@ public class MdCstsSiConfig
                           String responderPortIdentifier,
                           List<ProcedureInstanceIdentifier> proceduresIdentifiers)
     {
-        this.scId = scId;
-        this.facilityId = facilityId;
-        this.instanceNumber = instanceNumber;
-        this.peerIdentifier = peerIdentifier;
-        this.responderPortIdentifier = responderPortIdentifier;
+    	super(scId,facilityId,instanceNumber,peerIdentifier,responderPortIdentifier);
         this.proceduresIdentifiers = proceduresIdentifiers;
         this.functionalResourceTypes = new ArrayList<FunctionalResourceType>();
     }
@@ -75,11 +61,7 @@ public class MdCstsSiConfig
                           List<ProcedureInstanceIdentifier> proceduresIdentifiers,
                           FunctionalResourceType... functionalResourceTypes)
     {
-        this.scId = scId;
-        this.facilityId = facilityId;
-        this.instanceNumber = instanceNumber;
-        this.peerIdentifier = peerIdentifier;
-        this.responderPortIdentifier = responderPortIdentifier;
+    	super(scId,facilityId,instanceNumber,peerIdentifier,responderPortIdentifier);
         this.proceduresIdentifiers = proceduresIdentifiers;
 
         if (functionalResourceTypes.length != 0) {
@@ -89,32 +71,7 @@ public class MdCstsSiConfig
         	this.functionalResourceTypes = new ArrayList<>();
         }
     }
-
-    public ObjectIdentifier getScId()
-    {
-        return this.scId;
-    }
-
-    public ObjectIdentifier getFacilityId()
-    {
-        return this.facilityId;
-    }
-
-    public int getInstanceNumber()
-    {
-        return this.instanceNumber;
-    }
-
-    public String getPeerIdentifier()
-    {
-        return this.peerIdentifier;
-    }
-
-    public String getResponderPortIdentifier()
-    {
-        return this.responderPortIdentifier;
-    }
-
+    
     public List<ProcedureInstanceIdentifier> getProceduresIdentifiers()
     {
         return this.proceduresIdentifiers;

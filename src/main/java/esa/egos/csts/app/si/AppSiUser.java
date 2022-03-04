@@ -6,11 +6,15 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import esa.egos.csts.api.enumerations.CstsResult;
+import esa.egos.csts.api.enumerations.OperationResult;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.operations.IConfirmedOperation;
+import esa.egos.csts.api.operations.IGet;
 import esa.egos.csts.api.operations.IStart;
+import esa.egos.csts.api.procedures.IProcedure;
 import esa.egos.csts.api.procedures.IStatefulProcedure;
+import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.states.service.ServiceStatus;
 import esa.egos.csts.api.util.CSTS_LOG;
 
@@ -21,7 +25,9 @@ public abstract class AppSiUser extends AppSi {
 	
 	private final Condition retCond;	
 	
-	private IStatefulProcedure pendingProc;
+	private ProcedureInstanceIdentifier pendingProc;
+	
+	private OperationResult operationResult;
 	
 	public AppSiUser(ICstsApi api, SiConfig config, int serviceType, int serviceVersion) throws ApiException {
 		super(api, config, serviceType,serviceVersion);
@@ -108,8 +114,8 @@ public abstract class AppSiUser extends AppSi {
 		if(operation instanceof IConfirmedOperation) {
 			this.retLock.lock();
 			
-			if (this.pendingProc != null && this.pendingProc.getProcedureInstanceIdentifier()
-					.equals(operation.getProcedureInstanceIdentifier()) == true) {
+			if (this.pendingProc != null && this.pendingProc.equals(operation.getProcedureInstanceIdentifier()) == true) {
+				operationResult = operation.getResult();
 				this.retCond.signal();
 			} else if(this.getApiSi().getAssociationControlProcedure().getProcedureInstanceIdentifier().equals(operation.getProcedureInstanceIdentifier()) == true) {
 				this.retCond.signal();			}
@@ -125,13 +131,20 @@ public abstract class AppSiUser extends AppSi {
 		if(operation instanceof IStart) {
 			informStartOpReturn((IStart)operation);
 		}
+		else if (operation instanceof IGet) {
+			informGetOpReturn((IGet)operation);
+		}
 	}
 	
 	/**
 	 * Override to implement
 	 * @param startOperation the start operation
 	 */
-	public void informStartOpReturn(IStart startOperation) {
+	protected void informStartOpReturn(IStart operation) {
+		
+	}
+	
+	protected void informGetOpReturn(IGet operation) {
 		
 	}
 	
@@ -143,17 +156,18 @@ public abstract class AppSiUser extends AppSi {
 	 * @param expectedActivationState The finally expected activation state: true for active, false for inactive
 	 * @return CstsResult.SUCCESS if the desired activation state was reached, false otherwise
 	 */
-	public CstsResult waitForProcedureReturn(final IStatefulProcedure proc, boolean expectedActivationState) {
+	public CstsResult waitForStatefulProcedureReturn(final IStatefulProcedure proc, boolean expectedActivationState) {
 		CstsResult res = CstsResult.FAILURE;
 		
 		retLock.lock();
 		
 		if(this.pendingProc != null) {
 			CSTS_LOG.CSTS_API_LOGGER.severe("Error, procedure state change already pending for " + this.pendingProc);
+			retLock.unlock();
 			return CstsResult.FAILURE;
 		}
 		
-		this.pendingProc = proc;
+		this.pendingProc = proc.getProcedureInstanceIdentifier();
 		
 		try {
 				while(proc.isActivationPending() || proc.isDeactivationPending()) {
@@ -179,6 +193,46 @@ public abstract class AppSiUser extends AppSi {
 			retLock.unlock();
 		}
 		return res;		
+	}
+	
+	protected CstsResult waitForProcedureReturn(IProcedure proc)
+	{
+		retLock.lock();
+		
+		if(this.pendingProc != null) {
+			CSTS_LOG.CSTS_API_LOGGER.severe("Error, procedure state change already pending for " + this.pendingProc);
+			retLock.unlock();
+			return CstsResult.FAILURE;
+		}
+		
+		this.pendingProc = proc.getProcedureInstanceIdentifier();
+		
+		try {
+
+
+			while (this.operationResult == OperationResult.INVALID)
+			{
+
+				boolean signalled = this.retCond.await(this.getApiSi().getReturnTimeout(), TimeUnit.SECONDS);
+				if (signalled == false)
+				{
+					// return timeout, the operation return has not been received
+					break;
+				}
+			}
+		} catch(Exception ee) {
+			ee.printStackTrace();
+		}
+		
+		retLock.unlock();
+
+		if (this.operationResult == OperationResult.NEGATIVE) {
+			//System.out.println("DIAGNOSTIC: " + proc.getDiagnostic());
+			return CstsResult.FAILURE;
+		}
+		else {
+			return CstsResult.SUCCESS;
+		}
 	}
 
 	@Override

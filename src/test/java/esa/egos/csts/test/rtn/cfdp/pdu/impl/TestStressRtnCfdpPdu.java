@@ -99,12 +99,10 @@ public class TestStressRtnCfdpPdu {
           System.out.println("provider config: " + providerConfigName);
           System.out.println("user config: " + userConfigName);
 
-          providerApi = new CstsProviderApi("Test Service Provider API");
-          providerApi.initialize(providerConfigName);
+          providerApi = new CstsProviderApi("Test Service Provider API",providerConfigName);
           providerApi.start();
 
-          userApi = new CstsUserApi("Test Service User API");
-          userApi.initialize(userConfigName);
+          userApi = new CstsUserApi("Test Service User API",userConfigName);
           userApi.start();
 
           System.out.println("CSTS user and provider API started");
