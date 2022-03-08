@@ -21,7 +21,6 @@ import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 
 import esa.egos.csts.sim.impl.MdCstsSiConfig;
-import esa.egos.csts.sim.impl.prv.MdCollection;
 import esa.egos.csts.sim.impl.prv.MdCstsSiProvider;
 import esa.egos.csts.sim.impl.prv.MdCstsSiProviderConfig;
 import esa.egos.csts.sim.impl.usr.MdCstsSiUser;
@@ -32,7 +31,6 @@ import esa.egos.csts.api.TestUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 
 public class ProtocolAbortMultipleProviderAbortTest {
