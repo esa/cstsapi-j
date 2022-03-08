@@ -771,7 +771,13 @@ public abstract class Channel implements IChannelInitiate, ITimeoutProcessor
                 LOG.finer(msg);
                 
             // write urgent data with diagnostic
-            this.connectedSock.sendUrgentData(diag);
+                if(!this.connectedSock.equals(null)) {
+                     this.connectedSock.sendUrgentData(diag);
+                }
+                else {
+                     LOG.warning("A protocol abort happened the connected socket is not existing anymore.");
+                }
+                
             if (LOG.isLoggable(Level.FINEST))
             {
                 LOG.finest("URGENT DATA SENT");
