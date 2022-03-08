@@ -65,6 +65,18 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.4</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.4</version>
+        </dependency>
+
+<!-- <dependency> -->
+<!--     <groupId>org.osgi</groupId> -->
+<!--     <artifactId>org.osgi.framework</artifactId> -->
+<!--     <version>1.10.0</version> -->
+<!-- </dependency> -->
     </dependencies>
 
     <build>
@@ -192,7 +204,7 @@
                         <!-- How to get rid of the jasn1-1.8.0.jar in the 
                             csts.api-osgi-1.0.1.jar? Not ideal, but in line with the fat jar. -->
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
-                        embed the jasn1 jar
+                        <Export-Package>*</Export-Package>
                     </instructions>
                     <finalName>${project.artifactId}-osgi-${project.version}</finalName> <!-- different to the default name for fat jar with dependencies -->
                 </configuration>
@@ -346,6 +358,34 @@
                 </configuration>
             </plugin>
 
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.0.0-M2</version>
+                <executions>
+                    <execution>
+                        <id>default-deploy</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>deploy</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>deploy-osgi</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>deploy-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>target/${project.artifactId}-osgi-${project.version}.jar</file>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>${project.artifactId}-osgi</artifactId>
+                            <version>${project.version}</version>
+                            <repositoryId>${project.repository.id}</repositoryId>
+                            <url>${project.repository.url}</url>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
