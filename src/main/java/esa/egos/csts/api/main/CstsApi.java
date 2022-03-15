@@ -46,6 +46,7 @@ import esa.egos.proxy.util.ISecAttributes;
 import esa.egos.proxy.util.ITime;
 import esa.egos.proxy.util.IUtil;
 import esa.egos.proxy.util.impl.Util;
+import esa.egos.proxy.xml.FrameworkConfig;
 import esa.egos.proxy.xml.LogicalPort;
 import esa.egos.proxy.xml.Oid;
 import esa.egos.proxy.xml.OidConfig;
@@ -77,7 +78,9 @@ public abstract class CstsApi implements IApi, ILocator {
 	private ArrayList<IServiceInstance> serviceInstanceList;
 
 	private Map<String, String> portList;
-
+	
+	private FrameworkConfig frameworkConfig;
+	
 	public CstsApi(String name, AppRole role) {
 
 		this.APIName = name;
@@ -86,14 +89,21 @@ public abstract class CstsApi implements IApi, ILocator {
 
 		this.proxyList = new LinkedHashMap<String, ProxyPair>();
 		
+		this.frameworkConfig = new FrameworkConfig();
+		
 		this.util = new Util();
 	}
+
 	
 	protected abstract void initialize(InputStream configFileStream) throws ApiException ;
 	
 	protected abstract ProxyConfig getProxyConfig();
 	
 	protected abstract String getOidConfigFile();
+	
+	public FrameworkConfig getFrameworkConfig() {
+		return frameworkConfig;
+	}
 	
 	public void initialize(String configFile) throws ApiException {
 		
@@ -139,10 +149,12 @@ public abstract class CstsApi implements IApi, ILocator {
 	
 	private void initializeServiceVersions() {
 		
-		getProxyConfig().getServiceTypeList().forEach(
-				configService -> configService.getServiceVersion().forEach( 
-				serviceVersion -> SfwVersion.fromInt(serviceVersion.sfwVersion).addServiceVersion(
-						ObjectIdentifier.of(configService.getServiceId(),","),serviceVersion.value))); 
+		getProxyConfig().getServiceTypeList()
+			.forEach(configService -> configService.getServiceVersion()
+					.forEach(serviceVersion -> 	frameworkConfig.addServiceVersion(
+							SfwVersion.fromInt(serviceVersion.sfwVersion), 
+							ObjectIdentifier.of(configService.getServiceId(),","),
+							serviceVersion.value)));
 	
 	}
 	
@@ -274,8 +286,7 @@ public abstract class CstsApi implements IApi, ILocator {
 			serviceInstance = createServiceInstance(this, servInf, /* apId, */ null);
 			serviceInstance.setServiceInstanceIdentifier(identifier);
 			serviceInstance.setReturnTimeout(getProxyConfig().getAuthenticationDelay());
-			serviceInstance.setSfwVersion(
-					SfwVersion.getFrameworkVersion(identifier.getCstsTypeIdentifier(), serviceVersion));
+			serviceInstance.setSfwVersion(frameworkConfig.getFrameworkVersion(identifier.getCstsTypeIdentifier(), serviceVersion));
 			serviceInstance.setVersion(serviceVersion);
 		} catch (ApiException e) {
 			e.printStackTrace();
@@ -311,8 +322,7 @@ public abstract class CstsApi implements IApi, ILocator {
 			serviceId = ServiceInstanceConverter.decodeServiceInstanceIdentifier(sii);
 			serviceInstance.setServiceInstanceIdentifier(serviceId);
 			serviceInstance.setReturnTimeout(getProxyConfig().getAuthenticationDelay());
-			serviceInstance.setSfwVersion(
-					SfwVersion.getFrameworkVersion(serviceId.getCstsTypeIdentifier(), serviceVersion));
+			serviceInstance.setSfwVersion(frameworkConfig.getFrameworkVersion(serviceId.getCstsTypeIdentifier(), serviceVersion));
 			serviceInstance.setVersion(serviceVersion);
 		} catch (ApiException e) {
 			// couldn't create service instance because couldn't decode siid
@@ -340,8 +350,7 @@ public abstract class CstsApi implements IApi, ILocator {
 			serviceInstance = createServiceInstance(this, servInf, /* apId, */ associationControlProcedure);
 			serviceId = ServiceInstanceConverter.decodeServiceInstanceIdentifier(sii);
 			serviceInstance.setServiceInstanceIdentifier(serviceId);
-			serviceInstance.setSfwVersion(
-					SfwVersion.getFrameworkVersion(serviceId.getCstsTypeIdentifier(), serviceVersion));
+			serviceInstance.setSfwVersion(frameworkConfig.getFrameworkVersion(serviceId.getCstsTypeIdentifier(), serviceVersion));
 			serviceInstance.setVersion(serviceVersion);
 		} catch (ApiException e) {
 			// couldn't create service instance because couldn't decode siid

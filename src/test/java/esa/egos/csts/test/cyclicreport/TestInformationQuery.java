@@ -1,5 +1,6 @@
 package esa.egos.csts.test.cyclicreport;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -50,6 +51,8 @@ import esa.egos.csts.sim.impl.frm.FunctionalResourceIntegerParameter;
 import frm.csts.functional.resource.types.OidValues;
 
 public class TestInformationQuery {
+	
+	public static final long TEN_SECONDS = 10000;
 	
     @Rule
     public TestRule testWatcher = new CstsTestWatcher();
@@ -111,6 +114,8 @@ public class TestInformationQuery {
     	
     	try {
     		
+    		CountDownLatch eventsCounter = new CountDownLatch(1); // after 3 events, terminate
+    		
     		final AtomicBoolean testSuccess = new AtomicBoolean(false);
     		 
     		IMonitoringDataSiProvider providerSi = MonitoringDataSiProvider.builder(providerApi, providerConfig)
@@ -122,6 +127,7 @@ public class TestInformationQuery {
     			.setParameterListener((pii, event) -> {
     				System.out.println("Test");
     				testSuccess.set(true);
+    				eventsCounter.countDown();
     			})
     			.build();
     			
@@ -139,7 +145,7 @@ public class TestInformationQuery {
             //Note: parameters have to be set before the START or the onChange report will not contain them.
             CSTS_LOG.CSTS_API_LOGGER.info("GET...");
             verifyResult(userSi.queryInformation(informationQuery, getNewListOfParameters()),"GET");
-            
+            waitOrFail(eventsCounter,TEN_SECONDS);
             assertTrue(testSuccess.get());
             
             CSTS_LOG.CSTS_API_LOGGER.info("UNBIND...");
@@ -196,5 +202,15 @@ public class TestInformationQuery {
              CSTS_LOG.CSTS_API_LOGGER.info(what + " OK " + res);
         }
    }
+    
+    private void waitOrFail(CountDownLatch latch, long ms) {
+        try {
+        	latch.await(ms, TimeUnit.MILLISECONDS);
+        } catch (Exception e) {
+        	fail("Failed because of unexpected exception");
+        } finally {
+        	assertEquals(0, latch.getCount());
+		}
+    }
 
 }

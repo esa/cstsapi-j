@@ -250,7 +250,7 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 	 * @throws ApiException
 	 */
 	protected void initialiseTranslator() throws ApiException {
-		this.translator = new PDUTranslator();
+		this.translator = new PDUTranslator(this.api.getFrameworkConfig());
 		this.translator.initialise(this);
 	}
 

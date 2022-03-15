@@ -24,9 +24,11 @@ public class TestCstsApi {
 		CstsApi userApi = new CstsUserApi("Test Service User API");
 		userApi.initialize(userConfigName);
 		
-		assertTrue(SfwVersion.B1.getServiceVersion(ObjectIdentifier.of(1, 3, 112, 4, 4, 1, 2)).contains(1));
+		assertTrue(userApi.getFrameworkConfig().getVerion(SfwVersion.B1)
+				.getServiceVersion(ObjectIdentifier.of(1, 3, 112, 4, 4, 1, 2)).contains(1));
 		
-		assertTrue(SfwVersion.B2.getServiceVersion(ObjectIdentifier.of(1, 3, 112, 4, 4, 1, 2)).contains(2));
+		assertTrue(userApi.getFrameworkConfig().getVerion(SfwVersion.B2)
+				.getServiceVersion(ObjectIdentifier.of(1, 3, 112, 4, 4, 1, 2)).contains(2));
 		
 	}
 	
@@ -40,9 +42,9 @@ public class TestCstsApi {
 		CstsApi userApi = new CstsUserApi("Test Service User API");
 		userApi.initialize(userConfigName);
 		
-		assertEquals(SfwVersion.B1, SfwVersion.getFrameworkVersion(ObjectIdentifier.of(1, 3, 112, 4, 4, 1, 2), 1));
+		assertEquals(SfwVersion.B1, userApi.getFrameworkConfig().getFrameworkVersion(ObjectIdentifier.of(1, 3, 112, 4, 4, 1, 2), 1));
 		
-		assertEquals(SfwVersion.B2, SfwVersion.getFrameworkVersion(ObjectIdentifier.of(1, 3, 112, 4, 4, 1, 2), 2));
+		assertEquals(SfwVersion.B2, userApi.getFrameworkConfig().getFrameworkVersion(ObjectIdentifier.of(1, 3, 112, 4, 4, 1, 2), 2));
 		
 	}
 
