@@ -11,7 +11,6 @@ import esa.egos.csts.api.functionalresources.FunctionalResourceName;
 import esa.egos.csts.api.functionalresources.FunctionalResourceType;
 import esa.egos.csts.api.functionalresources.values.ICstsValue;
 import esa.egos.csts.api.functionalresources.values.impl.FunctionalResourceValue;
-import esa.egos.csts.api.main.CstsUserApi;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.oids.ObjectIdentifier;

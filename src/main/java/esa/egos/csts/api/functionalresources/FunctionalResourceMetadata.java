@@ -143,17 +143,17 @@ public class FunctionalResourceMetadata
     /**
      * Load FR meta data from the jASN compiler generated binary classes
      * 
-     * @param packageName The package name containing the generated binary
-     *            classes
+     * @param classLoader The class loader
+     * @param packageName The package name containing the generated binary classes
      * @throws Exception
      */
-    public synchronized void loadFromBinaryClasses(String packageName) throws Exception
+    public synchronized void loadFromBinaryClasses(ClassLoader classLoader, String packageName) throws Exception
     {
         try
         {
             // collect all classes from JASN.1 generated package
             LOG.info("looking for jASN.1 classes in package " + packageName);
-            List<Class<?>> classes = PackageUtils.getPackageClasses(packageName, false);
+            List<Class<?>> classes = PackageUtils.getPackageClasses(classLoader, packageName, false);
             LOG.info("num of jASN.1 classes: " + classes.size());
             LOG.finest(() -> {
                 StringBuilder sb = new StringBuilder();
@@ -170,6 +170,17 @@ public class FunctionalResourceMetadata
         {
             throw new Exception("Could not load FR metadata from " + packageName, e);
         }
+    }
+
+    /**
+     * Load FR meta data from the jASN compiler generated binary classes
+     * 
+     * @param packageName The package name containing the generated binary classes
+     * @throws Exception
+     */
+    public synchronized void loadFromBinaryClasses(String packageName) throws Exception
+    {
+        loadFromBinaryClasses(this.getClass().getClassLoader(), packageName);
     }
 
     /**

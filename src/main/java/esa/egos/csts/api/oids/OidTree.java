@@ -23,7 +23,10 @@ public class OidTree
     private static final Logger LOG = Logger.getLogger(OidTree.class.getName());
 
     /** The package name with generated classes by jASN.1 compiler */
-    private static final String GENERATED_PACKAGE_NAME = "b1.ccsds";
+    private static final String B1_PACKAGE_NAME = "b1.ccsds";
+
+    /** The package name with generated classes by jASN.1 compiler */
+    private static final String B2_PACKAGE_NAME = "b2.ccsds";
 
     /**
      * The strict flag indicating that all parents must exist on addition of a
@@ -136,7 +139,8 @@ public class OidTree
         ccsdsNode.addChildNode(6, "facility").addChildNode(0, "fid");
         ccsdsNode.addChildNode(7, "spacecraft").addChildNode(0, "scid");
         readOIDs();
-        readAllOidValues(GENERATED_PACKAGE_NAME, this::processOid);
+        readAllOidValues(B1_PACKAGE_NAME, this::processOid);
+        readAllOidValues(B2_PACKAGE_NAME, this::processOid);
         LOG.finest(() -> toString());
     }
 
@@ -183,22 +187,29 @@ public class OidTree
      */
     private void readAllOidValues(String packageName, BiFunction<String, int[], Boolean> biFn)
     {
-        for (String subPackageName : PackageUtils.getSubPackages(packageName, true))
+        try
         {
-            List<Class<?>> classes = PackageUtils.getPackageClasses(subPackageName, false);
-            Optional<Class<?>> opt = OidTree.findOidDefinitionClass(classes);
-            if (opt.isPresent())
+            for (String subPackageName : PackageUtils.getSubPackages(getClass().getClassLoader(), packageName, true))
             {
-                LOG.fine(()-> "Found: " + opt.get().getName());
-                readOidValues(opt.get(), biFn);
+                List<Class<?>> classes = PackageUtils.getPackageClasses(subPackageName, false);
+                Optional<Class<?>> opt = OidTree.findOidDefinitionClass(classes);
+                if (opt.isPresent())
+                {
+                    LOG.fine(()-> "Found: " + opt.get().getName());
+                    readOidValues(opt.get(), biFn);
+                }
             }
+        }
+        catch (Exception e)
+        {
+            LOG.severe("Couldn't collect OIDs from package " + packageName + ". " + e.getMessage());
         }
     }
 
     /**
-     * Process a single OID found in the OID definition class.
-     * The method collects FR, FR parameter, FR event and FR directives
-     * OID names and their integer arrays
+     * Process a single OID found in the OID definition class. The method
+     * collects FR, FR parameter, FR event and FR directives OID names and their
+     * integer arrays
      * 
      * @param oidName The OID (JASN.1 generated class) name
      * @param oidArray The OID as an int array

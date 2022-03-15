@@ -2,8 +2,11 @@ package esa.egos.csts.api.util.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -13,7 +16,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
 
 /**
  * Implements package utilities methods
@@ -39,16 +43,27 @@ public class PackageUtils
      * 
      * @param packageName The package name
      * @param alsoNestedClasses If true includes also nested sub-packages
-     * @return The lis with sub-package names
+     * @return a list with sub-package names
+     * @throws URISyntaxException 
      */
-    public static List<String> getSubPackages(String packageName, boolean alsoNestedClasses)
+    public static List<String> getSubPackages(ClassLoader classLoader, String packageName, boolean alsoNestedClasses) throws Exception
     {
         List<String> ret = new ArrayList<String>();
-        URL url = ClassLoader.getSystemResource(packageName.replace('.', '/'));
-        File packageDirectory = new File(url.getFile());
-        if (packageDirectory.exists())
+        String resourcePath = packageName.replace('.', '/');
+        URL url = ClassLoader.getSystemResource(resourcePath);
+        if (url == null)
         {
-            for (String directoryChild : packageDirectory.list())
+            url = classLoader.getResource(resourcePath);
+            if (url == null)
+            {
+                throw new RuntimeException("Couldn't find package " + packageName);
+            }
+        }
+
+        File file = new File(url.getPath());
+        if (file.isDirectory() && file.exists())
+        {
+            for (String directoryChild : file.list())
             {
                 try
                 {
@@ -62,7 +77,7 @@ public class PackageUtils
 
                         if (alsoNestedClasses)
                         {
-                            ret.addAll(getSubPackages(subPackageName, alsoNestedClasses));
+                            ret.addAll(getSubPackages(classLoader, subPackageName, alsoNestedClasses));
                         }
                     }
                 }
@@ -71,6 +86,143 @@ public class PackageUtils
                     LOG.log(Level.SEVERE, "Failed to provide sub-packages of the " + packageName + " package. ", e);
                 }
             }
+        }
+        else
+        {
+            // assume it is running in Karaf(Felix) container
+            // get sub-packages w/o OSGi dependency
+            long dots = 0;
+            if (alsoNestedClasses == false)
+            {
+                dots = getDotCount(packageName);
+            }
+
+            JarFile jarFile = null;
+            try
+            {
+                String filePath = getPathFileNameFromResource(classLoader, resourcePath);
+                jarFile = new JarFile(filePath);
+
+                // Getting jar's entries
+                Enumeration<? extends JarEntry> enumeration = jarFile.entries();
+                // iterates over jar's entries
+                while (enumeration.hasMoreElements())
+                {
+                    JarEntry jarEntry = enumeration.nextElement();
+                    String name = jarEntry.getName();
+                    if (name.startsWith(resourcePath) && name.endsWith("/"))
+                    {
+                        // remove the last slash
+                        if (alsoNestedClasses == false)
+                        {
+                            long count = name.chars().filter(c -> c == '/').count();
+                            if (count > dots + 2)
+                            {
+                                // ignore nested package
+                                continue;
+                            }
+                        }
+
+                        name = name.substring(0, name.length() - 1);
+                        name = name.replace('/', '.');
+                        if (name.equals(packageName))
+                        {
+                            // ignore the input package name
+                            continue;
+                        }
+                        ret.add(name);
+                        LOG.finest(name);
+                    }
+                }
+            }
+            finally
+            {
+                if (jarFile != null)
+                {
+                    jarFile.close();
+                }
+            }
+        }
+
+        return ret;
+    }
+
+    /**
+     * Get JAR path file name installed in Felix(Karaf) container
+     * from a resource path
+     * 
+     * https://jar-download.com/artifacts/org.apache.felix/org.apache.felix.framework/6.0.2/source-code/org/apache/felix/framework/util/WeakZipFileFactory.java
+     * 
+     * @param classLoader The class loader
+     * @param resourcePath The resource path
+     * @return JAR path file name
+     * @throws RuntimeException
+     */
+    public static String getPathFileNameFromResource(ClassLoader classLoader, String resourcePath) throws Exception
+    {
+        try (InputStream inputStream = classLoader.getResourceAsStream(resourcePath))
+        {
+            // try to get ZIP(jar) file from WeakZipInputStream
+            try
+            {
+                Field field = inputStream.getClass().getDeclaredField("m_zipFileSnapshot");
+                field.setAccessible(true);
+                ZipFile zipFile = (ZipFile) field.get(inputStream);
+                field.setAccessible(false);
+                return zipFile.getName();
+            }
+            catch (Exception e)
+            {
+                throw new RuntimeException("Couldn't get a JAR path file installed in Felix(Karaf) container from resource "
+                                           + resourcePath, e);
+            }
+        }
+    }
+
+    /**
+     * Get all binary classes from a package
+     * 
+     * @param classLoader The class loader
+     * @param packageName The package name
+     * @param alsoNestedClasses The nested classes are included
+     * @return the list of found classes in the package
+     * @throws Exception 
+     * @throws ClassNotFoundException
+     */
+    public static List<Class<?>> getPackageClasses(ClassLoader classLoader, String packageName, boolean alsoNestedClasses) throws Exception
+    {
+        List<Class<?>> ret = new ArrayList<Class<?>>();
+        String internalPath = packageName.replace('.', '/');
+        URL url = ClassLoader.getSystemResource(internalPath);
+        if (url == null)
+        {
+            url = classLoader.getResource(internalPath);
+            if (url == null)
+            {
+                throw new Exception("Couldn't find package " + packageName);
+            }
+        }
+        try
+        {
+            final String fileName = URLDecoder.decode(url.getFile(), UTF_8);
+            File packageDirectory = new File(fileName);
+            if (packageDirectory.exists())
+            {
+                ret = getPackageClassesFromDirectory(packageDirectory, packageName, alsoNestedClasses);
+            }
+            else if (url.getProtocol().equals("jar"))
+            {
+                ret = getPackageClassesFromJar(url, classLoader, packageName, alsoNestedClasses);
+            }
+            else if (url.getProtocol().equals("bundle"))
+            {
+                String pathFileName = getPathFileNameFromResource(classLoader, internalPath);
+                ret = getPackageClassesFromJar(new URL("jar:file:"+ pathFileName + "!/"), classLoader, packageName, alsoNestedClasses);
+            }
+        }
+        catch (Exception e)
+        {
+            throw new Exception("Failed to get classes from package " + packageName + ". ", e);
         }
 
         return ret;
@@ -82,46 +234,28 @@ public class PackageUtils
      * @param packageName The package name
      * @param alsoNestedClasses The nested classes are included
      * @return the list of found classes in the package
+     * @throws Exception 
      * @throws ClassNotFoundException
      */
-    public static List<Class<?>> getPackageClasses(String packageName, boolean alsoNestedClasses)
+    public static List<Class<?>> getPackageClasses(String packageName, boolean alsoNestedClasses) throws Exception
     {
-        List<Class<?>> ret = new ArrayList<Class<?>>();
-        String internalPath = packageName.replace('.', '/');
-        URL url = ClassLoader.getSystemResource(internalPath);
-        LOG.log(Level.INFO, "package URL: " + url);
-        if (url == null)
-        {
-            throw new IllegalArgumentException("Could not find package " + packageName);
-        }
-        LOG.log(Level.INFO, "URL: " + url.getFile());
-        try
-        {
-        	final String fileName = URLDecoder.decode(url.getFile(), UTF_8);
-            File packageDirectory = new File(fileName);
-            if (packageDirectory.exists())
-            {
-                ret = getPackageClassesFromDirectory(packageDirectory, packageName, alsoNestedClasses);
-            }
-            else
-            {
-                ret = getPackageClassesFromJar(url, packageName, alsoNestedClasses);
-            }
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            LOG.log(Level.SEVERE, "Failed to provide classes of the " + packageName + " package. ", e);
-        }
-
-        return ret;
+        return getPackageClasses(PackageUtils.class.getClassLoader(), packageName, alsoNestedClasses);
     }
 
+    /**
+     * Collect classes from apackage directory
+     * 
+     * @param packageDirectory
+     * @param packageName
+     * @param alsoNestedClasses
+     * @return
+     * @throws ClassNotFoundException
+     */
     private static List<Class<?>> getPackageClassesFromDirectory(File packageDirectory, String packageName, boolean alsoNestedClasses) throws ClassNotFoundException
     {
         LOG.log(Level.INFO, "getting classes from a package director");
         List<Class<?>> ret = new ArrayList<Class<?>>();
-        int packageNameSegmentCount = getDotCount(packageName);
+        long packageNameSegmentCount = getDotCount(packageName);
         for (String fileName : packageDirectory.list())
         {
             if (fileName.endsWith(CLASS_FILE_SUFFIX))
@@ -144,7 +278,16 @@ public class PackageUtils
         return ret;
     }
 
-    public static List<Class<?>> getPackageClassesFromJar(URL url, String packageName, boolean alsoNestedClasses) throws IOException
+    /**
+     * Collect classes from a package in a jar file
+     * 
+     * @param url The URL to a jar file
+     * @param packageName The package name
+     * @param alsoNestedClasses The flag indication whether nested packages should be included (true) or not (false)
+     * @return A list of found classes
+     * @throws IOException
+     */
+    public static List<Class<?>> getPackageClassesFromJar(URL url, ClassLoader classLoader, String packageName, boolean alsoNestedClasses) throws IOException
     {
         List<Class<?>> ret = new ArrayList<Class<?>>();
         JarFile jar = null;
@@ -157,17 +300,17 @@ public class PackageUtils
             String[] split1 = urlDecoded.split("file:");
             String[] split2 = split1[1].split("!");
             String filePath = split2[0];
-            String internalPath = split2[1];
+            String internalPath = packageName.replace('.', '/');
 
             LOG.log(Level.INFO, "filePath: " + filePath);
-            LOG.log(Level.INFO, "internalPath: " + internalPath);
+//            LOG.log(Level.INFO, "internalPath: " + internalPath);
 
             if (internalPath.charAt(0) == '/')
             {
-                // cut off the very first slash
+                // cut off the very the first slash if present
                 internalPath = internalPath.substring(1);
             }
-            int packageNameSegmentCount = getDotCount(packageName);
+            long packageNameSegmentCount = getDotCount(packageName);
             jar = new JarFile(filePath);
 
             // Getting jar's entries
@@ -175,17 +318,17 @@ public class PackageUtils
             // iterates over jar's entries
             while (enumeration.hasMoreElements())
             {
-                ZipEntry zipEntry = enumeration.nextElement();
-                LOG.log(Level.INFO, "zipEntry: " + zipEntry.getName());
+                JarEntry jarEntry = enumeration.nextElement();
+                LOG.log(Level.INFO, "jarEntry: " + jarEntry.getName());
 
                 // take the classes stored at the certain path in the jar only
-                if (zipEntry.getName().contains(internalPath) && zipEntry.getName().endsWith(CLASS_FILE_SUFFIX))
+                // the relative path of file in the jar.
+                String relativePathFileName = jarEntry.getName(); 
+                if (relativePathFileName.contains(internalPath) && relativePathFileName.endsWith(CLASS_FILE_SUFFIX))
                 {
-                    // the relative path of file in the jar.
-                    String fileName = zipEntry.getName();
-
                     // build the class name
-                    Class<?> clazz = Class.forName(fileName.replace("/", ".").replace(CLASS_FILE_SUFFIX, ""));
+                    String className = relativePathFileName.replace("/", ".").replace(CLASS_FILE_SUFFIX, "");
+                    Class<?> clazz = Class.forName(className, true, classLoader);
                     if (!alsoNestedClasses)
                     {
                         if ((packageNameSegmentCount + 1) != getDotCount(clazz.getCanonicalName()))
@@ -238,7 +381,7 @@ public class PackageUtils
         File packageDirectory = new File(url.getFile());
         if (packageDirectory.exists())
         {
-            int packageNameSegmentCount = getDotCount(packageName);
+            long packageNameSegmentCount = getDotCount(packageName);
             for (String fileName : packageDirectory.list())
             {
                 try
@@ -323,9 +466,9 @@ public class PackageUtils
      * @param str The string
      * @return The number of dots in the string
      */
-    private static int getDotCount(final String str)
+    private static long getDotCount(final String str)
     {
-        return str.length() - str.replaceAll("[.]", "").length();
+        return str.chars().filter(c -> c == '.').count();
     }
 
     /**

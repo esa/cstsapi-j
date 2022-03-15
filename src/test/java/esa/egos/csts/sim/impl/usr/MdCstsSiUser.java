@@ -21,7 +21,6 @@ import esa.egos.csts.api.procedures.notification.NotificationUser;
 import esa.egos.csts.api.serviceinstance.IServiceInstance;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceInternal;
 import esa.egos.csts.api.states.service.ServiceStatus;
-import esa.egos.csts.api.types.SfwVersion;
 import esa.egos.csts.monitored.data.procedures.OnChangeCyclicReportUser;
 import esa.egos.csts.sim.impl.MdCstsSiConfig;
 
