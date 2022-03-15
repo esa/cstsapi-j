@@ -96,7 +96,7 @@ public class EE_APIPX_AssocPxy extends EE_APIPX_LinkAdapter implements IChannelI
         this.writingTh = null;
         
         this.util = new Util();
-        this.translator = new PDUTranslator();
+        this.translator = new PDUTranslator(config.getFrameworkConfig());
     }
 
     /**

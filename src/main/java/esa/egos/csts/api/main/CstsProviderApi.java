@@ -32,7 +32,7 @@ public class CstsProviderApi extends CstsApi {
 	protected void initialize(InputStream configFileStream) throws ApiException  {
 		ProviderConfig providerConfig = ProviderConfig.load(configFileStream);
 		if (providerConfig != null && providerConfig.getRole() == ProxyRoleEnum.RESPONDER) {
-			proxyConfig = new ProxyConfig(providerConfig);
+			proxyConfig = new ProxyConfig(providerConfig,getFrameworkConfig());
 			oidConfigFile = providerConfig.getOidConfigFile();
 		} else {
 			throw new ApiException("The role specified in the configuration file does not match the role " + "used to construct the CSTS API instance.");

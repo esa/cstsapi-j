@@ -32,11 +32,13 @@ public class ProxyConfig {
 	private int maxHB;
 	
 	private TransferType transferType;
-
+	
+	private final FrameworkConfig frameworkConfig;
+	
 	/**
 	 * 
 	 */
-	public ProxyConfig(UserConfig userConfig) {
+	public ProxyConfig(UserConfig userConfig, FrameworkConfig frameworkConfig) {
 		
 		this.role = userConfig.getRole();
 		this.localId = userConfig.getLocalId();
@@ -50,12 +52,13 @@ public class ProxyConfig {
 		this.remotePeerList = userConfig.getRemotePeerList();
 		this.portList = userConfig.getPortList();
 		this.setTransferType(userConfig.getTransferType());
+		this.frameworkConfig = frameworkConfig;
 	}
 
 	/**
 	 * 
 	 */
-	public ProxyConfig(ProviderConfig providerConfig) {
+	public ProxyConfig(ProviderConfig providerConfig, FrameworkConfig frameworkConfig) {
 		
 		this.role = providerConfig.getRole();
 		this.localId = providerConfig.getLocalId();
@@ -77,6 +80,7 @@ public class ProxyConfig {
 		this.minDeadFactor = providerConfig.getMinDeadFactor();
 		this.maxDeadFactor = providerConfig.getMaxDeadFactor();
 		this.setTransferType(providerConfig.getTransferType());
+		this.frameworkConfig = frameworkConfig;
 	}
 	
 	private ArrayList<LogicalPort> createFromForeignPortList(ArrayList<ForeignLogicalPort> ports){
@@ -283,6 +287,10 @@ public class ProxyConfig {
 
 	public void setTransferType(TransferType transferType) {
 		this.transferType = transferType;
+	}
+	
+	public FrameworkConfig getFrameworkConfig() {
+		return frameworkConfig;
 	}
 
 }

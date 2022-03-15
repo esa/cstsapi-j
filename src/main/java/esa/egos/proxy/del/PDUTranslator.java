@@ -26,6 +26,7 @@ import esa.egos.csts.api.serviceinstance.IServiceInstanceInternal;
 import esa.egos.csts.api.types.SfwVersion;
 import esa.egos.proxy.enums.AbortOriginator;
 import esa.egos.proxy.util.impl.Reference;
+import esa.egos.proxy.xml.FrameworkConfig;
 
 public class PDUTranslator implements ITranslator {
 
@@ -36,16 +37,19 @@ public class PDUTranslator implements ITranslator {
 
 	private final ReentrantLock accessPendingReturn;
 	private final TreeMap<Integer, IConfirmedOperation> pendingReturn;
+	
+	private final FrameworkConfig frameworkConfig;
 
 	/**
 	 * 
 	 */
-	public PDUTranslator() {
+	public PDUTranslator(FrameworkConfig frameworkConfig) {
 
 		this.pendingBind = null;
 		this.pendingUnbind = null;
 		this.accessPendingReturn = new ReentrantLock();
 		this.pendingReturn = new TreeMap<Integer, IConfirmedOperation>();
+		this.frameworkConfig = frameworkConfig;
 		;
 	}
 
@@ -92,7 +96,7 @@ public class PDUTranslator implements ITranslator {
 			if (this.serviceInstance != null)
 				identifier = ProcedureInstanceIdentifier.decode(pdu.getBindInvocation().getStandardInvocationHeader().getProcedureInstanceId());
 			else
-				return AssocTranslator.decodeBindInvocation(pdu);
+				return AssocTranslator.decodeBindInvocation(frameworkConfig,pdu);
 		}
 		// unbindinvoke
 		if (pdu.getUnbindInvocation() != null) {
@@ -243,7 +247,7 @@ public class PDUTranslator implements ITranslator {
 			if (this.serviceInstance != null)
 				identifier = ProcedureInstanceIdentifier.decode(pdu.getBindInvocation().getStandardInvocationHeader().getProcedureName());
 			else
-				return AssocTranslator.decodeBindInvocation(pdu);
+				return AssocTranslator.decodeBindInvocation(frameworkConfig,pdu);
 		}
 		// unbindinvoke
 		if (pdu.getUnbindInvocation() != null) {

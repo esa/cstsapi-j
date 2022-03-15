@@ -13,7 +13,10 @@ import java.util.logging.Logger;
 import esa.egos.csts.api.enumerations.AppRole;
 import esa.egos.csts.api.enumerations.Result;
 import esa.egos.csts.api.exceptions.ApiException;
+import esa.egos.csts.api.oids.ObjectIdentifier;
+import esa.egos.csts.api.types.SfwVersion;
 import esa.egos.proxy.impl.MasterLink;
+import esa.egos.proxy.xml.FrameworkConfig;
 import esa.egos.proxy.xml.ProviderConfig;
 import esa.egos.proxy.xml.ProxyConfig;
 import esa.egos.proxy.xml.ProxyRoleEnum;
@@ -38,7 +41,14 @@ public class Slecsexe {
 
 		providerConfig = ProviderConfig.load(configFileStream);
 		if (providerConfig != null && providerConfig.getRole() == ProxyRoleEnum.RESPONDER) {
-			proxyConfig = new ProxyConfig(providerConfig);
+			FrameworkConfig frameworkConfig = new FrameworkConfig();
+			providerConfig.getServiceTypeList()
+				.forEach(configService -> configService.getServiceVersion()
+					.forEach(serviceVersion -> 	frameworkConfig.addServiceVersion(
+							SfwVersion.fromInt(serviceVersion.sfwVersion), 
+							ObjectIdentifier.of(configService.getServiceId(),","),
+							serviceVersion.value)));
+			proxyConfig = new ProxyConfig(providerConfig,frameworkConfig);
 		} else {
 			throw new ApiException("The role " + providerConfig.getRole().name() +
 					" specified in the configuration file does not match the role " + ProxyRoleEnum.RESPONDER.name()

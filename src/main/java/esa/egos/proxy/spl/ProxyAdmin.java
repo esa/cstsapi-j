@@ -248,7 +248,7 @@ public class ProxyAdmin implements IProxy
 			UserConfig userConfig;
 			try {
 				userConfig = UserConfig.load(new FileInputStream(new File(configFilePath)));
-				this.config = new ProxyConfig(userConfig);
+				this.config = new ProxyConfig(userConfig, this.api.getFrameworkConfig());
 			} catch (FileNotFoundException e) {
 				throw new ApiException("ApiException: File not found for configFilePath " + configFilePath);
 			}
@@ -258,7 +258,7 @@ public class ProxyAdmin implements IProxy
 			ProviderConfig providerConfig;
 			try {
 				providerConfig = ProviderConfig.load(new FileInputStream(new File(configFilePath)));
-				this.config = new ProxyConfig(providerConfig);
+				this.config = new ProxyConfig(providerConfig,this.api.getFrameworkConfig());
 			} catch (FileNotFoundException e) {
 				throw new ApiException("ApiException: File not found for configFilePath " + configFilePath);
 			}

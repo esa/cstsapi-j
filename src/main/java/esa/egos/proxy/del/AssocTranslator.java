@@ -23,19 +23,19 @@ import esa.egos.csts.api.operations.impl.b1.Start;
 import esa.egos.csts.api.operations.impl.b1.Stop;
 import esa.egos.csts.api.operations.impl.b1.TransferData;
 import esa.egos.csts.api.types.SfwVersion;
+import esa.egos.proxy.xml.FrameworkConfig;
 
 public class AssocTranslator {
 
-	public static IOperation decodeBindInvocation( b1.ccsds.csts.pdus.CstsFrameworkPdu pdu) throws ApiException {
+	public static IOperation decodeBindInvocation(FrameworkConfig frameworkConfig, b1.ccsds.csts.pdus.CstsFrameworkPdu pdu) throws ApiException {
 
 		if (pdu.getBindInvocation() == null)
 			throw new ApiException("No bind data for Assoc Translator transmitted.");
 
 		IBind bind = OpsFactory.createBind(SfwVersion.B1);
 		bind.decodeBindInvocation(pdu.getBindInvocation());
-		
 		ObjectIdentifier serviceIdentifier = bind.getServiceInstanceIdentifier().getCstsTypeIdentifier();
-		if(SfwVersion.B1.getServiceVersion(serviceIdentifier).contains(bind.getServiceVersion()) == false) {
+		if(frameworkConfig.getVerion(SfwVersion.B1).getServiceVersion(serviceIdentifier).contains(bind.getServiceVersion()) == false) {
 			throw new ApiException("Configuration for standard B1 does not support version " 
 					+ bind.getServiceVersion() + " for service " + serviceIdentifier);
 		}
@@ -44,7 +44,7 @@ public class AssocTranslator {
 		return bind;
 	}
 	
-	public static IOperation decodeBindInvocation( b2.ccsds.csts.pdus.CstsFrameworkPdu pdu) throws ApiException {
+	public static IOperation decodeBindInvocation(FrameworkConfig frameworkConfig, b2.ccsds.csts.pdus.CstsFrameworkPdu pdu) throws ApiException {
 
 		if (pdu.getBindInvocation() == null)
 			throw new ApiException("No bind data for Assoc Translator transmitted.");
@@ -53,7 +53,7 @@ public class AssocTranslator {
 		bind.decodeBindInvocation(pdu.getBindInvocation());
 		
 		ObjectIdentifier serviceIdentifier = bind.getServiceInstanceIdentifier().getCstsTypeIdentifier();
-		if(SfwVersion.B2.getServiceVersion(serviceIdentifier).contains(bind.getServiceVersion()) == false) {
+		if(frameworkConfig.getVerion(SfwVersion.B2).getServiceVersion(serviceIdentifier).contains(bind.getServiceVersion()) == false) {
 			throw new ApiException("Configuration for standard B1 does not support version " 
 					+ bind.getServiceVersion() + " for service " + serviceIdentifier);
 		}

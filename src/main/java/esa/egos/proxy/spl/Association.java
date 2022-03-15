@@ -1148,7 +1148,7 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 
 				// assume BIND so create a temporary translator to process the bind
 				if (this.translator == null)
-					this.translator = new PDUTranslator();
+					this.translator = new PDUTranslator(config.getFrameworkConfig());
 
 				op = this.translator.decode(data, isInvoke);
 				

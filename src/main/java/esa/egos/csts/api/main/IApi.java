@@ -11,10 +11,13 @@ import esa.egos.proxy.del.ITranslator;
 import esa.egos.proxy.logging.IReporter;
 import esa.egos.proxy.util.ISecAttributes;
 import esa.egos.proxy.util.ITime;
+import esa.egos.proxy.xml.FrameworkConfig;
 import esa.egos.proxy.xml.ProxyConfig;
 import esa.egos.proxy.xml.RemotePeer;
 
 public interface IApi extends ICstsApi {
+	
+	FrameworkConfig getFrameworkConfig();
 
 	ISecAttributes createSecAttributes();
 
