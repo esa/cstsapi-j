@@ -189,16 +189,11 @@ public class OidTree
     {
         try
         {
-            for (String subPackageName : PackageUtils.getSubPackages(getClass().getClassLoader(), packageName, true))
-            {
-                List<Class<?>> classes = PackageUtils.getPackageClasses(subPackageName, false);
-                Optional<Class<?>> opt = OidTree.findOidDefinitionClass(classes);
-                if (opt.isPresent())
-                {
-                    LOG.fine(()-> "Found: " + opt.get().getName());
-                    readOidValues(opt.get(), biFn);
-                }
-            }
+            List<Class<?>> classes = PackageUtils.getPackageClasses(packageName, true);
+            classes.stream().filter(clazz -> OidTree.isOidDefinitionClass(clazz)).forEach(clazz -> {
+                LOG.fine(() -> "Found: " + clazz.getCanonicalName());
+                readOidValues(clazz, biFn);
+            });
         }
         catch (Exception e)
         {

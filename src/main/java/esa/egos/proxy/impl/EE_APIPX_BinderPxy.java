@@ -321,7 +321,7 @@ public class EE_APIPX_BinderPxy extends EE_APIPX_LinkAdapter implements IBinder
             {
                 LOG.finest("before from sendMessage B:" + regId);
             }
-            sendMessage(data, pLink, 3);
+            this.result = sendMessage(data, pLink, 3);
             if (LOG.isLoggable(Level.FINEST))
             {
                 LOG.finest("after from sendMessage B:" + regId);

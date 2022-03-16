@@ -290,12 +290,13 @@ public class PackageUtils
     public static List<Class<?>> getPackageClassesFromJar(URL url, ClassLoader classLoader, String packageName, boolean alsoNestedClasses) throws IOException
     {
         List<Class<?>> ret = new ArrayList<Class<?>>();
-        JarFile jar = null;
+        JarFile jarFile = null;
 
         try
         {
             final String urlDecoded = URLDecoder.decode(url.getFile(), UTF_8);
-            LOG.log(Level.INFO, "getting classes from JAR file " + urlDecoded);
+            LOG.info(() -> { return "getting " + packageName + ((alsoNestedClasses)?".*":"")
+                    + " classes from JAR file " + urlDecoded;});
             // extract the path file name from URL: file:<path file name>!/package
             String[] split1 = urlDecoded.split("file:");
             String[] split2 = split1[1].split("!");
@@ -303,7 +304,6 @@ public class PackageUtils
             String internalPath = packageName.replace('.', '/');
 
             LOG.log(Level.INFO, "filePath: " + filePath);
-//            LOG.log(Level.INFO, "internalPath: " + internalPath);
 
             if (internalPath.charAt(0) == '/')
             {
@@ -311,15 +311,14 @@ public class PackageUtils
                 internalPath = internalPath.substring(1);
             }
             long packageNameSegmentCount = getDotCount(packageName);
-            jar = new JarFile(filePath);
+            jarFile = new JarFile(filePath);
 
             // Getting jar's entries
-            Enumeration<? extends JarEntry> enumeration = jar.entries();
+            Enumeration<? extends JarEntry> enumeration = jarFile.entries();
             // iterates over jar's entries
             while (enumeration.hasMoreElements())
             {
                 JarEntry jarEntry = enumeration.nextElement();
-                LOG.log(Level.INFO, "jarEntry: " + jarEntry.getName());
 
                 // take the classes stored at the certain path in the jar only
                 // the relative path of file in the jar.
@@ -338,6 +337,9 @@ public class PackageUtils
                         }
                     }
                     ret.add(clazz);
+                    LOG.finest(() -> {
+                        return "class: " + className;
+                    });
                 }
             }
         }
@@ -349,9 +351,9 @@ public class PackageUtils
         }
         finally
         {
-            if (jar != null)
+            if (jarFile != null)
             {
-                jar.close();
+                jarFile.close();
             }
         }
         return ret;
