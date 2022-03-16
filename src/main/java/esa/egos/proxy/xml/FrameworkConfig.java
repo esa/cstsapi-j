@@ -52,6 +52,7 @@ public class FrameworkConfig {
 	
 	public SfwVersion getFrameworkVersion(ObjectIdentifier objectIdentifier, Integer serviceVersion) {
 		return versions.entrySet().stream()
+				.filter(entry -> Objects.nonNull(entry.getValue().getServiceVersion(objectIdentifier)))
 				.filter(entry -> entry.getValue().getServiceVersion(objectIdentifier).contains(serviceVersion))
 				.map(entry -> entry.getKey())
 				.findAny()
