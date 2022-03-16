@@ -10,8 +10,6 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.ListIterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
@@ -445,7 +443,7 @@ public class ProxyAdmin implements IProxy
             if (res != Result.S_OK)
             {
                 this.objMutex.unlock();
-                throw new ApiException(res.toString());
+                throw new ApiException(res.name());
             }
         }
 
