@@ -31,6 +31,7 @@ import esa.egos.csts.api.serviceinstance.impl.ServiceType;
 import esa.egos.csts.api.states.service.ServiceStatus;
 import esa.egos.csts.api.types.SfwVersion;
 import esa.egos.csts.api.util.ICredentials;
+import esa.egos.csts.app.si.SiConfig;
 import esa.egos.proxy.ILocator;
 import esa.egos.proxy.IProxyAdmin;
 import esa.egos.proxy.ISrvProxyInform;
@@ -46,6 +47,7 @@ import esa.egos.proxy.util.ISecAttributes;
 import esa.egos.proxy.util.ITime;
 import esa.egos.proxy.util.IUtil;
 import esa.egos.proxy.util.impl.Util;
+import esa.egos.proxy.xml.ConfigServiceType;
 import esa.egos.proxy.xml.FrameworkConfig;
 import esa.egos.proxy.xml.LogicalPort;
 import esa.egos.proxy.xml.Oid;
@@ -101,21 +103,20 @@ public abstract class CstsApi implements IApi, ILocator {
 	
 	protected abstract String getOidConfigFile();
 	
+	protected abstract boolean validate(InputStream configFile) throws ApiException;
+	
 	public FrameworkConfig getFrameworkConfig() {
 		return frameworkConfig;
 	}
 	
 	public void initialize(String configFile) throws ApiException {
 		
-		InputStream configFileStream;
 		try {
-			configFileStream = new FileInputStream(new File(configFile));
+			validate(new FileInputStream(new File(configFile)));
+			initialize(new FileInputStream(new File(configFile)));
 		} catch (FileNotFoundException e) {
 			throw new ApiException("File not found: " + configFile);
 		}
-		
-		initialize(configFileStream);
-		
 		
 		this.reporter = new IReporter() {
 
@@ -271,8 +272,7 @@ public abstract class CstsApi implements IApi, ILocator {
 	}
 
 	@Override
-	public IServiceInstance createServiceInstance(IServiceInstanceIdentifier identifier, int serviceVersion, IServiceInform servInf) {
-
+	public IServiceInstance createServiceInstance(IServiceInstanceIdentifier identifier, int serviceVersion, IServiceInform servInf){
 		// a) identities of the service initiator (i.e., the service user) and
 		// the service responder (i.e., the service provider
 		// b) identity of the port at which the service is made available;
@@ -595,5 +595,51 @@ public abstract class CstsApi implements IApi, ILocator {
 					"Failed to process OID configuration file '" + oidConfigFile + "'. " + e.getMessage());
 			e.printStackTrace();
 		}
+	}
+	
+	public void verifyConfiguration(SiConfig siConfig) throws ApiException {
+		 ProxyConfig proxyConfig = getProxyConfig();
+		 if(proxyConfig == null) {
+			 throw new ApiException("ProxyConfig is NULL for API "
+					 + getApiName() + 
+					 " , cannot validate SiConfiguration. Initialize application first");
+		 }
+		 
+		 proxyConfig.getRemotePeerList().stream()
+		 	.filter( remotePeer -> remotePeer.getId().equals(siConfig.getPeerIdentifier()))
+		 	.findAny()
+		 	.orElseThrow(() -> new ApiException("Cannot find peer identifier " + 
+		 			siConfig.getPeerIdentifier() + " in the configuration of API " + getApiName() ));
+		 
+		 proxyConfig.getLogicalPortList().stream()
+		 	.filter( logicalPort -> logicalPort.getName().equals(siConfig.getResponderPortIdentifier()))
+		 	.findAny()
+		 	.orElseThrow(() -> new ApiException("Cannot find responder port identifier " + 
+		 			siConfig.getResponderPortIdentifier() + " in the configuration of API " + getApiName() ));
+	}
+	
+	public void verifyServiceInstance(IServiceInstanceIdentifier identifier,  int serviceVersion) throws ApiException {
+		 ProxyConfig proxyConfig = getProxyConfig();
+		 if(proxyConfig == null) {
+			 throw new ApiException("ProxyConfig is NULL for API "
+					 + getApiName() + 
+					 " , cannot validate SiConfiguration. Initialize application first");
+		 }
+		 
+		 ConfigServiceType configServiceType = proxyConfig.getServiceTypeList().stream()
+		 	.filter(serviceType -> ObjectIdentifier.of(serviceType.getServiceId(),",").equals(identifier.getCstsTypeIdentifier()))
+		 	.findAny()
+		 	.orElseThrow(()-> new ApiException("Cannot find service of identifer " + 
+		 			identifier.getCstsTypeIdentifier().toString() + " in the configuration of API " + getApiName()));
+		 
+		 if(this.getRole() == AppRole.USER) {
+			 configServiceType.getServiceVersion().stream()
+			 	.filter(configServiceVersion -> serviceVersion == configServiceVersion.value)
+			 	.findAny()
+			 	.orElseThrow(()-> new ApiException("Cannot find service of identifer " + 
+			 			identifier.getCstsTypeIdentifier().toString() + " in the configuration of API " + getApiName())); 
+		 }
+		 	
+		 
 	}
 }

@@ -5,6 +5,7 @@ import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.serviceinstance.IServiceInform;
 import esa.egos.csts.api.serviceinstance.IServiceInstance;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceIdentifier;
+import esa.egos.csts.app.si.SiConfig;
 
 /**
  * The main interface representing the CSTS API.
@@ -76,5 +77,19 @@ public interface ICstsApi {
 	 * @throws ApiException
 	 */
 	void destroyServiceInstance(IServiceInstance serviceInstance) throws ApiException;
+	
+	/**
+	 * Verify whether the Si Configuration is consistent with the API configuration
+	 * @param siConfig the selected Si configuration
+	 * @throws ApiException configuration error;
+	 */
+	void verifyConfiguration(SiConfig siConfig) throws ApiException;
+	
+	/**
+	 * Verify whether the identifier is consistent with the API configuration
+	 * @param identifier the service identifier
+	 * @throws ApiException configuration error
+	 */
+	public void verifyServiceInstance(IServiceInstanceIdentifier identifier, int serviceVersion) throws ApiException;
 
 }

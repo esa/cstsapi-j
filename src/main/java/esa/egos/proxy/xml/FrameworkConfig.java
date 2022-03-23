@@ -3,6 +3,7 @@ package esa.egos.proxy.xml;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 import java.util.TreeSet;
@@ -28,7 +29,7 @@ public class FrameworkConfig {
 		}
 		
 		public Set<Integer> getServiceVersion(ObjectIdentifier objectIdentifier) {
-			return supportedServiceVersions.get(objectIdentifier);
+			return Optional.ofNullable(supportedServiceVersions.get(objectIdentifier)).orElse(new TreeSet<Integer>());
 		}
 	}
 	
@@ -40,10 +41,10 @@ public class FrameworkConfig {
 	}
 	
 	public void addServiceVersion(SfwVersion sfwVersion, ObjectIdentifier objectIdentifier, Integer serviceVersion) {
-		getVerion(sfwVersion).addServiceVersion(objectIdentifier, serviceVersion);
+		getVersion(sfwVersion).addServiceVersion(objectIdentifier, serviceVersion);
 	}
 	
-	public Version getVerion(SfwVersion sfwVersion) {
+	public Version getVersion(SfwVersion sfwVersion) {
 		if(versions.containsKey(sfwVersion) == false ) {
 			versions.put(sfwVersion, new Version());
 		}

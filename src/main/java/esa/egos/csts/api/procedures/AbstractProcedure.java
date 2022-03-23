@@ -418,15 +418,14 @@ public abstract class AbstractProcedure implements IProcedureInternal {
 		IBind bind = OpsFactory.createBind(getServiceInstance().getSfwVersion(),
 				getServiceInstance().getServiceType(),
 				getServiceInstance().getVersion());
-		bind.setInitiatorIdentifier(getServiceInstance().getApi().getProxySettings().getLocalId());
-		bind.setResponderIdentifier(getServiceInstance().getPeerIdentifier());
-		bind.setResponderPortIdentifier(getServiceInstance().getResponderPortIdentifier());
-		bind.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
-		
 		try {
+			bind.setInitiatorIdentifier(getServiceInstance().getApi().getProxySettings().getLocalId());
+			bind.setResponderIdentifier(getServiceInstance().getPeerIdentifier());
+			bind.setResponderPortIdentifier(getServiceInstance().getResponderPortIdentifier());
+			bind.setProcedureInstanceIdentifier(getProcedureInstanceIdentifier());
 			bind.setServiceInstanceIdentifier(getServiceInstance().getServiceInstanceIdentifier());
 		} catch (ConfigException e) {
-			LOGGER.log(Level.WARNING, "Could not create BIND operation.", e);
+			LOGGER.log(Level.SEVERE, "Could not create BIND operation for service Isntance " + getServiceInstance(), e);
 			return null;
 		}
 		return bind;

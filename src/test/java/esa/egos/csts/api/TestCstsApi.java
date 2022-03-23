@@ -24,10 +24,10 @@ public class TestCstsApi {
 		CstsApi userApi = new CstsUserApi("Test Service User API");
 		userApi.initialize(userConfigName);
 		
-		assertTrue(userApi.getFrameworkConfig().getVerion(SfwVersion.B1)
+		assertTrue(userApi.getFrameworkConfig().getVersion(SfwVersion.B1)
 				.getServiceVersion(ObjectIdentifier.of(1, 3, 112, 4, 4, 1, 2)).contains(1));
 		
-		assertTrue(userApi.getFrameworkConfig().getVerion(SfwVersion.B2)
+		assertTrue(userApi.getFrameworkConfig().getVersion(SfwVersion.B2)
 				.getServiceVersion(ObjectIdentifier.of(1, 3, 112, 4, 4, 1, 2)).contains(2));
 		
 	}

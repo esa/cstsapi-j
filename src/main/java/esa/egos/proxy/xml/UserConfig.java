@@ -1,8 +1,10 @@
 package esa.egos.proxy.xml;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -13,6 +15,15 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
+
+import org.xml.sax.SAXException;
+
+import esa.egos.csts.api.exceptions.ApiException;
 
 @XmlType(name = "UserConfig", propOrder = {
     "role",
@@ -193,6 +204,23 @@ public class UserConfig {
         {
             throw new RuntimeException(e);
         }
+    }
+    
+    public static boolean validate(InputStream stream) throws ApiException {
+    	InputStream schemaStream = ProviderConfig.class.getResourceAsStream("/schema/UserConfig1.xsd");
+    	Source xmlFile = new StreamSource(stream);
+    	SchemaFactory schemaFactory = SchemaFactory
+    			.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+    	try {
+    		Schema schema = schemaFactory.newSchema(new StreamSource(schemaStream));
+    		Validator validator = schema.newValidator();
+    		validator.validate(xmlFile);
+    		return true;
+    	} catch (SAXException e) {    		
+    		throw new ApiException("Provider configuration  not valid", e);
+    	} catch (IOException e) {
+    		throw new ApiException("Error accessing file", e);
+    	}
     }
 
 }

@@ -30,6 +30,7 @@
 		<!-- Return CFDP PDU Service -->
 		<service_type srv_id="[1, 3, 112, 4, 4, 1, 4]">
 			<srv_versions>
+				<srv_version sfw="1">1</srv_version>
 				<srv_version sfw="2">2</srv_version>
 			</srv_versions>
 		</service_type>
