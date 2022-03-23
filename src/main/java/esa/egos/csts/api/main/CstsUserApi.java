@@ -27,17 +27,21 @@ public class CstsUserApi extends CstsApi {
 		super(name, AppRole.USER);
 		initialize(configFile);
 	}
+	
+	@Override
+	protected boolean validate(InputStream configFileStream) throws ApiException {
+		return UserConfig.validate(configFileStream);
+	}
 
 	@Override
 	protected void initialize(InputStream configFileStream) throws ApiException  {
-		 UserConfig userConfig = UserConfig.load(configFileStream);
-		if (userConfig != null && userConfig.getRole() == ProxyRoleEnum.INITIATOR) {
-			proxyConfig = new ProxyConfig(userConfig, this.getFrameworkConfig());
-			oidConfigFile = userConfig.getOidConfigFile();
-		} else {
-			throw new ApiException("The role specified in the configuration file does not match the role " + "used to construct the CSTS API instance.");
-		}
-		
+			 UserConfig userConfig = UserConfig.load(configFileStream);
+				if (userConfig != null && userConfig.getRole() == ProxyRoleEnum.INITIATOR) {
+					proxyConfig = new ProxyConfig(userConfig, this.getFrameworkConfig());
+					oidConfigFile = userConfig.getOidConfigFile();
+				} else {
+					throw new ApiException("The role specified in the configuration file does not match the role " + "used to construct the CSTS API instance.");
+				}	
 	}
 
 	@Override

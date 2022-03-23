@@ -7,13 +7,42 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 import org.junit.Test;
 
+import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.serviceinstance.impl.ServiceType;
 
 
 public class ProviderConfigurationTest {
+	
+	@Test
+	public void testXsdValidationProviderConfiguration() throws Exception {
+		File file = new File("src/test/resources/ProviderConfig1.xml");
+		
+		String providerConfigName = file.getAbsolutePath();
+		
+		FileInputStream configFileStream = new FileInputStream(new File(providerConfigName));
+				
+        //System.out.println(System.getProperties().get("java.class.path"));
+
+		assertTrue(ProviderConfig.validate(configFileStream));
+		
+		
+	}
+	
+	@Test(expected = ApiException.class)
+	public void testXsdValidationProviderConfigurationError() throws Exception {
+		File file = new File("src/test/resources/ProviderConfigError1.xml");
+		
+		String providerConfigName = file.getAbsolutePath();
+		
+		FileInputStream configFileStream = new FileInputStream(new File(providerConfigName));
+		
+		ProviderConfig.validate(configFileStream);
+	}
 
 	@Test
 	public void testParsingProviderConfiguration() throws FileNotFoundException {

@@ -27,6 +27,12 @@ public class CstsProviderApi extends CstsApi {
 		super(name, AppRole.PROVIDER);
 		initialize(configFile);
 	}
+	
+	@Override
+	protected boolean validate(InputStream configFileStream) throws ApiException {
+		return ProviderConfig.validate(configFileStream);
+	}
+
 
 	@Override
 	protected void initialize(InputStream configFileStream) throws ApiException  {
@@ -37,7 +43,6 @@ public class CstsProviderApi extends CstsApi {
 		} else {
 			throw new ApiException("The role specified in the configuration file does not match the role " + "used to construct the CSTS API instance.");
 		}
-		
 	}
 
 	@Override

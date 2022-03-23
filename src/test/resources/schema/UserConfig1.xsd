@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <xs:element name="provider_config" type="providerConfig"/>
+  <xs:element name="UserConfig" type="UserConfig"/>
 
-  <xs:complexType name="providerConfig">
+  <xs:complexType name="UserConfig">
     <xs:sequence>
       <xs:element name="service_types" minOccurs="0">
         <xs:complexType>
@@ -19,10 +19,10 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
-      <xs:element name="local_logical_ports">
+      <xs:element name="foreign_logical_ports">
         <xs:complexType>
           <xs:sequence>
-            <xs:element name="logical_port" type="localLogicalPort" maxOccurs="unbounded"/>
+            <xs:element name="logical_port" type="foreignLogicalPort" maxOccurs="unbounded"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>
@@ -34,15 +34,8 @@
     <xs:attribute name="startup_timer" type="xs:int" use="required"/>
     <xs:attribute name="non_useheartbeat" type="xs:boolean" use="required"/>
     <xs:attribute name="authentication_delay" type="xs:int" use="required"/>
-    <xs:attribute name="transmit_queue_size" type="xs:int" use="required"/>
-    <xs:attribute name="cs_address" type="xs:string" use="required"/>
-    <xs:attribute name="default_reporting_address" type="xs:string" use="required"/>
-    <xs:attribute name="use_nagel" type="xs:boolean" use="required"/>
-    <xs:attribute name="min_deadfactor" type="xs:int" use="required"/>
-    <xs:attribute name="max_deadfactor" type="xs:int" use="required"/>
-    <xs:attribute name="min_heartbeat" type="xs:int" use="required"/>
-    <xs:attribute name="max_heartbeat" type="xs:int" use="required"/>
     <xs:attribute name="transfer_type" type="transferType" use="required"/>
+    <xs:attribute name="transmit_queue_size" type="xs:int" use="required"/>
     <xs:attribute name="oid_config_file" type="xs:string" use="optional"/>
   </xs:complexType>
 
@@ -51,12 +44,20 @@
       <xs:element name="srv_versions">
         <xs:complexType>
           <xs:sequence>
-            <xs:element name="srv_version" type="xs:int" maxOccurs="unbounded"/>
+            <xs:element name="srv_version" type="srvVersionType" maxOccurs="unbounded"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>
     </xs:sequence>
     <xs:attribute name="srv_id" type="xs:string" use="required"/>
+  </xs:complexType>
+
+ <xs:complexType name="srvVersionType">
+    <xs:simpleContent>
+	  <xs:extension base="xs:int">
+	    <xs:attribute name="sfw" type="xs:int" use="required"/>
+      </xs:extension>
+    </xs:simpleContent>
   </xs:complexType>
 
   <xs:complexType name="remotePeer">
@@ -66,11 +67,13 @@
     <xs:attribute name="password" type="xs:string" use="required"/>
   </xs:complexType>
 
-  <xs:complexType name="localLogicalPort">
+  <xs:complexType name="foreignLogicalPort">
     <xs:sequence>
       <xs:element name="port_data" type="portData" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:attribute name="port_name" type="xs:string" use="required"/>
+    <xs:attribute name="port_heartbeat_timer" type="xs:int" use="required"/>
+    <xs:attribute name="port_dead_factor" type="xs:int" use="required"/>
     <xs:attribute name="tcp_xmit_buffer_size" type="xs:int" use="required"/>
     <xs:attribute name="tcp_recv_buffer_size" type="xs:int" use="required"/>
   </xs:complexType>

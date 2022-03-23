@@ -39,12 +39,17 @@ public abstract class AppSi implements IServiceInform {
 	 * @throws ApiException
 	 */
 	public AppSi(ICstsApi api, SiConfig config, int serviceType, int serviceVersion) throws ApiException {
+		
+		api.verifyConfiguration(config);
+		
 		this.api = api;
 		
 		IServiceInstanceIdentifier identifier = new ServiceInstanceIdentifier(config.getScId(),
 				config.getFacilityId(),
 				ObjectIdentifier.of(1,3,112,4,4,1, serviceType), 
 				config.getInstanceNumber());
+		
+		api.verifyServiceInstance(identifier, serviceVersion);
 
 		this.apiServiceInstance = api.createServiceInstance(identifier,serviceVersion, this);	
 		

@@ -205,6 +205,7 @@ public class TestRtnCfdpPdu {
 
           } catch (Exception e) {
                e.printStackTrace();
+               Assert.fail("Unexpected Exception");
           }
      }
 

@@ -15,13 +15,6 @@ import esa.egos.csts.api.operations.ITransferData;
 import esa.egos.csts.api.operations.IUnbind;
 import esa.egos.csts.api.operations.impl.OpsFactory;
 import esa.egos.csts.api.operations.impl.b1.ConfirmedProcessData;
-import esa.egos.csts.api.operations.impl.b1.ExecuteDirective;
-import esa.egos.csts.api.operations.impl.b1.Get;
-import esa.egos.csts.api.operations.impl.b1.Notify;
-import esa.egos.csts.api.operations.impl.b1.ProcessData;
-import esa.egos.csts.api.operations.impl.b1.Start;
-import esa.egos.csts.api.operations.impl.b1.Stop;
-import esa.egos.csts.api.operations.impl.b1.TransferData;
 import esa.egos.csts.api.types.SfwVersion;
 import esa.egos.proxy.xml.FrameworkConfig;
 
@@ -35,7 +28,7 @@ public class AssocTranslator {
 		IBind bind = OpsFactory.createBind(SfwVersion.B1);
 		bind.decodeBindInvocation(pdu.getBindInvocation());
 		ObjectIdentifier serviceIdentifier = bind.getServiceInstanceIdentifier().getCstsTypeIdentifier();
-		if(frameworkConfig.getVerion(SfwVersion.B1).getServiceVersion(serviceIdentifier).contains(bind.getServiceVersion()) == false) {
+		if(frameworkConfig.getVersion(SfwVersion.B1).getServiceVersion(serviceIdentifier).contains(bind.getServiceVersion()) == false) {
 			throw new ApiException("Configuration for standard B1 does not support version " 
 					+ bind.getServiceVersion() + " for service " + serviceIdentifier);
 		}
@@ -53,8 +46,8 @@ public class AssocTranslator {
 		bind.decodeBindInvocation(pdu.getBindInvocation());
 		
 		ObjectIdentifier serviceIdentifier = bind.getServiceInstanceIdentifier().getCstsTypeIdentifier();
-		if(frameworkConfig.getVerion(SfwVersion.B2).getServiceVersion(serviceIdentifier).contains(bind.getServiceVersion()) == false) {
-			throw new ApiException("Configuration for standard B1 does not support version " 
+		if(frameworkConfig.getVersion(SfwVersion.B2).getServiceVersion(serviceIdentifier).contains(bind.getServiceVersion()) == false) {
+			throw new ApiException("Configuration for standard BB does not support version " 
 					+ bind.getServiceVersion() + " for service " + serviceIdentifier);
 		}
 		

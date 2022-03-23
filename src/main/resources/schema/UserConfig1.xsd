@@ -44,12 +44,20 @@
       <xs:element name="srv_versions">
         <xs:complexType>
           <xs:sequence>
-            <xs:element name="srv_version" type="xs:int" maxOccurs="unbounded"/>
+            <xs:element name="srv_version" type="srvVersionType" maxOccurs="unbounded"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>
     </xs:sequence>
     <xs:attribute name="srv_id" type="xs:string" use="required"/>
+  </xs:complexType>
+
+ <xs:complexType name="srvVersionType">
+    <xs:simpleContent>
+	  <xs:extension base="xs:int">
+	    <xs:attribute name="sfw" type="xs:int" use="required"/>
+      </xs:extension>
+    </xs:simpleContent>
   </xs:complexType>
 
   <xs:complexType name="remotePeer">
