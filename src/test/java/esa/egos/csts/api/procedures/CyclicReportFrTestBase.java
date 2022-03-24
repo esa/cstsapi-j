@@ -85,7 +85,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             TestUtils.verifyResult(userSi.startCyclicReport(this.piid_ocr_prime, listOfParameters, 100),
                                    "START-CYCLIC-REPORT");
 
-            this.userSi.waitTransferData(5, 500);
+            this.userSi.waitTransferData(10, 1000);
 
             System.out.println("Check values at user");
             index = 0;
@@ -344,7 +344,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_ocr_prime, listOfParameters, 100),
                     "START-CYCLIC-REPORT");
 
-            this.userSi.waitTransferData(5, 500);
+            this.userSi.waitTransferData(10, 1000);
 
             System.out.println("Check values at user");
             index = 0;
@@ -588,7 +588,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_ocr_prime, listOfParameters, 100),
                     "START-CYCLIC-REPORT");
 
-            this.userSi.waitTransferData(5, 500);
+            this.userSi.waitTransferData(10, 1000);
 
             System.out.println("Check values at user");
             Map<Name, ICstsValue> userValues = this.userSi.getParameterValues(this.piid_ocr_prime, frn);
@@ -875,7 +875,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_ocr_prime, listOfParameters, 100),
                     "START-CYCLIC-REPORT");
 
-            this.userSi.waitTransferData(5, 500);
+            this.userSi.waitTransferData(10, 1000);
 
             System.out.println("Check values at user for both instances");
             Map<Long, Map<Label, ICstsValue>> userValues = this.userSi.getParameterValues(this.piid_ocr_prime, getFunctionalResource());
@@ -997,7 +997,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_ocr_secondary_02, listOfParameters, 100, onChange_03),
                                    "START-CYCLIC-REPORT " + this.piid_ocr_secondary_02);
 
-            this.userSi.waitTransferData(5, 500);
+            this.userSi.waitTransferData(10, 1000);
             
             ProcedureInstanceIdentifier piids[] = new ProcedureInstanceIdentifier[] { this.piid_ocr_prime,
                                                                                       this.piid_ocr_secondary_01,
@@ -1047,7 +1047,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
                 nParams++;
             }
 
-            this.userSi.waitTransferData(10, 500);
+            this.userSi.waitTransferData(10, 1000);
 
             System.out.println("Check updated values at user for all started procedures");
             for (ProcedureInstanceIdentifier piid : piids)
@@ -1522,7 +1522,7 @@ public abstract class CyclicReportFrTestBase extends MdCstsTestBase
             TestUtils.verifyResult(this.userSi.startCyclicReport(this.piid_ocr_prime, ListOfParameters.empty(), 100),
                     "START-CYCLIC-REPORT");
             
-            this.userSi.waitTransferData(5, 500);
+            this.userSi.waitTransferData(10, 1000);
 
             // check values at user
             System.out.println("Check values at user");
