@@ -1,5 +1,7 @@
 package esa.egos.csts.test.rtn.cfdp.pdu.impl;
 
+import static org.junit.Assume.assumeNotNull;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -80,7 +82,8 @@ public class TestStressRtnCfdpReducePdu {
 
      @BeforeClass
      public static void setUpClass() throws ApiException {
-          TestBootstrap.initCs();
+    	 assumeNotNull(System.getProperty("stressTest"));
+         TestBootstrap.initCs();
      }
 
      /**

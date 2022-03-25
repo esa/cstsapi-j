@@ -306,20 +306,17 @@ public class TestMds {
 				tcpForwarder.stop(); 
 				
 
-                    userSi.waitTransferData(500, 500);
+                userSi.waitTransferData(500, 2000);
 
+                Assert.assertTrue(userSi.getApiServiceInstance().getStatus() == ServiceStatus.UNBOUND);
 				Assert.assertTrue(providerSi.getApiServiceInstance().getStatus() == ServiceStatus.UNBOUND);
 			}
 			
-			
-			
 			providerSi.destroy();
 			
-			
-			
-		
 		} catch(Exception e) {
 			e.printStackTrace();
+			Assert.fail("Exception thrown");
 		}		
 	}	
 	

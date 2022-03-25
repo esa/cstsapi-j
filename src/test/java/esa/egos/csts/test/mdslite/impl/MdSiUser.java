@@ -319,7 +319,7 @@ public class MdSiUser extends MdSi {
 					received++;
 				}
 			} catch (InterruptedException e) {
-				
+				Thread.interrupted();
 				e.printStackTrace();
 			} finally {
 				retLock.unlock();
