@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.Optional;
 
 import com.beanit.jasn1.ber.types.BerType;
@@ -100,6 +102,40 @@ public class FunctionalResourceMetadata
      PARAMETER, EVENT, DIRECTIVE
     }
 
+
+    /**
+     * Compare class names of classes stored in the entry values
+     * @param e1 the 1st OID to class entry
+     * @param e2 the 2nd OID to class entry
+     * @return  e1.getValue().getSimpleName().compareTo(e2.getValue().getSimpleName())
+     *
+     */
+    class EntryClassNameComp implements Comparator<Map.Entry<ObjectIdentifier,Class<?>>>
+    {
+        
+        @Override
+        public int compare(Map.Entry<ObjectIdentifier,Class<?>> e1, Map.Entry<ObjectIdentifier,Class<?>> e2) 
+        {
+            return e1.getValue().getSimpleName().compareTo(e2.getValue().getSimpleName());
+        }
+    }
+
+    /**
+     * Compare class names of classes stored in the entry values
+     * @param e1 the 1st OID to class entry
+     * @param e2 the 2nd OID to class entry
+     * @return  e1.getValue().getSimpleName().compareTo(e2.getValue().getSimpleName())
+     *
+     */
+    class ClassNameComp implements Comparator<Class<?>>
+    {
+        
+        @Override
+        public int compare(Class<?> class1, Class<?> class2) 
+        {
+            return class1.getSimpleName().compareTo(class2.getSimpleName());
+        }
+    }
 
     /**
      * C-tor
@@ -657,6 +693,7 @@ public class FunctionalResourceMetadata
         }
 
         // FR parameters and FR events
+        ClassNameComp comparator = new ClassNameComp(); 
         for (Entry<String, int[]> frEntry : this.frOidName2oidArray.entrySet())
         {
             ObjectIdentifier frOid = ObjectIdentifier.of(frEntry.getValue());
@@ -670,7 +707,12 @@ public class FunctionalResourceMetadata
                 {
                     frTypesBuilder.addNestedClass("parameter");
 
-                    for (Entry<ObjectIdentifier, Class<?>> frParEntry : oid2parClass.entrySet())
+                    LinkedHashMap<ObjectIdentifier, Class<?>> sortedoid2parClassMap = oid2parClass.entrySet().stream()
+                            .sorted(Map.Entry.comparingByValue(comparator))
+                            .collect(Collectors.toMap(Map.Entry::getKey,
+                                                      Map.Entry::getValue,
+                                                      (e1, e2) -> e1, LinkedHashMap::new));
+                    for (Entry<ObjectIdentifier, Class<?>> frParEntry : sortedoid2parClassMap.entrySet())
                     {
                         String oidName = this.oid2oidName.get(frParEntry.getKey());// removeSuffix(this.oid2oidName.get(frParEntry.getKey()),
                                                                                    // TYPE_SUFFIX);
@@ -688,7 +730,12 @@ public class FunctionalResourceMetadata
                 {
                     frTypesBuilder.addNestedClass("event");
 
-                    for (Entry<ObjectIdentifier, Class<?>> frEvEntry : oid2evClass.entrySet())
+                    LinkedHashMap<ObjectIdentifier, Class<?>> sortedoid2evClassMap = oid2evClass.entrySet().stream()
+                            .sorted(Map.Entry.comparingByValue(comparator))
+                            .collect(Collectors.toMap(Map.Entry::getKey,
+                                                      Map.Entry::getValue,
+                                                      (e1, e2) -> e1, LinkedHashMap::new));
+                    for (Entry<ObjectIdentifier, Class<?>> frEvEntry : sortedoid2evClassMap.entrySet())
                     {
                         String oidName = removeSuffix(this.oid2oidName.get(frEvEntry.getKey()), TYPE_SUFFIX);
                         int[] oidArray = frEvEntry.getKey().toArray();

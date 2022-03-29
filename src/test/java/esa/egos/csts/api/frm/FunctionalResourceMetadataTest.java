@@ -18,7 +18,7 @@ import esa.egos.proxy.xml.OidConfig;
 public class FunctionalResourceMetadataTest
 {
     String oidConfigFile = "src/test/resources/OidConfigFrmTest.xml";
-    String frOutpuDirectory = "src/test/java/frm/csts/generated/test/classes";
+    String frOutpuDirectory = "src/test/java/esa/egos/csts/sim/impl/frm";
 
     @Rule
     public TestRule testWatcher = new CstsTestWatcher();
