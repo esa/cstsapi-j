@@ -72,6 +72,29 @@
             <version>3.4</version>
         </dependency>
 
+<!-- SLES15 support -->
+              <!-- https://mvnrepository.com/artifact/javax.xml/jaxb-api -->
+              <dependency>
+                     <groupId>javax.xml</groupId>
+                     <artifactId>jaxb-api</artifactId>
+                     <version>2.1</version>
+              </dependency>
+
+              <!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api-osgi -->
+              <dependency>
+                     <groupId>javax.xml.bind</groupId>
+                     <artifactId>jaxb-api-osgi</artifactId>
+                     <version>2.2.7</version>
+              </dependency>
+
+              <!-- https://mvnrepository.com/artifact/javax.xml/jaxb-impl -->
+              <dependency>
+                     <groupId>javax.xml</groupId>
+                     <artifactId>jaxb-impl</artifactId>
+                     <version>2.1</version>
+              </dependency>
+
+
 <!-- <dependency> -->
 <!--     <groupId>org.osgi</groupId> -->
 <!--     <artifactId>org.osgi.framework</artifactId> -->
@@ -114,8 +137,6 @@
         </pluginManagement>
 
         <plugins>
-
-
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -365,16 +386,6 @@
                     </filesets>
                 </configuration>
             </plugin>
-<!--
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M5</version>
-                <configuration>
-                    <rerunFailingTestsCount>3</rerunFailingTestsCount>
-                </configuration>
-            </plugin>
--->
             <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>
                 <version>3.0.0-M2</version>
@@ -405,5 +416,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
