@@ -49,10 +49,10 @@ public class SicfUtil {
 				.getFunctionalResourceInstance());
 		if (instanceNumber.equals("0"))
 			instanceNumber = "";
-		String subsystem = "/" + StringUtils.substringBetween(funcResType, "/");
-		String subsystemUnit = StringUtils.substringAfter(funcResType,
-				subsystem);
-		return subsystem + instanceNumber + subsystemUnit + paramId;
+		String unprefixedFuncResType = StringUtils.removeStart(funcResType, "/");
+		String subsystem = StringUtils.substringBefore(unprefixedFuncResType, "/");
+		String subsystemUnit = StringUtils.substringAfter(unprefixedFuncResType,subsystem);
+		return createSTCParamName(subsystem,instanceNumber,subsystemUnit,paramId);
 	}
 
 	private static SicfParameter createSicfParameter(
@@ -86,9 +86,30 @@ public class SicfUtil {
 				.getFunctionalResourceInstance());
 		if (instanceNumber.equals("0"))
 			instanceNumber = "";
-		String subsystem = "/" + StringUtils.substringBetween(funcResType, "/");
-		String subsystemUnit = StringUtils.substringAfter(funcResType,
-				subsystem);
-		return subsystem + instanceNumber + subsystemUnit + paramId;
+		String unprefixedFuncResType = StringUtils.removeStart(funcResType, "/");
+		String subsystem = StringUtils.substringBefore(unprefixedFuncResType, "/");
+		String subsystemUnit = StringUtils.substringAfter(unprefixedFuncResType,subsystem);
+		return createSTCParamName(subsystem,instanceNumber,subsystemUnit,paramId);
+	}
+	
+	private static String createSTCParamName(String subsystem, String instanceNumber, String subsystemUnit, String paramID ) {
+		StringBuilder build = new StringBuilder();
+		if(subsystem!=null && !subsystem.isEmpty()) {
+			build.append("/");
+			build.append(subsystem);
+		}
+		if(instanceNumber!=null && !instanceNumber.isEmpty()) {
+			build.append("/");
+			build.append(instanceNumber);
+		}
+		if(subsystemUnit!=null && !subsystemUnit.isEmpty()) {
+			build.append("/");
+			build.append(subsystemUnit);
+		}
+		if(paramID!=null && !paramID.isEmpty()) {
+			build.append("/");
+			build.append(paramID);
+		}	
+		return StringUtils.replace(build.toString(), "//", "/");
 	}
 }
