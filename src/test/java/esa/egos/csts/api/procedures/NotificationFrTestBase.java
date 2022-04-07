@@ -94,7 +94,7 @@ public abstract class NotificationFrTestBase extends MdCstsTestBase
             {
                 this.providerSi.getEvent(name).fire();
 
-                this.userSi.waitTransferData(5, 100);
+                this.userSi.waitTransferData(5, 500);
 
                 FunctionalResourceEvent<?, FunctionalResourceValue<?>> event_01 = null;
                 try
