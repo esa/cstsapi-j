@@ -96,7 +96,7 @@ public class TestInformationQuery {
     @After
     public void finalize() {
          providerApi.stop();
-        // userApi.stop();
+         userApi.stop();
          System.out.println("CSTS user and provider API stopped");
     }
     
