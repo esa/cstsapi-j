@@ -19,7 +19,7 @@
         <project.repository.id>vsdenexus</project.repository.id>
         <project.repository.url>https://vsdenexus.esoc.esa.int/nexus/content/sites/cda-p2-site</project.repository.url>
         <project.site.id>vsdenexus</project.site.id>
-        <project.site.url>dav:https://vsdenexus.esoc.esa.int/nexus/content/sites/cda-p2-site/esa/egos/csts.api/repository-p2-${version}</project.site.url>
+        <project.site.url>dav:https://vsdenexus.esoc.esa.int/nexus/content/sites/cda-p2-site/esa/egos/csts.api/repository-p2-${project.version}</project.site.url>
     </properties>
 
     <description>Cross Support Transfer Service API</description>
@@ -66,25 +66,12 @@
             <version>3.4</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.4</version>
-        </dependency>
-
 <!-- SLES15 support -->
               <!-- https://mvnrepository.com/artifact/javax.xml/jaxb-api -->
               <dependency>
-                     <groupId>javax.xml</groupId>
+                     <groupId>javax.xml.bind</groupId>
                      <artifactId>jaxb-api</artifactId>
                      <version>2.1</version>
-              </dependency>
-
-              <!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api-osgi -->
-              <dependency>
-                     <groupId>javax.xml.bind</groupId>
-                     <artifactId>jaxb-api-osgi</artifactId>
-                     <version>2.2.7</version>
               </dependency>
 
               <!-- https://mvnrepository.com/artifact/javax.xml/jaxb-impl -->
