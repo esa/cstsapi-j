@@ -24,7 +24,7 @@ public class ElapsedTimer
 {
     private static final Logger LOG = Logger.getLogger(Channel.class.getName());
 
-    private Timer timer = new Timer();;
+    private Timer timer;
 
     private RemindTask currentTask;
 
