@@ -556,7 +556,11 @@ public class EE_APIPX_AssocPxy extends EE_APIPX_LinkAdapter implements IChannelI
         if (this.eeAPIPXLink != null)
         {
             // don't set linkClosed otherwise the last pdu is not transmitted
-            // over the link !!
+            // over the link !!        	
+        	// #hd# despite what is written above - if the link is not closed, the WritingThread never completes!
+        	// #hd# the EE_APIPX_LinkAdapter#waitForWrite does not return if the link is not closed
+        	this.linkClosed = true;
+        	
             this.eeAPIPXLink.setAssocPxy(null);
             this.eeAPIPXLink = null;
         }

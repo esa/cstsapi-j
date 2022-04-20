@@ -213,9 +213,17 @@ public abstract class EE_APIPX_LinkAdapter
         TransmittableUnit dataToSend = null;
         try
         {
-            dataToSend = this.listRcvData.take();
+        	// check for closed links during the timeout of poll. The old approach to use this.listRcvData.take() does not return w/o data
+        	while(dataToSend == null && this.linkClosed == false) {
+        		dataToSend = this.listRcvData.poll(10, TimeUnit.MILLISECONDS);
+        	}
+        	
             // send it to the link
-            dataToSend.transmit(link);
+        	if(dataToSend != null) {
+        		dataToSend.transmit(link);
+        	} else {
+        		LOG.log(Level.FINE, "ipc link closed");
+        	}
         }
         catch (InterruptedException e)
         {
