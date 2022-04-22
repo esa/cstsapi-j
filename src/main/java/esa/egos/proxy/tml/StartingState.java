@@ -26,7 +26,7 @@ public class StartingState implements ITMLState
     public StartingState(Channel channel)
     {
         this.channel = channel;
-        this.channel.startCommThreads();
+        // this.channel.startCommThreads(); CSTSAPI-62 
     }
 
     @Override

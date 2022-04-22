@@ -391,14 +391,19 @@ public abstract class Channel implements IChannelInitiate, ITimeoutProcessor
         
         LOG.fine(this.channelState.toString());
 
-        if (LOG.isLoggable(Level.FINEST))
+        if (LOG.isLoggable(Level.INFO))
         {
-            LOG.finest("Changing the channel state from: " + this.channelState + ", to: " + newState);
+            LOG.info("Changing the channel state from: " + this.channelState + ", to: " + newState);
         }
 
         this.channelState = newState;
 
         this.objMutex.unlock();
+        
+        if(newState instanceof StartingState) 
+        {
+        	this.startCommThreads(); // CSTAPI-62 only start the communication threads after setting the StartingState
+        }
     }
 
     /**
@@ -531,9 +536,9 @@ public abstract class Channel implements IChannelInitiate, ITimeoutProcessor
         {
             try
             {
-                if (LOG.isLoggable(Level.FINE))
+                if (LOG.isLoggable(Level.INFO))
                 {
-                    LOG.fine("Ready to close socket " + this.connectedSock);
+                    LOG.info("Channel cleanup. Closing socket " + this.connectedSock);
                 }
                 this.connectedSock.close();
             }
@@ -720,7 +725,7 @@ public abstract class Channel implements IChannelInitiate, ITimeoutProcessor
             }
             else
             {
-                logError("Urgent data received");
+                logError("Urgent data received on " + connectedSock + " originator: " + originator);
                 ISP1ProtocolAbortDiagnostics diag = new ISP1ProtocolAbortDiagnostics(originator,
                                                                                                        diagnosticByte,
                                                                                                        errorCode);
@@ -736,6 +741,7 @@ public abstract class Channel implements IChannelInitiate, ITimeoutProcessor
         {
         	if(this.connectedSock != null)
         	{
+        		LOG.info("Abort request. Closing socket " + this.connectedSock + " for " + this);
         		this.connectedSock.close();
         	}
         }

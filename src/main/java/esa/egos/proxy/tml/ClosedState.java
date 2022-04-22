@@ -28,7 +28,7 @@ public class ClosedState implements ITMLState
         if (this.channel instanceof InitiatingChannel)
         {
             // -> S1
-            this.channel.setChannelState(new StartingState(this.channel));
+            this.channel.setChannelState(new StartingState(this.channel));            
             ((InitiatingChannel) this.channel).tcpConnectReq(respPortId);
         }
         else if (this.channel instanceof RespondingChannel)
@@ -40,7 +40,7 @@ public class ClosedState implements ITMLState
     @Override
     public void tcpConnectCnf()
     {
-        // N/A
+        LOG.severe("Error: Call ClosedState#tcpCnf");
     }
 
     @Override
@@ -67,91 +67,91 @@ public class ClosedState implements ITMLState
     @Override
     public void tcpDataInd(TMLMessage msg)
     {
-        // N/A
+    	LOG.severe("Error: Call ClosedState#tcpDataind");
     }
 
     @Override
     public void hlDisconnectReq()
     {
-        // N/A
+    	LOG.severe("Error: Call ClosedState#hlDisconnectReq");
     }
 
     @Override
     public void tcpDisconnectInd()
     {
-        // N/A
+    	LOG.severe("Error: Call ClosedState#tcpDisconnectInd");
     }
 
     @Override
     public void delSLEPDUReq(TMLMessage pduMsg, boolean last)
     {
-        // N/A
+    	LOG.severe("Error: Call ClosedState#delSLEPDUReq");
     }
 
     @Override
     public void hlPeerAbortReq(int diagnostic)
     {
-        // N/A
+    	LOG.severe("Error: Call ClosedState#hlPeerAbortReq");
     }
 
     @Override
     public void tcpUrgentDataInd()
     {
-        // N/A
+    	LOG.severe("Error: Call ClosedState#tcpUrgentDataInd");
     }
 
     @Override
     public void hlResetReq()
     {
-        // N/A
+    	LOG.severe("Error: Call ClosedState#hlResetReq");
     }
 
     @Override
     public void tcpAbortInd()
     {
-        // N/A
+    	LOG.severe("Error: Call ClosedState#tcpAbortInd");
     }
 
     @Override
     public void tcpTimeOut()
     {
-        // N/A
+    	LOG.severe("Error: Call ClosedState#tcpTimeOut");
     }
 
     @Override
     public void tcpError(String message)
     {
-        // N/A
+    	LOG.severe("Error: Call ClosedState#tcpError");
     }
 
     @Override
     public void tmsTimeout()
     {
-        // N/A
+    	LOG.severe("Error: Call ClosedState#tmsTimeout");
     }
 
     @Override
     public void cpaTimeout()
     {
-        // N/A
+    	LOG.severe("Error: Call ClosedState#cpaTimeout");
     }
 
     @Override
     public void hbrTimeout()
     {
-        // N/A
+    	LOG.severe("Error: Call ClosedState#hbrTimeout");
     }
 
     @Override
     public void hbtTimeout()
     {
-        // N/A
+    	LOG.severe("Error: Call ClosedState#hbtTimeout");
     }
 
     @Override
     public void manageBadFormMsg()
     {
-        // Nothing to do here
+    	LOG.severe("Error: Call ClosedState#manageBadFormMsg");
     }
 
     @Override
