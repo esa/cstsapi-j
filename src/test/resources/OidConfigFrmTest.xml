@@ -1,482 +1,482 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<OidConfig number_fr_oids="59" number_fr_parameter_oids="321" number_fr_event_oids="61" number_fr_directive_oids="38">
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10101]" label="antArrayFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100]" label="antennaFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40202]" label="aosEncapPktProcAndVcGenFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40200]" label="aosMcMuxFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40201]" label="aosVcMuxFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300]" label="ccsds401SpaceLinkCarrierRcptFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20100]" label="ccsds401SpaceLinkCarrierXmitFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50200]" label="cfdpEntityFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 999100]" label="cfdpRcvEntityFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 999900]" label="cfdpSendEntityFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 60300]" label="ddorRawDataCollectionFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 70500]" label="ddorRawDataStoreFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80200]" label="fCltuTsProviderFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30300]" label="flfSyncAndChnlDecodeFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30200]" label="flfSyncChnlEncodeAndOidGenFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40404]" label="flfUslpEncapMapPktProcessingFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40403]" label="flfUslpMapMuxFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40400]" label="flfUslpMcMuxFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40402]" label="flfUslpVcGenFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40401]" label="flfUslpVcMuxFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50100]" label="frameDataSinkFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80100]" label="fspTsProviderFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 70800]" label="fwdFileDataStoreFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50201]" label="fwdFileSvcProdFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80300]" label="fwdFrameCstsProviderFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 90100]" label="mdCstsProviderFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 60200]" label="nonValRmDataCollectionFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 70300]" label="nonValRmDataStoreFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 70100]" label="offlineFrameBufferFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 70600]" label="openLoopDataStoreFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 60400]" label="openLoopRxFormatterFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80400]" label="rafTsProviderFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80500]" label="rcfTsProviderFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20301]" label="rngAndDopplerExtractionFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20101]" label="rngXmitFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80600]" label="rocfTsProviderFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 70700]" label="rtnFileDataStoreFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50202]" label="rtnFileSvcProdFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 90200]" label="scCstsProviderFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 90201]" label="scProductionFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40104]" label="tcEncapMapPktProcessingFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40102]" label="tcEncapVcPktProcVcGenFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40103]" label="tcMapMuxFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40100]" label="tcMcMuxFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30100]" label="tcPlopSyncAndChnlEncodeFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40101]" label="tcVcMuxFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80700]" label="tdCstsProviderFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 70200]" label="tdmRcrdBufferFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 60100]" label="tdmSegmentGenFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80800]" label="tgftHostFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40500]" label="tmAosMcDemuxFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40502]" label="tmAosPktExtractDeencapFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40501]" label="tmAosVcDemuxFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40304]" label="uslpEncapMapPktProcessingFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40303]" label="uslpMapMuxFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 70400]" label="valRmDataStoreFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40300]" label="vlfUslpMcMuxFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40302]" label="vlfUslpVcGenFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40301]" label="vlfUslpVcMuxFrOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 30, 1, 1]" label="antAccumulatedPrecipitationParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 3, 1, 1]" label="antActualAzimuthParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 4, 1, 1]" label="antActualElevationParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 34, 1, 1]" label="antAmbientTemperatureParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 33, 1, 1]" label="antAtmosphericPressureParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 13, 1, 1]" label="antAzimuthAberrationParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 11, 1, 1]" label="antAzimuthResidualParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 16, 1, 1]" label="antClosedLoopConfigurationParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 5, 1, 1]" label="antCommandedAzimuthParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 6, 1, 1]" label="antCommandedElevationParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 7, 1, 1]" label="antContrAzimuthParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 9, 1, 1]" label="antContrAzimuthRateParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 8, 1, 1]" label="antContrElevationParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 10, 1, 1]" label="antContrElevationRateParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 14, 1, 1]" label="antElevationAberrationParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 12, 1, 1]" label="antElevationResidualParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 2, 1, 1]" label="antIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 27, 1, 1]" label="antMeanWindSpeedParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 28, 1, 1]" label="antPeakWindSpeedParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 15, 1, 1]" label="antPointingModeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 31, 1, 1]" label="antPrecipitationRateParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 32, 1, 1]" label="antRelativeHumidityParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 1, 1, 1]" label="antResourceStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 21, 1, 1]" label="antTrackingRxFreqSearchRangeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 19, 1, 1]" label="antTrackingRxInpLevelParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 25, 1, 1]" label="antTrackingRxLockStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 23, 1, 1]" label="antTrackingRxLoopBwdthParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 17, 1, 1]" label="antTrackingRxModeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 20, 1, 1]" label="antTrackingRxNominalFreqParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 24, 1, 1]" label="antTrackingRxOrderOfLoopParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 22, 1, 1]" label="antTrackingRxPredictModeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 18, 1, 1]" label="antTrackingSignalPolarizationParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 29, 1, 1]" label="antWindDirectionParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 26, 1, 1]" label="antWindIntegrationTimeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40200, 1, 2, 1, 1]" label="aosMcMuxContrParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40200, 1, 4, 1, 1]" label="aosMcMuxPresenceOfFrameErrorContrParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40200, 1, 3, 1, 1]" label="aosMcMuxPresenceOfFrameHeaderErrorContrParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40200, 1, 1, 1, 1]" label="aosMcMuxResourceStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40201, 1, 3, 1, 1]" label="aosVcMuxContrParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40201, 1, 2, 1, 1]" label="aosVcMuxMcParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40201, 1, 1, 1, 1]" label="aosVcMuxResourceStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 17, 1, 1]" label="ccsds401CarrierRcptActualFreqParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 22, 1, 1]" label="ccsds401CarrierRcptActualSubcarrierFreqParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 27, 1, 1]" label="ccsds401CarrierRcptActualSymbolRateParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 20, 1, 1]" label="ccsds401CarrierRcptBestLockFreqParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 16, 1, 1]" label="ccsds401CarrierRcptCarrierLoopMeanPhaseErrorParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 15, 1, 1]" label="ccsds401CarrierRcptCarrierLoopSnrParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 19, 1, 1]" label="ccsds401CarrierRcptDopplerStdDeviationParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 31, 1, 1]" label="ccsds401CarrierRcptEsOverNoResidualAndSoftSymbolDistributionParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 30, 1, 1]" label="ccsds401CarrierRcptExpectedEsOverNoParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 6, 1, 1]" label="ccsds401CarrierRcptExpectedSignalLevelParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 18, 1, 1]" label="ccsds401CarrierRcptFreqOffsetParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 10, 1, 1]" label="ccsds401CarrierRcptFreqSearchRangeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 14, 1, 1]" label="ccsds401CarrierRcptLockStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 3, 1, 1]" label="ccsds401CarrierRcptModTypeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 9, 1, 1]" label="ccsds401CarrierRcptNominalFreqParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 26, 1, 1]" label="ccsds401CarrierRcptNominalSymbolRateParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 21, 1, 1]" label="ccsds401CarrierRcptNominallSubcarrierFreqParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 13, 1, 1]" label="ccsds401CarrierRcptOrderOfLoopParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 2, 1, 1]" label="ccsds401CarrierRcptPhysChnlNameParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 5, 1, 1]" label="ccsds401CarrierRcptPolarizationAngleParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 4, 1, 1]" label="ccsds401CarrierRcptPolarizationParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 11, 1, 1]" label="ccsds401CarrierRcptPredictModeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 1, 1, 1]" label="ccsds401CarrierRcptResourceStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 7, 1, 1]" label="ccsds401CarrierRcptSignalLevelResidualParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 23, 1, 1]" label="ccsds401CarrierRcptSubcarrierDemodLoopBwdthParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 25, 1, 1]" label="ccsds401CarrierRcptSubcarrierLevelEstimateParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 24, 1, 1]" label="ccsds401CarrierRcptSubcarrierLoopMeanPhaseErrorParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 29, 1, 1]" label="ccsds401CarrierRcptSymbolLoopMeanPhaseErrorParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 28, 1, 1]" label="ccsds401CarrierRcptSymbolSynchronizerLoopBwdthParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 8, 1, 1]" label="ccsds401CarrierRcptSystemNoiseTemperatureParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 12, 1, 1]" label="ccsds401CarrierRcptTrackingLoopBwdthParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 6, 1, 1]" label="ccsds401CarrierXmitActualCarrierFreqParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 4, 1, 1]" label="ccsds401CarrierXmitEirpParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 12, 1, 1]" label="ccsds401CarrierXmitModInpStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 11, 1, 1]" label="ccsds401CarrierXmitModParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 7, 1, 1]" label="ccsds401CarrierXmitNominalCarrierFreqParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 2, 1, 1]" label="ccsds401CarrierXmitPhysChnlNameParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 5, 1, 1]" label="ccsds401CarrierXmitPolarizationParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 8, 1, 1]" label="ccsds401CarrierXmitReferenceFreqLockParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 1, 1, 1]" label="ccsds401CarrierXmitResourceStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 15, 1, 1]" label="ccsds401CarrierXmitRngModIndexParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 3, 1, 1]" label="ccsds401CarrierXmitStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 16, 1, 1]" label="ccsds401CarrierXmitSubcarrierFreqParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 17, 1, 1]" label="ccsds401CarrierXmitSubcarrierModParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 9, 1, 1]" label="ccsds401CarrierXmitSweepProcStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 10, 1, 1]" label="ccsds401CarrierXmitSweepProfileParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 18, 1, 1]" label="ccsds401CarrierXmitSymbolRateParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 14, 1, 1]" label="ccsds401CarrierXmitSymbolStreamModTypeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 13, 1, 1]" label="ccsds401CarrierXmitTcPriorityParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50200, 1, 4, 1, 1]" label="cfdpLocalEntityConfigurationParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50200, 1, 2, 1, 1]" label="cfdpLocalEntityIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50200, 1, 1, 1, 1]" label="cfdpLocalEntityResourceStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50200, 1, 3, 1, 1]" label="cfdpRemoteEntityConfigurationParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 8, 1, 1]" label="fCltuDeliveryModeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 12, 1, 1]" label="fCltuExpectedCltuIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 13, 1, 1]" label="fCltuExpectedEventInvocIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 4, 1, 1]" label="fCltuInitiatorIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 9, 1, 1]" label="fCltuNotificationModeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 15, 1, 1]" label="fCltuNumberOfCltusProcessedParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 16, 1, 1]" label="fCltuNumberOfCltusRadiatedParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 14, 1, 1]" label="fCltuNumberOfCltusReceivedParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 1, 1, 1]" label="fCltuProdStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 10, 1, 1]" label="fCltuProtocolAbortModeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 11, 1, 1]" label="fCltuReportingCycleParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 5, 1, 1]" label="fCltuResponderIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 6, 1, 1]" label="fCltuResponderPortIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 7, 1, 1]" label="fCltuRtnTimeoutPeriodParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 2, 1, 1]" label="fCltuSvcInstanceIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 3, 1, 1]" label="fCltuSvcInstanceStateParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 9, 1, 1]" label="ffAuthorizedGvcidAndBitMaskParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 8, 1, 1]" label="ffDataProcessingModeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 4, 1, 1]" label="ffInitiatorIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 12, 1, 1]" label="ffInputQueueSizeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 15, 1, 1]" label="ffMasterThrowEventEnabledParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 11, 1, 1]" label="ffMaxFrameLengthParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 13, 1, 1]" label="ffMinAllowedDeliveryCycleParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 10, 1, 1]" label="ffMinFrameLengthParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 14, 1, 1]" label="ffNamedEventLabelListsParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 16, 1, 1]" label="ffNamedParamLabelListsParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 19, 1, 1]" label="ffNumberDataUnitsProcessedParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 17, 1, 1]" label="ffNumberDataUnitsRcvdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 18, 1, 1]" label="ffNumberDataUnitsToProcessingParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 5, 1, 1]" label="ffResponderIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 6, 1, 1]" label="ffResponderPortIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 2, 1, 1]" label="ffSvcInstanceIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 3, 1, 1]" label="ffSvcInstanceStateParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 1, 1, 1]" label="ffSvcProdStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 7, 1, 1]" label="ffSvcUserRespondingTimerParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30300, 1, 2, 1, 1]" label="flfSyncDecAsmConfigParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30300, 1, 3, 1, 1]" label="flfSyncDecAsmCorrelationErrorParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30300, 1, 9, 1, 1]" label="flfSyncDecCaduLengthParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30300, 1, 11, 1, 1]" label="flfSyncDecDecodeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30300, 1, 13, 1, 1]" label="flfSyncDecDecodeQualityIndicationsParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30300, 1, 10, 1, 1]" label="flfSyncDecDerandomizationParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30300, 1, 8, 1, 1]" label="flfSyncDecErtAnnotationLockedToReferenceParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30300, 1, 12, 1, 1]" label="flfSyncDecFecfPresentParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30300, 1, 6, 1, 1]" label="flfSyncDecFrameErrorRateParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30300, 1, 4, 1, 1]" label="flfSyncDecFrameSyncLockStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30300, 1, 7, 1, 1]" label="flfSyncDecNumberOfRsErrorsCorrectedParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30300, 1, 1, 1, 1]" label="flfSyncDecResourceStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30300, 1, 5, 1, 1]" label="flfSyncDecSymbolInversionParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30200, 1, 3, 1, 1]" label="flfSyncEncCodingSelectionParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30200, 1, 1, 1, 1]" label="flfSyncEncResourceStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30200, 1, 2, 1, 1]" label="flfSyncEncSlpduLengthParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40400, 1, 2, 1, 1]" label="flfUslpMcMuxContrParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40400, 1, 3, 1, 1]" label="flfUslpMcMuxFrameErrorContrLengthParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40400, 1, 1, 1, 1]" label="flfUslpMcMuxResourceStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40401, 1, 3, 1, 1]" label="flfUslpVcMuxContrParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40401, 1, 2, 1, 1]" label="flfUslpVcMuxMcParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40401, 1, 1, 1, 1]" label="flfUslpVcMuxResourceStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50100, 1, 1, 1, 1]" label="frameDataSinkResourceStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50100, 1, 2, 1, 1]" label="frameDataSinkStorageSelectionParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 13, 1, 1]" label="fspPermittedTransmissionModeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 14, 1, 1]" label="fspApidListParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 10, 1, 1]" label="fspBitLockRequiredParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 8, 1, 1]" label="fspDeliveryModeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 12, 1, 1]" label="fspDirectiveInvocationOnlineParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 11, 1, 1]" label="fspDirectiveInvocationParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 17, 1, 1]" label="fspExpectedDirectiveIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 18, 1, 1]" label="fspExpectedEventInvocIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 16, 1, 1]" label="fspExpectedPktIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 4, 1, 1]" label="fspInitiatorIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 1, 1, 1]" label="fspProdStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 15, 1, 1]" label="fspReportingCycleParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 5, 1, 1]" label="fspResponderIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 6, 1, 1]" label="fspResponderPortIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 9, 1, 1]" label="fspRfAvailableRequiredParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 7, 1, 1]" label="fspRtnTimeoutPeriodParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 2, 1, 1]" label="fspSvcInstanceIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 3, 1, 1]" label="fspSvcInstanceStateParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 19, 1, 1]" label="fspTcMcMuxValidScidsParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 20, 1, 1]" label="fspTcVcMuxValidTcVcIdsParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 90100, 1, 4, 1, 1]" label="mdInitiatorIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 90100, 1, 8, 1, 1]" label="mdMinAllowedDeliveryCycleParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 90100, 1, 10, 1, 1]" label="mdNamedEventLabelListsParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 90100, 1, 9, 1, 1]" label="mdNamedParamLabelListsParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 90100, 1, 5, 1, 1]" label="mdResponderIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 90100, 1, 6, 1, 1]" label="mdResponderPortIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 90100, 1, 7, 1, 1]" label="mdServiceUserRespondingTimerParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 90100, 1, 2, 1, 1]" label="mdSvcInstanceIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 90100, 1, 3, 1, 1]" label="mdSvcInstanceStateParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 90100, 1, 1, 1, 1]" label="mdSvcProdStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 70100, 1, 2, 1, 1]" label="offlineFrameBufferAllocatedStorageParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 70100, 1, 3, 1, 1]" label="offlineFrameBufferAvailableStorageParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 70100, 1, 5, 1, 1]" label="offlineFrameBufferDataRetentionPolicyParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 70100, 1, 7, 1, 1]" label="offlineFrameBufferPurgeCessationThresholdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 70100, 1, 6, 1, 1]" label="offlineFrameBufferPurgePriorityParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 70100, 1, 8, 1, 1]" label="offlineFrameBufferPurgeWarningThresholdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 70100, 1, 1, 1, 1]" label="offlineFrameBufferResourceStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 70100, 1, 4, 1, 1]" label="offlineFrameBufferUsedStorageParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 8, 1, 1]" label="rafDeliveryModeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 4, 1, 1]" label="rafInitiatorIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 9, 1, 1]" label="rafLatencyLimitParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 14, 1, 1]" label="rafNumberOfErrorFreeFramesDeliveredParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 15, 1, 1]" label="rafNumberOfFramesDeliveredParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 11, 1, 1]" label="rafPermittedFrameQualityParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 1, 1, 1]" label="rafProdStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 13, 1, 1]" label="rafReportingCycleParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 12, 1, 1]" label="rafRequestedFrameQualityParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 5, 1, 1]" label="rafResponderIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 6, 1, 1]" label="rafResponderPortIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 7, 1, 1]" label="rafRtnTimeoutPeriodParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 2, 1, 1]" label="rafSvcInstanceIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 3, 1, 1]" label="rafSvcInstanceStateParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 10, 1, 1]" label="rafTransferBufferSizeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80500, 1, 8, 1, 1]" label="rcfDeliveryModeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80500, 1, 4, 1, 1]" label="rcfInitiatorIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80500, 1, 9, 1, 1]" label="rcfLatencyLimitParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80500, 1, 14, 1, 1]" label="rcfNumberOfFramesDeliveredParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80500, 1, 11, 1, 1]" label="rcfPermittedGvcidSetParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80500, 1, 1, 1, 1]" label="rcfProdStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80500, 1, 13, 1, 1]" label="rcfReportingCycleParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80500, 1, 12, 1, 1]" label="rcfRequestedGvcidParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80500, 1, 5, 1, 1]" label="rcfResponderIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80500, 1, 6, 1, 1]" label="rcfResponderPortIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80500, 1, 7, 1, 1]" label="rcfRtnTimeoutPeriodParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80500, 1, 2, 1, 1]" label="rcfSvcInstanceIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80500, 1, 3, 1, 1]" label="rcfSvcInstanceStateParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80500, 1, 10, 1, 1]" label="rcfTransferBufferSizeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 15, 1, 1]" label="rngAndDopplerExtractionAmbiguityResolvedParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 14, 1, 1]" label="rngAndDopplerExtractionCodeNumberCorrelatedParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 20, 1, 1]" label="rngAndDopplerExtractionDataCollectionParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 19, 1, 1]" label="rngAndDopplerExtractionDopplerMeasurementSamplingRateParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 11, 1, 1]" label="rngAndDopplerExtractionExpectedRngModIndexParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 17, 1, 1]" label="rngAndDopplerExtractionExpectedSpacecraftPnAcqDurationParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 9, 1, 1]" label="rngAndDopplerExtractionLoopLockStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 8, 1, 1]" label="rngAndDopplerExtractionLoopSettlingTimeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 21, 1, 1]" label="rngAndDopplerExtractionObservableAndResidualParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 22, 1, 1]" label="rngAndDopplerExtractionObservablesCountParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 7, 1, 1]" label="rngAndDopplerExtractionOpenLoopTimeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 13, 1, 1]" label="rngAndDopplerExtractionPnCodeIntegrationTimeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 5, 1, 1]" label="rngAndDopplerExtractionPredictedRngLoopSnrParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 2, 1, 1]" label="rngAndDopplerExtractionPresteeringParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 1, 1, 1]" label="rngAndDopplerExtractionResourceStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 4, 1, 1]" label="rngAndDopplerExtractionRngLoopBwdthParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 18, 1, 1]" label="rngAndDopplerExtractionRngMeasurementSamplingRateParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 3, 1, 1]" label="rngAndDopplerExtractionRngPowerOverNoResidualParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 6, 1, 1]" label="rngAndDopplerExtractionRngSignalAcquisitionProbabilityParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 10, 1, 1]" label="rngAndDopplerExtractionRngToCarrierPowerRatioParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 16, 1, 1]" label="rngAndDopplerExtractionSpacecraftTransponderModeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 12, 1, 1]" label="rngAndDopplerExtractionToneIntegrationTimeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20101, 1, 2, 1, 1]" label="rngXmitModParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20101, 1, 4, 1, 1]" label="rngXmitPnChipRateParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20101, 1, 1, 1, 1]" label="rngXmitResourceStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20101, 1, 3, 1, 1]" label="rngXmitRngTypeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 8, 1, 1]" label="rocfDeliveryModeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 4, 1, 1]" label="rocfInitiatorIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 9, 1, 1]" label="rocfLatencyLimitParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 20, 1, 1]" label="rocfNumberOfOcfsDeliveredParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 13, 1, 1]" label="rocfPermittedContrWordTypeSetParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 11, 1, 1]" label="rocfPermittedGvcidSetParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 15, 1, 1]" label="rocfPermittedTcVcidSetParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 17, 1, 1]" label="rocfPermittedUpdateModeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 1, 1, 1]" label="rocfProdStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 19, 1, 1]" label="rocfReportingCycleParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 14, 1, 1]" label="rocfRequestedContrWordTypeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 12, 1, 1]" label="rocfRequestedGvcidParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 16, 1, 1]" label="rocfRequestedTcVcidParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 18, 1, 1]" label="rocfRequestedUpdateModeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 5, 1, 1]" label="rocfResponderIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 6, 1, 1]" label="rocfResponderPortIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 7, 1, 1]" label="rocfRtnTimeoutPeriodParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 2, 1, 1]" label="rocfSvcInstanceIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 3, 1, 1]" label="rocfSvcInstanceStateParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 10, 1, 1]" label="rocfTransferBufferSizeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40100, 1, 4, 1, 1]" label="tcMcMuxContrParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40100, 1, 3, 1, 1]" label="tcMcMuxMaxFrameLengthParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40100, 1, 2, 1, 1]" label="tcMcMuxMaxNumberOfFramesPerCltuParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40100, 1, 5, 1, 1]" label="tcMcMuxPresenceOfFecParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40100, 1, 1, 1, 1]" label="tcMcMuxResourceStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30100, 1, 7, 1, 1]" label="tcPlopSyncAcqAndIdlePatternParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30100, 1, 10, 1, 1]" label="tcPlopSyncClcwEvaluationParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30100, 1, 4, 1, 1]" label="tcPlopSyncEncodeTypeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30100, 1, 2, 1, 1]" label="tcPlopSyncMaxCltuLengthParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30100, 1, 5, 1, 1]" label="tcPlopSyncMaxCltuRepetitionsParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30100, 1, 3, 1, 1]" label="tcPlopSyncMaxNumberOfFramesPerCltuParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30100, 1, 8, 1, 1]" label="tcPlopSyncMinDelayTimeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30100, 1, 6, 1, 1]" label="tcPlopSyncPlopParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30100, 1, 1, 1, 1]" label="tcPlopSyncResourceStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30100, 1, 9, 1, 1]" label="tcPlopSyncTcLinkStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40101, 1, 3, 1, 1]" label="tcVcMuxAdFrameRepetitionsParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40101, 1, 4, 1, 1]" label="tcVcMuxBcFrameRepetitionsParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40101, 1, 6, 1, 1]" label="tcVcMuxContrParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40101, 1, 2, 1, 1]" label="tcVcMuxMaxFrameLengthParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40101, 1, 5, 1, 1]" label="tcVcMuxMcParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40101, 1, 1, 1, 1]" label="tcVcMuxResourceStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80700, 1, 10, 1, 1]" label="tdDeliveryLatencyLimitParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80700, 1, 8, 1, 1]" label="tdDeliveryModeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80700, 1, 4, 1, 1]" label="tdInitiatorIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80700, 1, 11, 1, 1]" label="tdNamedLabelListsParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80700, 1, 12, 1, 1]" label="tdPathListParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80700, 1, 1, 1, 1]" label="tdProdStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80700, 1, 5, 1, 1]" label="tdResponderIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80700, 1, 6, 1, 1]" label="tdResponderPortIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80700, 1, 9, 1, 1]" label="tdReturnBufferSizeParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80700, 1, 2, 1, 1]" label="tdSvcInstanceIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80700, 1, 3, 1, 1]" label="tdSvcInstanceStateParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80700, 1, 7, 1, 1]" label="tdSvcUserRespTimerParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 70200, 1, 2, 1, 1]" label="tdmRcrdBufferMaxStorageAllocParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 70200, 1, 1, 1, 1]" label="tdmRcrdBufferResourceStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 70200, 1, 3, 1, 1]" label="tdmRcrdBufferRetentionPolicyParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 60100, 1, 11, 1, 1]" label="tdmSegGenAntAnglesPathTableParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 60100, 1, 2, 1, 1]" label="tdmSegGenCarrierPowerPathTableParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 60100, 1, 5, 1, 1]" label="tdmSegGenDoppInstPathTableParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 60100, 1, 6, 1, 1]" label="tdmSegGenDoppIntegPathTableParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 60100, 1, 3, 1, 1]" label="tdmSegGenPcOverN0PathTableParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 60100, 1, 4, 1, 1]" label="tdmSegGenPrOverNoPathTableParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 60100, 1, 7, 1, 1]" label="tdmSegGenRangePathTableParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 60100, 1, 1, 1, 1]" label="tdmSegGenResourceStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 60100, 1, 9, 1, 1]" label="tdmSegGenXmitFreqPathTableParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 60100, 1, 10, 1, 1]" label="tdmSegGenXmitFreqRatePathTableParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 60100, 1, 8, 1, 1]" label="tdmSeqGenRcvFreqPathTableParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40500, 1, 3, 1, 1]" label="tmAosMcDemuxClcwExtractionParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40500, 1, 2, 1, 1]" label="tmAosMcDemuxMcIdsParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40500, 1, 1, 1, 1]" label="tmAosMcDemuxResourceStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40502, 1, 1, 1, 1]" label="tmAosSpacePktApidSetParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40501, 1, 3, 1, 1]" label="tmAosVcDemuxClcwExtractionParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40501, 1, 4, 1, 1]" label="tmAosVcDemuxGvcidParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40501, 1, 1, 1, 1]" label="tmAosVcDemuxResourceStatParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40501, 1, 2, 1, 1]" label="tmAosVcDemuxVcIdParamOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 2, 1, 1, 1]" label="antResourceStatChangeEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 2, 2, 1, 1]" label="antTrackingRxLockStatChangeEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 2, 3, 1, 1]" label="antWindSpeedWarningEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40200, 2, 2, 1, 1]" label="aosMcMuxDataUnitProcessingCompletedValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40200, 2, 1, 1, 1]" label="aosMcMuxResourceStatValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40201, 2, 2, 1, 1]" label="aosVcMuxDataUnitProcessingCompletedValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40201, 2, 1, 1, 1]" label="aosVcMuxResourceStatValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 2, 2, 1, 1]" label="ccsds401CarrierRcptLockStatChangeEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 2, 1, 1, 1]" label="ccsds401CarrierRcptResourceStatChangeEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20100, 2, 1, 1, 1]" label="ccsds401CarrierXmitResourceStatChangeEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50200, 2, 10, 1, 1]" label="cfdpAbandonedIndicationValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50200, 2, 12, 1, 1]" label="cfdpConsignedTransactionIdValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50200, 2, 11, 1, 1]" label="cfdpEofRcvdTransactionIdValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50200, 2, 2, 1, 1]" label="cfdpEofSentTransactionIdValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50200, 2, 9, 1, 1]" label="cfdpFaultIndicationValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50200, 2, 5, 1, 1]" label="cfdpFileSegmentIndicationValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50200, 2, 3, 1, 1]" label="cfdpFinishedTransactionValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50200, 2, 4, 1, 1]" label="cfdpMetadataIndicationValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50200, 2, 6, 1, 1]" label="cfdpReportIndicationValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50200, 2, 8, 1, 1]" label="cfdpResumedIndicationValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50200, 2, 7, 1, 1]" label="cfdpSuspendedIndicationValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50200, 2, 1, 1, 1]" label="cfdpTransactionTransactionIdValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80200, 2, 2, 1, 1]" label="fCltuProdConfigurationChangeEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80200, 2, 1, 1, 1]" label="fCltuProdStatChangeEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80300, 2, 2, 1, 1]" label="ffSvcProdConfgurationChangeValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80300, 2, 1, 1, 1]" label="ffSvcProdStatChangeValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40401, 2, 2, 1, 1]" label="flfUslpVcMuxDataUnitProcessingCompletedValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30300, 2, 2, 1, 1]" label="flfSyncDecFrameSyncLockStatChangeEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30300, 2, 1, 1, 1]" label="flfSyncDecResourceStatChangeEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30200, 2, 2, 1, 1]" label="flfSyncEncDataUnitProcessingCompletedValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30200, 2, 1, 1, 1]" label="flfSyncEncResourceStatValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40400, 2, 1, 1, 1]" label="flfUslpMcMuxDataUnitProcessingCompletedValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40400, 2, 2, 1, 1]" label="flfUslpMcMuxResourceStatValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40401, 2, 1, 1, 1]" label="flfUslpVcMuxResourceStatValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50100, 2, 1, 1, 1]" label="frameDataSinkResourceStatChangeValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80100, 2, 2, 1, 1]" label="fspProdConfigurationChangeEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80100, 2, 1, 1, 1]" label="fspProdStatChangeEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 90100, 2, 2, 1, 1]" label="mdSvcProdConfgurationChangeValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 90100, 2, 1, 1, 1]" label="mdSvcProdStatChangeValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 70100, 2, 2, 1, 1]" label="offlineFrameBufferPurgeWarningValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 70100, 2, 1, 1, 1]" label="offlineFrameBufferResourceStatChangeValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80400, 2, 2, 1, 1]" label="rafProdConfigurationChangeEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80400, 2, 1, 1, 1]" label="rafProdStatChangeEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80500, 2, 2, 1, 1]" label="rcfProdConfigurationChangeEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80500, 2, 1, 1, 1]" label="rcfProdStatChangeEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20301, 2, 1, 1, 1]" label="rngAndDopplerExtractionResourceStatChangeEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20301, 2, 2, 1, 1]" label="rngAndDopplerExtractionStatChangeEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20101, 2, 1, 1, 1]" label="rngXmitResourceStatChangeEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80600, 2, 2, 1, 1]" label="rocfProdConfigurationChangeEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80600, 2, 1, 1, 1]" label="rocfProdStatChangeEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40100, 2, 1, 1, 1]" label="tcMcMuxResourceStatChangeEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30100, 2, 3, 1, 1]" label="tcPlopSyncDataUnitProcessingCompletedEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30100, 2, 1, 1, 1]" label="tcPlopSyncResourceStatChangeEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30100, 2, 2, 1, 1]" label="tcPlopSyncTcLinkStatChangeEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40101, 2, 1, 1, 1]" label="tcVcMuxResourceStatChangeEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80700, 2, 2, 1, 1]" label="tdProdConfigurationChangeEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80700, 2, 1, 1, 1]" label="tdProdStatChangeEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 70200, 2, 1, 1, 1]" label="tdmRcrdBufferResourceStatChangeValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 60100, 2, 1, 1, 1]" label="tdmSegGenResourceStatChangeValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40500, 2, 1, 1, 1]" label="tmAosMcDemuxResourceStatChangeEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40501, 2, 1, 1, 1]" label="tmAosVcDemuxResourceStatChangeEventValueValueOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 10100, 3, 1, 1, 1]" label="antContrParamIdsAndValuesQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40200, 3, 1, 1, 1]" label="aosMcMuxContrParamIdsAndValuesQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40200, 3, 2, 1, 1]" label="aosMcMuxDiscardDataUnitsSvcInstanceIdQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40201, 3, 1, 1, 1]" label="aosVcMuxContrParamIdsAndValuesQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40201, 3, 2, 1, 1]" label="aosVcMuxDiscardDataUnitsSvcInstanceIdQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20100, 3, 1, 1, 1]" label="ccsds401CarrierXmitContrParamIdsAndValuesQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20300, 3, 1, 1, 1]" label="ccsds401SpaceLinkCarrierRcptContrParamIdsAndValuesQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50200, 3, 3, 1, 1]" label="cfdpCancelRequestTransactionIdQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50200, 3, 1, 1, 1]" label="cfdpPutRequestQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50200, 3, 2, 1, 1]" label="cfdpReportRequestTransactionIdQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50200, 3, 5, 1, 1]" label="cfdpResumeTransactionIdQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50200, 3, 4, 1, 1]" label="cfdpSuspendTransactionIdQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80200, 3, 1, 1, 1]" label="fCltuContrParamIdsAndValuesQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30300, 3, 1, 1, 1]" label="flfSyncDecContrParamIdsAndValuesQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30200, 3, 1, 1, 1]" label="flfSyncEncContrParamIdsAndValuesQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30200, 3, 2, 1, 1]" label="flfSyncEncDiscardDataUnitsSvcInstanceIdQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40400, 3, 2, 1, 1]" label="flfUslpMcMuxDiscardDataUnitsSvcInstanceIdQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40400, 3, 1, 1, 1]" label="flfUslpMcMuxSetContrParamIdsAndValuesQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40401, 3, 1, 1, 1]" label="flfUslpVcMuxContrParamIdsAndValuesQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40401, 3, 2, 1, 1]" label="flfUslpVcMuxDiscardDataUnitsSvcInstanceIdQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 50100, 3, 1, 1, 1]" label="frameDataSinkContrParamIdsAndValuesQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 70100, 3, 1, 1, 1]" label="offlineFrameBufferContrParamIdsAndValuesQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80400, 3, 1, 1, 1]" label="rafContrParamIdsAndValuesQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80500, 3, 1, 1, 1]" label="rcfContrParamIdsAndValuesQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20301, 3, 1, 1, 1]" label="rngAndDopplerExtractionContrParamIdsAndValuesQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 20101, 3, 1, 1, 1]" label="rngXmitContrParamIdsAndValuesQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80600, 3, 1, 1, 1]" label="rocfContrParamIdsAndValuesQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40100, 3, 1, 1, 1]" label="tcMcMuxContrParamIdsAndValuesQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40100, 3, 2, 1, 1]" label="tcMcMuxDiscardDataUnitsQualifierQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30100, 3, 1, 1, 1]" label="tcPlopSyncContrParamIdsAndValuesQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 30100, 3, 2, 1, 1]" label="tcPlopSyncFrAndServiceInstanceIdQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40101, 3, 1, 1, 1]" label="tcVcMuxContrParamIdsAndValuesQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40101, 3, 2, 1, 1]" label="tcVcMuxDiscardDataUnitsQualifierQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 80700, 3, 1, 1, 1]" label="tdContrParamIdsAndValuesQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 70200, 3, 1, 1, 1]" label="tdmRcrdBufferContrParamIdsAndValuesQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 60100, 3, 1, 1, 1]" label="tdmSegGenContrParamIdsAndValuesQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40500, 3, 1, 1, 1]" label="tmAosMcDemuxContrParamIdsAndValuesQualifierOid"/>
-    <oid array="[1, 3, 112, 4, 4, 2, 1, 40501, 3, 1, 1, 1]" label="tmAosVcDemuxContrParamIdsAndValuesQualifierOid"/>
+<OidConfig number_fr_directive_oids="38" number_fr_event_oids="61" number_fr_parameter_oids="321" number_fr_oids="59">
+    <oid label="antArrayFrOid" array="[1, 3, 112, 4, 4, 2, 1, 10101]"/>
+    <oid label="antennaFrOid" array="[1, 3, 112, 4, 4, 2, 1, 10100]"/>
+    <oid label="aosEncapPktProcAndVcGenFrOid" array="[1, 3, 112, 4, 4, 2, 1, 40202]"/>
+    <oid label="aosMcMuxFrOid" array="[1, 3, 112, 4, 4, 2, 1, 40200]"/>
+    <oid label="aosVcMuxFrOid" array="[1, 3, 112, 4, 4, 2, 1, 40201]"/>
+    <oid label="ccsds401SpaceLinkCarrierRcptFrOid" array="[1, 3, 112, 4, 4, 2, 1, 20300]"/>
+    <oid label="ccsds401SpaceLinkCarrierXmitFrOid" array="[1, 3, 112, 4, 4, 2, 1, 20100]"/>
+    <oid label="cfdpEntityFrOid" array="[1, 3, 112, 4, 4, 2, 1, 50200]"/>
+    <oid label="cfdpRcvEntityFrOid" array="[1, 3, 112, 4, 4, 2, 1, 999100]"/>
+    <oid label="cfdpSendEntityFrOid" array="[1, 3, 112, 4, 4, 2, 1, 999900]"/>
+    <oid label="ddorRawDataCollectionFrOid" array="[1, 3, 112, 4, 4, 2, 1, 60300]"/>
+    <oid label="ddorRawDataStoreFrOid" array="[1, 3, 112, 4, 4, 2, 1, 70500]"/>
+    <oid label="fCltuTsProviderFrOid" array="[1, 3, 112, 4, 4, 2, 1, 80200]"/>
+    <oid label="flfSyncAndChnlDecodeFrOid" array="[1, 3, 112, 4, 4, 2, 1, 30300]"/>
+    <oid label="flfSyncChnlEncodeAndOidGenFrOid" array="[1, 3, 112, 4, 4, 2, 1, 30200]"/>
+    <oid label="flfUslpEncapMapPktProcessingFrOid" array="[1, 3, 112, 4, 4, 2, 1, 40404]"/>
+    <oid label="flfUslpMapMuxFrOid" array="[1, 3, 112, 4, 4, 2, 1, 40403]"/>
+    <oid label="flfUslpMcMuxFrOid" array="[1, 3, 112, 4, 4, 2, 1, 40400]"/>
+    <oid label="flfUslpVcGenFrOid" array="[1, 3, 112, 4, 4, 2, 1, 40402]"/>
+    <oid label="flfUslpVcMuxFrOid" array="[1, 3, 112, 4, 4, 2, 1, 40401]"/>
+    <oid label="frameDataSinkFrOid" array="[1, 3, 112, 4, 4, 2, 1, 50100]"/>
+    <oid label="fspTsProviderFrOid" array="[1, 3, 112, 4, 4, 2, 1, 80100]"/>
+    <oid label="fwdFileDataStoreFrOid" array="[1, 3, 112, 4, 4, 2, 1, 70800]"/>
+    <oid label="fwdFileSvcProdFrOid" array="[1, 3, 112, 4, 4, 2, 1, 50201]"/>
+    <oid label="fwdFrameCstsProviderFrOid" array="[1, 3, 112, 4, 4, 2, 1, 80300]"/>
+    <oid label="mdCstsProviderFrOid" array="[1, 3, 112, 4, 4, 2, 1, 90100]"/>
+    <oid label="nonValRmDataCollectionFrOid" array="[1, 3, 112, 4, 4, 2, 1, 60200]"/>
+    <oid label="nonValRmDataStoreFrOid" array="[1, 3, 112, 4, 4, 2, 1, 70300]"/>
+    <oid label="offlineFrameBufferFrOid" array="[1, 3, 112, 4, 4, 2, 1, 70100]"/>
+    <oid label="openLoopDataStoreFrOid" array="[1, 3, 112, 4, 4, 2, 1, 70600]"/>
+    <oid label="openLoopRxFormatterFrOid" array="[1, 3, 112, 4, 4, 2, 1, 60400]"/>
+    <oid label="rafTsProviderFrOid" array="[1, 3, 112, 4, 4, 2, 1, 80400]"/>
+    <oid label="rcfTsProviderFrOid" array="[1, 3, 112, 4, 4, 2, 1, 80500]"/>
+    <oid label="rngAndDopplerExtractionFrOid" array="[1, 3, 112, 4, 4, 2, 1, 20301]"/>
+    <oid label="rngXmitFrOid" array="[1, 3, 112, 4, 4, 2, 1, 20101]"/>
+    <oid label="rocfTsProviderFrOid" array="[1, 3, 112, 4, 4, 2, 1, 80600]"/>
+    <oid label="rtnFileDataStoreFrOid" array="[1, 3, 112, 4, 4, 2, 1, 70700]"/>
+    <oid label="rtnFileSvcProdFrOid" array="[1, 3, 112, 4, 4, 2, 1, 50202]"/>
+    <oid label="scCstsProviderFrOid" array="[1, 3, 112, 4, 4, 2, 1, 90200]"/>
+    <oid label="scProductionFrOid" array="[1, 3, 112, 4, 4, 2, 1, 90201]"/>
+    <oid label="tcEncapMapPktProcessingFrOid" array="[1, 3, 112, 4, 4, 2, 1, 40104]"/>
+    <oid label="tcEncapVcPktProcVcGenFrOid" array="[1, 3, 112, 4, 4, 2, 1, 40102]"/>
+    <oid label="tcMapMuxFrOid" array="[1, 3, 112, 4, 4, 2, 1, 40103]"/>
+    <oid label="tcMcMuxFrOid" array="[1, 3, 112, 4, 4, 2, 1, 40100]"/>
+    <oid label="tcPlopSyncAndChnlEncodeFrOid" array="[1, 3, 112, 4, 4, 2, 1, 30100]"/>
+    <oid label="tcVcMuxFrOid" array="[1, 3, 112, 4, 4, 2, 1, 40101]"/>
+    <oid label="tdCstsProviderFrOid" array="[1, 3, 112, 4, 4, 2, 1, 80700]"/>
+    <oid label="tdmRcrdBufferFrOid" array="[1, 3, 112, 4, 4, 2, 1, 70200]"/>
+    <oid label="tdmSegmentGenFrOid" array="[1, 3, 112, 4, 4, 2, 1, 60100]"/>
+    <oid label="tgftHostFrOid" array="[1, 3, 112, 4, 4, 2, 1, 80800]"/>
+    <oid label="tmAosMcDemuxFrOid" array="[1, 3, 112, 4, 4, 2, 1, 40500]"/>
+    <oid label="tmAosPktExtractDeencapFrOid" array="[1, 3, 112, 4, 4, 2, 1, 40502]"/>
+    <oid label="tmAosVcDemuxFrOid" array="[1, 3, 112, 4, 4, 2, 1, 40501]"/>
+    <oid label="uslpEncapMapPktProcessingFrOid" array="[1, 3, 112, 4, 4, 2, 1, 40304]"/>
+    <oid label="uslpMapMuxFrOid" array="[1, 3, 112, 4, 4, 2, 1, 40303]"/>
+    <oid label="valRmDataStoreFrOid" array="[1, 3, 112, 4, 4, 2, 1, 70400]"/>
+    <oid label="vlfUslpMcMuxFrOid" array="[1, 3, 112, 4, 4, 2, 1, 40300]"/>
+    <oid label="vlfUslpVcGenFrOid" array="[1, 3, 112, 4, 4, 2, 1, 40302]"/>
+    <oid label="vlfUslpVcMuxFrOid" array="[1, 3, 112, 4, 4, 2, 1, 40301]"/>
+    <oid label="antAccumulatedPrecipitationParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 30, 1, 1]"/>
+    <oid label="antActualAzimuthParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 3, 1, 1]"/>
+    <oid label="antActualElevationParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 4, 1, 1]"/>
+    <oid label="antAmbientTemperatureParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 34, 1, 1]"/>
+    <oid label="antAtmosphericPressureParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 33, 1, 1]"/>
+    <oid label="antAzimuthAberrationParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 13, 1, 1]"/>
+    <oid label="antAzimuthResidualParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 11, 1, 1]"/>
+    <oid label="antClosedLoopConfigurationParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 16, 1, 1]"/>
+    <oid label="antCommandedAzimuthParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 5, 1, 1]"/>
+    <oid label="antCommandedElevationParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 6, 1, 1]"/>
+    <oid label="antContrAzimuthParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 7, 1, 1]"/>
+    <oid label="antContrAzimuthRateParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 9, 1, 1]"/>
+    <oid label="antContrElevationParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 8, 1, 1]"/>
+    <oid label="antContrElevationRateParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 10, 1, 1]"/>
+    <oid label="antElevationAberrationParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 14, 1, 1]"/>
+    <oid label="antElevationResidualParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 12, 1, 1]"/>
+    <oid label="antIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 2, 1, 1]"/>
+    <oid label="antMeanWindSpeedParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 27, 1, 1]"/>
+    <oid label="antPeakWindSpeedParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 28, 1, 1]"/>
+    <oid label="antPointingModeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 15, 1, 1]"/>
+    <oid label="antPrecipitationRateParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 31, 1, 1]"/>
+    <oid label="antRelativeHumidityParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 32, 1, 1]"/>
+    <oid label="antResourceStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 1, 1, 1]"/>
+    <oid label="antTrackingRxFreqSearchRangeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 21, 1, 1]"/>
+    <oid label="antTrackingRxInpLevelParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 19, 1, 1]"/>
+    <oid label="antTrackingRxLockStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 25, 1, 1]"/>
+    <oid label="antTrackingRxLoopBwdthParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 23, 1, 1]"/>
+    <oid label="antTrackingRxModeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 17, 1, 1]"/>
+    <oid label="antTrackingRxNominalFreqParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 20, 1, 1]"/>
+    <oid label="antTrackingRxOrderOfLoopParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 24, 1, 1]"/>
+    <oid label="antTrackingRxPredictModeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 22, 1, 1]"/>
+    <oid label="antTrackingSignalPolarizationParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 18, 1, 1]"/>
+    <oid label="antWindDirectionParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 29, 1, 1]"/>
+    <oid label="antWindIntegrationTimeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 1, 26, 1, 1]"/>
+    <oid label="aosMcMuxContrParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40200, 1, 2, 1, 1]"/>
+    <oid label="aosMcMuxPresenceOfFrameErrorContrParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40200, 1, 4, 1, 1]"/>
+    <oid label="aosMcMuxPresenceOfFrameHeaderErrorContrParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40200, 1, 3, 1, 1]"/>
+    <oid label="aosMcMuxResourceStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40200, 1, 1, 1, 1]"/>
+    <oid label="aosVcMuxContrParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40201, 1, 3, 1, 1]"/>
+    <oid label="aosVcMuxMcParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40201, 1, 2, 1, 1]"/>
+    <oid label="aosVcMuxResourceStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40201, 1, 1, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptActualFreqParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 17, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptActualSubcarrierFreqParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 22, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptActualSymbolRateParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 27, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptBestLockFreqParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 20, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptCarrierLoopMeanPhaseErrorParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 16, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptCarrierLoopSnrParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 15, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptDopplerStdDeviationParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 19, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptEsOverNoResidualAndSoftSymbolDistributionParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 31, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptExpectedEsOverNoParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 30, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptExpectedSignalLevelParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 6, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptFreqOffsetParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 18, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptFreqSearchRangeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 10, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptLockStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 14, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptModTypeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 3, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptNominalFreqParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 9, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptNominalSymbolRateParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 26, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptNominallSubcarrierFreqParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 21, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptOrderOfLoopParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 13, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptPhysChnlNameParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 2, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptPolarizationAngleParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 5, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptPolarizationParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 4, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptPredictModeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 11, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptResourceStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 1, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptSignalLevelResidualParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 7, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptSubcarrierDemodLoopBwdthParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 23, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptSubcarrierLevelEstimateParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 25, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptSubcarrierLoopMeanPhaseErrorParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 24, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptSymbolLoopMeanPhaseErrorParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 29, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptSymbolSynchronizerLoopBwdthParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 28, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptSystemNoiseTemperatureParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 8, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptTrackingLoopBwdthParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 1, 12, 1, 1]"/>
+    <oid label="ccsds401CarrierXmitActualCarrierFreqParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 6, 1, 1]"/>
+    <oid label="ccsds401CarrierXmitEirpParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 4, 1, 1]"/>
+    <oid label="ccsds401CarrierXmitModInpStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 12, 1, 1]"/>
+    <oid label="ccsds401CarrierXmitModParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 11, 1, 1]"/>
+    <oid label="ccsds401CarrierXmitNominalCarrierFreqParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 7, 1, 1]"/>
+    <oid label="ccsds401CarrierXmitPhysChnlNameParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 2, 1, 1]"/>
+    <oid label="ccsds401CarrierXmitPolarizationParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 5, 1, 1]"/>
+    <oid label="ccsds401CarrierXmitReferenceFreqLockParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 8, 1, 1]"/>
+    <oid label="ccsds401CarrierXmitResourceStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 1, 1, 1]"/>
+    <oid label="ccsds401CarrierXmitRngModIndexParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 15, 1, 1]"/>
+    <oid label="ccsds401CarrierXmitStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 3, 1, 1]"/>
+    <oid label="ccsds401CarrierXmitSubcarrierFreqParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 16, 1, 1]"/>
+    <oid label="ccsds401CarrierXmitSubcarrierModParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 17, 1, 1]"/>
+    <oid label="ccsds401CarrierXmitSweepProcStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 9, 1, 1]"/>
+    <oid label="ccsds401CarrierXmitSweepProfileParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 10, 1, 1]"/>
+    <oid label="ccsds401CarrierXmitSymbolRateParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 18, 1, 1]"/>
+    <oid label="ccsds401CarrierXmitSymbolStreamModTypeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 14, 1, 1]"/>
+    <oid label="ccsds401CarrierXmitTcPriorityParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20100, 1, 13, 1, 1]"/>
+    <oid label="cfdpLocalEntityConfigurationParamOid" array="[1, 3, 112, 4, 4, 2, 1, 50200, 1, 4, 1, 1]"/>
+    <oid label="cfdpLocalEntityIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 50200, 1, 2, 1, 1]"/>
+    <oid label="cfdpLocalEntityResourceStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 50200, 1, 1, 1, 1]"/>
+    <oid label="cfdpRemoteEntityConfigurationParamOid" array="[1, 3, 112, 4, 4, 2, 1, 50200, 1, 3, 1, 1]"/>
+    <oid label="fCltuDeliveryModeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 8, 1, 1]"/>
+    <oid label="fCltuExpectedCltuIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 12, 1, 1]"/>
+    <oid label="fCltuExpectedEventInvocIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 13, 1, 1]"/>
+    <oid label="fCltuInitiatorIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 4, 1, 1]"/>
+    <oid label="fCltuNotificationModeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 9, 1, 1]"/>
+    <oid label="fCltuNumberOfCltusProcessedParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 15, 1, 1]"/>
+    <oid label="fCltuNumberOfCltusRadiatedParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 16, 1, 1]"/>
+    <oid label="fCltuNumberOfCltusReceivedParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 14, 1, 1]"/>
+    <oid label="fCltuProdStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 1, 1, 1]"/>
+    <oid label="fCltuProtocolAbortModeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 10, 1, 1]"/>
+    <oid label="fCltuReportingCycleParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 11, 1, 1]"/>
+    <oid label="fCltuResponderIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 5, 1, 1]"/>
+    <oid label="fCltuResponderPortIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 6, 1, 1]"/>
+    <oid label="fCltuRtnTimeoutPeriodParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 7, 1, 1]"/>
+    <oid label="fCltuSvcInstanceIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 2, 1, 1]"/>
+    <oid label="fCltuSvcInstanceStateParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80200, 1, 3, 1, 1]"/>
+    <oid label="ffAuthorizedGvcidAndBitMaskParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 9, 1, 1]"/>
+    <oid label="ffDataProcessingModeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 8, 1, 1]"/>
+    <oid label="ffInitiatorIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 4, 1, 1]"/>
+    <oid label="ffInputQueueSizeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 12, 1, 1]"/>
+    <oid label="ffMasterThrowEventEnabledParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 15, 1, 1]"/>
+    <oid label="ffMaxFrameLengthParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 11, 1, 1]"/>
+    <oid label="ffMinAllowedDeliveryCycleParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 13, 1, 1]"/>
+    <oid label="ffMinFrameLengthParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 10, 1, 1]"/>
+    <oid label="ffNamedEventLabelListsParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 14, 1, 1]"/>
+    <oid label="ffNamedParamLabelListsParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 16, 1, 1]"/>
+    <oid label="ffNumberDataUnitsProcessedParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 19, 1, 1]"/>
+    <oid label="ffNumberDataUnitsRcvdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 17, 1, 1]"/>
+    <oid label="ffNumberDataUnitsToProcessingParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 18, 1, 1]"/>
+    <oid label="ffResponderIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 5, 1, 1]"/>
+    <oid label="ffResponderPortIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 6, 1, 1]"/>
+    <oid label="ffSvcInstanceIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 2, 1, 1]"/>
+    <oid label="ffSvcInstanceStateParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 3, 1, 1]"/>
+    <oid label="ffSvcProdStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 1, 1, 1]"/>
+    <oid label="ffSvcUserRespondingTimerParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80300, 1, 7, 1, 1]"/>
+    <oid label="flfSyncDecAsmConfigParamOid" array="[1, 3, 112, 4, 4, 2, 1, 30300, 1, 2, 1, 1]"/>
+    <oid label="flfSyncDecAsmCorrelationErrorParamOid" array="[1, 3, 112, 4, 4, 2, 1, 30300, 1, 3, 1, 1]"/>
+    <oid label="flfSyncDecCaduLengthParamOid" array="[1, 3, 112, 4, 4, 2, 1, 30300, 1, 9, 1, 1]"/>
+    <oid label="flfSyncDecDecodeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 30300, 1, 11, 1, 1]"/>
+    <oid label="flfSyncDecDecodeQualityIndicationsParamOid" array="[1, 3, 112, 4, 4, 2, 1, 30300, 1, 13, 1, 1]"/>
+    <oid label="flfSyncDecDerandomizationParamOid" array="[1, 3, 112, 4, 4, 2, 1, 30300, 1, 10, 1, 1]"/>
+    <oid label="flfSyncDecErtAnnotationLockedToReferenceParamOid" array="[1, 3, 112, 4, 4, 2, 1, 30300, 1, 8, 1, 1]"/>
+    <oid label="flfSyncDecFecfPresentParamOid" array="[1, 3, 112, 4, 4, 2, 1, 30300, 1, 12, 1, 1]"/>
+    <oid label="flfSyncDecFrameErrorRateParamOid" array="[1, 3, 112, 4, 4, 2, 1, 30300, 1, 6, 1, 1]"/>
+    <oid label="flfSyncDecFrameSyncLockStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 30300, 1, 4, 1, 1]"/>
+    <oid label="flfSyncDecNumberOfRsErrorsCorrectedParamOid" array="[1, 3, 112, 4, 4, 2, 1, 30300, 1, 7, 1, 1]"/>
+    <oid label="flfSyncDecResourceStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 30300, 1, 1, 1, 1]"/>
+    <oid label="flfSyncDecSymbolInversionParamOid" array="[1, 3, 112, 4, 4, 2, 1, 30300, 1, 5, 1, 1]"/>
+    <oid label="flfSyncEncCodingSelectionParamOid" array="[1, 3, 112, 4, 4, 2, 1, 30200, 1, 3, 1, 1]"/>
+    <oid label="flfSyncEncResourceStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 30200, 1, 1, 1, 1]"/>
+    <oid label="flfSyncEncSlpduLengthParamOid" array="[1, 3, 112, 4, 4, 2, 1, 30200, 1, 2, 1, 1]"/>
+    <oid label="flfUslpMcMuxContrParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40400, 1, 2, 1, 1]"/>
+    <oid label="flfUslpMcMuxFrameErrorContrLengthParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40400, 1, 3, 1, 1]"/>
+    <oid label="flfUslpMcMuxResourceStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40400, 1, 1, 1, 1]"/>
+    <oid label="flfUslpVcMuxContrParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40401, 1, 3, 1, 1]"/>
+    <oid label="flfUslpVcMuxMcParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40401, 1, 2, 1, 1]"/>
+    <oid label="flfUslpVcMuxResourceStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40401, 1, 1, 1, 1]"/>
+    <oid label="frameDataSinkResourceStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 50100, 1, 1, 1, 1]"/>
+    <oid label="frameDataSinkStorageSelectionParamOid" array="[1, 3, 112, 4, 4, 2, 1, 50100, 1, 2, 1, 1]"/>
+    <oid label="fspPermittedTransmissionModeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 13, 1, 1]"/>
+    <oid label="fspApidListParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 14, 1, 1]"/>
+    <oid label="fspBitLockRequiredParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 10, 1, 1]"/>
+    <oid label="fspDeliveryModeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 8, 1, 1]"/>
+    <oid label="fspDirectiveInvocationOnlineParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 12, 1, 1]"/>
+    <oid label="fspDirectiveInvocationParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 11, 1, 1]"/>
+    <oid label="fspExpectedDirectiveIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 17, 1, 1]"/>
+    <oid label="fspExpectedEventInvocIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 18, 1, 1]"/>
+    <oid label="fspExpectedPktIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 16, 1, 1]"/>
+    <oid label="fspInitiatorIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 4, 1, 1]"/>
+    <oid label="fspProdStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 1, 1, 1]"/>
+    <oid label="fspReportingCycleParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 15, 1, 1]"/>
+    <oid label="fspResponderIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 5, 1, 1]"/>
+    <oid label="fspResponderPortIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 6, 1, 1]"/>
+    <oid label="fspRfAvailableRequiredParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 9, 1, 1]"/>
+    <oid label="fspRtnTimeoutPeriodParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 7, 1, 1]"/>
+    <oid label="fspSvcInstanceIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 2, 1, 1]"/>
+    <oid label="fspSvcInstanceStateParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 3, 1, 1]"/>
+    <oid label="fspTcMcMuxValidScidsParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 19, 1, 1]"/>
+    <oid label="fspTcVcMuxValidTcVcIdsParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80100, 1, 20, 1, 1]"/>
+    <oid label="mdInitiatorIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 90100, 1, 4, 1, 1]"/>
+    <oid label="mdMinAllowedDeliveryCycleParamOid" array="[1, 3, 112, 4, 4, 2, 1, 90100, 1, 8, 1, 1]"/>
+    <oid label="mdNamedEventLabelListsParamOid" array="[1, 3, 112, 4, 4, 2, 1, 90100, 1, 10, 1, 1]"/>
+    <oid label="mdNamedParamLabelListsParamOid" array="[1, 3, 112, 4, 4, 2, 1, 90100, 1, 9, 1, 1]"/>
+    <oid label="mdResponderIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 90100, 1, 5, 1, 1]"/>
+    <oid label="mdResponderPortIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 90100, 1, 6, 1, 1]"/>
+    <oid label="mdServiceUserRespondingTimerParamOid" array="[1, 3, 112, 4, 4, 2, 1, 90100, 1, 7, 1, 1]"/>
+    <oid label="mdSvcInstanceIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 90100, 1, 2, 1, 1]"/>
+    <oid label="mdSvcInstanceStateParamOid" array="[1, 3, 112, 4, 4, 2, 1, 90100, 1, 3, 1, 1]"/>
+    <oid label="mdSvcProdStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 90100, 1, 1, 1, 1]"/>
+    <oid label="offlineFrameBufferAllocatedStorageParamOid" array="[1, 3, 112, 4, 4, 2, 1, 70100, 1, 2, 1, 1]"/>
+    <oid label="offlineFrameBufferAvailableStorageParamOid" array="[1, 3, 112, 4, 4, 2, 1, 70100, 1, 3, 1, 1]"/>
+    <oid label="offlineFrameBufferDataRetentionPolicyParamOid" array="[1, 3, 112, 4, 4, 2, 1, 70100, 1, 5, 1, 1]"/>
+    <oid label="offlineFrameBufferPurgeCessationThresholdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 70100, 1, 7, 1, 1]"/>
+    <oid label="offlineFrameBufferPurgePriorityParamOid" array="[1, 3, 112, 4, 4, 2, 1, 70100, 1, 6, 1, 1]"/>
+    <oid label="offlineFrameBufferPurgeWarningThresholdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 70100, 1, 8, 1, 1]"/>
+    <oid label="offlineFrameBufferResourceStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 70100, 1, 1, 1, 1]"/>
+    <oid label="offlineFrameBufferUsedStorageParamOid" array="[1, 3, 112, 4, 4, 2, 1, 70100, 1, 4, 1, 1]"/>
+    <oid label="rafDeliveryModeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 8, 1, 1]"/>
+    <oid label="rafInitiatorIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 4, 1, 1]"/>
+    <oid label="rafLatencyLimitParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 9, 1, 1]"/>
+    <oid label="rafNumberOfErrorFreeFramesDeliveredParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 14, 1, 1]"/>
+    <oid label="rafNumberOfFramesDeliveredParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 15, 1, 1]"/>
+    <oid label="rafPermittedFrameQualityParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 11, 1, 1]"/>
+    <oid label="rafProdStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 1, 1, 1]"/>
+    <oid label="rafReportingCycleParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 13, 1, 1]"/>
+    <oid label="rafRequestedFrameQualityParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 12, 1, 1]"/>
+    <oid label="rafResponderIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 5, 1, 1]"/>
+    <oid label="rafResponderPortIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 6, 1, 1]"/>
+    <oid label="rafRtnTimeoutPeriodParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 7, 1, 1]"/>
+    <oid label="rafSvcInstanceIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 2, 1, 1]"/>
+    <oid label="rafSvcInstanceStateParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 3, 1, 1]"/>
+    <oid label="rafTransferBufferSizeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80400, 1, 10, 1, 1]"/>
+    <oid label="rcfDeliveryModeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80500, 1, 8, 1, 1]"/>
+    <oid label="rcfInitiatorIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80500, 1, 4, 1, 1]"/>
+    <oid label="rcfLatencyLimitParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80500, 1, 9, 1, 1]"/>
+    <oid label="rcfNumberOfFramesDeliveredParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80500, 1, 14, 1, 1]"/>
+    <oid label="rcfPermittedGvcidSetParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80500, 1, 11, 1, 1]"/>
+    <oid label="rcfProdStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80500, 1, 1, 1, 1]"/>
+    <oid label="rcfReportingCycleParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80500, 1, 13, 1, 1]"/>
+    <oid label="rcfRequestedGvcidParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80500, 1, 12, 1, 1]"/>
+    <oid label="rcfResponderIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80500, 1, 5, 1, 1]"/>
+    <oid label="rcfResponderPortIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80500, 1, 6, 1, 1]"/>
+    <oid label="rcfRtnTimeoutPeriodParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80500, 1, 7, 1, 1]"/>
+    <oid label="rcfSvcInstanceIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80500, 1, 2, 1, 1]"/>
+    <oid label="rcfSvcInstanceStateParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80500, 1, 3, 1, 1]"/>
+    <oid label="rcfTransferBufferSizeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80500, 1, 10, 1, 1]"/>
+    <oid label="rngAndDopplerExtractionAmbiguityResolvedParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 15, 1, 1]"/>
+    <oid label="rngAndDopplerExtractionCodeNumberCorrelatedParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 14, 1, 1]"/>
+    <oid label="rngAndDopplerExtractionDataCollectionParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 20, 1, 1]"/>
+    <oid label="rngAndDopplerExtractionDopplerMeasurementSamplingRateParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 19, 1, 1]"/>
+    <oid label="rngAndDopplerExtractionExpectedRngModIndexParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 11, 1, 1]"/>
+    <oid label="rngAndDopplerExtractionExpectedSpacecraftPnAcqDurationParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 17, 1, 1]"/>
+    <oid label="rngAndDopplerExtractionLoopLockStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 9, 1, 1]"/>
+    <oid label="rngAndDopplerExtractionLoopSettlingTimeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 8, 1, 1]"/>
+    <oid label="rngAndDopplerExtractionObservableAndResidualParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 21, 1, 1]"/>
+    <oid label="rngAndDopplerExtractionObservablesCountParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 22, 1, 1]"/>
+    <oid label="rngAndDopplerExtractionOpenLoopTimeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 7, 1, 1]"/>
+    <oid label="rngAndDopplerExtractionPnCodeIntegrationTimeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 13, 1, 1]"/>
+    <oid label="rngAndDopplerExtractionPredictedRngLoopSnrParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 5, 1, 1]"/>
+    <oid label="rngAndDopplerExtractionPresteeringParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 2, 1, 1]"/>
+    <oid label="rngAndDopplerExtractionResourceStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 1, 1, 1]"/>
+    <oid label="rngAndDopplerExtractionRngLoopBwdthParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 4, 1, 1]"/>
+    <oid label="rngAndDopplerExtractionRngMeasurementSamplingRateParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 18, 1, 1]"/>
+    <oid label="rngAndDopplerExtractionRngPowerOverNoResidualParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 3, 1, 1]"/>
+    <oid label="rngAndDopplerExtractionRngSignalAcquisitionProbabilityParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 6, 1, 1]"/>
+    <oid label="rngAndDopplerExtractionRngToCarrierPowerRatioParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 10, 1, 1]"/>
+    <oid label="rngAndDopplerExtractionSpacecraftTransponderModeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 16, 1, 1]"/>
+    <oid label="rngAndDopplerExtractionToneIntegrationTimeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20301, 1, 12, 1, 1]"/>
+    <oid label="rngXmitModParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20101, 1, 2, 1, 1]"/>
+    <oid label="rngXmitPnChipRateParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20101, 1, 4, 1, 1]"/>
+    <oid label="rngXmitResourceStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20101, 1, 1, 1, 1]"/>
+    <oid label="rngXmitRngTypeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 20101, 1, 3, 1, 1]"/>
+    <oid label="rocfDeliveryModeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 8, 1, 1]"/>
+    <oid label="rocfInitiatorIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 4, 1, 1]"/>
+    <oid label="rocfLatencyLimitParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 9, 1, 1]"/>
+    <oid label="rocfNumberOfOcfsDeliveredParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 20, 1, 1]"/>
+    <oid label="rocfPermittedContrWordTypeSetParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 13, 1, 1]"/>
+    <oid label="rocfPermittedGvcidSetParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 11, 1, 1]"/>
+    <oid label="rocfPermittedTcVcidSetParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 15, 1, 1]"/>
+    <oid label="rocfPermittedUpdateModeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 17, 1, 1]"/>
+    <oid label="rocfProdStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 1, 1, 1]"/>
+    <oid label="rocfReportingCycleParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 19, 1, 1]"/>
+    <oid label="rocfRequestedContrWordTypeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 14, 1, 1]"/>
+    <oid label="rocfRequestedGvcidParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 12, 1, 1]"/>
+    <oid label="rocfRequestedTcVcidParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 16, 1, 1]"/>
+    <oid label="rocfRequestedUpdateModeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 18, 1, 1]"/>
+    <oid label="rocfResponderIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 5, 1, 1]"/>
+    <oid label="rocfResponderPortIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 6, 1, 1]"/>
+    <oid label="rocfRtnTimeoutPeriodParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 7, 1, 1]"/>
+    <oid label="rocfSvcInstanceIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 2, 1, 1]"/>
+    <oid label="rocfSvcInstanceStateParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 3, 1, 1]"/>
+    <oid label="rocfTransferBufferSizeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80600, 1, 10, 1, 1]"/>
+    <oid label="tcMcMuxContrParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40100, 1, 4, 1, 1]"/>
+    <oid label="tcMcMuxMaxFrameLengthParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40100, 1, 3, 1, 1]"/>
+    <oid label="tcMcMuxMaxNumberOfFramesPerCltuParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40100, 1, 2, 1, 1]"/>
+    <oid label="tcMcMuxPresenceOfFecParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40100, 1, 5, 1, 1]"/>
+    <oid label="tcMcMuxResourceStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40100, 1, 1, 1, 1]"/>
+    <oid label="tcPlopSyncAcqAndIdlePatternParamOid" array="[1, 3, 112, 4, 4, 2, 1, 30100, 1, 7, 1, 1]"/>
+    <oid label="tcPlopSyncClcwEvaluationParamOid" array="[1, 3, 112, 4, 4, 2, 1, 30100, 1, 10, 1, 1]"/>
+    <oid label="tcPlopSyncEncodeTypeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 30100, 1, 4, 1, 1]"/>
+    <oid label="tcPlopSyncMaxCltuLengthParamOid" array="[1, 3, 112, 4, 4, 2, 1, 30100, 1, 2, 1, 1]"/>
+    <oid label="tcPlopSyncMaxCltuRepetitionsParamOid" array="[1, 3, 112, 4, 4, 2, 1, 30100, 1, 5, 1, 1]"/>
+    <oid label="tcPlopSyncMaxNumberOfFramesPerCltuParamOid" array="[1, 3, 112, 4, 4, 2, 1, 30100, 1, 3, 1, 1]"/>
+    <oid label="tcPlopSyncMinDelayTimeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 30100, 1, 8, 1, 1]"/>
+    <oid label="tcPlopSyncPlopParamOid" array="[1, 3, 112, 4, 4, 2, 1, 30100, 1, 6, 1, 1]"/>
+    <oid label="tcPlopSyncResourceStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 30100, 1, 1, 1, 1]"/>
+    <oid label="tcPlopSyncTcLinkStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 30100, 1, 9, 1, 1]"/>
+    <oid label="tcVcMuxAdFrameRepetitionsParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40101, 1, 3, 1, 1]"/>
+    <oid label="tcVcMuxBcFrameRepetitionsParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40101, 1, 4, 1, 1]"/>
+    <oid label="tcVcMuxContrParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40101, 1, 6, 1, 1]"/>
+    <oid label="tcVcMuxMaxFrameLengthParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40101, 1, 2, 1, 1]"/>
+    <oid label="tcVcMuxMcParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40101, 1, 5, 1, 1]"/>
+    <oid label="tcVcMuxResourceStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40101, 1, 1, 1, 1]"/>
+    <oid label="tdDeliveryLatencyLimitParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80700, 1, 10, 1, 1]"/>
+    <oid label="tdDeliveryModeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80700, 1, 8, 1, 1]"/>
+    <oid label="tdInitiatorIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80700, 1, 4, 1, 1]"/>
+    <oid label="tdNamedLabelListsParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80700, 1, 11, 1, 1]"/>
+    <oid label="tdPathListParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80700, 1, 12, 1, 1]"/>
+    <oid label="tdProdStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80700, 1, 1, 1, 1]"/>
+    <oid label="tdResponderIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80700, 1, 5, 1, 1]"/>
+    <oid label="tdResponderPortIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80700, 1, 6, 1, 1]"/>
+    <oid label="tdReturnBufferSizeParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80700, 1, 9, 1, 1]"/>
+    <oid label="tdSvcInstanceIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80700, 1, 2, 1, 1]"/>
+    <oid label="tdSvcInstanceStateParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80700, 1, 3, 1, 1]"/>
+    <oid label="tdSvcUserRespTimerParamOid" array="[1, 3, 112, 4, 4, 2, 1, 80700, 1, 7, 1, 1]"/>
+    <oid label="tdmRcrdBufferMaxStorageAllocParamOid" array="[1, 3, 112, 4, 4, 2, 1, 70200, 1, 2, 1, 1]"/>
+    <oid label="tdmRcrdBufferResourceStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 70200, 1, 1, 1, 1]"/>
+    <oid label="tdmRcrdBufferRetentionPolicyParamOid" array="[1, 3, 112, 4, 4, 2, 1, 70200, 1, 3, 1, 1]"/>
+    <oid label="tdmSegGenAntAnglesPathTableParamOid" array="[1, 3, 112, 4, 4, 2, 1, 60100, 1, 11, 1, 1]"/>
+    <oid label="tdmSegGenCarrierPowerPathTableParamOid" array="[1, 3, 112, 4, 4, 2, 1, 60100, 1, 2, 1, 1]"/>
+    <oid label="tdmSegGenDoppInstPathTableParamOid" array="[1, 3, 112, 4, 4, 2, 1, 60100, 1, 5, 1, 1]"/>
+    <oid label="tdmSegGenDoppIntegPathTableParamOid" array="[1, 3, 112, 4, 4, 2, 1, 60100, 1, 6, 1, 1]"/>
+    <oid label="tdmSegGenPcOverN0PathTableParamOid" array="[1, 3, 112, 4, 4, 2, 1, 60100, 1, 3, 1, 1]"/>
+    <oid label="tdmSegGenPrOverNoPathTableParamOid" array="[1, 3, 112, 4, 4, 2, 1, 60100, 1, 4, 1, 1]"/>
+    <oid label="tdmSegGenRangePathTableParamOid" array="[1, 3, 112, 4, 4, 2, 1, 60100, 1, 7, 1, 1]"/>
+    <oid label="tdmSegGenResourceStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 60100, 1, 1, 1, 1]"/>
+    <oid label="tdmSegGenXmitFreqPathTableParamOid" array="[1, 3, 112, 4, 4, 2, 1, 60100, 1, 9, 1, 1]"/>
+    <oid label="tdmSegGenXmitFreqRatePathTableParamOid" array="[1, 3, 112, 4, 4, 2, 1, 60100, 1, 10, 1, 1]"/>
+    <oid label="tdmSeqGenRcvFreqPathTableParamOid" array="[1, 3, 112, 4, 4, 2, 1, 60100, 1, 8, 1, 1]"/>
+    <oid label="tmAosMcDemuxClcwExtractionParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40500, 1, 3, 1, 1]"/>
+    <oid label="tmAosMcDemuxMcIdsParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40500, 1, 2, 1, 1]"/>
+    <oid label="tmAosMcDemuxResourceStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40500, 1, 1, 1, 1]"/>
+    <oid label="tmAosSpacePktApidSetParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40502, 1, 1, 1, 1]"/>
+    <oid label="tmAosVcDemuxClcwExtractionParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40501, 1, 3, 1, 1]"/>
+    <oid label="tmAosVcDemuxGvcidParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40501, 1, 4, 1, 1]"/>
+    <oid label="tmAosVcDemuxResourceStatParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40501, 1, 1, 1, 1]"/>
+    <oid label="tmAosVcDemuxVcIdParamOid" array="[1, 3, 112, 4, 4, 2, 1, 40501, 1, 2, 1, 1]"/>
+    <oid label="antResourceStatChangeEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 2, 1, 1, 1]"/>
+    <oid label="antTrackingRxLockStatChangeEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 2, 2, 1, 1]"/>
+    <oid label="antWindSpeedWarningEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 2, 3, 1, 1]"/>
+    <oid label="aosMcMuxDataUnitProcessingCompletedValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 40200, 2, 2, 1, 1]"/>
+    <oid label="aosMcMuxResourceStatValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 40200, 2, 1, 1, 1]"/>
+    <oid label="aosVcMuxDataUnitProcessingCompletedValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 40201, 2, 2, 1, 1]"/>
+    <oid label="aosVcMuxResourceStatValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 40201, 2, 1, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptLockStatChangeEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 2, 2, 1, 1]"/>
+    <oid label="ccsds401CarrierRcptResourceStatChangeEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 2, 1, 1, 1]"/>
+    <oid label="ccsds401CarrierXmitResourceStatChangeEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 20100, 2, 1, 1, 1]"/>
+    <oid label="cfdpAbandonedIndicationValueOid" array="[1, 3, 112, 4, 4, 2, 1, 50200, 2, 10, 1, 1]"/>
+    <oid label="cfdpConsignedTransactionIdValueOid" array="[1, 3, 112, 4, 4, 2, 1, 50200, 2, 12, 1, 1]"/>
+    <oid label="cfdpEofRcvdTransactionIdValueOid" array="[1, 3, 112, 4, 4, 2, 1, 50200, 2, 11, 1, 1]"/>
+    <oid label="cfdpEofSentTransactionIdValueOid" array="[1, 3, 112, 4, 4, 2, 1, 50200, 2, 2, 1, 1]"/>
+    <oid label="cfdpFaultIndicationValueOid" array="[1, 3, 112, 4, 4, 2, 1, 50200, 2, 9, 1, 1]"/>
+    <oid label="cfdpFileSegmentIndicationValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 50200, 2, 5, 1, 1]"/>
+    <oid label="cfdpFinishedTransactionValueOid" array="[1, 3, 112, 4, 4, 2, 1, 50200, 2, 3, 1, 1]"/>
+    <oid label="cfdpMetadataIndicationValueOid" array="[1, 3, 112, 4, 4, 2, 1, 50200, 2, 4, 1, 1]"/>
+    <oid label="cfdpReportIndicationValueOid" array="[1, 3, 112, 4, 4, 2, 1, 50200, 2, 6, 1, 1]"/>
+    <oid label="cfdpResumedIndicationValueOid" array="[1, 3, 112, 4, 4, 2, 1, 50200, 2, 8, 1, 1]"/>
+    <oid label="cfdpSuspendedIndicationValueOid" array="[1, 3, 112, 4, 4, 2, 1, 50200, 2, 7, 1, 1]"/>
+    <oid label="cfdpTransactionTransactionIdValueOid" array="[1, 3, 112, 4, 4, 2, 1, 50200, 2, 1, 1, 1]"/>
+    <oid label="fCltuProdConfigurationChangeEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 80200, 2, 2, 1, 1]"/>
+    <oid label="fCltuProdStatChangeEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 80200, 2, 1, 1, 1]"/>
+    <oid label="ffSvcProdConfgurationChangeValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 80300, 2, 2, 1, 1]"/>
+    <oid label="ffSvcProdStatChangeValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 80300, 2, 1, 1, 1]"/>
+    <oid label="flfUslpVcMuxDataUnitProcessingCompletedValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 40401, 2, 2, 1, 1]"/>
+    <oid label="flfSyncDecFrameSyncLockStatChangeEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 30300, 2, 2, 1, 1]"/>
+    <oid label="flfSyncDecResourceStatChangeEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 30300, 2, 1, 1, 1]"/>
+    <oid label="flfSyncEncDataUnitProcessingCompletedValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 30200, 2, 2, 1, 1]"/>
+    <oid label="flfSyncEncResourceStatValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 30200, 2, 1, 1, 1]"/>
+    <oid label="flfUslpMcMuxDataUnitProcessingCompletedValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 40400, 2, 1, 1, 1]"/>
+    <oid label="flfUslpMcMuxResourceStatValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 40400, 2, 2, 1, 1]"/>
+    <oid label="flfUslpVcMuxResourceStatValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 40401, 2, 1, 1, 1]"/>
+    <oid label="frameDataSinkResourceStatChangeValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 50100, 2, 1, 1, 1]"/>
+    <oid label="fspProdConfigurationChangeEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 80100, 2, 2, 1, 1]"/>
+    <oid label="fspProdStatChangeEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 80100, 2, 1, 1, 1]"/>
+    <oid label="mdSvcProdConfgurationChangeValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 90100, 2, 2, 1, 1]"/>
+    <oid label="mdSvcProdStatChangeValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 90100, 2, 1, 1, 1]"/>
+    <oid label="offlineFrameBufferPurgeWarningValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 70100, 2, 2, 1, 1]"/>
+    <oid label="offlineFrameBufferResourceStatChangeValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 70100, 2, 1, 1, 1]"/>
+    <oid label="rafProdConfigurationChangeEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 80400, 2, 2, 1, 1]"/>
+    <oid label="rafProdStatChangeEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 80400, 2, 1, 1, 1]"/>
+    <oid label="rcfProdConfigurationChangeEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 80500, 2, 2, 1, 1]"/>
+    <oid label="rcfProdStatChangeEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 80500, 2, 1, 1, 1]"/>
+    <oid label="rngAndDopplerExtractionResourceStatChangeEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 20301, 2, 1, 1, 1]"/>
+    <oid label="rngAndDopplerExtractionStatChangeEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 20301, 2, 2, 1, 1]"/>
+    <oid label="rngXmitResourceStatChangeEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 20101, 2, 1, 1, 1]"/>
+    <oid label="rocfProdConfigurationChangeEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 80600, 2, 2, 1, 1]"/>
+    <oid label="rocfProdStatChangeEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 80600, 2, 1, 1, 1]"/>
+    <oid label="tcMcMuxResourceStatChangeEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 40100, 2, 1, 1, 1]"/>
+    <oid label="tcPlopSyncDataUnitProcessingCompletedEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 30100, 2, 3, 1, 1]"/>
+    <oid label="tcPlopSyncResourceStatChangeEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 30100, 2, 1, 1, 1]"/>
+    <oid label="tcPlopSyncTcLinkStatChangeEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 30100, 2, 2, 1, 1]"/>
+    <oid label="tcVcMuxResourceStatChangeEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 40101, 2, 1, 1, 1]"/>
+    <oid label="tdProdConfigurationChangeEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 80700, 2, 2, 1, 1]"/>
+    <oid label="tdProdStatChangeEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 80700, 2, 1, 1, 1]"/>
+    <oid label="tdmRcrdBufferResourceStatChangeValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 70200, 2, 1, 1, 1]"/>
+    <oid label="tdmSegGenResourceStatChangeValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 60100, 2, 1, 1, 1]"/>
+    <oid label="tmAosMcDemuxResourceStatChangeEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 40500, 2, 1, 1, 1]"/>
+    <oid label="tmAosVcDemuxResourceStatChangeEventValueValueOid" array="[1, 3, 112, 4, 4, 2, 1, 40501, 2, 1, 1, 1]"/>
+    <oid label="antContrParamIdsAndValuesQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 10100, 3, 1, 1, 1]"/>
+    <oid label="aosMcMuxContrParamIdsAndValuesQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 40200, 3, 1, 1, 1]"/>
+    <oid label="aosMcMuxDiscardDataUnitsSvcInstanceIdQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 40200, 3, 2, 1, 1]"/>
+    <oid label="aosVcMuxContrParamIdsAndValuesQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 40201, 3, 1, 1, 1]"/>
+    <oid label="aosVcMuxDiscardDataUnitsSvcInstanceIdQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 40201, 3, 2, 1, 1]"/>
+    <oid label="ccsds401CarrierXmitContrParamIdsAndValuesQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 20100, 3, 1, 1, 1]"/>
+    <oid label="ccsds401SpaceLinkCarrierRcptContrParamIdsAndValuesQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 20300, 3, 1, 1, 1]"/>
+    <oid label="cfdpCancelRequestTransactionIdQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 50200, 3, 3, 1, 1]"/>
+    <oid label="cfdpPutRequestQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 50200, 3, 1, 1, 1]"/>
+    <oid label="cfdpReportRequestTransactionIdQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 50200, 3, 2, 1, 1]"/>
+    <oid label="cfdpResumeTransactionIdQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 50200, 3, 5, 1, 1]"/>
+    <oid label="cfdpSuspendTransactionIdQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 50200, 3, 4, 1, 1]"/>
+    <oid label="fCltuContrParamIdsAndValuesQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 80200, 3, 1, 1, 1]"/>
+    <oid label="flfSyncDecContrParamIdsAndValuesQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 30300, 3, 1, 1, 1]"/>
+    <oid label="flfSyncEncContrParamIdsAndValuesQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 30200, 3, 1, 1, 1]"/>
+    <oid label="flfSyncEncDiscardDataUnitsSvcInstanceIdQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 30200, 3, 2, 1, 1]"/>
+    <oid label="flfUslpMcMuxDiscardDataUnitsSvcInstanceIdQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 40400, 3, 2, 1, 1]"/>
+    <oid label="flfUslpMcMuxSetContrParamIdsAndValuesQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 40400, 3, 1, 1, 1]"/>
+    <oid label="flfUslpVcMuxContrParamIdsAndValuesQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 40401, 3, 1, 1, 1]"/>
+    <oid label="flfUslpVcMuxDiscardDataUnitsSvcInstanceIdQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 40401, 3, 2, 1, 1]"/>
+    <oid label="frameDataSinkContrParamIdsAndValuesQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 50100, 3, 1, 1, 1]"/>
+    <oid label="offlineFrameBufferContrParamIdsAndValuesQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 70100, 3, 1, 1, 1]"/>
+    <oid label="rafContrParamIdsAndValuesQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 80400, 3, 1, 1, 1]"/>
+    <oid label="rcfContrParamIdsAndValuesQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 80500, 3, 1, 1, 1]"/>
+    <oid label="rngAndDopplerExtractionContrParamIdsAndValuesQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 20301, 3, 1, 1, 1]"/>
+    <oid label="rngXmitContrParamIdsAndValuesQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 20101, 3, 1, 1, 1]"/>
+    <oid label="rocfContrParamIdsAndValuesQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 80600, 3, 1, 1, 1]"/>
+    <oid label="tcMcMuxContrParamIdsAndValuesQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 40100, 3, 1, 1, 1]"/>
+    <oid label="tcMcMuxDiscardDataUnitsQualifierQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 40100, 3, 2, 1, 1]"/>
+    <oid label="tcPlopSyncContrParamIdsAndValuesQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 30100, 3, 1, 1, 1]"/>
+    <oid label="tcPlopSyncFrAndServiceInstanceIdQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 30100, 3, 2, 1, 1]"/>
+    <oid label="tcVcMuxContrParamIdsAndValuesQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 40101, 3, 1, 1, 1]"/>
+    <oid label="tcVcMuxDiscardDataUnitsQualifierQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 40101, 3, 2, 1, 1]"/>
+    <oid label="tdContrParamIdsAndValuesQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 80700, 3, 1, 1, 1]"/>
+    <oid label="tdmRcrdBufferContrParamIdsAndValuesQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 70200, 3, 1, 1, 1]"/>
+    <oid label="tdmSegGenContrParamIdsAndValuesQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 60100, 3, 1, 1, 1]"/>
+    <oid label="tmAosMcDemuxContrParamIdsAndValuesQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 40500, 3, 1, 1, 1]"/>
+    <oid label="tmAosVcDemuxContrParamIdsAndValuesQualifierOid" array="[1, 3, 112, 4, 4, 2, 1, 40501, 3, 1, 1, 1]"/>
 </OidConfig>

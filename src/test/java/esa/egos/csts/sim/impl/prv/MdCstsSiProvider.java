@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import esa.egos.csts.api.events.IEvent;
@@ -51,7 +52,8 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
     /** condition variable for signaling an operation return or abort */
     private final Condition stateCond;
 
-
+    private final Logger LOG = Logger.getLogger(getClass().getName());
+    
     public MdCstsSiProvider(ICstsApi api,
                             MdCstsSiProviderConfig config) throws ApiException
     {
@@ -59,8 +61,8 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
         this.stateLock = new ReentrantLock();
         this.stateCond = stateLock.newCondition();
 
-        System.out.println("MdCstsSiProvider#MdCstsSiProvider() begin");
-        System.out.println("MdCstsSiProvider#MdCstsSiProvider() end");
+        LOG.info("MdCstsSiProvider#MdCstsSiProvider() begin");
+        LOG.info("MdCstsSiProvider#MdCstsSiProvider() end");
     }
     
     @Override
@@ -122,48 +124,48 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
 
     public void informOpInvocation(IOperation operation)
     {
-        System.out.println("MdCstsSiProvider#informOpInvocation() begin");
+        LOG.info("MdCstsSiProvider#informOpInvocation() begin");
         this.stateLock.lock();
 
-        System.out.println("Operation invocation (state: " + getApiSi().getStatus() + "):  " + operation);
+        LOG.info("Operation invocation (state: " + getApiSi().getStatus() + "):  " + operation);
         this.stateCond.signalAll();
         
         this.stateLock.unlock();
-        System.out.println("MdCstsSiProvider#informOpInvocation() end");
+        LOG.info("MdCstsSiProvider#informOpInvocation() end");
         
     }
 
     @Override
     public void informOpAcknowledgement(IAcknowledgedOperation operation)
     {
-        System.out.println("MdCstsSiProvider#informOpAcknowledgement() begin");
+        LOG.info("MdCstsSiProvider#informOpAcknowledgement() begin");
 
-        System.out.println("Operation acknowledgement: " + operation);
+        LOG.info("Operation acknowledgement: " + operation);
 
-        System.out.println("MdCstsSiProvider#informOpAcknowledgement() end");
+        LOG.info("MdCstsSiProvider#informOpAcknowledgement() end");
     }
 
     @Override
     public void informOpReturn(IConfirmedOperation operation)
     {
-        System.out.println("MdCstsSiProvider#informOpReturn() begin");
+        LOG.info("MdCstsSiProvider#informOpReturn() begin");
 
-        System.out.println("Operation return:  " + operation);
+        LOG.info("Operation return:  " + operation);
 
-        System.out.println("MdCstsSiProvider#informOpReturn() end");
+        LOG.info("MdCstsSiProvider#informOpReturn() end");
     }
 
     @Override
     public void protocolAbort()
     {
-        System.out.println("MdCstsSiProvider#protocolAbort() begin");
+        LOG.info("MdCstsSiProvider#protocolAbort() begin");
         this.stateLock.lock();
 
-        System.out.println("CSTS provider service instance received protocol abort");
+        LOG.info("CSTS provider service instance received protocol abort");
         this.stateCond.signalAll();
 
         this.stateLock.unlock();
-        System.out.println("MdCstsSiProvider#informOpAcknowledgement() end");
+        LOG.info("MdCstsSiProvider#informOpAcknowledgement() end");
     }
 
     @Override
@@ -337,7 +339,7 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
     	boolean signaled = false;
     	
     	if(getApiSi().getStatus() == desiredState) {
-    		System.out.println("Provider SI has desired state, no wait for " + desiredState);
+    		LOG.info("Provider SI has desired state, no wait for " + desiredState + " " + getApiSi().getServiceInstanceIdentifier());
     		return desiredState;
     	}
     	
@@ -352,9 +354,9 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
     	}
     	
     	if(desiredState == getApiSi().getStatus()) {
-    		System.out.println("Provider SI has desired state " + desiredState + ", state change signaled: " + signaled);
+    		LOG.info("Provider SI has desired state " + desiredState + ", state change signaled: " + signaled + " " + getApiSi().getServiceInstanceIdentifier());
     	} else {
-    		System.err.println("Provider SI does not have desired state " + desiredState + ", state change signaled: " + signaled);
+    		LOG.severe("Provider SI does not have desired state " + desiredState + ", state change signaled: " + signaled + " " + getApiSi().getServiceInstanceIdentifier());
     	}
     	
     	return getApiSi().getStatus();

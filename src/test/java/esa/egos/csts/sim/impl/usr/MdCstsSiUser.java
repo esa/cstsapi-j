@@ -2,6 +2,7 @@ package esa.egos.csts.sim.impl.usr;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.enumerations.CstsResult;
@@ -32,6 +33,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
     /** the association procedure */
     private AssociationControlUser associationProcedure;
 
+    private final Logger LOG = Logger.getLogger(getClass().getName());
 
     /**
      * Constructs an MD CSTS User SI
@@ -45,12 +47,12 @@ public class MdCstsSiUser extends MdCstsSiUserInform
     {
         super(api, config,serviceVersion);
 
-        System.out.println("MdCstsSiUser#MdCstsSiUser() begin");
+        LOG.info("MdCstsSiUser#MdCstsSiUser() begin");
 
         //this.serviceInstance.setVersion(serviceInstance.getServiceInstanceIdentifier().getServiceInstanceNumber());
         this.associationProcedure = (AssociationControlUser) this.getApiSi().getAssociationControlProcedure();
 
-        System.out.println("MdCstsSiUser#MdCstsSiUser() end");
+        LOG.info("MdCstsSiUser#MdCstsSiUser() end");
     }
 
     
@@ -96,7 +98,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
      */
     public CstsResult bind() throws InterruptedException
     {
-        System.out.println("MdCstsSiUser#bind() begin");
+        LOG.info("MdCstsSiUser#bind() begin " + getApiSi().getServiceInstanceIdentifier());
 
         CstsResult ret = CstsResult.FAILURE;
         this.retLock.lock();
@@ -113,7 +115,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
                 // invocation initiation succeeded
                 // wait for the bind operation return
                 ret = waitForReturnOrAbort(this.associationProcedure,
-                                           "service instance is still not bound");
+                                           "service instance waiting for state BOUND " + getApiSi().getServiceInstanceIdentifier());
             }
         }
         finally
@@ -121,7 +123,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
             this.retLock.unlock();
         }
 
-        System.out.println("MdCstsSiUser#bind() end");
+        LOG.info("MdCstsSiUser#bind() end in state " + getApiSi().getStatus() + " " + getApiSi().getServiceInstanceIdentifier());
         return ret;
     }
 
@@ -134,7 +136,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
      */
     public CstsResult unbind() throws InterruptedException
     {
-        System.out.println("MdCstsSiUser#unbind() begin");
+        LOG.info("MdCstsSiUser#unbind() begin");
 
         CstsResult ret = CstsResult.FAILURE;
         this.retLock.lock();
@@ -168,7 +170,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
             this.retLock.unlock();
         }
 
-        System.out.println("MdCstsSiUser#unbind() end");
+        LOG.info("MdCstsSiUser#unbind() end");
         return ret;
     }
 
@@ -180,11 +182,11 @@ public class MdCstsSiUser extends MdCstsSiUserInform
      */
     public CstsResult peerAbort() throws InterruptedException
     {
-        System.out.println("MdCstsSiUser#peerAbort() begin");
+        LOG.info("MdCstsSiUser#peerAbort() begin");
 
         CstsResult ret = this.associationProcedure.abort(PeerAbortDiagnostics.OPERATIONAL_REQUIREMENT);
 
-        System.out.println("MdCstsSiUser#peerAbort() end");
+        LOG.info("MdCstsSiUser#peerAbort() end");
 
         return ret;
     }
@@ -206,7 +208,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
                                         long deliveryCycle,
                                         boolean onChange) throws Exception
     {
-        System.out.println("MdCstsSiUser#startCyclicReport() begin");
+        LOG.info("MdCstsSiUser#startCyclicReport() begin");
 
         CstsResult ret = CstsResult.FAILURE;
         this.retLock.lock();
@@ -252,7 +254,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
             this.retLock.unlock();
         }
 
-        System.out.println("MdCstsSiUser#startCyclicReport() end");
+        LOG.info("MdCstsSiUser#startCyclicReport() end");
 
         return ret;
     }
@@ -271,11 +273,11 @@ public class MdCstsSiUser extends MdCstsSiUserInform
                                         ListOfParameters listOfParameters,
                                         long deliveryCycle) throws Exception
     {
-        System.out.println("MdCstsSiUser#startCyclicReport() begin");
+        LOG.info("MdCstsSiUser#startCyclicReport() begin");
 
         CstsResult ret = startCyclicReport(piid, listOfParameters, deliveryCycle, false);
 
-        System.out.println("MdCstsSiUser#startCyclicReport() end");
+        LOG.info("MdCstsSiUser#startCyclicReport() end");
 
         return ret;
     }
@@ -297,7 +299,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
                                         long deliveryCycle,
                                         boolean onChange) throws Exception
     {
-        System.out.println("MdCstsSiUser#startCyclicReport() begin");
+        LOG.info("MdCstsSiUser#startCyclicReport() begin");
 
         OnChangeCyclicReportUser onChangeCyclicReport = getProcedure(OnChangeCyclicReportUser.class, instanceNumber);
         CstsResult ret = startCyclicReport(onChangeCyclicReport.getProcedureInstanceIdentifier(),
@@ -305,7 +307,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
                                            deliveryCycle,
                                            onChange);
 
-        System.out.println("MdCstsSiUser#startCyclicReport() end");
+        LOG.info("MdCstsSiUser#startCyclicReport() end");
 
         return ret;
     }
@@ -324,12 +326,12 @@ public class MdCstsSiUser extends MdCstsSiUserInform
                                         ListOfParameters listOfParameters,
                                         long deliveryCycle) throws Exception
     {
-        System.out.println("MdCstsSiUser#startCyclicReport() begin");
+        LOG.info("MdCstsSiUser#startCyclicReport() begin");
 
         OnChangeCyclicReportUser onChangeCyclicReport = getProcedure(OnChangeCyclicReportUser.class, instanceNumber);
         CstsResult ret = startCyclicReport(onChangeCyclicReport.getProcedureInstanceIdentifier(), listOfParameters, deliveryCycle);
 
-        System.out.println("MdCstsSiUser#startCyclicReport() end");
+        LOG.info("MdCstsSiUser#startCyclicReport() end");
 
         return ret;
     }
@@ -343,7 +345,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
      */
     public CstsResult stopCyclicReport(ProcedureInstanceIdentifier piid) throws Exception
     {
-        System.out.println("MdCstsSiUser#stopCyclicReport() begin");
+        LOG.info("MdCstsSiUser#stopCyclicReport() begin");
 
         CstsResult ret = CstsResult.FAILURE;
         this.retLock.lock();
@@ -388,7 +390,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
             this.retLock.unlock();
         }
 
-        System.out.println("MdCstsSiUser#stopCyclicReport() end");
+        LOG.info("MdCstsSiUser#stopCyclicReport() end");
 
         return ret;
     }
@@ -402,12 +404,12 @@ public class MdCstsSiUser extends MdCstsSiUserInform
      */
     public CstsResult stopCyclicReport(long instanceNumber) throws Exception
     {
-        System.out.println("MdCstsSiUser#stopCyclicReport() begin");
+        LOG.info("MdCstsSiUser#stopCyclicReport() begin");
 
         CyclicReportUser cyclicReport = getProcedure(OnChangeCyclicReportUser.class, instanceNumber);
         CstsResult ret = stopCyclicReport(cyclicReport.getProcedureInstanceIdentifier());
 
-        System.out.println("MdCstsSiUser#stopCyclicReport() end");
+        LOG.info("MdCstsSiUser#stopCyclicReport() end");
 
         return ret;
     }
@@ -424,7 +426,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
     public CstsResult startNotification(ProcedureInstanceIdentifier piid,
                                         ListOfParameters listOfEvents) throws Exception
     {
-        System.out.println("MdCstsSiUser#startNotification() begin");
+        LOG.info("MdCstsSiUser#startNotification() begin");
 
         CstsResult ret = CstsResult.FAILURE;
         this.retLock.lock();
@@ -470,7 +472,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
             this.retLock.unlock();
         }
 
-        System.out.println("MdCstsSiUser#startNotification() end");
+        LOG.info("MdCstsSiUser#startNotification() end");
 
         return ret;
     }
@@ -487,12 +489,12 @@ public class MdCstsSiUser extends MdCstsSiUserInform
     public CstsResult startNotification(long instanceNumber,
                                         ListOfParameters listOfEvents) throws Exception
     {
-        System.out.println("MdCstsSiUser#startNotification() begin");
+        LOG.info("MdCstsSiUser#startNotification() begin");
 
         NotificationUser notification = getProcedure(NotificationUser.class, instanceNumber);
         CstsResult ret = startNotification(notification.getProcedureInstanceIdentifier(), listOfEvents);
 
-        System.out.println("MdCstsSiUser#startNotification() end");
+        LOG.info("MdCstsSiUser#startNotification() end");
 
         return ret;
     }
@@ -506,7 +508,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
      */
     public CstsResult stopNotification(ProcedureInstanceIdentifier piid) throws Exception
     {
-        System.out.println("MdCstsSiUser#stopNotification() begin");
+        LOG.info("MdCstsSiUser#stopNotification() begin");
 
         CstsResult ret = CstsResult.FAILURE;
         this.retLock.lock();
@@ -551,7 +553,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
             this.retLock.unlock();
         }
 
-        System.out.println("MdCstsSiUser#stopNotification() end");
+        LOG.info("MdCstsSiUser#stopNotification() end");
 
         return ret;
     }
@@ -565,12 +567,12 @@ public class MdCstsSiUser extends MdCstsSiUserInform
      */
     public CstsResult stopNotification(long instanceNumber) throws Exception
     {
-        System.out.println("MdCstsSiUser#stopNotification() begin");
+        LOG.info("MdCstsSiUser#stopNotification() begin");
 
         NotificationUser notification = getProcedure(NotificationUser.class, instanceNumber);
         CstsResult ret = stopNotification(notification.getProcedureInstanceIdentifier());
 
-        System.out.println("MdCstsSiUser#stopNotification() end");
+        LOG.info("MdCstsSiUser#stopNotification() end");
 
         return ret;
     }
@@ -587,7 +589,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
     public CstsResult queryInformation(ProcedureInstanceIdentifier piid,
                                        ListOfParameters listOfParameters) throws Exception
     {
-        System.out.println("MdCstsSiUser#queryInformation() begin");
+        LOG.info("MdCstsSiUser#queryInformation() begin");
 
         CstsResult ret = CstsResult.FAILURE;
         this.retLock.lock();
@@ -625,7 +627,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
             this.retLock.unlock();
         }
 
-        System.out.println("MdCstsSiUser#queryInformation() end");
+        LOG.info("MdCstsSiUser#queryInformation() end");
 
         return ret;
     }
@@ -642,12 +644,12 @@ public class MdCstsSiUser extends MdCstsSiUserInform
     public CstsResult queryInformation(long instanceNumber,
                                        ListOfParameters listOfParameters) throws Exception
     {
-        System.out.println("MdCstsSiUser#queryInformation() begin");
+        LOG.info("MdCstsSiUser#queryInformation() begin");
 
         InformationQueryUser informationQuery = getProcedure(InformationQueryUser.class, instanceNumber);
         CstsResult ret = queryInformation(informationQuery.getProcedureInstanceIdentifier(), listOfParameters);
 
-        System.out.println("MdCstsSiUser#queryInformation() end");
+        LOG.info("MdCstsSiUser#queryInformation() end");
 
         return ret;
     }
@@ -657,7 +659,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
     {
         while (this.operationResult == OperationResult.INVALID)
         {
-            System.out.println(waitMsg);
+            LOG.info(waitMsg);
 
             boolean signalled = this.retCond.await(this.getApiSi().getReturnTimeout(), TimeUnit.SECONDS);
             if (signalled == false)
@@ -670,7 +672,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
         CstsResult ret = convert(this.operationResult);
         if (ret == CstsResult.FAILURE)
         {
-            System.out.println("DIAGNOSTIC: " + getDiagnostic());
+            LOG.info("DIAGNOSTIC: " + getDiagnostic());
         }
 
         return ret;
@@ -746,7 +748,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
      */   
     private <P extends IProcedure> P getProcedure(Class<P> clazz, long instanceNumber) throws Exception
     {
-        System.out.println("MdCstsSiUser#getProcedure() begin");
+        LOG.info("MdCstsSiUser#getProcedure() begin");
 
         // first try to find procedure w/ the PRIME role
         P ret = getProcedure(clazz, ProcedureRole.PRIME, instanceNumber);
@@ -762,7 +764,7 @@ public class MdCstsSiUser extends MdCstsSiUserInform
                                 + " is not configured");
         }
 
-        System.out.println("MdCstsSiUser#getProcedure() end");
+        LOG.info("MdCstsSiUser#getProcedure() end");
         return ret;
     }
 

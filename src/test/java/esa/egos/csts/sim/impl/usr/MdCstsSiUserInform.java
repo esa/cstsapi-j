@@ -13,6 +13,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import esa.egos.csts.api.diagnostics.CyclicReportStartDiagnostics;
@@ -123,7 +124,8 @@ public abstract class MdCstsSiUserInform extends
     /** Number of the received event updates by a procedure */
     protected Map<ProcedureInstanceIdentifier, Integer> eventUpdateCounters;
 
-
+    private final Logger LOG = Logger.getLogger(getClass().getName());
+    
     /**
      * Constructs an MD CSTS User SI
      * 
@@ -136,7 +138,7 @@ public abstract class MdCstsSiUserInform extends
     {
         super(api, config, serviceVersion);
 
-        System.out.println("MdCstsSiUserInform#MdCstsSiUser() begin");
+        LOG.info("MdCstsSiUserInform#MdCstsSiUser() begin");
 
         this.retLock = new ReentrantLock();
         this.retCond = retLock.newCondition();
@@ -165,7 +167,7 @@ public abstract class MdCstsSiUserInform extends
 
         resetOperationResult();
 
-        System.out.println("MdCstsSiUserInform#MdCstsSiUser() end");
+        LOG.info("MdCstsSiUserInform#MdCstsSiUser() end");
     }
 
     /**
@@ -176,7 +178,7 @@ public abstract class MdCstsSiUserInform extends
     @Override
     public void informOpInvocation(IOperation operation)
     {
-        // System.out.println("MdCstsSiUserInform#informOpInvocation() begin");
+        // LOG.info("MdCstsSiUserInform#informOpInvocation() begin");
 
         switch (operation.getType())
         {
@@ -191,10 +193,10 @@ public abstract class MdCstsSiUserInform extends
         	protocolAbort(); // TODO: call a TBD peer abort method
             break;
         default:
-            System.err.print("unexpected operation " + operation.getClass().getSimpleName() + " invoked");
+            LOG.severe("unexpected operation " + operation.getClass().getSimpleName() + " invoked");
             break;
         }
-        // System.out.println("MdCstsSiUserInform#informOpInvocation() end");
+        // LOG.info("MdCstsSiUserInform#informOpInvocation() end");
     }
 
     /**
@@ -205,9 +207,9 @@ public abstract class MdCstsSiUserInform extends
     @Override
     public void informOpAcknowledgement(IAcknowledgedOperation operation)
     {
-        System.out.println("MdCstsSiUserInform#informOpAcknowledgement() begin");
-        System.err.println("NOT IMPL!");
-        System.out.println("MdCstsSiUserInform#informOpAcknowledgement() end");
+        LOG.info("MdCstsSiUserInform#informOpAcknowledgement() begin");
+        LOG.severe("NOT IMPL!");
+        LOG.info("MdCstsSiUserInform#informOpAcknowledgement() end");
     }
 
     /**
@@ -218,7 +220,7 @@ public abstract class MdCstsSiUserInform extends
     @Override
     public void informOpReturn(IConfirmedOperation operation)
     {
-        System.out.println("MdCstsSiUserInform#informOpReturn() begin");
+        LOG.info("MdCstsSiUserInform#informOpReturn() begin");
 
         switch (operation.getType())
         {
@@ -251,7 +253,7 @@ public abstract class MdCstsSiUserInform extends
             break;
         }
 
-        System.out.println("MdCstsSiUserInform#informOpReturn() end");
+        LOG.info("MdCstsSiUserInform#informOpReturn() end");
     }
 
     /**
@@ -260,13 +262,14 @@ public abstract class MdCstsSiUserInform extends
     @Override
     public void protocolAbort()
     {
-        System.out.println("MdCstsSiUserInform#protocolAbort() begin");
+        LOG.info("MdCstsSiUserInform#protocolAbort() begin");
 
         this.retLock.lock();
 
         try
         {
-            System.out.println("PROTOCOL ABORT");
+            LOG.info("PROTOCOL ABORT");
+            this.operationResult = OperationResult.NEGATIVE;
             this.retCond.signalAll();
         }
         finally
@@ -274,7 +277,7 @@ public abstract class MdCstsSiUserInform extends
             this.retLock.unlock();
         }
 
-        System.out.println("MdCstsSiUserInform#protocolAbort() end");
+        LOG.info("MdCstsSiUserInform#protocolAbort() end");
     }
 
     /**
@@ -286,7 +289,7 @@ public abstract class MdCstsSiUserInform extends
      */
     private <OP extends IConfirmedOperation> void onReturn(OP op, Supplier<String> specDiagFn)
     {
-        System.out.println("MdCstsSiUserInform#onReturn() begin");
+        LOG.info("MdCstsSiUserInform#onReturn() begin");
 
         this.retLock.lock();
 
@@ -306,7 +309,7 @@ public abstract class MdCstsSiUserInform extends
                 }
             }
 
-            System.out.println("Signaling operation " + op.getClass().getSimpleName() + " return");
+            LOG.info("Signaling operation " + op.getClass().getSimpleName() + " return");
             this.retCond.signalAll();
         }
         finally
@@ -314,7 +317,7 @@ public abstract class MdCstsSiUserInform extends
             this.retLock.unlock();
         }
 
-        System.out.println("MdCstsSiUserInform#onReturn() end");
+        LOG.info("MdCstsSiUserInform#onReturn() end");
     }
 
     private void setDiagnosticObject(CyclicReportStartDiagnostics cyclicReportStartDiagnostics) {
@@ -341,7 +344,7 @@ public abstract class MdCstsSiUserInform extends
     
     private void onStartReturnB1(IStart start)
     {
-        System.out.println("MdCstsSiUserInform#onStartReturn() begin(b1)");
+        LOG.info("MdCstsSiUserInform#onStartReturn() begin(b1)");
 
         this.retLock.lock();
 
@@ -402,12 +405,12 @@ public abstract class MdCstsSiUserInform extends
             this.retLock.unlock();
         }
 
-        System.out.println("MdCstsSiUserInform#onStartReturn() end(b1)");
+        LOG.info("MdCstsSiUserInform#onStartReturn() end(b1)");
     }
     
     private void onStartReturnB2(IStart start)
     {
-        System.out.println("MdCstsSiUserInform#onStartReturn() begin(b2)");
+        LOG.info("MdCstsSiUserInform#onStartReturn() begin(b2)");
 
         this.retLock.lock();
 
@@ -468,7 +471,7 @@ public abstract class MdCstsSiUserInform extends
             this.retLock.unlock();
         }
 
-        System.out.println("MdCstsSiUserInform#onStartReturn() end(b2)");
+        LOG.info("MdCstsSiUserInform#onStartReturn() end(b2)");
     }
 
     /**
@@ -478,7 +481,7 @@ public abstract class MdCstsSiUserInform extends
      */
     private void onStopReturn(IStop stop)
     {
-        System.out.println("MdCstsSiUserInform#onStopReturn() begin");
+        LOG.info("MdCstsSiUserInform#onStopReturn() begin");
 
         this.retLock.lock();
 
@@ -493,7 +496,7 @@ public abstract class MdCstsSiUserInform extends
             this.retLock.unlock();
         }
 
-        System.out.println("MdCstsSiUserInform#onStopReturn() end");
+        LOG.info("MdCstsSiUserInform#onStopReturn() end");
     }
 
     private void processFunctionalResourceParameters(ProcedureInstanceIdentifier piid,
@@ -536,13 +539,13 @@ public abstract class MdCstsSiUserInform extends
                             }
                             else
                             {
-                                System.out.println("Received qualified parameter " + qualifiedParameter.getName()
+                                LOG.info("Received qualified parameter " + qualifiedParameter.getName()
                                                    + " w/ unexpected type " + parameterValue.getType());
                             }
                         }
                         else
                         {
-                            System.out.println("Received qualified parameter " + qualifiedParameter.getName()
+                            LOG.info("Received qualified parameter " + qualifiedParameter.getName()
                                                + " w/o qualified values");
                         }
                     }
@@ -575,7 +578,7 @@ public abstract class MdCstsSiUserInform extends
      */
     private void onGetReturn(IGet get)
     {
-        // System.out.println("MdCstsSiUserInform#onGetReturn() begin");
+        // LOG.info("MdCstsSiUserInform#onGetReturn() begin");
 
         this.retLock.lock();
         try
@@ -627,7 +630,7 @@ public abstract class MdCstsSiUserInform extends
             this.retLock.unlock();
         }
 
-        // System.out.println("MdCstsSiUserInform#onGetReturn() end");
+        // LOG.info("MdCstsSiUserInform#onGetReturn() end");
     }
 
     private FunctionalResourceParameterEx<?, FunctionalResourceValue<?>> getParameter(Map<Name, FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>> procedureParameters,
@@ -767,7 +770,7 @@ public abstract class MdCstsSiUserInform extends
      */
     private void onTransferData(ITransferData transferData)
     {
-        // System.out.println("MdCstsSiUserInform#onTransferData() begin");
+        // LOG.info("MdCstsSiUserInform#onTransferData() begin");
 
         ProcedureInstanceIdentifier piid = transferData.getProcedureInstanceIdentifier();
 
@@ -804,7 +807,7 @@ public abstract class MdCstsSiUserInform extends
             this.retLock.unlock();
         }
 
-        // System.out.println("MdCstsSiUserInform#onTransferData() end");
+        // LOG.info("MdCstsSiUserInform#onTransferData() end");
     }
 
     /**
@@ -821,7 +824,7 @@ public abstract class MdCstsSiUserInform extends
 	    	try {
 				boolean ret = this.retCond.await(ms, TimeUnit.MILLISECONDS);
 				if(ret == false) {
-					System.out.println("Timeout of " + ms + " ms. Received " + received + " transfer data operations");
+					LOG.info("Timeout of " + ms + " ms. Received " + received + " transfer data operations");
 					return -1;
 				} else {
 					received++;
@@ -833,7 +836,7 @@ public abstract class MdCstsSiUserInform extends
 				retLock.unlock();
 			}	    	
     	}
-    	System.out.println("Received " + received + " transfer data operations");
+    	LOG.info("Received " + received + " transfer data operations");
     	return received;
     }
     
@@ -848,7 +851,7 @@ public abstract class MdCstsSiUserInform extends
     	boolean signaled = false;
     	
     	if(getApiSi().getStatus() == desiredState) {
-    		System.out.println("User SI has desired state, no wait for " + desiredState);
+    		LOG.info("User SI has desired state, no wait for " + desiredState);
     		return desiredState;
     	}
     	
@@ -863,9 +866,9 @@ public abstract class MdCstsSiUserInform extends
     	}
     	
     	if(desiredState == getApiSi().getStatus()) {
-    		System.out.println("User SI has desired state " + desiredState + ", state change signaled: " + signaled);
+    		LOG.info("User SI has desired state " + desiredState + ", state change signaled: " + signaled);
     	} else {
-    		System.err.println("User SI does not have desired state " + desiredState + ", state change signaled: " + signaled);
+    		LOG.severe("User SI does not have desired state " + desiredState + ", state change signaled: " + signaled);
     	}
     	
     	return getApiSi().getStatus();
@@ -878,14 +881,14 @@ public abstract class MdCstsSiUserInform extends
      */
     private void onNotify(INotify notify)
     {
-        System.out.println("MdCstsSiUserInform#onNotify() begin");
+        LOG.info("MdCstsSiUserInform#onNotify() begin");
 
         ProcedureInstanceIdentifier piid = notify.getProcedureInstanceIdentifier();
         Name eventName = notify.getEventName();
 
         if (eventName != null)
         {
-            System.out.println(eventName);
+            LOG.info(eventName.toString());
 
             synchronized (this.notifiedEvents)
             {
@@ -914,7 +917,7 @@ public abstract class MdCstsSiUserInform extends
                 }
                 else
                 {
-                    System.out.println("Received and event w/ usuppoerted EventValueType " + eventValue.getType());
+                    LOG.info("Received and event w/ usuppoerted EventValueType " + eventValue.getType());
                 }
             }
         }
@@ -923,7 +926,7 @@ public abstract class MdCstsSiUserInform extends
             e.printStackTrace();
         }
 
-        System.out.println("MdCstsSiUserInform#onNotify() end");
+        LOG.info("MdCstsSiUserInform#onNotify() end");
 
     }
 

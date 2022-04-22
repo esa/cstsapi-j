@@ -160,7 +160,7 @@ public class TCPCommMng
                     
                     if(this.channel != null)
                     {
-                    	msg += " for " + this.channel.toString();
+                    	msg += " for " + this.channel.toString() + e;
                     }
                     
                     // this.channel.logError(LogMsg.TMLTR_IOEVENT.getCode(),

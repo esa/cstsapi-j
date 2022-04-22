@@ -6,6 +6,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
+
 import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.rules.Timeout;
@@ -31,6 +33,7 @@ import esa.egos.csts.api.TestUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 
 public class ProtocolAbortMultipleProviderAbortTest {
@@ -47,6 +50,8 @@ public class ProtocolAbortMultipleProviderAbortTest {
      private static final int SERVICE_VERSION_SFW_B1 = 1;
 
      private static final int SERVICE_VERSION_SFW_B2 = 2;
+     
+     private final Logger LOG = Logger.getLogger(getClass().getName());
 
      @BeforeClass
      public static void setUpClass() throws ApiException {
@@ -67,8 +72,8 @@ public class ProtocolAbortMultipleProviderAbortTest {
           file = new File("src/test/resources/UserConfig.xml");
           String userConfigName = file.getAbsolutePath();
 
-          System.out.println("provider config: " + providerConfigName);
-          System.out.println("user config: " + userConfigName);
+          LOG.info("provider config: " + providerConfigName);
+          LOG.info("user config: " + userConfigName);
 
           this.providerApi = new CstsProviderApi("Test Service Provider API");
           this.providerApi.initialize(providerConfigName);
@@ -78,7 +83,7 @@ public class ProtocolAbortMultipleProviderAbortTest {
           this.userApi.initialize(userConfigName);
           this.userApi.start();
 
-          System.out.println("CSTS user and provider API started");
+          LOG.info("CSTS user and provider API started");
      }
 
      /**
@@ -88,7 +93,7 @@ public class ProtocolAbortMultipleProviderAbortTest {
      public void tearDown() {
           this.providerApi.stop();
           this.userApi.stop();
-          System.out.println("CSTS user and provider API stopped");
+          LOG.info("CSTS user and provider API stopped");
      }
 
      /**
@@ -98,8 +103,9 @@ public class ProtocolAbortMultipleProviderAbortTest {
       */
      
      @Test
+     @Ignore
      public void test1ProviderAbortB1() throws InterruptedException {
-    	 for(int idx=0; idx<2; idx++) {
+    	 for(int idx=0; idx<15; idx++) {
     		 testMultipleProviderAbort(SERVICE_VERSION_SFW_B1, 1);
     	 }
      }
@@ -113,7 +119,7 @@ public class ProtocolAbortMultipleProviderAbortTest {
      
      @Test
      public void test15ProviderAbortB1() throws InterruptedException {
-    	 for(int idx=0; idx<2; idx++) {
+    	 for(int idx=0; idx<15; idx++) {
     		 testMultipleProviderAbort(SERVICE_VERSION_SFW_B1, 15);
     	 }
      }
@@ -204,12 +210,12 @@ public class ProtocolAbortMultipleProviderAbortTest {
                     MdCstsSiProvider currentProviderSi = mdCstsSiProviders.get(indexOfProviderUser);
                     
                     if (currentUserSi.isBound()) {
-                         System.out.println("userSi#destroy() user " + indexOfProviderUser);
+                         LOG.info("userSi#destroy() user " + indexOfProviderUser);
                          currentUserSi.destroy();
                     }
                     assertEquals(ServiceStatus.UNBOUND, mdCstsSiProviders.get(indexOfProviderUser).waitServiceStatus(ServiceStatus.UNBOUND, 1000));
                     
-                    System.out.println("providerSi#destroy() provider " + indexOfProviderUser);
+                    LOG.info("providerSi#destroy() provider " + indexOfProviderUser);
                     currentProviderSi.destroy();
                }
 
