@@ -355,7 +355,7 @@ public class GenericTest
             mdCollection.fireAllEvents();
 
             // wait for notification
-            userSi.waitTransferData(5, 200);
+            userSi.waitTransferData(10, 200);
             assertTrue("no event notified", userSi.getNotifiedEventCount() > 0);
 
             System.out.println("STOP-NOTIFICATION...");

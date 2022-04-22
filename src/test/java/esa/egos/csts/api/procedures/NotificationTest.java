@@ -266,7 +266,7 @@ public class NotificationTest
 
             mdCollection.fireAllEvents();
             // wait for notification (there should be none)
-            userSi.waitTransferData(5, 500);
+            userSi.waitTransferData(10, 500);
 
             assertFalse("did not get any notifications from provider", userSi.getNotifiedEventCount() == 0);
 
@@ -342,7 +342,7 @@ public class NotificationTest
             
             mdCollection.fireAllEvents();
             // wait for notification (there should be none)
-            userSi.waitTransferData(5, 500);
+            userSi.waitTransferData(10, 500);
 
             // verify that diagnostic contains the OID of the unknown parameter
             System.out.println("diag: "+userSi.getDiagnostic());
@@ -393,7 +393,7 @@ public class NotificationTest
 
             mdCollection.fireAllEvents();
             // wait for notification (there should be none)
-            userSi.waitTransferData(5, 500);
+            userSi.waitTransferData(10, 500);
 
             List<Name> notificationEvents_01 = userSi.getNotifiedEvents();
             assertFalse("did not get any events from provider", notificationEvents_01.isEmpty());
@@ -512,7 +512,7 @@ public class NotificationTest
 
             mdCollection.fireAllEvents();
             // wait for notification (there should be none)
-            userSi.waitTransferData(5, 500);
+            userSi.waitTransferData(10, 500);
 
             List<Name> eventNotifications_01 = userSi.getNotifiedEvents();
             assertFalse("did not get any parameters from provider", eventNotifications_01.isEmpty());
@@ -675,7 +675,7 @@ public class NotificationTest
 
             mdCollection.fireAllEvents();
             // wait for notification (there should be none)
-            userSi.waitTransferData(5, 500);
+            userSi.waitTransferData(10, 500);
 
             List<Name> notificationEvents = userSi.getNotifiedEvents();
             assertFalse("did not get any events from provider", notificationEvents.isEmpty());

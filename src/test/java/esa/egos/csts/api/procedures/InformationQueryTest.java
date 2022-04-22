@@ -1128,7 +1128,7 @@ public class InformationQueryTest
             }
 
             // wait for several cyclic reports
-            userSi.waitTransferData(5, 100);
+            userSi.waitTransferData(10, 100);
 
             System.out.println("update provider's parameter value");
             mdCollection.updateIntegerParameter(mdCollection.getParameterNameSet().getParameterNames().get(0), 10);

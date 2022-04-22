@@ -164,9 +164,9 @@ public class TestMds {
 					Assert.assertTrue(proc.isDeactivationPending() == false);
 				}				
 								
-				userSi.waitTransferData(5, 500);
+				userSi.waitTransferData(10, 500);
 				providerSi.setAntAzimut(815, 0);
-				userSi.waitTransferData(5, 500);
+				userSi.waitTransferData(10, 500);
 				
 				userSi.stopCyclicReport(0);
 				
@@ -223,7 +223,7 @@ public class TestMds {
 				boolean onChange = true;
 				userSi.startCyclicReport(1000, onChange, 0);
 				
-				userSi.waitTransferData(5, 500);
+				userSi.waitTransferData(10, 500);
 	
 				System.out.println("Initiate abort by the user...");
 				userSi.getApiServiceInstance().getAssociationControlProcedure().abort(PeerAbortDiagnostics.OTHER_REASON);		

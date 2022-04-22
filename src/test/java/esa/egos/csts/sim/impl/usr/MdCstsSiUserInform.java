@@ -809,6 +809,47 @@ public abstract class MdCstsSiUserInform extends
 
         // LOG.info("MdCstsSiUserInform#onTransferData() end");
     }
+    
+    /**
+     * Wait for the given procedure identifier for the given number of parameter updates
+     * @param piid
+     * @param numUpdates
+     * @return
+     */
+    public long waitForNumParamUpdates(ProcedureInstanceIdentifier piid, int numUpdates)
+    {
+    	int attempt = 0;
+    	final int maxAttempts = 100;
+    	
+    	while(getParameterUpdateCount(piid) < numUpdates)
+    	{
+    		retLock.lock();
+    		try
+    		{
+    			// ease testing... this should not be an endless loop
+    			if(attempt >= maxAttempts) 
+    			{
+    				LOG.severe("Failed to receive " + numUpdates + " (got " + getParameterUpdateCount(piid) 
+    					+ ") parameter updates for " + piid + " attempts: " + attempt);
+    				return getParameterUpdateCount(piid);
+    			}
+    			
+				attempt++;
+    			retCond.await();
+			}
+    		catch (InterruptedException e)
+    		{
+				e.printStackTrace();
+			} finally 
+    		{
+				retLock.unlock();
+    		}
+    		
+    	}
+
+    	LOG.info("Completed " + numUpdates+ " parameter updates for " + piid);
+    	return getParameterUpdateCount(piid);
+    }
 
     /**
      * Wait for reception of a given number transfer data unit
