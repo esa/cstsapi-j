@@ -391,9 +391,9 @@ public abstract class Channel implements IChannelInitiate, ITimeoutProcessor
         
         LOG.fine(this.channelState.toString());
 
-        if (LOG.isLoggable(Level.INFO))
+        if (LOG.isLoggable(Level.FINE))
         {
-            LOG.info("Changing the channel state from: " + this.channelState + ", to: " + newState);
+            LOG.fine("Changing the channel state from: " + this.channelState + ", to: " + newState);
         }
 
         this.channelState = newState;
