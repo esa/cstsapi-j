@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import esa.egos.csts.api.diagnostics.BindDiagnostic;
+import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.enumerations.AppRole;
 import esa.egos.csts.api.enumerations.Result;
 import esa.egos.csts.api.exceptions.ApiException;
@@ -365,11 +366,12 @@ public abstract class CstsApi implements IApi, ILocator {
 
 	@Override
 	public void destroyServiceInstance(IServiceInstance serviceInstance) throws ApiException {
-		if (this.serviceInstanceList.contains(serviceInstance)
-				// && serviceInstance.getState().getStateEnum() ==
-				// ServiceInstanceStateEnum.unbound){
-				&& serviceInstance.getStatus() == ServiceStatus.UNBOUND) {
-
+		if (this.serviceInstanceList.contains(serviceInstance)) {
+			if(serviceInstance.getStatus() != ServiceStatus.UNBOUND &&
+					serviceInstance instanceof IServiceInstanceInternal) {
+				((IServiceInstanceInternal)serviceInstance).abort(PeerAbortDiagnostics.OPERATIONAL_REQUIREMENT);
+			}
+			
 			// TODO serviceInstance.destroy();
 			// serviceInstance.getAssociationControlProcedure().releaseAssoc(); ?
 			// #hd# give a chance to remove ports

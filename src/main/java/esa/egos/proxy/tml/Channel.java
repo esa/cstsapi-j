@@ -525,6 +525,8 @@ public abstract class Channel implements IChannelInitiate, ITimeoutProcessor
 
         this.commMng.stopThreads();
 
+        this.objMutex.lock();
+        
         if (this.connectedSock != null)
         {
             try
@@ -546,7 +548,7 @@ public abstract class Channel implements IChannelInitiate, ITimeoutProcessor
             this.connectedSock = null;
         }
 
-        this.objMutex.lock();
+        
 
         if (this.reporter != null)
         {
@@ -771,7 +773,7 @@ public abstract class Channel implements IChannelInitiate, ITimeoutProcessor
                 LOG.finer(msg);
                 
             // write urgent data with diagnostic
-                if(!this.connectedSock.equals(null)) {
+                if(this.connectedSock != null) {
                      this.connectedSock.sendUrgentData(diag);
                 }
                 else {

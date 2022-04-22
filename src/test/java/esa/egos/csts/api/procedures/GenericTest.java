@@ -101,13 +101,17 @@ public class GenericTest
     @Test
     public void testAssociationB1()
     {
+    	for(int idx=0; idx<100; idx++) {
          testAssociation(SERVICE_VERSION_SFW_B1);
+    	}
     }
     
     @Test
     public void testAssociationB2()
     {
+    	for(int idx=0; idx<100; idx++) {
          testAssociation(SERVICE_VERSION_SFW_B2);
+    	}
     }
     
     /**

@@ -917,8 +917,15 @@ public class EE_APIPX_AssocPxy extends EE_APIPX_LinkAdapter implements IChannelI
         signalResponseReceived();
 
         // close the writing thread
-        if(this.writingTh != null)
+        if(this.writingTh != null) {
         	this.writingTh.terminate();
+        	try {
+				this.writingTh.join();
+			} catch (InterruptedException e) {
+				LOG.log(Level.SEVERE, "Interrupted exception joining EE_APIPX_AssocPxy#WritingThread", e);
+				e.printStackTrace();
+			}
+        }
     }
 
     /**

@@ -100,10 +100,10 @@ public abstract class EE_APIPX_LinkAdapter
                 {
                     LOG.finest("Waiting for ack on link " + link);
                 }
-                this.condVar.timeWait(timer, TimeUnit.SECONDS);
-                if (LOG.isLoggable(Level.FINEST))
+                boolean signaled = this.condVar.timeWait(timer, TimeUnit.SECONDS);
+                if (signaled == false && LOG.isLoggable(Level.SEVERE))
                 {
-                    LOG.finest("Timeout or response on link " + link + " received");
+                    LOG.severe("Timeout or response on link " + link + " received");
                 }
                 this.condVar.unlock();
             }

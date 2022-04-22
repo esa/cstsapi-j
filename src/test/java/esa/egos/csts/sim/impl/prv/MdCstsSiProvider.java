@@ -3,6 +3,10 @@ package esa.egos.csts.sim.impl.prv;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 import esa.egos.csts.api.events.IEvent;
@@ -26,6 +30,7 @@ import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.procedures.informationquery.InformationQueryProvider;
 import esa.egos.csts.api.procedures.notification.NotificationProvider;
 import esa.egos.csts.api.serviceinstance.IServiceInstance;
+import esa.egos.csts.api.states.service.ServiceStatus;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.LabelList;
 import esa.egos.csts.api.types.Name;
@@ -39,12 +44,20 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
 {
 
     MdCollection mdCollection;
+    
+    /** lock protecting this service instance */
+    private final Lock stateLock;
+
+    /** condition variable for signaling an operation return or abort */
+    private final Condition stateCond;
 
 
     public MdCstsSiProvider(ICstsApi api,
                             MdCstsSiProviderConfig config) throws ApiException
     {
         super(api, config,0);
+        this.stateLock = new ReentrantLock();
+        this.stateCond = stateLock.newCondition();
 
         System.out.println("MdCstsSiProvider#MdCstsSiProvider() begin");
         System.out.println("MdCstsSiProvider#MdCstsSiProvider() end");
@@ -110,10 +123,14 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
     public void informOpInvocation(IOperation operation)
     {
         System.out.println("MdCstsSiProvider#informOpInvocation() begin");
+        this.stateLock.lock();
 
-        System.out.println("Operation invocation:  " + operation);
-
+        System.out.println("Operation invocation (state: " + getApiSi().getStatus() + "):  " + operation);
+        this.stateCond.signalAll();
+        
+        this.stateLock.unlock();
         System.out.println("MdCstsSiProvider#informOpInvocation() end");
+        
     }
 
     @Override
@@ -140,9 +157,12 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
     public void protocolAbort()
     {
         System.out.println("MdCstsSiProvider#protocolAbort() begin");
+        this.stateLock.lock();
 
         System.out.println("CSTS provider service instance received protocol abort");
+        this.stateCond.signalAll();
 
+        this.stateLock.unlock();
         System.out.println("MdCstsSiProvider#informOpAcknowledgement() end");
     }
 
@@ -305,5 +325,39 @@ public class MdCstsSiProvider extends MdCstsSi<MdCstsSiProviderConfig, Informati
                 .map(p -> (FunctionalResourceParameterEx<?, FunctionalResourceValue<?>>)p)
                 .collect(Collectors.toList());
     }
+    
+    /**
+     * Wait for the specified timeout until the desired SI status is reached.
+     * Wait on the retCond member, which is signaled for incoming operations changing the state
+     * @param desiredState
+     * @param msTimeout
+     * @return
+     */
+    public ServiceStatus waitServiceStatus(ServiceStatus desiredState, long msTimeout) {
+    	boolean signaled = false;
+    	
+    	if(getApiSi().getStatus() == desiredState) {
+    		System.out.println("Provider SI has desired state, no wait for " + desiredState);
+    		return desiredState;
+    	}
+    	
+    	this.stateLock.lock();
+    	try {
+    		signaled = this.stateCond.await(msTimeout, TimeUnit.MILLISECONDS);
+    	}
+    	catch(InterruptedException ie) {
+    		// ignore 
+    	} finally {
+    		this.stateLock.unlock();
+    	}
+    	
+    	if(desiredState == getApiSi().getStatus()) {
+    		System.out.println("Provider SI has desired state " + desiredState + ", state change signaled: " + signaled);
+    	} else {
+    		System.err.println("Provider SI does not have desired state " + desiredState + ", state change signaled: " + signaled);
+    	}
+    	
+    	return getApiSi().getStatus();
+    }    
 
 }

@@ -56,6 +56,7 @@ import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
 import esa.egos.csts.api.procedures.informationquery.InformationQueryUser;
 import esa.egos.csts.api.procedures.notification.NotificationUser;
+import esa.egos.csts.api.states.service.ServiceStatus;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.Name;
 import esa.egos.csts.api.types.SfwVersion;
@@ -186,7 +187,9 @@ public abstract class MdCstsSiUserInform extends
         case NOTIFY:
             onNotify((INotify) operation);
             break;
-
+        case PEER_ABORT:
+        	protocolAbort(); // TODO: call a TBD peer abort method
+            break;
         default:
             System.err.print("unexpected operation " + operation.getClass().getSimpleName() + " invoked");
             break;
@@ -264,7 +267,7 @@ public abstract class MdCstsSiUserInform extends
         try
         {
             System.out.println("PROTOCOL ABORT");
-            this.retCond.signal();
+            this.retCond.signalAll();
         }
         finally
         {
@@ -304,7 +307,7 @@ public abstract class MdCstsSiUserInform extends
             }
 
             System.out.println("Signaling operation " + op.getClass().getSimpleName() + " return");
-            this.retCond.signal();
+            this.retCond.signalAll();
         }
         finally
         {
@@ -794,7 +797,7 @@ public abstract class MdCstsSiUserInform extends
         this.retLock.lock();
         try
         {
-            this.retCond.signal();
+            this.retCond.signalAll();
         }
         finally
         {
@@ -832,6 +835,40 @@ public abstract class MdCstsSiUserInform extends
     	}
     	System.out.println("Received " + received + " transfer data operations");
     	return received;
+    }
+    
+    /**
+     * Wait for the specified timeout until the desired SI status is reached.
+     * Wait on the retCond member, which is signaled for incoming operations changing the state
+     * @param desiredState
+     * @param msTimeout
+     * @return
+     */
+    public ServiceStatus waitServiceStatus(ServiceStatus desiredState, long msTimeout) {
+    	boolean signaled = false;
+    	
+    	if(getApiSi().getStatus() == desiredState) {
+    		System.out.println("User SI has desired state, no wait for " + desiredState);
+    		return desiredState;
+    	}
+    	
+    	this.retLock.lock();
+    	try {
+    		signaled = this.retCond.await(msTimeout, TimeUnit.MILLISECONDS);
+    	}
+    	catch(InterruptedException ie) {
+    		// ignore 
+    	} finally {
+    		this.retLock.unlock();
+    	}
+    	
+    	if(desiredState == getApiSi().getStatus()) {
+    		System.out.println("User SI has desired state " + desiredState + ", state change signaled: " + signaled);
+    	} else {
+    		System.err.println("User SI does not have desired state " + desiredState + ", state change signaled: " + signaled);
+    	}
+    	
+    	return getApiSi().getStatus();
     }
     
     /**

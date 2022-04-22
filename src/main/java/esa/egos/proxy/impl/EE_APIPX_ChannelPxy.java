@@ -76,7 +76,7 @@ public class EE_APIPX_ChannelPxy extends IEE_APIPX_LoggerAdapter implements ICha
      */
     @Override
     public void takeData(byte[] data, int dataType, EE_APIPX_Link pLink, boolean lastPdu)
-    {
+    {    	
         if (this.ieeChannelInform == null)
         {
             return;
@@ -439,6 +439,12 @@ public class EE_APIPX_ChannelPxy extends IEE_APIPX_LoggerAdapter implements ICha
     private void terminateThread()
     {
         this.writingTh.terminate();
+        try {
+			this.writingTh.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     private class WritingThread extends Thread
@@ -457,7 +463,7 @@ public class EE_APIPX_ChannelPxy extends IEE_APIPX_LoggerAdapter implements ICha
 
         public void terminate()
         {
-            this.isRunning = false;
+            this.isRunning = false;            
         }
     }
 

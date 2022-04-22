@@ -49,8 +49,15 @@ public class CondVar
         this.condVar.await();
     }
 
-    public void timeWait(long time, TimeUnit unit) throws InterruptedException
+    /**
+     * Timed wait like java.util.concurrent.locks.Condition
+     * @param time
+     * @param unit
+     * @return	false if the waiting time elapsed	
+     * @throws InterruptedException
+     */
+    public boolean timeWait(long time, TimeUnit unit) throws InterruptedException
     {
-        this.condVar.await(time, unit);
+        return this.condVar.await(time, unit);
     }
 }

@@ -71,7 +71,7 @@ public interface ICstsApi {
 	IServiceInstance getServiceInstance(IServiceInstanceIdentifier serviceInstanceIdentifier);
 
 	/**
-	 * Destroys the specified Service Instance.
+	 * Destroys the specified Service Instance. If the service instance is not unbound, it will be aborted.
 	 * 
 	 * @param serviceInstance the specified Service Instance
 	 * @throws ApiException

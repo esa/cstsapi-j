@@ -153,6 +153,7 @@ public class EE_APIPX_BinderAdapter extends EE_APIPX_LinkAdapter
         Result res = pBinder.deregisterPort(mess.getRegId());
 
         // send the result
+        LOG.fine("Send Deregister Port response on link " + this.eeAPIPXLink);
         sendResultMessage(MessId.mid_Rsp_DeregisterPort.getCode(), res, mess.getRegId(), this.eeAPIPXLink);
     }
 

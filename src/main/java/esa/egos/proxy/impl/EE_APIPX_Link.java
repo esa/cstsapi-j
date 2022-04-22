@@ -177,6 +177,12 @@ public class EE_APIPX_Link
             LOG.finest("Stopping the receiving thread on link " + this + ": " + this.recThread.isCanceled());
         }
         this.recThread.cancel();
+        try {
+			this.recThread.join();
+		} catch (InterruptedException e) {
+			LOG.log(Level.SEVERE, "Interrupted Exception joining recevie thread of EE_APIPX_Link");
+			e.printStackTrace();
+		}
 
     }
 
@@ -252,6 +258,7 @@ public class EE_APIPX_Link
                 readHeader = true;
             }
         }
+        LOG.fine("Leaving EE_APIPX_Link#threadMain");
     }
 
     /**
@@ -475,6 +482,7 @@ public class EE_APIPX_Link
 
         // stop the receiving thread
         this.recThread.cancel();
+        
 
         // close the client socket
         try
@@ -680,5 +688,11 @@ public class EE_APIPX_Link
         {
             return this.cancelThread;
         }
+    }
+    
+    @Override
+    public String toString() 
+    {
+    	return "EE_APIPX_Link on socket " + this.socket + "disconnect requested: " + disconnectionRequested;
     }
 }

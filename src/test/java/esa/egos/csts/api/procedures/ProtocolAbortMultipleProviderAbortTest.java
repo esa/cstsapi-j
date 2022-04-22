@@ -19,7 +19,7 @@ import esa.egos.csts.api.oids.OIDs;
 import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureInstanceIdentifier;
 import esa.egos.csts.api.procedures.impl.ProcedureType;
-
+import esa.egos.csts.api.states.service.ServiceStatus;
 import esa.egos.csts.sim.impl.MdCstsSiConfig;
 import esa.egos.csts.sim.impl.prv.MdCstsSiProvider;
 import esa.egos.csts.sim.impl.prv.MdCstsSiProviderConfig;
@@ -98,8 +98,24 @@ public class ProtocolAbortMultipleProviderAbortTest {
       */
      
      @Test
-     public void testMultipleProviderAbortB1() throws InterruptedException {
-          testMultipleProviderAbort(SERVICE_VERSION_SFW_B1);
+     public void test1ProviderAbortB1() throws InterruptedException {
+    	 for(int idx=0; idx<2; idx++) {
+    		 testMultipleProviderAbort(SERVICE_VERSION_SFW_B1, 1);
+    	 }
+     }
+
+     
+     /**
+      * Test multiple provider aborts for B1 standard
+      * 
+      * @throws InterruptedException
+      */
+     
+     @Test
+     public void test15ProviderAbortB1() throws InterruptedException {
+    	 for(int idx=0; idx<2; idx++) {
+    		 testMultipleProviderAbort(SERVICE_VERSION_SFW_B1, 15);
+    	 }
      }
 
      /**
@@ -108,18 +124,15 @@ public class ProtocolAbortMultipleProviderAbortTest {
       * @throws InterruptedException
       */
      @Test
-     public void testMultipleProviderAbortB2() throws InterruptedException {
-          testMultipleProviderAbort(SERVICE_VERSION_SFW_B2);
+     public void test15ProviderAbortB2() throws InterruptedException {
+          testMultipleProviderAbort(SERVICE_VERSION_SFW_B2, 15);
      }
 
      /**
       * Test multiple provider aborts
       */
-     public void testMultipleProviderAbort(int sfwVersion) throws InterruptedException {
+     public void testMultipleProviderAbort(int sfwVersion, int numberOfProvidersUsers) throws InterruptedException {
           try {
-
-               int numberOfProvidersUsers = 15;
-
                // S/C identifier
                ObjectIdentifier scId = ObjectIdentifier.of(1, 3, 112, 4, 7, 0);
                // G/S identifier
@@ -161,11 +174,17 @@ public class ProtocolAbortMultipleProviderAbortTest {
 
                // simulate protocol aborts from user
                for (int indexOfProviderUser = 0; indexOfProviderUser < numberOfProvidersUsers; indexOfProviderUser++) {
-                    mdCstsSiUsers.get(indexOfProviderUser).getApiSi().protocolAbort();
+                    //mdCstsSiUsers.get(indexOfProviderUser).getApiSi().protocolAbort();
+            	   mdCstsSiUsers.get(indexOfProviderUser).peerAbort();
                }
 
                // Wait for protocol abort threads
-               mdCstsSiUsers.get(0).waitTransferData(500, 1500);
+
+               //mdCstsSiUsers.get(0).waitTransferData(500, 1500);
+               for(int siIndex=0; siIndex< numberOfProvidersUsers; siIndex++) {
+            	   assertEquals(ServiceStatus.UNBOUND, mdCstsSiUsers.get(siIndex).waitServiceStatus(ServiceStatus.UNBOUND, 100));            	   
+            	   assertEquals(ServiceStatus.UNBOUND, mdCstsSiProviders.get(siIndex).waitServiceStatus(ServiceStatus.UNBOUND, 1000));
+               }
 
                // if a concurrent modification exception has happened:
                // -> binding again is not possible and a timeout will occur
@@ -173,21 +192,25 @@ public class ProtocolAbortMultipleProviderAbortTest {
                     TestUtils.verifyResult(mdCstsSiUsers.get(indexOfUser).bind(), "BIND");
                }
                // Wait for rebound
-               mdCstsSiUsers.get(0).waitTransferData(500, 1500);
+               //mdCstsSiUsers.get(0).waitTransferData(500, 1500);
+               for(int siIndex=0; siIndex< numberOfProvidersUsers; siIndex++) {
+            	   assertEquals(ServiceStatus.BOUND, mdCstsSiUsers.get(siIndex).waitServiceStatus(ServiceStatus.BOUND, 100));            	   
+            	   assertEquals(ServiceStatus.BOUND, mdCstsSiProviders.get(siIndex).waitServiceStatus(ServiceStatus.BOUND, 100));
+               }
 
                // clean up
                for (int indexOfProviderUser = 0; indexOfProviderUser < numberOfProvidersUsers; indexOfProviderUser++) {
                     MdCstsSiUser currentUserSi = mdCstsSiUsers.get(indexOfProviderUser);
                     MdCstsSiProvider currentProviderSi = mdCstsSiProviders.get(indexOfProviderUser);
-
+                    
                     if (currentUserSi.isBound()) {
                          System.out.println("userSi#destroy() user " + indexOfProviderUser);
                          currentUserSi.destroy();
                     }
-
+                    assertEquals(ServiceStatus.UNBOUND, mdCstsSiProviders.get(indexOfProviderUser).waitServiceStatus(ServiceStatus.UNBOUND, 1000));
+                    
                     System.out.println("providerSi#destroy() provider " + indexOfProviderUser);
                     currentProviderSi.destroy();
-
                }
 
                mdCstsSiProviders.clear();

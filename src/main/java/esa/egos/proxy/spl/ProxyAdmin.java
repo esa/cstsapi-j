@@ -396,7 +396,10 @@ public class ProxyAdmin implements IProxy
 
         if (this.binder != null)
         {
-            Result res = this.binder.registerPort(sii, responderPort, regId);
+        	IBinder tmpBinder = this.binder;
+        	this.objMutex.unlock();
+            Result res = tmpBinder.registerPort(sii, responderPort, regId); // CSTSAPI-61
+            this.objMutex.lock();
             if (res != Result.S_OK)
             {
                 this.objMutex.unlock();
@@ -438,16 +441,21 @@ public class ProxyAdmin implements IProxy
         }
 
         if (this.binder != null)
-        {            
-            Result res = this.binder.deregisterPort(regId);
+        {
+        	IBinder tmpBinder = this.binder;
+        	this.objMutex.unlock();
+        	
+        	// don't leave the object under lock. Otherwise the object cen't be used from outside while the message is sent
+            Result res = tmpBinder.deregisterPort(regId); // CSTSAPI-61 Interlock of received peer abort and initiating abort
             if (res != Result.S_OK)
-            {
-                this.objMutex.unlock();
+            {                
                 throw new ApiException(res.name());
             }
         }
-
-        this.objMutex.unlock();
+        else
+        {
+        	this.objMutex.unlock();
+        }
     }
 
     /**

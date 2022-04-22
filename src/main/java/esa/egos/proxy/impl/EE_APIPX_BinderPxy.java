@@ -400,9 +400,9 @@ public class EE_APIPX_BinderPxy extends EE_APIPX_LinkAdapter implements IBinder
             this.result = mess.getResult();
             this.regID = mess.getRegId();
 
-            if (LOG.isLoggable(Level.FINEST))
+            if (LOG.isLoggable(Level.FINE))
             {
-                LOG.finest("this.result B:" + this.result);
+                LOG.fine("Deregister port response: " + this.result);
             }
 
             // signal response received
