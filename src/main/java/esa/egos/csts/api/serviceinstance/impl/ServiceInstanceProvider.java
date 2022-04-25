@@ -266,7 +266,13 @@ public class ServiceInstanceProvider extends AbstractServiceInstance {
 				throw new ApiException(msg);
 			}
 
-			toBeForwardedTo.informOperationInvoke(operation);
+			CstsResult res = toBeForwardedTo.informOperationInvoke(operation);
+			if(res != CstsResult.SUCCESS)
+			{
+				String msg = "Error informing operaton invocation, result: " + res + " operation: " + operation.print(100);
+				LOG.severe(msg);
+				throw new ApiException(msg);
+			}
 		} else {
 			String msg = "Unknown procedure for the operation " + operation.getProcedureInstanceIdentifier().toString();
 			LOG.fine(msg);

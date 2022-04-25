@@ -1,5 +1,7 @@
 package esa.egos.csts.api.states.cyclicreport;
 
+import java.util.logging.Logger;
+
 import esa.egos.csts.api.diagnostics.CyclicReportStartDiagnostics;
 import esa.egos.csts.api.diagnostics.CyclicReportStartDiagnosticsType;
 import esa.egos.csts.api.diagnostics.Diagnostic;
@@ -10,7 +12,6 @@ import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IStart;
-import esa.egos.csts.api.procedures.cyclicreport.AbstractCyclicReport;
 import esa.egos.csts.api.procedures.cyclicreport.ICyclicReportInternal;
 import esa.egos.csts.api.states.State;
 
@@ -24,6 +25,7 @@ public class Inactive extends State<ICyclicReportInternal> {
 	@Override
 	public synchronized CstsResult process(IOperation operation) {
 		if (operation.getType() == OperationType.TRANSFER_DATA) {
+			Logger.getAnonymousLogger().severe("TD in state INACTIVE called!");
 			return CstsResult.NOT_APPLICABLE;
 		} else if (operation.getType() == OperationType.START) {
 			ICyclicReportInternal procedure = getProcedure();
@@ -44,6 +46,9 @@ public class Inactive extends State<ICyclicReportInternal> {
 				start.setPositiveResult();
 				procedure.forwardInvocationToApplication(start);
 				procedure.setState(new Active(procedure));
+				procedure.startCyclicReport();	// CSTSAPI-63 Only start the reporting when the state is set.
+												// If that is done in the Active constructor above, 
+												// reporting threads may still encounter the Inactive state object 
 			} else {
 				// Diagnostics will be implicitly present in this branch
 				start.setStartDiagnostic(new StartDiagnostic(procedure.encodeStartDiagnosticExt(),procedure.printStartDiagnostic()));				

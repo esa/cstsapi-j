@@ -410,7 +410,11 @@ public abstract class AbstractCyclicReport extends AbstractUnbufferedDataDeliver
 	            data.setGenerationTime(Time.now());
 	            data.setSequenceCounter(getCurrentSequenceCounter());
 	            data.setEmbeddedData(encodeDataRefinement());
-	            state.process(data);
+	            CstsResult res = state.process(data);
+	            if(res != CstsResult.SUCCESS)
+	            {
+	            	LOGGER.severe("State processing of " + data.print(100) + " failed fpor state " + state);
+	            }
 	            //getQualifiedParameters().clear(); // https://sdejira.esa.int/browse/CSTSAPI-12
 	        }
 	    }

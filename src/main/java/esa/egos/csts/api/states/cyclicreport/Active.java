@@ -15,7 +15,7 @@ public class Active extends State<ICyclicReportInternal> {
 
 	public Active(ICyclicReportInternal procedure) {
 		super(procedure);
-		procedure.startCyclicReport();
+		//procedure.startCyclicReport(); // CSTSAPI-63 don't start threads in the constructor - it may be to early and the Active state may not be set yet!
 	}
 
 	@Override
