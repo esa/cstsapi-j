@@ -118,10 +118,15 @@ public class ProtocolAbortMultipleProviderAbortTest {
       */
      
      @Test
-     public void test15ProviderAbortB1() throws InterruptedException {
-    	 for(int idx=0; idx<15; idx++) {
+     public void test7ProviderAbortB1() throws InterruptedException {
+    	 int numberOfThreadBefore =  Thread.activeCount();
+    	 for(int idx=0; idx<7; idx++) {
     		 testMultipleProviderAbort(SERVICE_VERSION_SFW_B1, 15);
     	 }
+    	 Thread.sleep(1000);//termination of threads is not immediate
+    	 int numberOfThreadAfter =  Thread.activeCount();
+    	 System.out.println("number of active threads: " + numberOfThreadAfter);
+    	 assertEquals(numberOfThreadBefore, numberOfThreadAfter);
      }
 
      /**
@@ -130,8 +135,16 @@ public class ProtocolAbortMultipleProviderAbortTest {
       * @throws InterruptedException
       */
      @Test
-     public void test15ProviderAbortB2() throws InterruptedException {
-          testMultipleProviderAbort(SERVICE_VERSION_SFW_B2, 15);
+     public void test7ProviderAbortB2() throws InterruptedException {
+    	 int numberOfThreadBefore =  Thread.activeCount();
+    	 for(int idx=0; idx<7; idx++) {
+    		 testMultipleProviderAbort(SERVICE_VERSION_SFW_B2, 15);
+    		 Thread.sleep(1000);
+    	 }
+    	 Thread.sleep(1000);//termination of threads is not immediate
+    	 int numberOfThreadAfter =  Thread.activeCount();
+    	 System.out.println("number of active threads: " + numberOfThreadAfter);
+    	 assertEquals(numberOfThreadBefore, numberOfThreadAfter);
      }
 
      /**
