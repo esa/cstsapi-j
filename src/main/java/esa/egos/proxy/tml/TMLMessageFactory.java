@@ -43,7 +43,7 @@ public class TMLMessageFactory
         		int currentlyRead = is.read(this.buf, read, left);
         		if (currentlyRead < 0) {
                     error.setReference(EE_APIPX_TMLErrors.eeAPIPXtml_unexpectedClose);
-                    throw new IOException("Connection has been unexpectedly closed: Received <0 bytes from socket");
+                    throw new IOException("Connection has been unexpectedly closed: Received " + currentlyRead + " bytes from socket");
         		}
         		read += currentlyRead;
         	}
@@ -84,9 +84,9 @@ public class TMLMessageFactory
         {
             if (read == 1)
             {
-                if (LOG.isLoggable(Level.FINEST))
+                if (LOG.isLoggable(Level.INFO))
                 {
-                    LOG.finest("1 byte read from the socket - assume a PEER ABORT received with diagnostic "
+                    LOG.info("1 byte read from the socket - assume a PEER ABORT received with diagnostic "
                                + this.buf[0]);
                 }
                 // assume buf[0] peer abort diagnostic
@@ -95,9 +95,9 @@ public class TMLMessageFactory
             }
             else
             {
-                if (LOG.isLoggable(Level.FINEST))
+                if (LOG.isLoggable(Level.INFO))
                 {
-                    LOG.finest(">1 and < 8 byte read from the socket - assume a PEER ABORT received with diagnostic "
+                    LOG.info(read + " read from the socket - assume a PEER ABORT received with diagnostic "
                                + this.buf[read - 1]);
                 }
                 // assume buf[read - 1] peer abort diagnostic

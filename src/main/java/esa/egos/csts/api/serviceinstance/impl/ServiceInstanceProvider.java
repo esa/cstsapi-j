@@ -267,7 +267,7 @@ public class ServiceInstanceProvider extends AbstractServiceInstance {
 			}
 
 			CstsResult res = toBeForwardedTo.informOperationInvoke(operation);
-			if(res != CstsResult.SUCCESS)
+			if(res != CstsResult.SUCCESS && operation.getType() != OperationType.PEER_ABORT) // peer abort may be ignored if both sides abort 
 			{
 				String msg = "Error informing operaton invocation, result: " + res + " operation: " + operation.print(100);
 				LOG.severe(msg);

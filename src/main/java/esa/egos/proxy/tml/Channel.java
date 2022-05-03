@@ -780,7 +780,7 @@ public abstract class Channel implements IChannelInitiate, ITimeoutProcessor
                 
             // write urgent data with diagnostic
                 if(this.connectedSock != null) {
-                     this.connectedSock.sendUrgentData(diag);
+                     this.connectedSock.sendUrgentData(diag);                     
                 }
                 else {
                      LOG.warning("A protocol abort happened the connected socket is not existing anymore.");
@@ -814,8 +814,20 @@ public abstract class Channel implements IChannelInitiate, ITimeoutProcessor
         }
         finally
         {
+        	try {
+        		if(this.connectedSock != null)
+        		{
+        			this.connectedSock.close(); // CSTSAPI-64 Close TCP connection after sending Peer Abort and cleanup SI
+        		}
+			} catch (IOException e) {				
+				LOG.log(Level.SEVERE, "Exception closing soket of channel " + this.toString(), e);
+			}        	
             this.objMutex.unlock();
         }
+        // CSTSAPI-64 Close TCP connection after sending Peer Abort and cleanup SI
+        // #hd# close the socket and wait for the communication threads to finish.
+        // If communication threads are not finished, the next incoming BIND may interfere with still finishing threads
+        cleanup(); 
     }
 
     // ////////////////////////////////////////////////////////////
@@ -972,7 +984,7 @@ public abstract class Channel implements IChannelInitiate, ITimeoutProcessor
     {
     	if(this.connectedSock != null)
     	{
-    		return "Channel " + getClass().getSimpleName() + " acting on socket " + connectedSock;
+    		return "Channel " + getClass().getSimpleName() + " acting on socket " + connectedSock + " state: " + this.channelState;
     	}
     	else
     	{

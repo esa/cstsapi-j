@@ -3,6 +3,7 @@ package esa.egos.proxy.tml;
 import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,18 +24,18 @@ public class TCPCommMng
 
     private final Channel channel;
 
-    protected BlockingQueue<TMLMessage> sendingQueue;
+    protected final BlockingQueue<TMLMessage> sendingQueue;
 
-    private volatile SendingThread sendingThr;
+    private final AtomicReference<SendingThread> sendingThr;  		// CSTSAPI-64 Close TCP connection after sending Peer Abort and cleanup SI
 
-    private volatile ReceivingThread receivingThr;
+    private final AtomicReference<ReceivingThread> receivingThr;	// CSTSAPI-64 Close TCP connection after sending Peer Abort and cleanup SI
 
 
     public TCPCommMng(Channel channel)
     {
         this.channel = channel;
-        this.sendingThr = new SendingThread();
-        this.receivingThr = new ReceivingThread();
+        this.sendingThr = new AtomicReference<SendingThread>(new SendingThread());
+        this.receivingThr = new AtomicReference<ReceivingThread>(new ReceivingThread());
         this.sendingQueue = new ArrayBlockingQueue<TMLMessage>(sendingCapacity, true);
     }
 
@@ -47,32 +48,78 @@ public class TCPCommMng
 
     public void startThreads()
     {
-        this.sendingThr.start();
-        this.receivingThr.start();
+    	SendingThread tmpSendingThr = this.sendingThr.get();
+    	if(tmpSendingThr != null)
+    	{
+    		tmpSendingThr.start();
+    	}
+        
+    	ReceivingThread tmpReceivingThr = this.receivingThr.get();
+    	if(tmpReceivingThr != null)
+    	{
+    		tmpReceivingThr.start();
+    	}
         // this.processingThr.start();
     }
 
     public void stopThreads()
     {
-        if (this.sendingThr != null)
+    	SendingThread tmpSendingThr = this.sendingThr.getAndSet(null);
+        if (tmpSendingThr != null)
         {
             if (LOG.isLoggable(Level.FINER))
             {
-                LOG.log(Level.FINER, "Sending Thread terminating on TCP Comm Mng " + this);
+                LOG.log(Level.FINER, "Sending Thread [" + tmpSendingThr.getName() + "] terminate requested on TCP Comm Mng " + this);
             }
-            this.sendingThr.terminate();
-            this.sendingThr = null;
+            tmpSendingThr.terminate();
+            
+            boolean interrupted = false;
+            do
+            {
+	            try
+	            {
+	            	interrupted = false;
+	            	if(Thread.currentThread().getId() != tmpSendingThr.getId())
+	            	{
+	            		tmpSendingThr.join(); // CSTSAPI-64 Close TCP connection after sending Peer Abort and cleanup SI
+	            	}
+				}
+	            catch (InterruptedException e)
+	            {
+	            	interrupted = true;
+				}
+            }
+            while(interrupted == true);
         }
 
-        if (this.receivingThr != null)
+        ReceivingThread tmpReceivingThr = this.receivingThr.getAndSet(null);
+        if (tmpReceivingThr != null)
         {
             if (LOG.isLoggable(Level.FINER))
             {
-                LOG.log(Level.FINER, "Receiving Thread terminating on TCP Comm Mng " + this);
+                LOG.log(Level.FINER, "Receiving Thread [" + tmpReceivingThr.getName() + "] terminate requested on TCP Comm Mng " + this);
             }
-            this.receivingThr.terminate();
-            this.receivingThr = null;
+            tmpReceivingThr.terminate();
+            
+            boolean interrupted = false;
+            do
+            {
+	            try
+	            {
+	            	interrupted = false;
+	            	if(Thread.currentThread().getId() != tmpReceivingThr.getId())
+	            	{
+	            		tmpReceivingThr.join(); // CSTSAPI-64 Close TCP connection after sending Peer Abort and cleanup SI
+	            	}
+				}
+	            catch (InterruptedException e)
+	            {
+	            	interrupted = true;
+				}
+            }
+            while(interrupted == true);                  
         }
+        LOG.log(Level.FINER, "TCP Comm Mng, all threads terminated by requesting thread [" + Thread.currentThread().getName() + "]");
     }
 
     /**
@@ -109,7 +156,7 @@ public class TCPCommMng
             }
             catch (ApiException | IOException e)
             {
-                SendingThread st = this.sendingThr;
+            	SendingThread st = this.sendingThr.get();
                 if (st != null && st.isRunning)
                 {
                     LOG.log(Level.FINE, "SleApiException | IOException e ", e);
@@ -145,8 +192,8 @@ public class TCPCommMng
             }
             catch (IOException | NullPointerException e)
             {
-                ReceivingThread st = this.receivingThr;
-                if (!this.channel.isAboutToClose() && st != null && st.isRunning)
+            	ReceivingThread tmpTeceivingThr = this.receivingThr.get();
+                if (!this.channel.isAboutToClose() && tmpTeceivingThr != null && tmpTeceivingThr.isRunning)
                 {
                 	if(this.channel != null)
                 	{
@@ -171,8 +218,8 @@ public class TCPCommMng
             }
             catch (ApiException e)
             {
-                ReceivingThread st = this.receivingThr;
-                if (!this.channel.isAboutToClose() && st != null && st.isRunning)
+            	ReceivingThread tmpReceivingThr = this.receivingThr.get();
+                if (!this.channel.isAboutToClose() && tmpReceivingThr != null && tmpReceivingThr.isRunning)
                 {
                     LOG.log(Level.SEVERE, "Failure reading from the socket input stream", e);
                     String msg = "Failure while decoding the TML Message from the socket output stream";
@@ -244,6 +291,7 @@ public class TCPCommMng
             {
                 TCPCommMng.this.sendTMLMessage();
             }
+            LOG.log(Level.FINER, "TCP Comm sending thread [" + this.getName() + "] terminated");
         }
 
         public void terminate()
@@ -275,6 +323,7 @@ public class TCPCommMng
                     this.isRunning = false;
                 }
             }
+            LOG.log(Level.FINER, "TCP Comm receiving thread [" + this.getName() + "] terminated");
         }
 
         public void terminate()

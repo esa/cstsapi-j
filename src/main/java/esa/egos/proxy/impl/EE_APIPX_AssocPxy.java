@@ -605,7 +605,7 @@ public class EE_APIPX_AssocPxy extends EE_APIPX_LinkAdapter implements IChannelI
             res = false;
 
             // perform control and authentication
-             diag = checkBind(bindop, diag, authOk);
+            checkBind(bindop, diag, authOk);
         }
         else if (pLink != null && pLink.getAssocPxy() != null)
         {
@@ -615,7 +615,7 @@ public class EE_APIPX_AssocPxy extends EE_APIPX_LinkAdapter implements IChannelI
             res = false;
 
             // perform control and authentication
-            diag = checkBind(bindop, diag, authOk);
+            checkBind(bindop, diag, authOk);
         }
         else
         {
@@ -642,26 +642,28 @@ public class EE_APIPX_AssocPxy extends EE_APIPX_LinkAdapter implements IChannelI
             if (diag == BindDiagnostic.ACCESS_DENIED)
             {
                 // report the error
+	            String tmp = bindop.print(512);
+	            String mess = "";
+                if (!authOk.getReference())
+                {
+                    mess = "Operation rejected. Authentication error. " + tmp;
+                }
+                else
+                {
+                    mess = "Operation rejected. " +  diag.toString() + tmp;
+                }
+                LOG.severe(mess + " Bind Diagnostic: " + diag);
+                
                 IReporter pIsleReporter = EE_APIPX_ReportTrace.getReporterInterface();
                 if (pIsleReporter != null)
                 {
-	                String tmp = bindop.print(512);
-	                String mess = "";
-	                if (!authOk.getReference())
-	                {
-	                    mess = "Operation rejected. Authentication error. " + tmp;
-	                }
-	                else
-	                {
-	                    mess = "Operation rejected. " +  diag.toString() + tmp;
-	                }
-	                pIsleReporter.notifyApplication(psii, CstsLogMessageType.ALARM, mess);
-	                pIsleReporter.logRecord(psii, 
-					                		null, 
-					                		Component.CP_proxy, 
-					                		AlarmLevel.sleAL_authFailure, 
-					                		CstsLogMessageType.ALARM, 
-					                		mess);
+                	pIsleReporter.notifyApplication(psii, CstsLogMessageType.ALARM, mess);
+                	pIsleReporter.logRecord(psii, 
+				                		null, 
+				                		Component.CP_proxy, 
+				                		AlarmLevel.sleAL_authFailure, 
+				                		CstsLogMessageType.ALARM, 
+				                		mess);
             	}
             }
             else
@@ -677,9 +679,13 @@ public class EE_APIPX_AssocPxy extends EE_APIPX_LinkAdapter implements IChannelI
                 else
                 {
                     mess = "Operation rejected. " + diag.toString() + messOp;
-                }
-                LOG.fine(mess);
+                }                
+                LOG.severe(mess + " Bind Diagnostic: " + diag);
             }
+        }
+        else if(diag != null && !authOk.getReference())
+        {
+        	LOG.severe("Internal error: processBind res OK, but AUTHENTICATON failed: " + bindop.print(512) + " Bind Diagnostic: " + diag);
         }
 
         return diag;

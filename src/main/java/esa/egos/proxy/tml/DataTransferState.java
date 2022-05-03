@@ -1,5 +1,6 @@
 package esa.egos.proxy.tml;
 
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,7 +44,7 @@ public class DataTransferState implements ITMLState
     {
         if (LOG.isLoggable(Level.FINEST))
         {
-            LOG.finest("tcpDataInd invoked");
+            LOG.finer("tcpDataInd invoked");
         }
 
         if (msg instanceof PDUMessage)
@@ -95,9 +96,9 @@ public class DataTransferState implements ITMLState
     @Override
     public void hlDisconnectReq()
     {
-        if (LOG.isLoggable(Level.FINEST))
+        if (LOG.isLoggable(Level.FINER))
         {
-            LOG.finest("hlDisconnectReq invoked");
+            LOG.finer("hlDisconnectReq invoked");
         }
 
         if (this.channel instanceof InitiatingChannel)
@@ -121,9 +122,9 @@ public class DataTransferState implements ITMLState
     @Override
     public void tcpDisconnectInd()
     {
-        if (LOG.isLoggable(Level.FINEST))
+        if (LOG.isLoggable(Level.FINER))
         {
-            LOG.finest("tcpDisconnectInd invoked");
+            LOG.finer("tcpDisconnectInd invoked");
         }
 
         // TCP.DISCONNECTreq
@@ -138,9 +139,9 @@ public class DataTransferState implements ITMLState
     @Override
     public void delSLEPDUReq(TMLMessage pduMsg, boolean last)
     {
-        if (LOG.isLoggable(Level.FINEST))
+        if (LOG.isLoggable(Level.FINER))
         {
-            LOG.finest("delSLEPDUReq invoked");
+            LOG.finer("delSLEPDUReq invoked");
         }
         if (last)
         {
@@ -154,9 +155,9 @@ public class DataTransferState implements ITMLState
     @Override
     public void hlPeerAbortReq(int diagnostic)
     {
-        if (LOG.isLoggable(Level.FINEST))
+        if (LOG.isLoggable(Level.FINER))
         {
-            LOG.finest("hlPeerAbortReq invoked");
+            LOG.finer("hlPeerAbortReq invoked");
         }
 
         // PEER-ABORT
@@ -170,9 +171,9 @@ public class DataTransferState implements ITMLState
     @Override
     public void tcpUrgentDataInd()
     {
-        if (LOG.isLoggable(Level.FINEST))
+        if (LOG.isLoggable(Level.FINER))
         {
-            LOG.finest("tcpUrgentDataInd invoked");
+            LOG.finer("tcpUrgentDataInd invoked");
         }
 
         this.channel.setLocalPeerAbort(false);
@@ -183,9 +184,9 @@ public class DataTransferState implements ITMLState
     @Override
     public void hlResetReq()
     {
-        if (LOG.isLoggable(Level.FINEST))
+        if (LOG.isLoggable(Level.FINER))
         {
-            LOG.finest("hlResetReq invoked");
+            LOG.finer("hlResetReq invoked from " + Arrays.toString(Thread.currentThread().getStackTrace()));
         }
 
         // TCP.ABORTreq
@@ -198,9 +199,9 @@ public class DataTransferState implements ITMLState
     @Override
     public void tcpAbortInd()
     {
-        if (LOG.isLoggable(Level.FINEST))
+        if (LOG.isLoggable(Level.FINER))
         {
-            LOG.finest("tcpAbortInd invoked");
+            LOG.finer("tcpAbortInd invoked");
         }
 
         // HL.PROTOCOL-ABORTind
@@ -216,9 +217,9 @@ public class DataTransferState implements ITMLState
     @Override
     public void tcpTimeOut()
     {
-        if (LOG.isLoggable(Level.FINEST))
+        if (LOG.isLoggable(Level.FINER))
         {
-            LOG.finest("tcpTimeOut invoked");
+            LOG.finer("tcpTimeOut invoked");
         }
 
         // TCP.ABORTreq
@@ -236,9 +237,9 @@ public class DataTransferState implements ITMLState
     @Override
     public void tcpError(String message)
     {
-        if (LOG.isLoggable(Level.FINEST))
+        if (LOG.isLoggable(Level.FINER))
         {
-            LOG.finest("tcpError invoked");
+            LOG.finer("tcpError invoked");
         }
         this.channel.logError(message);
         // HL.PROTOCOL-ABORTind
@@ -251,9 +252,9 @@ public class DataTransferState implements ITMLState
     @Override
     public void tmsTimeout()
     {
-        if (LOG.isLoggable(Level.FINEST))
+        if (LOG.isLoggable(Level.FINER))
         {
-            LOG.finest("tmsTimeout invoked");
+            LOG.finer("tmsTimeout invoked");
         }
 
         if (this.channel instanceof RespondingChannel)
@@ -279,9 +280,9 @@ public class DataTransferState implements ITMLState
     @Override
     public void hbrTimeout()
     {
-        if (LOG.isLoggable(Level.FINEST))
+        if (LOG.isLoggable(Level.FINER))
         {
-            LOG.finest("hbrTimeout invoked");
+            LOG.finer("hbrTimeout invoked");
         }
 
         // TCP.ABORTreq
@@ -300,9 +301,9 @@ public class DataTransferState implements ITMLState
     @Override
     public void hbtTimeout()
     {
-        if (LOG.isLoggable(Level.FINEST))
+        if (LOG.isLoggable(Level.FINER))
         {
-            LOG.finest("hbtTimeout invoked");
+            LOG.finer("hbtTimeout invoked");
         }
 
         this.channel.sendHbMsg();
@@ -318,9 +319,9 @@ public class DataTransferState implements ITMLState
     @Override
     public void manageBadFormMsg()
     {
-        if (LOG.isLoggable(Level.FINEST))
+        if (LOG.isLoggable(Level.FINER))
         {
-            LOG.finest("manageBadFormMsg invoked");
+            LOG.finer("manageBadFormMsg invoked");
         }
 
         // HL.PROTOCOL-ABORTind

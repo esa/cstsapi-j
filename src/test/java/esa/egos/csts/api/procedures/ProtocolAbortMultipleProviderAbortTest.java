@@ -41,7 +41,7 @@ public class ProtocolAbortMultipleProviderAbortTest {
      public TestRule testWatcher = new CstsTestWatcher();
 
      @Rule
-     public Timeout localTestTimeout = Timeout.seconds(125);
+     public Timeout localTestTimeout = Timeout.seconds(300);
 
      private ICstsApi providerApi;
 
@@ -120,7 +120,7 @@ public class ProtocolAbortMultipleProviderAbortTest {
      @Test
      public void test7ProviderAbortB1() throws InterruptedException {
     	 int numberOfThreadBefore =  Thread.activeCount();
-    	 for(int idx=0; idx<7; idx++) {
+    	 for(int idx=0; idx<15; idx++) {
     		 testMultipleProviderAbort(SERVICE_VERSION_SFW_B1, 15);
     	 }
     	 Thread.sleep(1000);//termination of threads is not immediate
@@ -137,9 +137,9 @@ public class ProtocolAbortMultipleProviderAbortTest {
      @Test
      public void test7ProviderAbortB2() throws InterruptedException {
     	 int numberOfThreadBefore =  Thread.activeCount();
-    	 for(int idx=0; idx<7; idx++) {
+    	 for(int idx=0; idx<15; idx++) {
     		 testMultipleProviderAbort(SERVICE_VERSION_SFW_B2, 15);
-    		 Thread.sleep(1000);
+    		 //Thread.sleep(1000);
     	 }
     	 Thread.sleep(1000);//termination of threads is not immediate
     	 int numberOfThreadAfter =  Thread.activeCount();
