@@ -17,7 +17,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <jasn1.version>1.11.3</jasn1.version>
         <project.repository.id>vsdenexus</project.repository.id>
-        <project.repository.url>https://vsdenexus.esoc.esa.int/nexus/content/sites/cda-p2-site</project.repository.url>
+        <project.repository.url>https://vsdenexus.esoc.esa.int/nexus/content/repositories/systems-accepted</project.repository.url>
         <project.site.id>vsdenexus</project.site.id>
         <project.site.url>dav:https://vsdenexus.esoc.esa.int/nexus/content/sites/cda-p2-site/esa/egos/csts.api/repository-p2-${project.version}</project.site.url>
     </properties>
@@ -297,7 +297,7 @@
                         <version>3.2.0</version>
                     </dependency>
                 </dependencies>
-            </plugin>
+            </plugin>            
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -320,6 +320,7 @@
                             </descriptorRefs>
                             <finalName>${project.artifactId}-${project.version}</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
+                            <attach>false</attach> <!-- if this is not set, jars are uploaded twice and the uploaded fails to systems-accepted  -->
                         </configuration>
                     </execution>
 
@@ -373,6 +374,7 @@
                     </filesets>
                 </configuration>
             </plugin>
+            
             <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>
                 <version>3.0.0-M2</version>
@@ -384,23 +386,9 @@
                             <goal>deploy</goal>
                         </goals>
                     </execution>
-                    <execution>
-                        <id>deploy-osgi</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>deploy-file</goal>
-                        </goals>
-                        <configuration>
-                            <file>target/${project.artifactId}-osgi-${project.version}.jar</file>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>${project.artifactId}-osgi</artifactId>
-                            <version>${project.version}</version>
-                            <repositoryId>${project.repository.id}</repositoryId>
-                            <url>${project.repository.url}</url>
-                        </configuration>
-                    </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
 </project>
