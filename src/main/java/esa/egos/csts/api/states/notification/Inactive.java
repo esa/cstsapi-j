@@ -37,6 +37,7 @@ public class Inactive extends State<INotificationInternal> {
 				start.setPositiveResult();
 				procedure.forwardInvocationToApplication(start);
 				procedure.setState(new Active(procedure));
+				procedure.startNotification(); // CSTSAPI-65
 			} else {
 				// List of Events Diagnostics will be present here
 				start.setStartDiagnostic(new StartDiagnostic(procedure.encodeStartDiagnosticExt(),procedure.printStartDiagnostic()));

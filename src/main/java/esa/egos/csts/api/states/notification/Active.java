@@ -15,7 +15,7 @@ public class Active extends State<INotificationInternal> {
 
 	public Active(INotificationInternal procedure) {
 		super(procedure);
-		procedure.startNotification();
+		//procedure.startNotification(); CSTSAPI-65
 	}
 
 	@Override
