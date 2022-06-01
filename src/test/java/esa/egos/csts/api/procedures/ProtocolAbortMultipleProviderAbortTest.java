@@ -41,7 +41,7 @@ public class ProtocolAbortMultipleProviderAbortTest {
      public TestRule testWatcher = new CstsTestWatcher();
 
      @Rule
-     public Timeout localTestTimeout = Timeout.seconds(300);
+     public Timeout localTestTimeout = Timeout.seconds(600);
 
      private ICstsApi providerApi;
 
