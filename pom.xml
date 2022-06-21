@@ -87,6 +87,16 @@
 <!--     <artifactId>org.osgi.framework</artifactId> -->
 <!--     <version>1.10.0</version> -->
 <!-- </dependency> -->
+        <dependency>
+            <groupId>com.sun.xml.fastinfoset</groupId>
+            <artifactId>FastInfoset</artifactId>
+            <version>1.2.16</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jvnet.staxex</groupId>
+            <artifactId>stax-ex</artifactId>
+            <version>1.8.3</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -170,7 +180,7 @@
                                 <argument>b2</argument>
                                 <argument>-f</argument>
                                 <argument>src/main/resources/asn1/922.1-B-1.asn</argument>
-				<argument>src/main/resources/asn1/ISP1-CREDENTIALS.asn</argument>
+                                <argument>src/main/resources/asn1/ISP1-CREDENTIALS.asn</argument>
                                 <argument>src/main/resources/asn1_b2/SFW_B2_ASN1.asn</argument>
                             </arguments>
                         </configuration>
@@ -205,13 +215,6 @@
                         <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
                     </archive>
                 </configuration>
-
-                <executions>
-                    <execution>
-                        <id>default-jar</id>
-                        <phase>none</phase>
-                    </execution>
-                </executions>
             </plugin>
 
             <!-- create also a jar with a MANIFEST.MF suitable for OSGi development -->
@@ -228,100 +231,14 @@
                             csts.api-osgi-1.0.1.jar? Not ideal, but in line with the fat jar. -->
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Export-Package>*</Export-Package>
+                        <Main-Class>esa.egos.csts.api.main.Slecsexe</Main-Class>
                     </instructions>
-                    <finalName>${project.artifactId}-osgi-${project.version}</finalName> <!-- different to the default name for fat jar with dependencies -->
                 </configuration>
             </plugin>
-
-            <!-- Build an P2 repository to provide CSTS API for eclipse target 
-                platforms -->
-            <plugin>
-                <groupId>org.reficio</groupId>
-                <artifactId>p2-maven-plugin</artifactId>
-                <version>1.3.0</version>
-                <executions>
-                    <execution>
-                        <id>default-cli</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>site</goal>
-                        </goals>
-                        <configuration>
-                            <featureDefinitions>
-                                <feature>
-                                    <id>${project.artifactId}.feature</id>
-                                    <version>${project.version}</version>
-                                    <label>CSTS API</label>
-                                    <providerName>${project.groupId}</providerName>
-                                    <description>${project.description}</description>
-                                    <copyright>European Space Agency</copyright>
-                                    <license>TBD</license>
-                                    <generateSourceFeature>true</generateSourceFeature>
-                                    <artifacts>
-                                        <artifact>
-                                            <id>${project.groupId}:${project.artifactId}:${project.version}</id>
-                                            <transitive>true</transitive>
-                                            <source>true</source>
-                                        </artifact>
-                                    </artifacts>
-                                </feature>
-                            </featureDefinitions>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- upload the P2 repository as is to maven -->
-            <plugin>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>3.9.1</version>
-                <executions>
-                    <execution>
-                        <id>deploy-p2-site</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>deploy</goal>
-                        </goals>
-                        <inherited>false</inherited>
-                        <configuration>
-                            <inputDirectory>${project.build.directory}/repository</inputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.maven.wagon</groupId>
-                        <artifactId>wagon-webdav-jackrabbit</artifactId>
-                        <version>3.2.0</version>
-                    </dependency>
-                </dependencies>
-            </plugin>            
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
-                    <execution>
-                        <id>fat-jar-with-dependencies</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <archive>
-                                <manifest>
-                                    <mainClass>esa.egos.csts.api.main.Slecsexe</mainClass>
-                                </manifest>
-                            </archive>
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
-                            <finalName>${project.artifactId}-${project.version}</finalName>
-                            <appendAssemblyId>false</appendAssemblyId>
-                            <attach>false</attach> <!-- if this is not set, jars are uploaded twice and the uploaded fails to systems-accepted  -->
-                        </configuration>
-                    </execution>
-
                     <execution>
                         <id>source-package</id>
                         <phase>package</phase>
@@ -372,21 +289,6 @@
                     </filesets>
                 </configuration>
             </plugin>
-            
-            <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>3.0.0-M2</version>
-                <executions>
-                    <execution>
-                        <id>default-deploy</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>deploy</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
         </plugins>
     </build>
 </project>
