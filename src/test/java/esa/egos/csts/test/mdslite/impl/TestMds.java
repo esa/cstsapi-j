@@ -115,67 +115,111 @@ public class TestMds {
 			
 			try {
 				SiConfig mdSiProviderConfig = new SiConfig(ObjectIdentifier.of(1,3,112,4,7,0),
-												ObjectIdentifier.of(1,3,112,4,6,0),
-												0, 
-												"CSTS-USER", 
-												"CSTS_PT1");
-
-				SiConfig mdSiUserConfig = new SiConfig(ObjectIdentifier.of(1,3,112,4,7,0),
 						ObjectIdentifier.of(1,3,112,4,6,0),
-						0, 
+						1, 
+						"CSTS-USER", 
+						"CSTS_PT1");
+				
+				// have a second provider SI on the same port
+				SiConfig mdSiProviderConfig2 = new SiConfig(ObjectIdentifier.of(1,3,112,4,7,0),
+						ObjectIdentifier.of(1,3,112,4,6,0),
+						2, 
+						"CSTS-USER", 
+						"CSTS_PT1");
+				
+				SiConfig mdSiUserConfig1 = new SiConfig(ObjectIdentifier.of(1,3,112,4,7,0),
+						ObjectIdentifier.of(1,3,112,4,6,0),
+						1, 
 						"CSTS-PROVIDER", // TODO: test correct behavior (return code) for wrong peer identifier
 						"CSTS_PT1");
+
+				// second user SI on the same port
+				SiConfig mdSiUserConfig2 = new SiConfig(ObjectIdentifier.of(1,3,112,4,7,0),
+						ObjectIdentifier.of(1,3,112,4,6,0),
+						2, 
+						"CSTS-PROVIDER", // TODO: test correct behavior (return code) for wrong peer identifier
+						"CSTS_PT1");
+				
 				
 				ListOfParameters paramList = ListOfParameters.of("test-list-1");
 				
 				List<ListOfParameters> paramLists = new ArrayList<ListOfParameters>();
 				paramLists.add(paramList);
 				
-				MdSiProvider providerSi = new MdSiProvider(providerApi, mdSiProviderConfig, paramLists, labelList);
-				MdSiUser userSi = new MdSiUser(userApi, mdSiUserConfig, serviceVersion, paramLists);
+				MdSiProvider providerSi1 = new MdSiProvider(providerApi, mdSiProviderConfig, paramLists, labelList);
+				
+				// test if we can create a second provider SI on the same port
+				MdSiProvider providerSi2 = new MdSiProvider(providerApi, mdSiProviderConfig2, paramLists, labelList);
+				
+				MdSiUser userSi1 = new MdSiUser(userApi, mdSiUserConfig1, serviceVersion, paramLists);
+
+				MdSiUser userSi2 = new MdSiUser(userApi, mdSiUserConfig2, serviceVersion, paramLists);
 
 				// add a label list for the CR provider procedures
 				
-				Collection<IOnChangeCyclicReport> procedures = providerSi.getCyclicReportProcedures();
+				Collection<IOnChangeCyclicReport> procedures = providerSi1.getCyclicReportProcedures();
 //				for(IOnChangeCyclicReport proc : procedures) {
 //					proc.getLabelLists().add(labelList);
 //					proc.getLabelLists().setConfigured(true); // Indicate that the list is now fully configured
 //				}				
 				
 				System.out.println("BIND...");
-				verifyResult(userSi.bind(), "BIND");
+				verifyResult(userSi1.bind(), "BIND");
+				verifyResult(userSi2.bind(), "BIND");
 
 				System.out.println("call userSi startCyclicReport...");
 				boolean onChange = true;
-				userSi.startCyclicReport(1000, onChange, 0);
+				userSi1.startCyclicReport(1000, onChange, 0);
+				userSi2.startCyclicReport(1000, onChange, 0);
 				
 				System.out.println("call userSi getCyclicReport...");
-				procedures = userSi.getCyclicReportProcedures();
+				procedures = userSi1.getCyclicReportProcedures();
 				for(IOnChangeCyclicReport proc : procedures) {
 					Assert.assertTrue(proc.isActive() == true);
 					Assert.assertTrue(proc.isActivationPending() == false);
 					Assert.assertTrue(proc.isDeactivationPending() == false);
 				}				
-				
-				procedures = providerSi.getCyclicReportProcedures();
+				procedures = userSi2.getCyclicReportProcedures();
+				for(IOnChangeCyclicReport proc : procedures) {
+					Assert.assertTrue(proc.isActive() == true);
+					Assert.assertTrue(proc.isActivationPending() == false);
+					Assert.assertTrue(proc.isDeactivationPending() == false);
+				}				
+				procedures = providerSi1.getCyclicReportProcedures();
+				for(IOnChangeCyclicReport proc : procedures) {
+					Assert.assertTrue(proc.isActive() == true);
+					Assert.assertTrue(proc.isActivationPending() == false);
+					Assert.assertTrue(proc.isDeactivationPending() == false);
+				}				
+				procedures = providerSi2.getCyclicReportProcedures();
 				for(IOnChangeCyclicReport proc : procedures) {
 					Assert.assertTrue(proc.isActive() == true);
 					Assert.assertTrue(proc.isActivationPending() == false);
 					Assert.assertTrue(proc.isDeactivationPending() == false);
 				}				
 								
-				userSi.waitTransferData(10, 500);
-				providerSi.setAntAzimut(815, 0);
-				userSi.waitTransferData(10, 500);
+				userSi1.waitTransferData(10, 500);
+				providerSi1.setAntAzimut(815, 0);
+				userSi1.waitTransferData(10, 500);
 				
-				userSi.stopCyclicReport(0);
+				userSi1.stopCyclicReport(0);
+
+				userSi2.waitTransferData(10, 500);
+				providerSi2.setAntAzimut(815, 0);
+				userSi2.waitTransferData(10, 500);
+				
+				userSi2.stopCyclicReport(0);
+				
 				
 				System.out.println("UNBIND...");
-				verifyResult(userSi.unbind(), "UNBIND");
+				verifyResult(userSi1.unbind(), "UNBIND");
+				verifyResult(userSi2.unbind(), "UNBIND");
 				
-				providerSi.destroy();
-				userSi.destroy();
+				providerSi1.destroy();
+				userSi1.destroy();
 				
+				providerSi2.destroy();
+				userSi2.destroy();
 			
 			} catch(Exception e) {
 				e.printStackTrace();
