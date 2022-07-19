@@ -9,10 +9,8 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 
 import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
-import esa.egos.csts.api.enumerations.AppRole;
 import esa.egos.csts.api.enumerations.CstsResult;
 import esa.egos.csts.api.exceptions.ApiException;
-import esa.egos.csts.api.main.CstsApi;
 import esa.egos.csts.api.main.CstsProviderApi;
 import esa.egos.csts.api.main.CstsUserApi;
 import esa.egos.csts.api.main.ICstsApi;
