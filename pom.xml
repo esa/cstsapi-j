@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>esa.egos</groupId>
     <artifactId>csts.api</artifactId>
-    <version>2.0.1</version>
+    <version>2.0.2</version>
     <packaging>bundle</packaging> <!-- bundle (instead of jar) packaging is required for maven-bundle-plugin -->
 
     <name>CSTS API</name>
@@ -67,19 +67,20 @@
         </dependency>
 
 <!-- SLES15 support -->
-              <!-- https://mvnrepository.com/artifact/javax.xml/jaxb-api -->
-              <dependency>
-                     <groupId>javax.xml.bind</groupId>
-                     <artifactId>jaxb-api</artifactId>
-                     <version>2.1</version>
-              </dependency>
 
-              <!-- https://mvnrepository.com/artifact/javax.xml/jaxb-impl -->
-              <dependency>
-                     <groupId>javax.xml</groupId>
-                     <artifactId>jaxb-impl</artifactId>
-                     <version>2.1</version>
-              </dependency>
+       <!-- https://mvnrepository.com/artifact/jakarta.xml.bind -->
+       <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>2.3.3</version>
+       </dependency>
+
+       <!-- https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-impl-->
+       <dependency>
+             <groupId>com.sun.xml.bind</groupId>
+             <artifactId>jaxb-impl</artifactId>
+             <version>2.3.3</version>
+       </dependency>
 
 
 <!-- <dependency> -->
