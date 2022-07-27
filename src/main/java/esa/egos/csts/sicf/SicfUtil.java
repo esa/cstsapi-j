@@ -99,7 +99,6 @@ public class SicfUtil {
 			build.append(subsystem);
 		}
 		if(instanceNumber!=null && !instanceNumber.isEmpty()) {
-			build.append("/");
 			build.append(instanceNumber);
 		}
 		if(subsystemUnit!=null && !subsystemUnit.isEmpty()) {
