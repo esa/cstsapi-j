@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<MDSicf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" TailoringVersion="V2.2" xsi:noNamespaceSchemaLocation="SICFSchemaV2.2.xsd">
+    <ServiceInstances>
+        <ServiceInstance SIID="spacecraft=gaia.facility=r68.service=md.instance=3" stationOID="1.5.1.2.1.2.1" spacecraftOID="1.3.112.4.7.0" serviceOID="1.3.112.4.4.1.2" instance="3">
+            <initiatorIdentifier>CSTS_USER</initiatorIdentifier>
+            <responderIdentifier>LMS</responderIdentifier>
+            <ResponderPortId>CSTS_PT3</ResponderPortId>
+            <UpdateCycleTime>5</UpdateCycleTime>
+            <SIParameterList>
+                <ListName>
+                    <Parameter parameterOrEventId="/1" functionalResourceType="/COR/TST1" functionalResourceInstance="1" name="R680001" OID="1.3.112.4.4.2.1.1000.1.1.1" />
+                    <Parameter parameterOrEventId="/2" functionalResourceType="/COR/TST1" functionalResourceInstance="1" name="R680002" OID="1.3.112.4.4.2.1.1000.1.2.1" />
+                    <Parameter parameterOrEventId="/3" functionalResourceType="/COR/TST1" functionalResourceInstance="1" name="R680003" OID="1.3.112.4.4.2.1.1000.1.3.1" />
+                    <Parameter parameterOrEventId="/4" functionalResourceType="/COR/TST1" functionalResourceInstance="1" name="R680004" OID="1.3.112.4.4.2.1.1000.1.4.1" />
+                    <Parameter parameterOrEventId="/7" functionalResourceType="/COR/TST1" functionalResourceInstance="1" name="R680005" OID="1.3.112.4.4.2.1.1000.1.7.1" />
+                    <Parameter parameterOrEventId="/8" functionalResourceType="/COR/TST1" functionalResourceInstance="1" name="R680006" OID="1.3.112.4.4.2.1.1000.1.8.1" />
+                    <Parameter parameterOrEventId="/9" functionalResourceType="/COR/TST1" functionalResourceInstance="1" name="R680007" OID="1.3.112.4.4.2.1.1000.1.9.1" />
+                    <Parameter parameterOrEventId="/10" functionalResourceType="/COR/TST1" functionalResourceInstance="1" name="R680008" OID="1.3.112.4.4.2.1.1000.1.10.1" />
+                </ListName>
+            </SIParameterList>
+        </ServiceInstance>
+    </ServiceInstances>
+    <ParameterDefinitions>
+        <Parameter name="R680001" OID="1.3.112.4.4.2.1.1000.1.1.1">
+            <paramOrEventId>/1</paramOrEventId>
+            <FunctionalResourceType>/COR/TST1</FunctionalResourceType>
+            <FunctionalResourceInstance>1</FunctionalResourceInstance>
+            <Description>Boolean Value</Description>
+            <ParameterType>Boolean</ParameterType>
+        </Parameter>
+        <Parameter name="R680003" OID="1.3.112.4.4.2.1.1000.1.3.1">
+            <paramOrEventId>/2</paramOrEventId>
+            <FunctionalResourceType>/SYS/SUBS/OTHER</FunctionalResourceType>
+            <FunctionalResourceInstance>0</FunctionalResourceInstance>
+            <Description>Float Value</Description>
+            <ParameterType>Double</ParameterType>
+        </Parameter>
+        <Parameter name="R680002" OID="1.3.112.4.4.2.1.1000.1.2.1">
+            <paramOrEventId>/3</paramOrEventId>
+            <FunctionalResourceType>/SYS/SUBS/OTHER</FunctionalResourceType>
+            <FunctionalResourceInstance>2</FunctionalResourceInstance>
+            <Description>Integer Value</Description>
+            <ParameterType>Integer</ParameterType>
+        </Parameter>
+        <Parameter name="R680003" OID="1.3.112.4.4.2.1.1000.1.3.1">
+            <paramOrEventId>/4</paramOrEventId>
+            <FunctionalResourceType>/SYS/SUBS6/OTHER5/OTHER_OTHER</FunctionalResourceType>
+            <FunctionalResourceInstance>42</FunctionalResourceInstance>
+            <Description>Float Value</Description>
+            <ParameterType>Double</ParameterType>
+        </Parameter>
+    </ParameterDefinitions>
+    <enumDefinitions>
+        <EnumType>
+            <Reference>ESA_RESOURCE_STATE</Reference>
+            <Literals>
+                <Literal stringValue="UNKNOWN" intValue="0" />
+                <Literal stringValue="KAPUT" intValue="1" />
+                <Literal stringValue="FREE" intValue="2" />
+                <Literal stringValue="START_REQ" intValue="3" />
+                <Literal stringValue="ACTIVE" intValue="4" />
+                <Literal stringValue="STOP_REQ" intValue="5" />
+                <Literal stringValue="ABORT_REQ" intValue="6" />
+            </Literals>
+        </EnumType>
+    </enumDefinitions>
+</MDSicf>
