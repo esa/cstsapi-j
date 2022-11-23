@@ -21,14 +21,17 @@ import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.Name;
 
 public class SicfParameter {
-	private static final String OID_PREFIX = "1.3.112.4.4.2.1.";
-
+	private static final String OID_PREFIX_SANA = "1.3.112.4.4.2.1.";
+	private static final String OID_PREFIX_AGENCY = "1.3.112.4.4.2.2.";
+	private static final String OID_PREFIX_ERROR = "1.0.000.0.0.0.0.";
+	
+	private final String OID_PREFIX;
 	private final String mcsName;
 	private final String oidString;
 	private final int funcResInstanceNumber;
 	private final String description;
 	private final String type;
-
+	
 	private String enumReference;
 
 	private final ObjectIdentifier paramOid;
@@ -39,6 +42,18 @@ public class SicfParameter {
 
 	public SicfParameter(String mcsName, String oidString,
 			int funcResInstanceNumber, String description, String type) {
+	     
+	     if(oidString.contains(OID_PREFIX_SANA)) {
+	          this.OID_PREFIX = OID_PREFIX_SANA;
+	     }
+	     else if(oidString.contains(OID_PREFIX_AGENCY)) {
+	          this.OID_PREFIX = OID_PREFIX_AGENCY;
+	     }
+	     else {
+	          this.OID_PREFIX = OID_PREFIX_ERROR;
+	          throw new IllegalArgumentException("OID string does not contain a valid prefix: " + oidString);
+	     }
+	     
 		this.mcsName = mcsName;
 		this.oidString = oidString;
 		this.funcResInstanceNumber = funcResInstanceNumber;
@@ -50,6 +65,8 @@ public class SicfParameter {
 		this.name = Name.of(paramOid, funcResName);
 		this.label = Label.of(paramOid, getFuncResType());
 		this.frParamEx = createfrParamEx();
+		
+		
 	}
 
 	private FunctionalResourceName createFuncResName() {
@@ -93,7 +110,7 @@ public class SicfParameter {
 				"Couldn't create Functional Resource Parameter.");
 	}
 
-	public static String getOidPrefix() {
+	public String getOidPrefix() {
 		return OID_PREFIX;
 	}
 
