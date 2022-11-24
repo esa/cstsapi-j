@@ -73,21 +73,21 @@
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
             <version>2.3.3</version>
+            <optional>true</optional>
        </dependency>
-
        <!-- https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-impl-->
        <dependency>
              <groupId>com.sun.xml.bind</groupId>
              <artifactId>jaxb-impl</artifactId>
              <version>2.3.3</version>
+             <optional>true</optional>
        </dependency>
-
-
 <!-- <dependency> -->
 <!--     <groupId>org.osgi</groupId> -->
 <!--     <artifactId>org.osgi.framework</artifactId> -->
 <!--     <version>1.10.0</version> -->
 <!-- </dependency> -->
+<!-- 
         <dependency>
             <groupId>com.sun.xml.fastinfoset</groupId>
             <artifactId>FastInfoset</artifactId>
@@ -98,6 +98,7 @@
             <artifactId>stax-ex</artifactId>
             <version>1.8.3</version>
         </dependency>
+-->    
     </dependencies>
 
     <build>
@@ -230,8 +231,11 @@
                         <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
                         <!-- How to get rid of the jasn1-1.8.0.jar in the 
                             csts.api-osgi-1.0.1.jar? Not ideal, but in line with the fat jar. -->
-                        <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
-                        <Export-Package>*</Export-Package>
+                        
+                        <!--
+                        <Embed-Dependency>jasn1;scope=compile|runtime</Embed-Dependency>
+                        -->
+                        <Export-Package>esa.*,b1.*,b2.*</Export-Package>
                         <Main-Class>esa.egos.csts.api.main.Slecsexe</Main-Class>
                     </instructions>
                 </configuration>
@@ -259,7 +263,7 @@
                                     <providerName>${project.groupId}</providerName>
                                     <description>${project.description}</description>
                                     <copyright>European Space Agency</copyright>
-                                    <license>TBD</license>
+                                    <license>ESA PL Type 2</license>
                                     <generateSourceFeature>true</generateSourceFeature>
                                     <artifacts>
                                         <artifact>
