@@ -16,6 +16,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <jasn1.version>1.11.3</jasn1.version>
+        <osgi.version>7.0.0</osgi.version>
         <project.repository.id>vsdenexus</project.repository.id>
         <project.repository.url>https://vsdenexus.esoc.esa.int/nexus/content/repositories/systems-snapshots</project.repository.url>
         <project.site.id>vsdenexus</project.site.id>
@@ -82,6 +83,13 @@
              <version>2.3.3</version>
              <optional>true</optional>
        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.core</artifactId>
+            <version>${osgi.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
 <!-- <dependency> -->
 <!--     <groupId>org.osgi</groupId> -->
 <!--     <artifactId>org.osgi.framework</artifactId> -->

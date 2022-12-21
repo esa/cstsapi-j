@@ -18,6 +18,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipFile;
 
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+
 
 /**
  * Implements package utilities methods
@@ -216,8 +219,24 @@ public class PackageUtils
             }
             else if (url.getProtocol().equals("bundle"))
             {
-                String pathFileName = getPathFileNameFromResource(classLoader, internalPath);
-                ret = getPackageClassesFromJar(new URL("jar:file:"+ pathFileName + "!/"), classLoader, packageName, alsoNestedClasses);
+                if (url.getAuthority().equals("felix"))
+                {
+                    Bundle bundle = FrameworkUtil.getBundle(PackageUtils.class);
+                    if (bundle == null)
+                    {
+                        throw new Exception(String.format("Failed to get classes from package %s. Unable to retrieve bundle", packageName));
+                    }
+                    Enumeration entries = bundle.findEntries(internalPath, "*", true);
+                    while(entries != null && entries.hasMoreElements())
+                    {
+                        ret.add(entries.nextElement().getClass());
+                    }
+                }
+                else
+                {
+                    String pathFileName = getPathFileNameFromResource(classLoader, internalPath);
+                    ret = getPackageClassesFromJar(new URL("jar:file:"+ pathFileName + "!/"), classLoader, packageName, alsoNestedClasses);
+                }
             }
         }
         catch (Exception e)
