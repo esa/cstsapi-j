@@ -1,8 +1,10 @@
 package esa.egos.csts.test.cyclicreport;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -139,11 +141,11 @@ public class TestCyclicReport {
         				stopLatch.countDown(); 
         				updateLatch.countDown();
         				System.out.println("Received list of size: " + event.size());
-        				trackResultsCyclicReport.append(event.size());
+        				trackResultsCyclicReport.append(event.size() + " ");
     				}
     				else {
     					System.out.println("Received on change report of size: " + event.size());
-    					trackResultsOnchangeReport.append(event.size());
+    					trackResultsOnchangeReport.append(event.size() + " ");
     				}
 
     				})
@@ -159,8 +161,8 @@ public class TestCyclicReport {
             ProcedureInstanceIdentifier onChangecyclicReportInstance = 
             		ProcedureInstanceIdentifier.of(ProcedureType.of(OIDs.ocoCyclicReport),ProcedureRole.SECONDARY,0);
             
-            IParameter parameter1 = createFunctionalResourceParameter(125);
-            IParameter parameter2 = createFunctionalResourceParameter(456);
+            IParameter parameter1 = createFunctionalRessourceParameter(OidValues.antennaFrOid.value, 125);
+            IParameter parameter2 = createFunctionalRessourceParameter(OidValues.antennaFrOid.value, 456);
             providerSi.addParameters(Arrays.asList(parameter1,parameter2));
             
             //Note: parameters have to be set before the START or the onChange report will not contain them.
@@ -193,33 +195,129 @@ public class TestCyclicReport {
     	}
     }
     
+    @Test
+    public void testCyclicReportWith1000parameters() {
+     final int serviceVersion = 1;
+     final int numberOfParameters = 1000;
+     final int numberOfReportsUntilFinish = 30;
+     final int numberOfReportsUntilUpdate = 10;
+     
+     //initialize the configuration for the procedures and the service instances
+     CyclicReportProcedureConfig procedureConfig = createProcedureConfiguration();
+     
+        SiConfig providerConfig = new SiConfig(ObjectIdentifier.of(1, 3, 112, 4, 7, 0),
+                ObjectIdentifier.of(1, 3, 112, 4, 6, 0), 0, "CSTS-USER", "CSTS_PT1");
+        
+        SiConfig userConfig = new SiConfig(ObjectIdentifier.of(1, 3, 112, 4, 7, 0),
+                ObjectIdentifier.of(1, 3, 112, 4, 6, 0), 0, "CSTS-PROVIDER", "CSTS_PT1");
+     
+     try {
+          //latches are for testing sake
+          
+       // after numberOfReportsUntilUpdate reports, update the parameter
+          CountDownLatch updateLatch = new CountDownLatch(numberOfReportsUntilUpdate); 
+       // after numberOfReportsUnitlFinish reports, terminate
+          CountDownLatch stopLatch = new CountDownLatch(numberOfReportsUntilFinish); 
+           
+          IMonitoringDataSiProvider providerSi = MonitoringDataSiProvider.builder(providerApi, providerConfig)
+               .addCyclicReportProcedure(procedureConfig, 0)//add one cyclic report procedure
+               .build();
+          
+          StringBuilder trackResultsCyclicReport = new StringBuilder();
+    
+          IMonitoringDataSiUser userSi = MonitoringDataSiUser.builder(userApi, userConfig, serviceVersion)
+               .addCyclicReportProcedure(procedureConfig, 0) // add one cyclic report procedure
+               .setParameterListener((pii, event) -> {
+                    //setup a simple callback when a report is received
+                    //and confirm that the size of parameterList has not changed
+                    assertEquals(numberOfParameters, event.size());
+
+                    if(pii.getRole().equals(ProcedureRole.PRIME)) {
+                         stopLatch.countDown();
+                         updateLatch.countDown();
+                         System.out.println("[" + stopLatch.getCount() + "]"+ "Received list of size: " + event.size());
+                         trackResultsCyclicReport.append(event.size()+" ");
+                    }
+                })
+               .build();
+               
+            CSTS_LOG.CSTS_API_LOGGER.info("BIND...");
+            verifyResult(userSi.bind(), "BIND");
+            
+            //Create procedure identifier of the procedure to be used
+            ProcedureInstanceIdentifier cyclicReportInstance = 
+                    ProcedureInstanceIdentifier.of(ProcedureType.of(OIDs.cyclicReport),ProcedureRole.PRIME,0);
+            
+            List<IParameter> parameterList = new ArrayList<>();
+            for(int indexOfparameter = 0; indexOfparameter < numberOfParameters/2; indexOfparameter++) {
+                 parameterList.add(createFunctionalRessourceParameter(OidValues.antennaFrOid.value, indexOfparameter));
+                 parameterList.add(createFunctionalRessourceParameter(OidValues.antMeanWindSpeedParamOid.value, indexOfparameter));
+            }
+            System.out.println("List size is " + parameterList.size());
+            providerSi.addParameters(parameterList);
+            
+            //Note: parameters have to be set before the START or the onChange report will not contain them.
+            
+            CSTS_LOG.CSTS_API_LOGGER.info("START...");
+            verifyResult(userSi.startCyclicReport(cyclicReportInstance, ONE_SECOND),"START");
+            
+            //Update the first 50 parameters after 5 reports
+            waitOrFail(updateLatch, 10000);
+            
+            System.out.println("[INFO]Updating the first 50 parameters...");
+            for(int indexOfParameter = 0; indexOfParameter < 50; indexOfParameter++) {
+                 setFunctionalResourceValue(parameterList.get(indexOfParameter), 777);
+            }
+            System.out.println("[INFO] Done updating");
+            
+           //wait for reception of numberOfReports reports or max wait time numberOfReports + 5 seconds 
+            waitOrFail(stopLatch, numberOfReportsUntilFinish*1000+5000);
+            
+            
+            CSTS_LOG.CSTS_API_LOGGER.info("STOP...");
+            verifyResult(userSi.stopCyclicReport(cyclicReportInstance),"STOP");
+            
+            CSTS_LOG.CSTS_API_LOGGER.info("UNBIND...");
+            verifyResult(userSi.unbind(), "UNBIND");
+            
+            System.out.println("Cyclic Reports: " + trackResultsCyclicReport.toString());
+     } 
+     catch(Exception ee) {
+          ee.printStackTrace();
+          fail("Failed because of unexpected exception");
+     }
+    }
     
     public CyclicReportProcedureConfig createProcedureConfiguration() {
     	
-        //ObjectIdentifier antActualAzimuthId = ObjectIdentifier.of(new int[] { 1, 3, 112, 4, 4, 2, 1, 1000, 1, 3, 1});
     	ObjectIdentifier antActualAzimuthId = ObjectIdentifier.of(OidValues.antennaFrOid.value);
         FunctionalResourceType antActualAzimuthType = FunctionalResourceType.of(antActualAzimuthId);
 
-        List<Label> labels = Collections.singletonList(Label.of(antActualAzimuthId, antActualAzimuthType));
+     ObjectIdentifier antMeanWindSpeedId = ObjectIdentifier.of(OidValues.antMeanWindSpeedParamOid.value);
+        FunctionalResourceType antMeanWindSpeedType = FunctionalResourceType.of(antMeanWindSpeedId);
+       
+        
+        List<Label> labels = new ArrayList<Label>();
+        labels.add(Label.of(antActualAzimuthId, antActualAzimuthType));
+        labels.add(Label.of(antMeanWindSpeedId, antMeanWindSpeedType));
     	
     	LabelList testLabels = new LabelList("test-list-1", true);
     	testLabels.getLabels().addAll(labels);
     	return new CyclicReportProcedureConfig(HALF_SECOND,testLabels, ListOfParameters.empty());
     }
     
-
-    public IParameter createFunctionalResourceParameter(double value) {
-        //ObjectIdentifier antActualAzimuthId = ObjectIdentifier.of(new int[] { 1, 3, 112, 4, 4, 2, 1, 1000, 1, 3, 1});
-        ObjectIdentifier antActualAzimuthId = ObjectIdentifier.of(OidValues.antennaFrOid.value);
-        FunctionalResourceType antActualAzimuthType = FunctionalResourceType.of(antActualAzimuthId);
-        FunctionalResourceName antActualAzimuthName = FunctionalResourceName.of(antActualAzimuthType, 1);
-        //This is a B1 only approach
-        FunctionalResourceIntegerParameter antActualAzimuth =
-                new FunctionalResourceIntegerParameter(antActualAzimuthId, antActualAzimuthName);
-        antActualAzimuth.setValue(value);
-        return antActualAzimuth;
-    }
+    public IParameter createFunctionalRessourceParameter(int[] oidValue,  double value) {
+         ObjectIdentifier oidValueId = ObjectIdentifier.of(oidValue);
+         FunctionalResourceType oidValueType = FunctionalResourceType.of(oidValueId);
+         FunctionalResourceName oidValueName = FunctionalResourceName.of(oidValueType, 1);
+         //This is a B1 only approach
+         FunctionalResourceIntegerParameter functionalRessource =
+                 new FunctionalResourceIntegerParameter(oidValueId, oidValueName);
+         functionalRessource.setValue(value);
+         return functionalRessource;
+     }
     
+
     public void setFunctionalResourceValue(IParameter parameter, double value) {
     	if(parameter instanceof FunctionalResourceIntegerParameter) {
     		FunctionalResourceIntegerParameter frip = (FunctionalResourceIntegerParameter)parameter;
