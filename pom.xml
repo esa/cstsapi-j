@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>esa.egos</groupId>
     <artifactId>csts.api</artifactId>
-    <version>2.0.3</version>
+    <version>2.0.4-SNAPSHOT</version>
     <packaging>bundle</packaging> <!-- bundle (instead of jar) packaging is required for maven-bundle-plugin -->
 
     <name>CSTS API</name>
@@ -18,7 +18,7 @@
         <jasn1.version>1.11.3</jasn1.version>
         <osgi.version>7.0.0</osgi.version>
         <project.repository.id>vsdenexus</project.repository.id>
-        <project.repository.url>https://vsdenexus.esoc.esa.int/nexus/content/repositories/systems-accepted</project.repository.url>
+        <project.repository.url>https://vsdenexus.esoc.esa.int/nexus/content/repositories/systems-snapshots</project.repository.url>
         <project.site.id>vsdenexus</project.site.id>
         <project.site.url>dav:https://vsdenexus.esoc.esa.int/nexus/content/sites/cda-p2-site/esa/egos/csts.api/repository-p2-${project.version}</project.site.url>
     </properties>
