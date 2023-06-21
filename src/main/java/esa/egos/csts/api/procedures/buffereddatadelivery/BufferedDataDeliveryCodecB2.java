@@ -131,7 +131,7 @@ public class BufferedDataDeliveryCodecB2 {
 					ITransferData transferData = bufferedDataDelivery.createTransferData();
 					transferData.decodeTransferDataInvocation(data.getTransferDataInvocation());
 					bufferedDataDelivery.getReturnBuffer().getBuffer().add(transferData);
-				} else if (data.getTransferDataInvocation() != null) {
+				} else if (data.getNotifyInvocation() != null) {
 					INotify notify = bufferedDataDelivery.createNotify();
 					notify.decodeNotifyInvocation(data.getNotifyInvocation());
 					bufferedDataDelivery.getReturnBuffer().getBuffer().add(notify);

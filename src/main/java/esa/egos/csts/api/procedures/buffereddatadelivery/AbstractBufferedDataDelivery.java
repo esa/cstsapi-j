@@ -248,7 +248,10 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 	public synchronized CstsResult attemptToPassBufferContents() {
 		CstsResult result = forwardInvocationToProxy(returnBuffer);
 		if (result == CstsResult.SUCCESS) {
-			releaseTimer.cancel(false);
+			if (releaseTimer != null)
+			{
+				releaseTimer.cancel(false);
+			}
 			returnBuffer.getBuffer().clear();
 			returnBufferSize = getReturnBufferSize().getValue();
 		}
@@ -257,7 +260,10 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 
 	@Override
 	public synchronized CstsResult passBufferContents() {
-		releaseTimer.cancel(false);
+		if (releaseTimer != null)
+		{
+			releaseTimer.cancel(false);
+		}
 		CstsResult result = forwardInvocationToProxy(returnBuffer);
 		returnBuffer.getBuffer().clear();
 		returnBufferSize = getReturnBufferSize().getValue();
@@ -266,7 +272,10 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 
 	@Override
 	public synchronized void transmitBuffer() {
-		releaseTimer.cancel(false);
+		if (releaseTimer != null)
+		{
+			releaseTimer.cancel(false);
+		}
 		forwardInvocationToProxy(returnBuffer);
 		returnBuffer.getBuffer().clear();
 		returnBufferSize = getReturnBufferSize().getValue();
