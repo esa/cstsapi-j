@@ -100,7 +100,7 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 	}
 
 	@Override
-	public void terminate() {
+	public synchronized void terminate() {
 		if (releaseTimer != null) {
 			releaseTimer.cancel(true);
 		}
@@ -240,8 +240,11 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 	}
 
 	@Override
-	public void scheduleReleaseTimer() {
-		releaseTimer = executor.schedule(this::releaseTimer, getDeliveryLatencyLimit().getValue(), TimeUnit.SECONDS);
+	public synchronized void scheduleReleaseTimer() {
+		if (!executor.isShutdown())
+		{
+			releaseTimer = executor.schedule(this::releaseTimer, getDeliveryLatencyLimit().getValue(), TimeUnit.SECONDS);
+		}
 	}
 
 	@Override
