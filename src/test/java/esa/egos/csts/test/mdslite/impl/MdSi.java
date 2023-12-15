@@ -45,7 +45,7 @@ public abstract class MdSi  implements IServiceInform {
 		
 		IServiceInstanceIdentifier identifier = new ServiceInstanceIdentifier(config.getScId(),
 																				config.getFacilityId(),
-																				ObjectIdentifier.of(1,3,112,4,4,1,2), 
+																				ObjectIdentifier.of(1,3,112,4,4,1,2,1), 
 																				config.getInstanceNumber());
 		
 		apiServiceInstance = api.createServiceInstance(identifier, serviceVersion, this);		

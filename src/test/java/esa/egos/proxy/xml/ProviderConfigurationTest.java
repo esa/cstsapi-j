@@ -7,13 +7,9 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.net.URL;
-import java.net.URLClassLoader;
-
 import org.junit.Test;
 
 import esa.egos.csts.api.exceptions.ApiException;
-import esa.egos.csts.api.serviceinstance.impl.ServiceType;
 
 
 public class ProviderConfigurationTest {
@@ -59,7 +55,7 @@ public class ProviderConfigurationTest {
 		
 		{
 			long b1s1 = providerConfig.getServiceTypeList().stream()
-					.filter(configServiceType -> configServiceType.getServiceId().equals("[1, 3, 112, 4, 4, 1, 2]"))
+					.filter(configServiceType -> configServiceType.getServiceId().equals("[1, 3, 112, 4, 4, 1, 2, 1]"))
 					.findAny().get().getServiceVersion().stream()
 					.filter(serviceVersionType -> 
 					serviceVersionType.sfwVersion.equals(Integer.valueOf(1)) && 
@@ -71,7 +67,7 @@ public class ProviderConfigurationTest {
 		
 		{
 			long b2s2 = providerConfig.getServiceTypeList().stream()
-					.filter(configServiceType -> configServiceType.getServiceId().equals("[1, 3, 112, 4, 4, 1, 2]"))
+					.filter(configServiceType -> configServiceType.getServiceId().equals("[1, 3, 112, 4, 4, 1, 2, 1]"))
 					.findAny().get().getServiceVersion().stream()
 					.filter(serviceVersionType -> 
 					serviceVersionType.sfwVersion.equals(Integer.valueOf(2)) && 
@@ -83,7 +79,7 @@ public class ProviderConfigurationTest {
 		
 		{
 			long b1s2 = providerConfig.getServiceTypeList().stream()
-					.filter(configServiceType -> configServiceType.getServiceId().equals("[1, 3, 112, 4, 4, 1, 2]"))
+					.filter(configServiceType -> configServiceType.getServiceId().equals("[1, 3, 112, 4, 4, 1, 2, 1]"))
 					.findAny().get().getServiceVersion().stream()
 					.filter(serviceVersionType -> 
 					serviceVersionType.sfwVersion.equals(Integer.valueOf(1)) && 
@@ -95,7 +91,7 @@ public class ProviderConfigurationTest {
 		
 		{
 			long b2s1 = providerConfig.getServiceTypeList().stream()
-					.filter(configServiceType -> configServiceType.getServiceId().equals("[1, 3, 112, 4, 4, 1, 2]"))
+					.filter(configServiceType -> configServiceType.getServiceId().equals("[1, 3, 112, 4, 4, 1, 2, 1]"))
 					.findAny().get().getServiceVersion().stream()
 					.filter(serviceVersionType -> 
 					serviceVersionType.sfwVersion.equals(Integer.valueOf(2)) && 

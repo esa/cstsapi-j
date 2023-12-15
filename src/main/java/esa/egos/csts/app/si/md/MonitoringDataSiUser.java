@@ -28,7 +28,7 @@ import esa.egos.csts.monitored.data.procedures.OnChangeCyclicReportUser;
 
 public class MonitoringDataSiUser extends AppSiUser implements IMonitoringDataSiUser {
 	
-	public static int CSTS_CYCLIC_REPORT_SRV = 2;//TBC
+	public static int CSTS_CYCLIC_REPORT_SRV = 1; // Artificial service for testing. Same ID as Monitored Data Service
 	
 	IMonitoringDataParameterListener parameterListener;
 	

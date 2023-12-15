@@ -25,7 +25,7 @@ import esa.egos.csts.monitored.data.procedures.OnChangeCyclicReportProvider;
 
 public class MonitoringDataSiProvider extends AppSi implements IMonitoringDataSiProvider {
 	
-	public static int CSTS_CYCLIC_REPORT_SRV = 2;//TBC
+	public static int CSTS_CYCLIC_REPORT_SRV = 1; // Artificial service for testing. Same ID as Monitored Data Service
 	
 	//Builder class
 	public static class MonitoringDataSiProviderBuilder {

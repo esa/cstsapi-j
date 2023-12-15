@@ -36,7 +36,7 @@ import esa.egos.csts.app.si.AppSi;
 public abstract class MdCstsSi<K extends MdCstsSiConfig, I extends IInformationQuery, C extends ICyclicReport, N extends INotification>
                               extends AppSi
 {  
-    private static int SERVICE_TYPE_ID = 2;
+    private static int SERVICE_TYPE_ID = 1; // CSTS Monitored Data is monitoredData OBJECT IDENTIFIER ::= {services 1}
 
     public MdCstsSi(ICstsApi api, K config, int serviceVersion) throws ApiException
     {
