@@ -523,56 +523,56 @@ public class ExecDirNegAckDiagnosticExt implements BerType, Serializable {
 		
 		if (parameterValueOutOfRange != null) {
 			codeLength += parameterValueOutOfRange.encode(reverseOS, false);
-			// write tag: CONTEXT_CLASS, CONSTRUCTED, 7
-			reverseOS.write(0xA7);
-			codeLength += 1;
-			return codeLength;
-		}
-		
-		if (invalidProcedureParameter != null) {
-			codeLength += invalidProcedureParameter.encode(reverseOS, false);
 			// write tag: CONTEXT_CLASS, CONSTRUCTED, 6
 			reverseOS.write(0xA6);
 			codeLength += 1;
 			return codeLength;
 		}
 		
-		if (invalidFunctionalResourceParameter != null) {
-			codeLength += invalidFunctionalResourceParameter.encode(reverseOS, false);
+		if (invalidProcedureParameter != null) {
+			codeLength += invalidProcedureParameter.encode(reverseOS, false);
 			// write tag: CONTEXT_CLASS, CONSTRUCTED, 5
 			reverseOS.write(0xA5);
 			codeLength += 1;
 			return codeLength;
 		}
 		
-		if (invalidFunctionalResourceName != null) {
-			codeLength += invalidFunctionalResourceName.encode(reverseOS, false);
-			// write tag: CONTEXT_CLASS, PRIMITIVE, 4
-			reverseOS.write(0x84);
+		if (invalidFunctionalResourceParameter != null) {
+			codeLength += invalidFunctionalResourceParameter.encode(reverseOS, false);
+			// write tag: CONTEXT_CLASS, CONSTRUCTED, 4
+			reverseOS.write(0xA4);
 			codeLength += 1;
 			return codeLength;
 		}
 		
-		if (invalidProcedureName != null) {
-			codeLength += invalidProcedureName.encode(reverseOS, false);
+		if (invalidFunctionalResourceName != null) {
+			codeLength += invalidFunctionalResourceName.encode(reverseOS, false);
 			// write tag: CONTEXT_CLASS, PRIMITIVE, 3
 			reverseOS.write(0x83);
 			codeLength += 1;
 			return codeLength;
 		}
 		
-		if (unknownQualifier != null) {
-			codeLength += unknownQualifier.encode(reverseOS, false);
+		if (invalidProcedureName != null) {
+			codeLength += invalidProcedureName.encode(reverseOS, false);
 			// write tag: CONTEXT_CLASS, PRIMITIVE, 2
 			reverseOS.write(0x82);
 			codeLength += 1;
 			return codeLength;
 		}
 		
-		if (unknownDirective != null) {
-			codeLength += unknownDirective.encode(reverseOS, false);
+		if (unknownQualifier != null) {
+			codeLength += unknownQualifier.encode(reverseOS, false);
 			// write tag: CONTEXT_CLASS, PRIMITIVE, 1
 			reverseOS.write(0x81);
+			codeLength += 1;
+			return codeLength;
+		}
+		
+		if (unknownDirective != null) {
+			codeLength += unknownDirective.encode(reverseOS, false);
+			// write tag: CONTEXT_CLASS, PRIMITIVE, 0
+			reverseOS.write(0x80);
 			codeLength += 1;
 			return codeLength;
 		}
@@ -594,43 +594,43 @@ public class ExecDirNegAckDiagnosticExt implements BerType, Serializable {
 			codeLength += berTag.decode(is);
 		}
 
-		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 1)) {
+		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 0)) {
 			unknownDirective = new BerNull();
 			codeLength += unknownDirective.decode(is, false);
 			return codeLength;
 		}
 
-		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 2)) {
+		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 1)) {
 			unknownQualifier = new BerNull();
 			codeLength += unknownQualifier.decode(is, false);
 			return codeLength;
 		}
 
-		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 3)) {
+		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 2)) {
 			invalidProcedureName = new BerNull();
 			codeLength += invalidProcedureName.decode(is, false);
 			return codeLength;
 		}
 
-		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 4)) {
+		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 3)) {
 			invalidFunctionalResourceName = new BerNull();
 			codeLength += invalidFunctionalResourceName.decode(is, false);
 			return codeLength;
 		}
 
-		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 5)) {
+		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 4)) {
 			invalidFunctionalResourceParameter = new InvalidFunctionalResourceParameter();
 			codeLength += invalidFunctionalResourceParameter.decode(is, false);
 			return codeLength;
 		}
 
-		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 6)) {
+		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 5)) {
 			invalidProcedureParameter = new InvalidProcedureParameter();
 			codeLength += invalidProcedureParameter.decode(is, false);
 			return codeLength;
 		}
 
-		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 7)) {
+		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 6)) {
 			parameterValueOutOfRange = new ParameterValueOutOfRange();
 			codeLength += parameterValueOutOfRange.decode(is, false);
 			return codeLength;

@@ -38,7 +38,7 @@ public abstract class MdSi  implements IServiceInform {
 	protected INotification notification;
 	private final ICstsApi api;
 
-	public MdSi(ICstsApi api, SiConfig config, List<ListOfParameters> parameterLists, LabelList labelList, boolean provider) throws ApiException {
+	public MdSi(ICstsApi api, SiConfig config, List<ListOfParameters> parameterLists, LabelList labelList, boolean provider, int serviceVersion) throws ApiException {
 		super();
 		
 		this.api = api;
@@ -48,7 +48,7 @@ public abstract class MdSi  implements IServiceInform {
 																				ObjectIdentifier.of(1,3,112,4,4,1,2), 
 																				config.getInstanceNumber());
 		
-		apiServiceInstance = api.createServiceInstance(identifier,1, this);		
+		apiServiceInstance = api.createServiceInstance(identifier, serviceVersion, this);		
 
 		int index = 0;
 		for(ListOfParameters list : parameterLists) {

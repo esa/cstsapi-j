@@ -408,24 +408,24 @@ public class ExecuteDirectiveInvocation implements BerType, Serializable {
 
 			if (directiveQualifierExtension != null) {
 				codeLength += directiveQualifierExtension.encode(reverseOS, false);
-				// write tag: CONTEXT_CLASS, CONSTRUCTED, 4
-				reverseOS.write(0xA4);
-				codeLength += 1;
-				return codeLength;
-			}
-			
-			if (functResourceDirQualifier != null) {
-				codeLength += functResourceDirQualifier.encode(reverseOS, false);
 				// write tag: CONTEXT_CLASS, CONSTRUCTED, 3
 				reverseOS.write(0xA3);
 				codeLength += 1;
 				return codeLength;
 			}
 			
-			if (serviceProcDirQualifier != null) {
-				codeLength += serviceProcDirQualifier.encode(reverseOS, false);
+			if (functResourceDirQualifier != null) {
+				codeLength += functResourceDirQualifier.encode(reverseOS, false);
 				// write tag: CONTEXT_CLASS, CONSTRUCTED, 2
 				reverseOS.write(0xA2);
+				codeLength += 1;
+				return codeLength;
+			}
+			
+			if (serviceProcDirQualifier != null) {
+				codeLength += serviceProcDirQualifier.encode(reverseOS, false);
+				// write tag: CONTEXT_CLASS, CONSTRUCTED, 1
+				reverseOS.write(0xA1);
 				codeLength += 1;
 				return codeLength;
 			}
@@ -434,8 +434,8 @@ public class ExecuteDirectiveInvocation implements BerType, Serializable {
 				sublength = localProcDirQualifier.encode(reverseOS);
 				codeLength += sublength;
 				codeLength += BerLength.encodeLength(reverseOS, sublength);
-				// write tag: CONTEXT_CLASS, CONSTRUCTED, 1
-				reverseOS.write(0xA1);
+				// write tag: CONTEXT_CLASS, CONSTRUCTED, 0
+				reverseOS.write(0xA0);
 				codeLength += 1;
 				return codeLength;
 			}
@@ -457,26 +457,26 @@ public class ExecuteDirectiveInvocation implements BerType, Serializable {
 				codeLength += berTag.decode(is);
 			}
 
-			if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 1)) {
+			if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 0)) {
 				codeLength += BerLength.skip(is);
 				localProcDirQualifier = new DirectiveQualifierValues();
 				codeLength += localProcDirQualifier.decode(is, null);
 				return codeLength;
 			}
 
-			if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 2)) {
+			if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 1)) {
 				serviceProcDirQualifier = new ServiceProcDirQualifier();
 				codeLength += serviceProcDirQualifier.decode(is, false);
 				return codeLength;
 			}
 
-			if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 3)) {
+			if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 2)) {
 				functResourceDirQualifier = new FunctResourceDirQualifier();
 				codeLength += functResourceDirQualifier.decode(is, false);
 				return codeLength;
 			}
 
-			if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 4)) {
+			if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 3)) {
 				directiveQualifierExtension = new Embedded();
 				codeLength += directiveQualifierExtension.decode(is, false);
 				return codeLength;

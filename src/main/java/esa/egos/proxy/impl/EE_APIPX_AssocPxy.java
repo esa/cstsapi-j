@@ -267,11 +267,11 @@ public class EE_APIPX_AssocPxy extends EE_APIPX_LinkAdapter implements IChannelI
                     return;
                 }
             } catch (ApiException e) {
-            	LOG.log(Level.FINE, "Api exception from receiving pdu. ", e);
+            	LOG.log(Level.SEVERE, "Api exception from receiving pdu. " + e, e);
                 releaseChannel();
                 return;
 			} catch (IOException e) {
-				LOG.log(Level.FINE, "Api exception from receiving pdu. ", e);
+				LOG.log(Level.SEVERE, "Api exception from receiving pdu. " + e, e);
                 releaseChannel();
                 return;
 			}

@@ -91,24 +91,24 @@ public class DirectiveQualifierValues implements BerType, Serializable {
 		int codeLength = 0;
 		if (noQualifierValues != null) {
 			codeLength += noQualifierValues.encode(reverseOS, false);
-			// write tag: CONTEXT_CLASS, PRIMITIVE, 3
-			reverseOS.write(0x83);
+			// write tag: CONTEXT_CLASS, PRIMITIVE, 2
+			reverseOS.write(0x82);
 			codeLength += 1;
 			return codeLength;
 		}
 		
 		if (parameterlessValues != null) {
 			codeLength += parameterlessValues.encode(reverseOS, false);
-			// write tag: CONTEXT_CLASS, CONSTRUCTED, 2
-			reverseOS.write(0xA2);
+			// write tag: CONTEXT_CLASS, CONSTRUCTED, 1
+			reverseOS.write(0xA1);
 			codeLength += 1;
 			return codeLength;
 		}
 		
 		if (sequenceOfParamIdsAndValues != null) {
 			codeLength += sequenceOfParamIdsAndValues.encode(reverseOS, false);
-			// write tag: CONTEXT_CLASS, CONSTRUCTED, 1
-			reverseOS.write(0xA1);
+			// write tag: CONTEXT_CLASS, CONSTRUCTED, 0
+			reverseOS.write(0xA0);
 			codeLength += 1;
 			return codeLength;
 		}
@@ -130,19 +130,19 @@ public class DirectiveQualifierValues implements BerType, Serializable {
 			codeLength += berTag.decode(is);
 		}
 
-		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 1)) {
+		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 0)) {
 			sequenceOfParamIdsAndValues = new SequenceOfParameterIdsAndValues();
 			codeLength += sequenceOfParamIdsAndValues.decode(is, false);
 			return codeLength;
 		}
 
-		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 2)) {
+		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 1)) {
 			parameterlessValues = new TypeAndValue();
 			codeLength += parameterlessValues.decode(is, false);
 			return codeLength;
 		}
 
-		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 3)) {
+		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 2)) {
 			noQualifierValues = new BerNull();
 			codeLength += noQualifierValues.decode(is, false);
 			return codeLength;

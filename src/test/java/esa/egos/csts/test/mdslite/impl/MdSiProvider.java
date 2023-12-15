@@ -19,7 +19,7 @@ import esa.egos.csts.monitored.data.procedures.IOnChangeCyclicReport;
 public class MdSiProvider extends MdSi {
 		
 	public MdSiProvider(ICstsApi api, SiConfig config, List<ListOfParameters> parameterLists, LabelList labelList) throws ApiException {
-		super(api, config, parameterLists, labelList, true);
+		super(api, config, parameterLists, labelList, true, 1 /* service version */);
 		
 		for(int idx= 0; idx<parameterLists.size(); idx++) {
 			setAntAzimut(4711, idx);

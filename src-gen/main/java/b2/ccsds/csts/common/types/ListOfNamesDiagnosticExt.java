@@ -206,16 +206,16 @@ public class ListOfNamesDiagnosticExt implements BerType, Serializable {
 		
 		if (unknownDefault != null) {
 			codeLength += unknownDefault.encode(reverseOS, false);
-			// write tag: CONTEXT_CLASS, PRIMITIVE, 3
-			reverseOS.write(0x83);
+			// write tag: CONTEXT_CLASS, PRIMITIVE, 1
+			reverseOS.write(0x81);
 			codeLength += 1;
 			return codeLength;
 		}
 		
 		if (unknownNames != null) {
 			codeLength += unknownNames.encode(reverseOS, false);
-			// write tag: CONTEXT_CLASS, CONSTRUCTED, 1
-			reverseOS.write(0xA1);
+			// write tag: CONTEXT_CLASS, CONSTRUCTED, 0
+			reverseOS.write(0xA0);
 			codeLength += 1;
 			return codeLength;
 		}
@@ -237,13 +237,13 @@ public class ListOfNamesDiagnosticExt implements BerType, Serializable {
 			codeLength += berTag.decode(is);
 		}
 
-		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 1)) {
+		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 0)) {
 			unknownNames = new UnknownNames();
 			codeLength += unknownNames.decode(is, false);
 			return codeLength;
 		}
 
-		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 3)) {
+		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 1)) {
 			unknownDefault = new AdditionalText();
 			codeLength += unknownDefault.decode(is, false);
 			return codeLength;

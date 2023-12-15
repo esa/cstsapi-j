@@ -80,16 +80,16 @@ public class EventValue implements BerType, Serializable {
 		
 		if (empty != null) {
 			codeLength += empty.encode(reverseOS, false);
-			// write tag: CONTEXT_CLASS, PRIMITIVE, 2
-			reverseOS.write(0x82);
+			// write tag: CONTEXT_CLASS, PRIMITIVE, 1
+			reverseOS.write(0x81);
 			codeLength += 1;
 			return codeLength;
 		}
 		
 		if (qualifiedValues != null) {
 			codeLength += qualifiedValues.encode(reverseOS, false);
-			// write tag: CONTEXT_CLASS, CONSTRUCTED, 1
-			reverseOS.write(0xA1);
+			// write tag: CONTEXT_CLASS, CONSTRUCTED, 0
+			reverseOS.write(0xA0);
 			codeLength += 1;
 			return codeLength;
 		}
@@ -111,13 +111,13 @@ public class EventValue implements BerType, Serializable {
 			codeLength += berTag.decode(is);
 		}
 
-		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 1)) {
+		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 0)) {
 			qualifiedValues = new SequenceOfQualifiedValue();
 			codeLength += qualifiedValues.decode(is, false);
 			return codeLength;
 		}
 
-		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 2)) {
+		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 1)) {
 			empty = new BerNull();
 			codeLength += empty.decode(is, false);
 			return codeLength;

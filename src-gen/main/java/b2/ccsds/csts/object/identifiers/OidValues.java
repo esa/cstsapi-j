@@ -65,7 +65,6 @@ public final class OidValues {
 	public static final BerObjectIdentifier scdpDerivedProcedures = new BerObjectIdentifier(new int[]{1, 3, 112, 4, 4, 1, 1, 3, 4, 1, 2, 1});
 	public static final BerObjectIdentifier scdpExtProcedureParam = new BerObjectIdentifier(new int[]{1, 3, 112, 4, 4, 1, 1, 3, 4, 1, 2, 2});
 	public static final BerObjectIdentifier sequenceControlledDataProcessing = new BerObjectIdentifier(new int[]{1, 3, 112, 4, 4, 1, 1, 3, 4, 1, 2});
-	public static final BerObjectIdentifier serviceGenericIdentifiers = new BerObjectIdentifier(new int[]{1, 3, 112, 4, 4, 1, 1, 5});
 	public static final BerObjectIdentifier services = new BerObjectIdentifier(new int[]{1, 3, 112, 4, 4, 1, 2});
 	public static final BerObjectIdentifier startInvocation = new BerObjectIdentifier(new int[]{1, 3, 112, 4, 4, 1, 1, 2, 6});
 	public static final BerObjectIdentifier startReturn = new BerObjectIdentifier(new int[]{1, 3, 112, 4, 4, 1, 1, 2, 7});

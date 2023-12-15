@@ -43,7 +43,7 @@ public class MdSiUser extends MdSi {
 	 * @throws ApiException		
 	 */
 	public MdSiUser(ICstsApi api, SiConfig config, int serviceVersion, List<ListOfParameters> parameterLists) throws ApiException {
-		super(api, config, parameterLists, null, false);
+		super(api, config, parameterLists, null, false, serviceVersion);
 
 		this.retLock = new ReentrantLock();
 		this.retCond = retLock.newCondition();

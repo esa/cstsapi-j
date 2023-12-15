@@ -85,16 +85,16 @@ public class SequContrDataProcStatus implements BerType, Serializable {
 		
 		if (processingNotStarted != null) {
 			codeLength += processingNotStarted.encode(reverseOS, false);
-			// write tag: CONTEXT_CLASS, PRIMITIVE, 2
-			reverseOS.write(0x82);
+			// write tag: CONTEXT_CLASS, PRIMITIVE, 1
+			reverseOS.write(0x81);
 			codeLength += 1;
 			return codeLength;
 		}
 		
 		if (expired != null) {
 			codeLength += expired.encode(reverseOS, false);
-			// write tag: CONTEXT_CLASS, PRIMITIVE, 1
-			reverseOS.write(0x81);
+			// write tag: CONTEXT_CLASS, PRIMITIVE, 0
+			reverseOS.write(0x80);
 			codeLength += 1;
 			return codeLength;
 		}
@@ -116,13 +116,13 @@ public class SequContrDataProcStatus implements BerType, Serializable {
 			codeLength += berTag.decode(is);
 		}
 
-		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 1)) {
+		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 0)) {
 			expired = new BerNull();
 			codeLength += expired.decode(is, false);
 			return codeLength;
 		}
 
-		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 2)) {
+		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 1)) {
 			processingNotStarted = new BerNull();
 			codeLength += processingNotStarted.decode(is, false);
 			return codeLength;

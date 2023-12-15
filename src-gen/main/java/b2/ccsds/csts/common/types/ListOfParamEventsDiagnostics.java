@@ -79,8 +79,8 @@ public class ListOfParamEventsDiagnostics implements BerType, Serializable {
 				
 				if (paramEventLabel != null) {
 					codeLength += paramEventLabel.encode(reverseOS, false);
-					// write tag: CONTEXT_CLASS, PRIMITIVE, 2
-					reverseOS.write(0x82);
+					// write tag: CONTEXT_CLASS, PRIMITIVE, 0
+					reverseOS.write(0x80);
 					codeLength += 1;
 					return codeLength;
 				}
@@ -102,7 +102,7 @@ public class ListOfParamEventsDiagnostics implements BerType, Serializable {
 					codeLength += berTag.decode(is);
 				}
 
-				if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 2)) {
+				if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 0)) {
 					paramEventLabel = new Label();
 					codeLength += paramEventLabel.decode(is, false);
 					return codeLength;
@@ -356,56 +356,56 @@ public class ListOfParamEventsDiagnostics implements BerType, Serializable {
 		int codeLength = 0;
 		if (unknownParamEventIdentifier != null) {
 			codeLength += unknownParamEventIdentifier.encode(reverseOS, false);
-			// write tag: CONTEXT_CLASS, CONSTRUCTED, 3
-			reverseOS.write(0xA3);
+			// write tag: CONTEXT_CLASS, CONSTRUCTED, 2
+			reverseOS.write(0xA2);
 			codeLength += 1;
 			return codeLength;
 		}
 		
 		if (unknownProcedureName != null) {
 			codeLength += unknownProcedureName.encode(reverseOS, false);
-			// write tag: CONTEXT_CLASS, CONSTRUCTED, 7
-			reverseOS.write(0xA7);
+			// write tag: CONTEXT_CLASS, CONSTRUCTED, 6
+			reverseOS.write(0xA6);
 			codeLength += 1;
 			return codeLength;
 		}
 		
 		if (unknownProcedureType != null) {
 			codeLength += unknownProcedureType.encode(reverseOS, false);
-			// write tag: CONTEXT_CLASS, PRIMITIVE, 6
-			reverseOS.write(0x86);
+			// write tag: CONTEXT_CLASS, PRIMITIVE, 5
+			reverseOS.write(0x85);
 			codeLength += 1;
 			return codeLength;
 		}
 		
 		if (unknownFunctionalResourceName != null) {
 			codeLength += unknownFunctionalResourceName.encode(reverseOS, false);
-			// write tag: CONTEXT_CLASS, CONSTRUCTED, 1
-			reverseOS.write(0xA1);
+			// write tag: CONTEXT_CLASS, CONSTRUCTED, 0
+			reverseOS.write(0xA0);
 			codeLength += 1;
 			return codeLength;
 		}
 		
 		if (unknownFunctionalResourceType != null) {
 			codeLength += unknownFunctionalResourceType.encode(reverseOS, false);
-			// write tag: CONTEXT_CLASS, PRIMITIVE, 2
-			reverseOS.write(0x82);
+			// write tag: CONTEXT_CLASS, PRIMITIVE, 1
+			reverseOS.write(0x81);
 			codeLength += 1;
 			return codeLength;
 		}
 		
 		if (unknownListName != null) {
 			codeLength += unknownListName.encode(reverseOS, false);
-			// write tag: CONTEXT_CLASS, PRIMITIVE, 4
-			reverseOS.write(0x84);
+			// write tag: CONTEXT_CLASS, PRIMITIVE, 3
+			reverseOS.write(0x83);
 			codeLength += 1;
 			return codeLength;
 		}
 		
 		if (undefinedDefault != null) {
 			codeLength += undefinedDefault.encode(reverseOS, false);
-			// write tag: CONTEXT_CLASS, PRIMITIVE, 5
-			reverseOS.write(0x85);
+			// write tag: CONTEXT_CLASS, PRIMITIVE, 4
+			reverseOS.write(0x84);
 			codeLength += 1;
 			return codeLength;
 		}
@@ -427,43 +427,43 @@ public class ListOfParamEventsDiagnostics implements BerType, Serializable {
 			codeLength += berTag.decode(is);
 		}
 
-		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 5)) {
+		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 4)) {
 			undefinedDefault = new AdditionalText();
 			codeLength += undefinedDefault.decode(is, false);
 			return codeLength;
 		}
 
-		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 4)) {
+		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 3)) {
 			unknownListName = new BerVisibleString();
 			codeLength += unknownListName.decode(is, false);
 			return codeLength;
 		}
 
-		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 2)) {
+		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 1)) {
 			unknownFunctionalResourceType = new FunctionalResourceType();
 			codeLength += unknownFunctionalResourceType.decode(is, false);
 			return codeLength;
 		}
 
-		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 1)) {
+		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 0)) {
 			unknownFunctionalResourceName = new FunctionalResourceName();
 			codeLength += unknownFunctionalResourceName.decode(is, false);
 			return codeLength;
 		}
 
-		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 6)) {
+		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 5)) {
 			unknownProcedureType = new ProcedureType();
 			codeLength += unknownProcedureType.decode(is, false);
 			return codeLength;
 		}
 
-		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 7)) {
+		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 6)) {
 			unknownProcedureName = new ProcedureName();
 			codeLength += unknownProcedureName.decode(is, false);
 			return codeLength;
 		}
 
-		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 3)) {
+		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 2)) {
 			unknownParamEventIdentifier = new UnknownParamEventIdentifier();
 			codeLength += unknownParamEventIdentifier.decode(is, false);
 			return codeLength;

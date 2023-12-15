@@ -75,24 +75,24 @@ public class ProcedureName implements BerType, Serializable {
 			int codeLength = 0;
 			if (associationControl != null) {
 				codeLength += associationControl.encode(reverseOS, false);
-				// write tag: CONTEXT_CLASS, PRIMITIVE, 3
-				reverseOS.write(0x83);
-				codeLength += 1;
-				return codeLength;
-			}
-			
-			if (secondaryProcedure != null) {
-				codeLength += secondaryProcedure.encode(reverseOS, false);
 				// write tag: CONTEXT_CLASS, PRIMITIVE, 2
 				reverseOS.write(0x82);
 				codeLength += 1;
 				return codeLength;
 			}
 			
-			if (primeProcedure != null) {
-				codeLength += primeProcedure.encode(reverseOS, false);
+			if (secondaryProcedure != null) {
+				codeLength += secondaryProcedure.encode(reverseOS, false);
 				// write tag: CONTEXT_CLASS, PRIMITIVE, 1
 				reverseOS.write(0x81);
+				codeLength += 1;
+				return codeLength;
+			}
+			
+			if (primeProcedure != null) {
+				codeLength += primeProcedure.encode(reverseOS, false);
+				// write tag: CONTEXT_CLASS, PRIMITIVE, 0
+				reverseOS.write(0x80);
 				codeLength += 1;
 				return codeLength;
 			}
@@ -114,19 +114,19 @@ public class ProcedureName implements BerType, Serializable {
 				codeLength += berTag.decode(is);
 			}
 
-			if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 1)) {
+			if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 0)) {
 				primeProcedure = new BerNull();
 				codeLength += primeProcedure.decode(is, false);
 				return codeLength;
 			}
 
-			if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 2)) {
+			if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 1)) {
 				secondaryProcedure = new IntPos();
 				codeLength += secondaryProcedure.decode(is, false);
 				return codeLength;
 			}
 
-			if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 3)) {
+			if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 2)) {
 				associationControl = new BerNull();
 				codeLength += associationControl.decode(is, false);
 				return codeLength;

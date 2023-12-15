@@ -23,7 +23,6 @@ EXPORTS 	acExtProcedureParam
 ,			operations
 ,			procedures
 ,			scdpExtProcedureParam
-,			serviceGenericIdentifiers
 ,			services
 ,			startReturn
 ,			teExtProcedureParam;
@@ -43,7 +42,6 @@ fwProceduresFunctionalities			OBJECT IDENTIFIER	::=	{framework 4}
 modules									OBJECT IDENTIFIER	::=	{framework 1}
 operations								OBJECT IDENTIFIER	::=	{framework 2}
 procedures								OBJECT IDENTIFIER	::=	{framework 3}
-serviceGenericIdentifiers				OBJECT IDENTIFIER	::=	{framework 5}
 -- ************************************
 -- FRAMEWORK OPERATIONS IDENTIFIERS:
 bindInvocation							OBJECT IDENTIFIER	::=	{operations 1}
@@ -188,7 +186,6 @@ EXPORTS		AbstractChoice
 ,			ProductionStatus
 ,			PublishedIdentifier
 ,			QualifiedParameter
-,			ServiceUserRespTimer
 ,			StandardAcknowledgeHeader
 ,			StandardInvocationHeader
 ,			StandardReturnHeader
@@ -208,7 +205,7 @@ AbstractChoice				::=		CHOICE
 }
 
 -- In the event of a negative result, the value of the diagnostic
--- is complemented by the following type (see 3.2.1.6 a)):
+-- is complemented by the following type (see 3.2.1.7 a)):
 AdditionalText				::=		VisibleString
 
 -- Appellation is used between the service provider and the service user.
@@ -257,16 +254,16 @@ DeliveryMode				::=		ENUMERATED
 -- diagnostic parameter can be introduced if that is necessary for the
 -- negative return or acknowledgement of an operation.
 Diagnostic				::=		CHOICE
-{	invalidParameterValue	[1]		SEQUENCE
+{	invalidParameterValue	[0]		SEQUENCE
 	{	text			AdditionalText
 	,	appellation	Appellation	-- of the invalid parameter
 	}
-,	conflictingValues		[2]		SEQUENCE
+,	conflictingValues		[1]		SEQUENCE
 	{	text			AdditionalText
 	,	appellations	SEQUENCE OF Appellation
 	}
-,	otherReason			[3]		AdditionalText
-,	unsupportedOption		[4]		AdditionalText
+,	otherReason			[2]		AdditionalText
+,	unsupportedOption		[3]		AdditionalText
 ,	diagnosticExtension	[100]	Embedded
 }
 
@@ -280,8 +277,8 @@ Duration				::=		CHOICE
 Embedded				::=		EMBEDDED PDV
 
 EventValue				::=		CHOICE
-{	qualifiedValues		[1]		SequenceOfQualifiedValue
-,	empty					[2]		NULL
+{	qualifiedValues		[0]		SequenceOfQualifiedValue
+,	empty					[1]		NULL
 ,	eventValueExtension	[100]	Embedded
 }
 
@@ -320,8 +317,8 @@ InvokeId				::=		IntUnsigned
 Label					::=		PublishedIdentifier
 
 ListOfNamesDiagnosticExt		::=		CHOICE
-{	unknownNames					[1]		SEQUENCE OF UnknownName
-,	unknownDefault					[3]		AdditionalText
+{	unknownNames					[0]		SEQUENCE OF UnknownName
+,	unknownDefault					[1]		AdditionalText
 ,	diagnosticExtension			[100]	Embedded
 }
 
@@ -342,14 +339,14 @@ ListOfParametersEvents	::=		CHOICE
 }
 
 ListOfParamEventsDiagnostics		::=		CHOICE
-{	undefinedDefault					[5]		AdditionalText
-,	unknownListName					[4]		VisibleString
-,	unknownFunctionalResourceType	[2]		FunctionalResourceType
-,	unknownFunctionalResourceName	[1]		FunctionalResourceName
-,	unknownProcedureType				[6]		ProcedureType
-, 	unknownProcedureName				[7]		ProcedureName
-,	unknownParamEventIdentifier		[3]		SEQUENCE OF CHOICE
-	{	paramEventLabel					[2]		Label
+{	undefinedDefault					[4]		AdditionalText
+,	unknownListName					[3]		VisibleString
+,	unknownFunctionalResourceType	[1]		FunctionalResourceType
+,	unknownFunctionalResourceName	[0]		FunctionalResourceName
+,	unknownProcedureType				[5]		ProcedureType
+, 	unknownProcedureName				[6]		ProcedureName
+,	unknownParamEventIdentifier		[2]		SEQUENCE OF CHOICE
+	{	paramEventLabel					[0]		Label
 	,	paramEventName						[1]		Name
 	}
 }
@@ -364,7 +361,7 @@ MaxFwdBufferSize		::=		IntPos
 -- 3. the Name of a directive
 Name						::=		SEQUENCE
 {	fRorProcedureName					FRorProcedureName
-,	paramOrEventOrDirectiveId			PublishedIdentifier
+,	paramOrEventOrDirectiveId		PublishedIdentifier
 }
 
 PortId					::=		LogicalPortName
@@ -372,9 +369,9 @@ PortId					::=		LogicalPortName
 ProcedureName			::=		SEQUENCE
 {	procedureType					ProcedureType
 ,	procedureRole					CHOICE
-	{	primeProcedure			[1]		NULL
-	,	secondaryProcedure		[2]		IntPos
-	,	associationControl		[3]		NULL
+	{	primeProcedure				[0]		NULL
+	,	secondaryProcedure		[1]		IntPos
+	,	associationControl		[2]		NULL
 	}
 }
 -- The ProcedureType is an Object Identifier, the allocation of which is
@@ -396,12 +393,6 @@ ProductionStatus		::=		ENUMERATED
 -- (See D2)
 PublishedIdentifier		::=		OBJECT IDENTIFIER
 
--- The definition of the parameters can be found in annex C.
-QualifiedParameter		::=		SEQUENCE
-{	parameterName			Name
-,	qualifiedValues		SequenceOfQualifiedValue
-}
-
 QualifiedValue			::=		CHOICE
 {	valid					[0]		TypeAndValue -- Valid value
 ,	unavailable			[1]		NULL	-- Unknown or unavailable value
@@ -409,9 +400,15 @@ QualifiedValue			::=		CHOICE
 ,	error					[3]		NULL	-- Processing resulted in an error
 }
 
-SequenceOfQualifiedValue	::=		SEQUENCE OF QualifiedValue
 
-ServiceUserRespTimer	::=		IntPos
+-- The definition of the parameters can be found in annex C.
+QualifiedParameter		::=		SEQUENCE
+{	parameterName			Name
+,	qualifiedValues		SequenceOfQualifiedValue
+}
+
+
+SequenceOfQualifiedValue	::=		SEQUENCE OF QualifiedValue
 
 StandardAcknowledgeHeader		::=		StandardReturnHeader
 
@@ -538,25 +535,25 @@ IMPORTS		AbstractChoice
 -- =============================================================
 
 DirectiveQualifierValues		::=		CHOICE
-{	sequenceOfParamIdsAndValues	[1]		SequenceOfParameterIdsAndValues
-,	parameterlessValues			[2]		TypeAndValue
-,	noQualifierValues				[3]		NULL
+{	sequenceOfParamIdsAndValues	[0]		SequenceOfParameterIdsAndValues
+,	parameterlessValues			[1]		TypeAndValue
+,	noQualifierValues				[2]		NULL
 }
 
 ExecuteDirectiveInvocation	::=		SEQUENCE
 {	standardInvocationHeader		StandardInvocationHeader
 ,	directiveIdentifier			PublishedIdentifier
 ,	directiveQualifier				CHOICE
-	{	localProcDirQualifier			[1]		DirectiveQualifierValues
-	,	serviceProcDirQualifier		[2]		SEQUENCE
+	{	localProcDirQualifier			[0]		DirectiveQualifierValues
+	,	serviceProcDirQualifier		[1]		SEQUENCE
 		{	targetProcedureName					ProcedureName
 		,	serviceProcDirQualifierValues		DirectiveQualifierValues
 		}
-	,	functResourceDirQualifier		[3]		SEQUENCE
-		{	functResourceName			FunctionalResourceName
+	,	functResourceDirQualifier	[2]		SEQUENCE
+		{	functResourceName						FunctionalResourceName
 		,	functionalResourceQualifiers			DirectiveQualifierValues
 		}
-	,	directiveQualifierExtension	[4]		Embedded
+	,	directiveQualifierExtension	[3]		Embedded
 	}
 ,	executeDirectiveInvocationExtension		Extended
 }
@@ -600,10 +597,8 @@ ExecuteDirectiveReturn	::=		StandardReturnHeader
 
 GetReturn				::=		StandardReturnHeader
 
--- The Published Identifier part of the eventName is defined by the Object
--- Identifiers svcProductionStatusChangeVersion1, by
--- svcProductionConfigurationChangeVersion1, or by procedure type
--- specific Published Identifiers (see F3.16 and F3.17).
+-- The Published Identifier part of the eventName is defined by Functional Resource type - specific Object Identifier (see https://sanaregistry.org/r/functional_resources) or by
+-- procedure type specific Published Identifiers(see F3.16).
 NotifyInvocation		::=		SEQUENCE
 {	standardInvocationHeader		StandardInvocationHeader
 ,	eventTime						Time
@@ -655,13 +650,13 @@ TransferDataInvocation	::=		SEQUENCE
 -- 'execDirAckDiagExt': 'ExecDirNegAckDiagnosticExt' in F3.4 except
 -- 'execDirNegAckDiagnosticExtExtension'.
 ExecDirNegAckDiagnosticExt	::=		CHOICE
-{	unknownDirective							[1]		NULL
-,	unknownQualifier							[2]		NULL
-,	invalidProcedureName						[3]		NULL
-,	invalidFunctionalResourceName			[4]		NULL
-,	invalidFunctionalResourceParameter		[5]		SET OF Name
-,	invalidProcedureParameter					[6]		SET OF Name
-,	parameterValueOutOfRange					[7]		SET OF Name
+{	unknownDirective							[0]		NULL
+,	unknownQualifier							[1]		NULL
+,	invalidProcedureName						[2]		NULL
+,	invalidFunctionalResourceName			[3]		NULL
+,	invalidFunctionalResourceParameter		[4]		SET OF Name
+,	invalidProcedureParameter				[5]		SET OF Name
+,	parameterValueOutOfRange					[6]		SET OF Name
 ,	execDirNegAckDiagnosticExtExtension		[100]	Embedded
 }
 
@@ -684,7 +679,7 @@ execDirAckDiagExt		OBJECT IDENTIFIER		::=		{executeDirectiveAcknowledge 1}
 -- 'execDirNegReturnDiagnosticExt': 'ExecDirNegReturnDiagnosticExt' in F3.4
 -- except 'execDirNegReturnDiagnosticExtExtension'.
 ExecDirNegReturnDiagnosticExt	::=		CHOICE
-{	actionNotCompleted								[0]		ActionNotCompletedDiag
+{	actionNotCompleted							[0]		ActionNotCompletedDiag
 ,	execDirNegReturnDiagnosticExtExtension		[100]	Embedded
 }
 
@@ -728,7 +723,7 @@ getPosReturnExt	OBJECT IDENTIFIER		::=		{getReturn 1}
 -- 'getDiagnosticExtExtension'.
 GetDiagnosticExt		::=		CHOICE
 {	common							[0]		ListOfParamEventsDiagnostics
-,	getDiagnosticExtExtension		[100]	Embedded
+,	getDiagnosticExtExtension	[100]	Embedded
 }
 
 getDiagnosticExt	OBJECT IDENTIFIER		::=		{getReturn 2}
@@ -781,10 +776,9 @@ END
 
 
 CCSDS-CSTS-ASSOCIATION-CONTROL-TYPES
-
 {	iso(1) identified-organization(3) standards-producing-organization(112)
 	ccsds(4) css(4) csts(1) framework(1) modules(1)
-	associationControlPdus(5) version(1)
+associationControlPdus(5) version(1)
 }
 
 DEFINITIONS
@@ -888,7 +882,7 @@ PeerAbortDiagnostic	::=		OCTET STRING (SIZE(1))
 --		protocolError						(43)
 --		communicationsFailure				(44)
 --		encodingError						(45)
---		returnTimeout						(46)
+--		responseTimeout					(46)
 --		endOfServiceProvisionPeriod		(47)
 --		unsolicitedInvokeId				(48)
 --		duplicateInvokeId					(49)
@@ -971,9 +965,10 @@ acBindDiagExt	OBJECT IDENTIFIER		::=		{acExtProcedureParam 1}
 
 END
 
+
 CCSDS-CSTS-UNBUFFERED-DATA-DELIVERY-PDUS
 {	iso(1) identified-organization(3) standards-producing-organization(112)
-	ccsds(4) css(4) csts(1) framework(1) modules(1) unbuffDataDeliveryPdus(6)
+ccsds(4) css(4) csts(1) framework(1) modules(1) unbuffDataDeliveryPdus(6)
 	version(1)
 }
 
@@ -988,8 +983,6 @@ EXPORTS		UnbufferedDataDeliveryPdu
 IMPORTS		CstsFrameworkPdu
 	FROM CCSDS-CSTS-PDUS
 ;
-
-
 
 -- =============================================================
 -- The first part of the module definition defines the PDU containing
@@ -1323,7 +1316,7 @@ DataProcessingPdu		::=		CstsFrameworkPdu (WITH COMPONENTS
 -- 'dataProcProcDataInvocExtExtension' shall be set to 'notUsed'.
 DataProcProcDataInvocExt	::=		SEQUENCE
 {	processCompletionReport			CHOICE
-	{	doNotProduceReport					[0]		NULL
+	{	doNotProduceReport				[0]		NULL
 	,	produceReport						[1]		NULL
 	}
 ,	dataProcProcDataInvocExtExtension	Extended
@@ -1400,7 +1393,6 @@ IMPLICIT TAGS
 EXPORTS		BufferedDataProcessingPdu
 ,			ForwardBuffer
 ;
-
 
 IMPORTS		DataProcessingPdu
 	FROM CCSDS-CSTS-DATA-PROCESSING-PDUS
@@ -1497,7 +1489,8 @@ END
 
 
 CCSDS-CSTS-SEQUENCE-CONTROLLED-DATA-PROCESSING-PDUS
-{	iso(1) identified-organization(3) standards-producing-organization(112) ccsds(4)	css(4) csts(1) framework(1) 	modules(1) sequenceControlledDataProcessingPdus(10)	version(1)
+{	iso(1) identified-organization(3) standards-producing-organization(112) ccsds(4)	css(4) csts(1) framework(1) modules(1) sequenceControlledDataProcessingPdus(10)
+	version(1)
 }
 
 DEFINITIONS
@@ -1710,8 +1703,8 @@ scdpProcDataDiagExt	OBJECT IDENTIFIER		::=		{scdpExtProcedureParam 4}
 -- 'SequContrDataProcStatus' must not be set to
 -- 'sequContrDataProcStatusExtension'.
 SequContrDataProcStatus	::=		CHOICE
-{	expired									[1]		NULL
-,	processingNotStarted					[2]		NULL
+{	expired									[0]		NULL
+,	processingNotStarted					[1]		NULL
 ,	sequContrDataProcStatusExtension		[100]	Embedded
 }
 
@@ -1967,6 +1960,7 @@ CyclicReportTransferDataInvocDataRef		::=		SEQUENCE
 crTransferDataInvocDataRef	OBJECT IDENTIFIER		::=		{crExtProcedureParam 3}
 
 END
+
 
 CCSDS-CSTS-NOTIFICATION-PDUS
 {	iso(1) identified-organization(3) standards-producing-organization(112)
@@ -2286,27 +2280,23 @@ DEFINITIONS
 IMPLICIT TAGS
 ::=		BEGIN
 
-
-
 EXPORTS		procAssociationControl
-,			pACparametersId
-,			pACeventsId
-,			pACdirectivesId
-,			pACserviceUserRespTimer
-,			PACserviceUserRespTimerType
-,			pACinitiatorId	
-,			PACinitiatorIdType
-,			pACresponderId	
-,			PACresponderIdType
-,			pACresponderPortId
-,			PACresponderPortIdType
-,			pACserviceInstanceId
+,			pACparametersId	
+,			pACeventsId	
+,			pACdirectivesId	
+,			pACinitiatorId		
+,			PACinitiatorIdType		
+,			pACresponderId		
+,			PACresponderIdType		
+,			pACresponderPortId			
+,			PACresponderPortIdType		
+,			pACserviceInstanceId	
 ,			PACserviceInstanceIdType
 ,			procUnbuffDataDelivery
-,			pUBDDparametersId
-,			pUBDDeventsId
+,			pUBDDparametersId	
+,			pUBDDeventsId		
 ,			pUDDdirectivesId
-,			procBuffDataDelivery
+,			procBuffDataDelivery	
 ,			pBDDparametersId	
 ,			pBDDeventsId	
 ,			pBDDdirectivesId	
@@ -2316,13 +2306,6 @@ EXPORTS		procAssociationControl
 ,			PBDDdeliveryModeType	
 ,			pBDDdeliveryLatencyLimit	
 ,			PBDDdeliveryLatencyLimitType	
-,			pBDDproductionStatusChange	
-,			pBDDproductionStatusChangeEvtValue	
-,			PBDDproductionStatusChangeEvtValueType	
-,			pBDDproductionConfigurationChange	
-,			pBDDdataDiscardedExcessBacklog	
-,			pBDDrecordingBufferOverflow	
-,			pBDDendOfData		
 ,			pBDDconfigurationChange	
 ,			pBDDconfigurationChangeEvtValue1		
 ,			PBDDconfigurationChangeEvtValue1Type	
@@ -2334,10 +2317,6 @@ EXPORTS		procAssociationControl
 ,			pDPdirectivesId	
 ,			pDPinputQueueSize	
 ,			PDPinputQueueSizeType		
-,			pDPproductionStatusChange		
-,			pDPproductionStatusChangeEvtValue	
-,			PDPproductionStatusChangeEvtValueType		
-,			pDPproductionConfigurationChange		
 ,			pDPdataProcessingCompleted	
 ,			pDPconfigurationChange	
 ,			pDPconfigurationChangeEvtValue	
@@ -2352,10 +2331,6 @@ EXPORTS		procAssociationControl
 ,			PBDPmaxForwardBufferSizeType		
 ,			pBDPprocessingLatencyLimit	
 ,			PBDPprocessingLatencyLimitType	
-,			pBDPproductionStatusChange	
-,			pBDPproductionStatusChangeEvtValue			
-,			PBDPproductionStatusChangeEvtValueType	
-,			pBDPproductionConfigurationChange	
 ,			pBDPdataProcessingCompleted	
 ,			pBDPconfigurationChange	
 ,			pBDPconfigurationChangeEvtValue1				
@@ -2370,10 +2345,6 @@ EXPORTS		procAssociationControl
 ,			pSCDPdirectivesId		
 ,			pSCDPdataUnitId		
 ,			PSCDPdataUnitId	
-,			pSCDPproductionStatusChange	
-,			pSCDPproductionStatusChangeEvtValue	
-,			PSCDPproductionStatusChangeEvtValueType		
-,			pSCDPproductionConfigurationChange	
 ,			pSCDPdataProcessingCompleted		
 ,			pSCDPexpired	 
 ,			pSCDPlocked	
@@ -2393,23 +2364,23 @@ EXPORTS		procAssociationControl
 ,			procCyclicReport	
 ,			pCRparametersId		
 ,			pCReventsId	
-,			pCRdirectivesId
-,			pCRnamedLabelLists
-,			pCRminimumAllowedDeliveryCycle
-,			PCRnamedLabelListsType
-,			PCRminimumAllowedDeliveryCycleType
-,			pCRnamedLabelListsTypeExt
-,			procNotification
-,			pNparametersId
-,			pNeventsId
-,			pNdirectivesId	
-,			pNnamedLabelLists
-,			PNnamedLabelListsType
-,			pNnamedLabelListsTypeExt
-,			procThrowEvent
-,			pTEparametersId
-,			pTEeventsId
-,			pTEdirectivesId
+,			pCRdirectivesId	
+,			pCRnamedLabelLists		
+,			pCRminimumAllowedDeliveryCycle	
+,			PCRnamedLabelListsType	
+,			PCRminimumAllowedDeliveryCycleType	
+,			pCRnamedLabelListsTypeExt		
+,			procNotification	
+,			pNparametersId		
+,			pNeventsId		
+,			pNdirectivesId		
+,			pNnamedLabelLists		
+,			PNnamedLabelListsType		
+,			pNnamedLabelListsTypeExt		
+,			procThrowEvent		
+,			pTEparametersId	
+,			pTEeventsId	
+,			pTEdirectivesId	
 ;
 
 IMPORTS		fwProceduresFunctionalities
@@ -2417,8 +2388,6 @@ IMPORTS		fwProceduresFunctionalities
 
 			ServiceInstanceIdentifier
 	FROM CCSDS-CSTS-SERVICE-INSTANCE-ID
-
-
 
 			AuthorityIdentifier
 ,			BufferSize
@@ -2431,14 +2400,8 @@ IMPORTS		fwProceduresFunctionalities
 ,			IntUnsigned
 ,			Label
 ,			ProcessingLatencyLimit
-,			ServiceUserRespTimer
+,			ProductionStatus
 	FROM CCSDS-CSTS-COMMON-TYPES
-
-			svcProductionConfigurationChangeVersion1
-,			svcProductionStatusChangeVersion1
-,			svcProductionStatusVersion1
-,			SvcProductionStatusVersion1Type
-	FROM CCSDS-CSTS-GENERIC-SERVICE-OBJECT-IDENTIFIERS
 ;
 
 -- ======================================================================
@@ -2451,15 +2414,13 @@ procAssociationControl	OBJECT IDENTIFIER	::=
 pACparametersId			OBJECT IDENTIFIER		::=		{procAssociationControl 1}
 pACeventsId				OBJECT IDENTIFIER		::=		{procAssociationControl 2}
 pACdirectivesId			OBJECT IDENTIFIER		::=		{procAssociationControl 3}
-pACserviceUserRespTimer	OBJECT IDENTIFIER		::=		{pACparametersId 1}
-PACserviceUserRespTimerType						::=		ServiceUserRespTimer
-pACinitiatorId				OBJECT IDENTIFIER		::=		{pACparametersId 2}
-PACinitiatorIdType									::=		AuthorityIdentifier
-pACresponderId				OBJECT IDENTIFIER		::=		{pACparametersId 3}
-PACresponderIdType									::=		AuthorityIdentifier
-pACresponderPortId			OBJECT IDENTIFIER		::=		{pACparametersId 4}
+pACinitiatorId				OBJECT IDENTIFIER		::=		{pACparametersId 1}
+PACinitiatorIdType								::=		AuthorityIdentifier
+pACresponderId				OBJECT IDENTIFIER		::=		{pACparametersId 2}
+PACresponderIdType								::=		AuthorityIdentifier
+pACresponderPortId			OBJECT IDENTIFIER	::=		{pACparametersId 3}
 PACresponderPortIdType							::=		IdentifierString (SIZE (3 .. 16))
-pACserviceInstanceId		OBJECT IDENTIFIER		::=		{pACparametersId 5}
+pACserviceInstanceId		OBJECT IDENTIFIER		::=		{pACparametersId 4}
 PACserviceInstanceIdType							::=		ServiceInstanceIdentifier
 
 
@@ -2483,15 +2444,7 @@ pBDDdeliveryMode			OBJECT IDENTIFIER		::=		{pBDDparametersId 2}
 PBDDdeliveryModeType								::=		DeliveryMode
 pBDDdeliveryLatencyLimit	OBJECT IDENTIFIER		::=		{pBDDparametersId 3}
 PBDDdeliveryLatencyLimitType						::=		DeliveryLatencyLimit
-pBDDproductionStatusChange	OBJECT IDENTIFIER	::=		{svcProductionStatusChangeVersion1}
-pBDDproductionStatusChangeEvtValue	OBJECT IDENTIFIER		::=																		{svcProductionStatusVersion1}
-PBDDproductionStatusChangeEvtValueType			::=		SvcProductionStatusVersion1Type
-pBDDproductionConfigurationChange	OBJECT IDENTIFIER		::=
-													{svcProductionConfigurationChangeVersion1}
-pBDDdataDiscardedExcessBacklog	OBJECT IDENTIFIER		::=		{pBDDeventsId 1}
-pBDDrecordingBufferOverflow	OBJECT IDENTIFIER		::=		{pBDDeventsId 2}
-pBDDendOfData				OBJECT IDENTIFIER		::=		{pBDDeventsId 3}
-pBDDconfigurationChange	OBJECT IDENTIFIER		::=		{pBDDeventsId 4}
+pBDDconfigurationChange	OBJECT IDENTIFIER		::=		{pBDDeventsId 1}
 pBDDconfigurationChangeEvtValue1		OBJECT IDENTIFIER  ::=		{pBDDreturnBufferSize}
 PBDDconfigurationChangeEvtValue1Type				::=		PBDDreturnBufferSizeType
 pBDDconfigurationChangeEvtValue2		OBJECT IDENTIFIER  ::=		{pBDDdeliveryLatencyLimit}
@@ -2505,13 +2458,6 @@ pDPeventsId			OBJECT IDENTIFIER			::=		{procDataProcessing 2}
 pDPdirectivesId		OBJECT IDENTIFIER			::=		{procDataProcessing 3}
 pDPinputQueueSize		OBJECT IDENTIFIER			::=		{pDPparametersId 1}
 PDPinputQueueSizeType								::=		BufferSize
-pDPproductionStatusChange		OBJECT IDENTIFIER		::=	
-													{svcProductionStatusChangeVersion1}
-pDPproductionStatusChangeEvtValue	OBJECT IDENTIFIER		::=
-													{svcProductionStatusVersion1}
-PDPproductionStatusChangeEvtValueType			::=		SvcProductionStatusVersion1Type
-pDPproductionConfigurationChange	OBJECT IDENTIFIER		::=
-													{svcProductionConfigurationChangeVersion1}
 pDPdataProcessingCompleted	OBJECT IDENTIFIER		::=		{pDPeventsId 1}
 pDPconfigurationChange	OBJECT IDENTIFIER		::=		{pDPeventsId 2}
 pDPconfigurationChangeEvtValue	OBJECT IDENTIFIER	::=		{pDPinputQueueSize}
@@ -2528,13 +2474,6 @@ pBDPmaxForwardBufferSize	OBJECT IDENTIFIER		::=		{pBDPparametersId 2}
 PBDPmaxForwardBufferSizeType						::=		BufferSize
 pBDPprocessingLatencyLimit	OBJECT IDENTIFIER		::=		{pBDPparametersId 3}
 PBDPprocessingLatencyLimitType					::=		ProcessingLatencyLimit
-pBDPproductionStatusChange	OBJECT IDENTIFIER		::=	
-													{svcProductionStatusChangeVersion1}
-pBDPproductionStatusChangeEvtValue	OBJECT IDENTIFIER		::=
-													{svcProductionStatusChangeVersion1}
-PBDPproductionStatusChangeEvtValueType			::=		SvcProductionStatusVersion1Type
-pBDPproductionConfigurationChange	OBJECT IDENTIFIER		::=
-													{svcProductionConfigurationChangeVersion1}
 pBDPdataProcessingCompleted	OBJECT IDENTIFIER		::=		{pDPdataProcessingCompleted}
 pBDPconfigurationChange	OBJECT IDENTIFIER		::=		{pDPconfigurationChange}
 pBDPconfigurationChangeEvtValue1		OBJECT IDENTIFIER	::=	{pBDPmaxForwardBufferSize}
@@ -2556,13 +2495,6 @@ pSCDPdirectivesId					OBJECT IDENTIFIER		 ::=
 													{procSeqControlledDataProcess 3}
 pSCDPdataUnitId					OBJECT IDENTIFIER		::=		{pSCDPparametersId 1}
 PSCDPdataUnitId									::=		DataUnitId
-pSCDPproductionStatusChange	OBJECT IDENTIFIER		::=	
-													{svcProductionStatusChangeVersion1}
-pSCDPproductionStatusChangeEvtValue	OBJECT IDENTIFIER		::=
-													{svcProductionStatusVersion1}
-PSCDPproductionStatusChangeEvtValueType			::=		SvcProductionStatusVersion1Type
-pSCDPproductionConfigurationChange	OBJECT IDENTIFIER		::=
-													{svcProductionConfigurationChangeVersion1}
 pSCDPdataProcessingCompleted		OBJECT IDENTIFIER		::=																	{pDPdataProcessingCompleted}
 pSCDPexpired						OBJECT IDENTIFIER		::=		{pSCDPeventsId 1} 
 pSCDPlocked						OBJECT IDENTIFIER		::=		{pSCDPeventsId 2}
@@ -2580,7 +2512,7 @@ procInformationQuery				OBJECT IDENTIFIER		::=
 pIQparametersId					OBJECT IDENTIFIER		::=		{procInformationQuery 1}
 pIQeventsId						OBJECT IDENTIFIER		::=		{procInformationQuery 2}
 pIQdirectivesId					OBJECT IDENTIFIER		::=		{procInformationQuery 3}
-pIQnamedLabelLists					OBJECT IDENTIFIER		::=		{pIQparametersId 1}
+pIQnamedLabelLists				OBJECT IDENTIFIER		::=		{pIQparametersId 1}
 -- Note: In case the service user selects a procedure type in the GET 
 -- invocation, the service provider will return the same list of
 -- parameters for each active instance of the selected procedure type.
@@ -2619,6 +2551,7 @@ pTEparametersId					OBJECT IDENTIFIER		::=		{procThrowEvent 1}
 pTEeventsId						OBJECT IDENTIFIER		::=		{procThrowEvent 2}
 pTEdirectivesId					OBJECT IDENTIFIER		::=		{procThrowEvent 3}
 
+
 -- Additional types for the Framework Functional Resource
 LabelList				::=		SEQUENCE
 {	name					VisibleString
@@ -2631,56 +2564,4 @@ LabelListSet			::=		SET OF LabelList
 
 END
 
-
-CCSDS-CSTS-GENERIC-SERVICE-OBJECT-IDENTIFIERS
-{	iso(1) identified-organization(3) standards-producing-organization(112)
-	ccsds(4) css(4) csts(1) framework(1) modules(1)
-	serviceGenericIdentifiers(17) version(1)
-}
-
-DEFINITIONS
-IMPLICIT TAGS
-::=		BEGIN
-
-EXPORTS		svcProductionConfigurationChange
-,			svcProductionConfigurationChangeVersion1
-,			svcProductionStatus
-,			svcProductionStatusVersion1
-,			SvcProductionStatusVersion1Type
-,			svcProductionStatusChange
-,			svcProductionStatusChangeVersion1
-;
-
-IMPORTS		serviceGenericIdentifiers
-	FROM CCSDS-CSTS-OBJECT-IDENTIFIERS
-
-			ProductionStatus
-	FROM CCSDS-CSTS-COMMON-TYPES
-;
-
--- ======================================================================
--- FRAMEWORK CROSS SUPPORT SERVICE IDENTIFIERS
-
--- Service generic Identifiers:
-
-svcParametersId					OBJECT IDENTIFIER		::=
-											{serviceGenericIdentifiers 1}
-svcEventsId						OBJECT IDENTIFIER		::=	
-											{serviceGenericIdentifiers 2}
-svcDirectivesId					OBJECT IDENTIFIER		::=	
-											{serviceGenericIdentifiers 3}
-
-svcProductionStatus				OBJECT IDENTIFIER		::=		{svcParametersId 1}
-svcProductionStatusVersion1		OBJECT IDENTIFIER		::=		{svcProductionStatus 1}
-SvcProductionStatusVersion1Type							::=		ProductionStatus
-
-svcProductionStatusChange 		OBJECT IDENTIFIER		::=		{svcEventsId 1}
-svcProductionStatusChangeVersion1	OBJECT IDENTIFIER		::=
-											{svcProductionStatusChange 1}
-SvcProductionStatusChangeVersion1EvtValue	::=		SvcProductionStatusVersion1Type	
-svcProductionConfigurationChange		OBJECT IDENTIFIER		::=	{svcEventsId 2}
-svcProductionConfigurationChangeVersion1	OBJECT IDENTIFIER	::=
-											{svcProductionConfigurationChange 1}
-
-END
 

@@ -527,32 +527,32 @@ public class Diagnostic implements BerType, Serializable {
 		
 		if (unsupportedOption != null) {
 			codeLength += unsupportedOption.encode(reverseOS, false);
-			// write tag: CONTEXT_CLASS, PRIMITIVE, 4
-			reverseOS.write(0x84);
-			codeLength += 1;
-			return codeLength;
-		}
-		
-		if (otherReason != null) {
-			codeLength += otherReason.encode(reverseOS, false);
 			// write tag: CONTEXT_CLASS, PRIMITIVE, 3
 			reverseOS.write(0x83);
 			codeLength += 1;
 			return codeLength;
 		}
 		
+		if (otherReason != null) {
+			codeLength += otherReason.encode(reverseOS, false);
+			// write tag: CONTEXT_CLASS, PRIMITIVE, 2
+			reverseOS.write(0x82);
+			codeLength += 1;
+			return codeLength;
+		}
+		
 		if (conflictingValues != null) {
 			codeLength += conflictingValues.encode(reverseOS, false);
-			// write tag: CONTEXT_CLASS, CONSTRUCTED, 2
-			reverseOS.write(0xA2);
+			// write tag: CONTEXT_CLASS, CONSTRUCTED, 1
+			reverseOS.write(0xA1);
 			codeLength += 1;
 			return codeLength;
 		}
 		
 		if (invalidParameterValue != null) {
 			codeLength += invalidParameterValue.encode(reverseOS, false);
-			// write tag: CONTEXT_CLASS, CONSTRUCTED, 1
-			reverseOS.write(0xA1);
+			// write tag: CONTEXT_CLASS, CONSTRUCTED, 0
+			reverseOS.write(0xA0);
 			codeLength += 1;
 			return codeLength;
 		}
@@ -574,25 +574,25 @@ public class Diagnostic implements BerType, Serializable {
 			codeLength += berTag.decode(is);
 		}
 
-		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 1)) {
+		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 0)) {
 			invalidParameterValue = new InvalidParameterValue();
 			codeLength += invalidParameterValue.decode(is, false);
 			return codeLength;
 		}
 
-		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 2)) {
+		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.CONSTRUCTED, 1)) {
 			conflictingValues = new ConflictingValues();
 			codeLength += conflictingValues.decode(is, false);
 			return codeLength;
 		}
 
-		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 3)) {
+		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 2)) {
 			otherReason = new AdditionalText();
 			codeLength += otherReason.decode(is, false);
 			return codeLength;
 		}
 
-		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 4)) {
+		if (berTag.equals(BerTag.CONTEXT_CLASS, BerTag.PRIMITIVE, 3)) {
 			unsupportedOption = new AdditionalText();
 			codeLength += unsupportedOption.decode(is, false);
 			return codeLength;

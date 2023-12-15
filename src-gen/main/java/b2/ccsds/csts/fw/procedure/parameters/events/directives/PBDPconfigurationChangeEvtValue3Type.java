@@ -29,8 +29,7 @@ import b2.ccsds.csts.common.types.IntPos;
 import b2.ccsds.csts.common.types.IntUnsigned;
 import b2.ccsds.csts.common.types.Label;
 import b2.ccsds.csts.common.types.ProcessingLatencyLimit;
-import b2.ccsds.csts.common.types.ServiceUserRespTimer;
-import b2.ccsds.csts.generic.service.object.identifiers.SvcProductionStatusVersion1Type;
+import b2.ccsds.csts.common.types.ProductionStatus;
 import b2.ccsds.csts.service.instance.id.ServiceInstanceIdentifier;
 
 public class PBDPconfigurationChangeEvtValue3Type extends PBDPprocessingLatencyLimitType {
