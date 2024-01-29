@@ -418,6 +418,12 @@ public abstract class AbstractProcedure implements IProcedureInternal {
 		IBind bind = OpsFactory.createBind(getServiceInstance().getSfwVersion(),
 				getServiceInstance().getServiceType(),
 				getServiceInstance().getVersion());
+				
+		if (bind == null) {
+			LOGGER.log(Level.SEVERE, "Framework Version: (" + getServiceInstance().getSfwVersion() + ") or Service Type: (" + getServiceInstance().getServiceType() + ") have not been properly defined!");
+			return null;
+		}
+		
 		try {
 			bind.setInitiatorIdentifier(getServiceInstance().getApi().getProxySettings().getLocalId());
 			bind.setResponderIdentifier(getServiceInstance().getPeerIdentifier());
