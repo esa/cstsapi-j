@@ -179,7 +179,7 @@ public class OIDs {
 	public static final ObjectIdentifier mdCstsProviderEventsId = ObjectIdentifier.of(mdCstsProvider, 2);
 	public static final ObjectIdentifier mdCstsProviderDirectivesId = ObjectIdentifier.of(mdCstsProvider, 3);
 	public static final ObjectIdentifier onChangeOptCyclicReportStartInvocExt = ObjectIdentifier.of(monitoredDataExtendedServiceParameters, 1);
-	public static final ObjectIdentifier rtnCfdpPduService = ObjectIdentifier.of(services, 4);
+	public static final ObjectIdentifier rtnCfdpPduService = ObjectIdentifier.of(services, 100);
 	public static final ObjectIdentifier rtnCfdpPduDerivedServices = ObjectIdentifier.of(rtnCfdpPduService, 1);
 	public static final ObjectIdentifier rtnCfdpPduExtendedServiceParameters = ObjectIdentifier.of(rtnCfdpPduService, 2);
 	public static final ObjectIdentifier rtnCfdpPduServiceProcedures = ObjectIdentifier.of(rtnCfdpPduService, 3);
