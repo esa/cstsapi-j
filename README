@@ -1,0 +1,5 @@
+The CSTS API implments the CCSDS Cross Support Transfer Service (CSTS) Specification Framework. It serves as a foundation to implement CSTSs. More documentation is available  in the doc folder.
+
+Two Issues are supported, Issue 1 and Issue 2:
+https://public.ccsds.org/Pubs/921x1b2e1.pdf
+https://public.ccsds.org/Pubs/921x1b1s.pdf
