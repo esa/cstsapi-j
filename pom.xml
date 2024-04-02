@@ -21,6 +21,7 @@
         <project.repository.url>https://maven.pkg.github.com/esa/cstsapi-j</project.repository.url>
         <project.site.id>vsdenexus</project.site.id>
         <project.site.url>dav:https://vsdenexus.esoc.esa.int/nexus/content/sites/cda-p2-site/esa/egos/csts.api/repository-p2-${project.version}</project.site.url>
+        <skip.p2>true</skip.p2>
     </properties>
 
     <description>Cross Support Transfer Service API</description>
@@ -263,6 +264,7 @@
                             <goal>site</goal>
                         </goals>
                         <configuration>
+                            <skip>${skip.p2}</skip>
                             <featureDefinitions>
                                 <feature>
                                     <id>${project.artifactId}.feature</id>
@@ -300,6 +302,7 @@
                         </goals>
                         <inherited>false</inherited>
                         <configuration>
+                            <skip>${skip.p2}</skip>
                             <inputDirectory>${project.build.directory}/repository</inputDirectory>
                         </configuration>
                     </execution>
