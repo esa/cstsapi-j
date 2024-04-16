@@ -206,7 +206,9 @@ public class PDUTranslator implements ITranslator {
 			return AssocTranslator.decodeUnbindReturn(getUnbindReturnOp(), pdu);
 		}
 
-		if (pdu.getReturnBuffer() != null) {
+		if (pdu.getReturnBuffer() != null && 
+				pdu.getReturnBuffer().getTransferDataOrNotification() != null &&
+				pdu.getReturnBuffer().getTransferDataOrNotification().size() > 0) {
 			isInvoke.setReference(true);
 			if (this.serviceInstance != null)
 				if (pdu.getReturnBuffer().getTransferDataOrNotification().get(0).getTransferDataInvocation() != null) {
@@ -357,7 +359,9 @@ public class PDUTranslator implements ITranslator {
 			return AssocTranslator.decodeUnbindReturn(getUnbindReturnOp(), pdu);
 		}
 
-		if (pdu.getReturnBuffer() != null) {
+		if (pdu.getReturnBuffer() != null && 
+				pdu.getReturnBuffer().getTransferDataOrNotification() != null &&
+				pdu.getReturnBuffer().getTransferDataOrNotification().size() > 0) {
 			isInvoke.setReference(true);
 			if (this.serviceInstance != null)
 				if (pdu.getReturnBuffer().getTransferDataOrNotification().get(0).getTransferDataInvocation() != null) {
