@@ -106,7 +106,7 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 		}
 		executor.shutdownNow();
 		executor = Executors.newSingleThreadScheduledExecutor();
-		returnBuffer.getBuffer().clear();
+		returnBuffer = createReturnBuffer(); // CSTSAPI-79 The returnBuffer may be queued, so we cannot clear and re-use it
 		returnBufferSize = 0;
 		dataEnded = false;
 		startGenerationTime = ConditionalTime.unknown();
@@ -255,7 +255,7 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 			{
 				releaseTimer.cancel(false);
 			}
-			returnBuffer.getBuffer().clear();
+			returnBuffer = createReturnBuffer(); // CSTSAPI-79 The returnBuffer may be queued, so we cannot clear and re-use it
 			returnBufferSize = getReturnBufferSize().getValue();
 		}
 		return result;
@@ -268,7 +268,7 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 			releaseTimer.cancel(false);
 		}
 		CstsResult result = forwardInvocationToProxy(returnBuffer);
-		returnBuffer.getBuffer().clear();
+		returnBuffer = createReturnBuffer(); // CSTSAPI-79 The returnBuffer may be queued, so we cannot clear and re-use it
 		returnBufferSize = getReturnBufferSize().getValue();
 		return result;
 	}
@@ -280,7 +280,7 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 			releaseTimer.cancel(false);
 		}
 		forwardInvocationToProxy(returnBuffer);
-		returnBuffer.getBuffer().clear();
+		returnBuffer = createReturnBuffer(); // CSTSAPI-79 The returnBuffer may be queued, so we cannot clear and re-use it
 		returnBufferSize = getReturnBufferSize().getValue();
 	}
 
