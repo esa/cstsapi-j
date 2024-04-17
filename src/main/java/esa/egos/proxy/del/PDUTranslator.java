@@ -2,13 +2,9 @@ package esa.egos.proxy.del;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.TreeMap;
 import java.util.concurrent.locks.ReentrantLock;
 
-import b1.ccsds.csts.association.control.types.PeerAbortDiagnostic;
-import b1.ccsds.csts.common.types.InvokeId;
-import b1.ccsds.csts.pdus.CstsFrameworkPdu;
 import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.enumerations.OperationResult;
 import esa.egos.csts.api.exceptions.ApiException;
