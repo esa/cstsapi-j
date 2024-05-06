@@ -1,6 +1,8 @@
 package esa.egos.proxy.spl;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -19,6 +21,7 @@ import esa.egos.csts.api.operations.IConfirmedOperation;
 import esa.egos.csts.api.operations.IOperation;
 import esa.egos.csts.api.operations.IPeerAbort;
 import esa.egos.csts.api.operations.IProcessData;
+import esa.egos.csts.api.operations.IReturnBuffer;
 import esa.egos.csts.api.operations.IUnbind;
 import esa.egos.csts.api.serviceinstance.IServiceConfiguration;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceIdentifier;
@@ -1063,6 +1066,10 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 			boolean reportTransmission) {
 		Result res = Result.E_FAIL;
 
+		if(pOperation == null) {
+			return Result.E_FAIL;
+		}
+		
 		if (IBind.class.isAssignableFrom(pOperation.getClass())) {
 			if (originatorIsNetwork) {
 				if (isInvoke) {
@@ -1357,6 +1364,16 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 			return Result.SLE_S_QUEUED;
 		}
 
+		
+		//investigation of CSTSAPI-79
+		if(pOperation instanceof IReturnBuffer &&
+				((IReturnBuffer)pOperation).getBuffer().size() == 0) {
+			Exception e = new Exception("Zero length return buffer passed to association");
+			StringWriter stackTrace = new StringWriter();
+			e.printStackTrace(new PrintWriter(stackTrace));
+			LOG.severe("Zero length return buffer passed to association: " + stackTrace);
+		}
+		
 		insertSecurityAttributes(pOperation, isInvoke);
 
 		if (IBind.class.isAssignableFrom(pOperation.getClass())) {

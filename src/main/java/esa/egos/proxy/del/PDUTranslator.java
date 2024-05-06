@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.TreeMap;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Logger;
 
 import esa.egos.csts.api.diagnostics.PeerAbortDiagnostics;
 import esa.egos.csts.api.enumerations.OperationResult;
@@ -214,6 +215,10 @@ public class PDUTranslator implements ITranslator {
 					identifier = ProcedureInstanceIdentifier
 							.decode(pdu.getReturnBuffer().getTransferDataOrNotification().get(0).getNotifyInvocation().getStandardInvocationHeader().getProcedureInstanceId());
 				}
+		}  else if(pdu.getReturnBuffer() != null &&
+				pdu.getReturnBuffer().getTransferDataOrNotification() != null &&
+				pdu.getReturnBuffer().getTransferDataOrNotification().size() == 0) {
+			Logger.getGlobal().warning("Received B1 empty retun buffer");
 		}
 
 		if (pdu.getForwardBuffer() != null) {
@@ -359,7 +364,7 @@ public class PDUTranslator implements ITranslator {
 				pdu.getReturnBuffer().getTransferDataOrNotification() != null &&
 				pdu.getReturnBuffer().getTransferDataOrNotification().size() > 0) {
 			isInvoke.setReference(true);
-			if (this.serviceInstance != null)
+			if (this.serviceInstance != null) {
 				if (pdu.getReturnBuffer().getTransferDataOrNotification().get(0).getTransferDataInvocation() != null) {
 					identifier = ProcedureInstanceIdentifier.decode(
 							pdu.getReturnBuffer().getTransferDataOrNotification().get(0).getTransferDataInvocation().getStandardInvocationHeader().getProcedureName());
@@ -367,6 +372,11 @@ public class PDUTranslator implements ITranslator {
 					identifier = ProcedureInstanceIdentifier
 							.decode(pdu.getReturnBuffer().getTransferDataOrNotification().get(0).getNotifyInvocation().getStandardInvocationHeader().getProcedureName());
 				}
+			}
+		} else if(pdu.getReturnBuffer() != null &&
+				pdu.getReturnBuffer().getTransferDataOrNotification() != null &&
+				pdu.getReturnBuffer().getTransferDataOrNotification().size() == 0) {
+			Logger.getGlobal().warning("Received B2 empty retun buffer");
 		}
 
 		if (pdu.getForwardBuffer() != null) {
