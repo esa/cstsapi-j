@@ -1,6 +1,8 @@
 package esa.egos.csts.api.procedures.buffereddatadelivery;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.BufferOverflowException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -248,7 +250,19 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 	}
 
 	@Override
-	public synchronized CstsResult attemptToPassBufferContents() {
+	public synchronized CstsResult attemptToPassBufferContents() {		
+		// The release timer may be eventually be can calling this method after a call from the application filling up the transfer buffer and passing it. 
+		if(returnBuffer.getBuffer().size() == 0) {
+			if(LOGGER.isLoggable(Level.FINE)) {
+				Exception e = new Exception("Zero length return buffer passed to association");
+				StringWriter stackTrace = new StringWriter();
+				e.printStackTrace(new PrintWriter(stackTrace));
+	
+				LOGGER.info("Empty return buffer for transmission encountered (attemptToPassBufferContents). " + getProcedureInstanceIdentifier() + " " + stackTrace);
+			}
+			return CstsResult.SUCCESS;
+		}
+		
 		CstsResult result = forwardInvocationToProxy(returnBuffer);
 		if (result == CstsResult.SUCCESS) {
 			if (releaseTimer != null)
@@ -267,6 +281,19 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 		{
 			releaseTimer.cancel(false);
 		}
+		
+		// The release timer may be eventually be can calling this method after a call from the application filling up the transfer buffer and passing it. 
+		if(returnBuffer.getBuffer().size() == 0) {
+			if(LOGGER.isLoggable(Level.FINE)) {
+				Exception e = new Exception("Zero length return buffer passed to association");
+				StringWriter stackTrace = new StringWriter();
+				e.printStackTrace(new PrintWriter(stackTrace));
+	
+				LOGGER.info("Empty return buffer for transmission encountered (passBufferContents). " + getProcedureInstanceIdentifier() + " " + stackTrace);
+			}
+			return CstsResult.SUCCESS;
+		}
+		
 		CstsResult result = forwardInvocationToProxy(returnBuffer);
 		returnBuffer = createReturnBuffer(); // CSTSAPI-79 The returnBuffer may be queued, so we cannot clear and re-use it
 		returnBufferSize = getReturnBufferSize().getValue();
@@ -279,6 +306,20 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 		{
 			releaseTimer.cancel(false);
 		}
+		
+		// The release timer may be eventually be can calling this method after a call from the application filling up the transfer buffer and passing it. 
+		if(returnBuffer.getBuffer().size() == 0) {
+			if(LOGGER.isLoggable(Level.FINE)) {
+				Exception e = new Exception("Zero length return buffer passed to association");
+				StringWriter stackTrace = new StringWriter();
+				e.printStackTrace(new PrintWriter(stackTrace));
+	
+				LOGGER.fine("Empty return buffer for transmission encountered (transmitBuffer). " + getProcedureInstanceIdentifier() + " " + stackTrace);
+			}
+			return;
+		}
+		
+		//returnBuffer.getBuffer().clear(); // for testing, do not check in!
 		forwardInvocationToProxy(returnBuffer);
 		returnBuffer = createReturnBuffer(); // CSTSAPI-79 The returnBuffer may be queued, so we cannot clear and re-use it
 		returnBufferSize = getReturnBufferSize().getValue();
