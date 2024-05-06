@@ -254,7 +254,7 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 		// The release timer may be eventually be can calling this method after a call from the application filling up the transfer buffer and passing it. 
 		if(returnBuffer.getBuffer().size() == 0) {
 			if(LOGGER.isLoggable(Level.FINE)) {
-				Exception e = new Exception("Zero length return buffer passed to association");
+				Exception e = new Exception("Zero length return buffer passed to BDD");
 				StringWriter stackTrace = new StringWriter();
 				e.printStackTrace(new PrintWriter(stackTrace));
 	
@@ -285,7 +285,7 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 		// The release timer may be eventually be can calling this method after a call from the application filling up the transfer buffer and passing it. 
 		if(returnBuffer.getBuffer().size() == 0) {
 			if(LOGGER.isLoggable(Level.FINE)) {
-				Exception e = new Exception("Zero length return buffer passed to association");
+				Exception e = new Exception("Zero length return buffer passed to BDD");
 				StringWriter stackTrace = new StringWriter();
 				e.printStackTrace(new PrintWriter(stackTrace));
 	
@@ -310,7 +310,7 @@ public abstract class AbstractBufferedDataDelivery extends AbstractStatefulProce
 		// The release timer may be eventually be can calling this method after a call from the application filling up the transfer buffer and passing it. 
 		if(returnBuffer.getBuffer().size() == 0) {
 			if(LOGGER.isLoggable(Level.FINE)) {
-				Exception e = new Exception("Zero length return buffer passed to association");
+				Exception e = new Exception("Zero length return buffer passed to BDD");
 				StringWriter stackTrace = new StringWriter();
 				e.printStackTrace(new PrintWriter(stackTrace));
 	
