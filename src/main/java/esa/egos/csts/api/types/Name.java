@@ -220,8 +220,8 @@ public class Name {
 
 	@Override
 	public String toString() {
-		return "Name [identifier=" + identifier + ", resourceIdentifier=" + resourceIdentifier
-				+ ", functionalResourceName=" + functionalResourceName + ", procedureInstanceIdentifier="
+		return "Name [identifier=" + identifier + ",\n\tresourceId=" + resourceIdentifier
+				+ " fr=" + functionalResourceName + ",\n\tproc="
 				+ procedureInstanceIdentifier + "]";
 	}
 

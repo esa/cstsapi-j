@@ -76,8 +76,8 @@ public abstract class AbstractConfigurationParameter extends AbstractParameter i
 	
 	@Override
 	public String toString() {
-	    return "AbstractConfigurationParameter [" + super.toString()
-	        + ", readable=" + this.readable
+	    return "AbstractConfigurationParameter \n\t[" + super.toString()
+	        + "\n\treadable=" + this.readable
 	        + ", dynamicallyModifiable=" + this.dynamicallyModifiable
 	        + ", configured=" + this.configured
 	        + "]";

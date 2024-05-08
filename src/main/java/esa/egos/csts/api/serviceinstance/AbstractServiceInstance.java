@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Optional;
@@ -1162,7 +1163,16 @@ public abstract class AbstractServiceInstance implements IServiceInstanceInterna
 
 	@Override
 	public IProcedureInternal getProcedureInternal(ProcedureInstanceIdentifier procedureInstanceIdentifier) {
-		return procedures.stream().map(p -> (IProcedureInternal) p).filter(p -> p.getProcedureInstanceIdentifier().equals(procedureInstanceIdentifier)).findFirst().get();
+		try {
+			return procedures.stream().map(p -> (IProcedureInternal) p).filter(p -> p.getProcedureInstanceIdentifier().equals(procedureInstanceIdentifier)).findFirst().get();
+		} catch(NoSuchElementException e) {
+			LOG.severe("SI " + this + " cannot handle procedure instance identifier " + procedureInstanceIdentifier);
+			for(IProcedure proc : procedures) {
+				LOG.severe("Available procedure: " + proc.getProcedureInstanceIdentifier());
+			}
+		}
+		
+		return null;
 	}
 
 	/**

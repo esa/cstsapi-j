@@ -64,9 +64,8 @@ public abstract class AbstractParameter extends Observable implements IParameter
 	
 	@Override
 	public String toString() {
-	    return "AbstractParameter [label="
-	            + this.label.toString()
-	            + ", name=" + this.name.toString()
+	    return "["
+	            + "name=" + this.name.toString()
 	            + "]";
 	}
 	

@@ -75,7 +75,7 @@ public class StringConfigurationParameter extends AbstractConfigurationParameter
 	 * @param value the value
 	 */
 	public void setValue(String value) {
-		if (!procedureIsBound() && !isDynamicallyModifiable()) {
+		if (procedureIsBound() && !isDynamicallyModifiable()) {
 			throw new ConfigurationParameterNotModifiableException();
 		}
 		this.value = value;

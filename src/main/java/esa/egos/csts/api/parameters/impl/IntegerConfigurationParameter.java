@@ -75,7 +75,7 @@ public class IntegerConfigurationParameter extends AbstractConfigurationParamete
 	 * @param value the value
 	 */
 	public synchronized void setValue(long value) {
-		if (!procedureIsBound() && !isDynamicallyModifiable()) {
+		if (procedureIsBound() && !isDynamicallyModifiable()) {
 			throw new ConfigurationParameterNotModifiableException();
 		}
 		this.value = value;

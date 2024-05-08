@@ -41,13 +41,6 @@ import esa.egos.csts.api.operations.ITransferData;
 import esa.egos.csts.api.operations.IUnbind;
 import esa.egos.csts.api.operations.impl.OpsFactory;
 import esa.egos.csts.api.operations.impl.b1.ConfirmedProcessData;
-import esa.egos.csts.api.operations.impl.b1.ExecuteDirective;
-import esa.egos.csts.api.operations.impl.b1.Get;
-import esa.egos.csts.api.operations.impl.b1.Notify;
-import esa.egos.csts.api.operations.impl.b1.ProcessData;
-import esa.egos.csts.api.operations.impl.b1.Start;
-import esa.egos.csts.api.operations.impl.b1.Stop;
-import esa.egos.csts.api.operations.impl.b1.TransferData;
 import esa.egos.csts.api.parameters.IConfigurationParameter;
 import esa.egos.csts.api.parameters.IParameter;
 import esa.egos.csts.api.procedures.associationcontrol.IAssociationControl;
@@ -808,17 +801,17 @@ public abstract class AbstractProcedure implements IProcedureInternal {
         // only parameters and events are observed by procedures
         if (IConfigurationParameter.class.isInstance(o))
         {
-            LOGGER.info(() -> "The Configuration Parameter " + o + " has been updated.");
+            LOGGER.info(() -> "The Configuration Parameter " + o + " has been updated to " + arg);
             processConfigurationChange((IConfigurationParameter) o);
         }
         else if (IParameter.class.isInstance(o))
         {
-            LOGGER.fine(() -> "The Parameter " + o + " has been updated.");
+            LOGGER.fine(() -> "The Parameter " + o + " has been updated to " + arg);
             processParameterChange((IParameter) o);
         }
         else if (IEvent.class.isInstance(o))
         {
-            LOGGER.info(() -> "The Event " + o + " has been updated.");
+            LOGGER.info(() -> "The Event " + o + " has been updated to " + arg);
             processIncomingEvent((IEvent) o);
         }
     }
