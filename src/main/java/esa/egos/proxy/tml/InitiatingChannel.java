@@ -208,6 +208,13 @@ public class InitiatingChannel extends Channel
         {
             for (SocketConnectionMng scmOutstanding : this.connecting)
             {
+            	//CSTSAPI-84 a verification is done for the case the DNS cannot be found or associated with a IP Address
+            	if (scmOutstanding.getPortData().getTcpIPAddress() == null || scMng.getPortData().getTcpIPAddress() == null)
+            	{
+            		logError("Could not resolve one of the DNS/IP Addresses");
+            		continue;
+            	}
+            	
                 if (scMng != null
                     && (!scmOutstanding.getPortData().getTcpIPAddress().toString()
                             .equals(scMng.getPortData().getTcpIPAddress().toString()) || scmOutstanding.getPortData()
