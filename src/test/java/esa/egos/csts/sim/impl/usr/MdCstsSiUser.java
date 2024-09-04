@@ -23,6 +23,7 @@ import esa.egos.csts.api.serviceinstance.IServiceInstance;
 import esa.egos.csts.api.serviceinstance.IServiceInstanceInternal;
 import esa.egos.csts.api.states.service.ServiceStatus;
 import esa.egos.csts.monitored.data.procedures.OnChangeCyclicReportUser;
+import esa.egos.csts.sicf.SicfParameter;
 import esa.egos.csts.sim.impl.MdCstsSiConfig;
 
 /**
@@ -30,6 +31,8 @@ import esa.egos.csts.sim.impl.MdCstsSiConfig;
  */
 public class MdCstsSiUser extends MdCstsSiUserInform
 {
+	private static final int DeliveryCycle = 5000; // ms
+	
     /** the association procedure */
     private AssociationControlUser associationProcedure;
 
@@ -56,7 +59,20 @@ public class MdCstsSiUser extends MdCstsSiUserInform
     }
 
     
-    /**
+    public MdCstsSiUser(ICstsApi api, MdCstsSiConfig config, int serviceVersion, List<SicfParameter> sicfParams, String siid) throws ApiException 
+    {
+    	super(api, config, serviceVersion, sicfParams, siid);
+
+        LOG.info("MdCstsSiUser#MdCstsSiUser() begin");
+
+        //this.serviceInstance.setVersion(serviceInstance.getServiceInstanceIdentifier().getServiceInstanceNumber());
+        this.associationProcedure = (AssociationControlUser) this.getApiSi().getAssociationControlProcedure();
+
+        LOG.info("MdCstsSiUser#MdCstsSiUser() end");
+	}
+
+
+	/**
      * Create InformationQueryUser procedure
      * 
      * @return InformationQueryUser
@@ -190,6 +206,18 @@ public class MdCstsSiUser extends MdCstsSiUserInform
 
         return ret;
     }
+    
+	public CstsResult startDefaultCyclicReport() {
+		CstsResult cstsResult = null;
+		try {
+			cstsResult = startCyclicReport(getPrimeProcedureIdentifier(), ListOfParameters.empty(), DeliveryCycle, true);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return cstsResult;
+	}    
 
     /**
      * Start an on change cyclic report procedure

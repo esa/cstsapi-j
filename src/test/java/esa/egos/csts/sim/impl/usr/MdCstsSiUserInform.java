@@ -2,6 +2,7 @@ package esa.egos.csts.sim.impl.usr;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +16,12 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import com.beanit.jasn1.ber.types.BerBoolean;
+import com.beanit.jasn1.ber.types.BerEnum;
+import com.beanit.jasn1.ber.types.BerInteger;
+import com.beanit.jasn1.ber.types.BerOctetString;
+import com.beanit.jasn1.ber.types.BerReal;
 
 import esa.egos.csts.api.diagnostics.CyclicReportStartDiagnostics;
 import esa.egos.csts.api.diagnostics.DiagnosticType;
@@ -39,6 +46,7 @@ import esa.egos.csts.api.functionalresources.values.impl.CstsEmptyValue;
 import esa.egos.csts.api.functionalresources.values.impl.FunctionalResourceValue;
 import esa.egos.csts.api.main.ICstsApi;
 import esa.egos.csts.api.oids.OIDs;
+import esa.egos.csts.api.oids.ObjectIdentifier;
 import esa.egos.csts.api.operations.IAcknowledgedOperation;
 import esa.egos.csts.api.operations.IBind;
 import esa.egos.csts.api.operations.IConfirmedOperation;
@@ -61,7 +69,9 @@ import esa.egos.csts.api.states.service.ServiceStatus;
 import esa.egos.csts.api.types.Label;
 import esa.egos.csts.api.types.Name;
 import esa.egos.csts.api.types.SfwVersion;
+import esa.egos.csts.monitored.data.procedures.IOnChangeCyclicReport;
 import esa.egos.csts.monitored.data.procedures.OnChangeCyclicReportUser;
+import esa.egos.csts.sicf.SicfParameter;
 import esa.egos.csts.sim.impl.MdCstsSi;
 import esa.egos.csts.sim.impl.MdCstsSiConfig;
 
@@ -123,10 +133,17 @@ public abstract class MdCstsSiUserInform extends
 
     /** Number of the received event updates by a procedure */
     protected Map<ProcedureInstanceIdentifier, Integer> eventUpdateCounters;
+    
+    private List<SicfParameter> sicfParameters;
+    
+    private String siid = "";
 
     private final Logger LOG = Logger.getLogger(getClass().getName());
     
-    /**
+    protected boolean isAgencySpecyficParameters = false;
+   
+
+	/**
      * Constructs an MD CSTS User SI
      * 
      * @param api The CSTS user API to work on
@@ -170,7 +187,15 @@ public abstract class MdCstsSiUserInform extends
         LOG.info("MdCstsSiUserInform#MdCstsSiUser() end");
     }
 
-    /**
+    public MdCstsSiUserInform(ICstsApi api, MdCstsSiConfig config, int serviceVersion, List<SicfParameter> sicfParams,
+			String siid) throws ApiException {
+
+    	this(api, config, serviceVersion);
+    	this.siid = siid;
+		this.sicfParameters = sicfParams;		
+    }
+
+	/**
      * Process an operation invocation from the provider
      * 
      * @param operation The invoked operation
@@ -183,9 +208,15 @@ public abstract class MdCstsSiUserInform extends
         switch (operation.getType())
         {
         case TRANSFER_DATA:
-            onTransferData((ITransferData) operation);
-            break;
-
+        	if(!this.isAgencySpecyficParameters == true)
+        	{
+                onTransferData((ITransferData) operation);
+        		
+        	} else
+        	{
+        		onTransferPrivateData((ITransferData) operation);
+        	}
+            break;           
         case NOTIFY:
             onNotify((INotify) operation);
             break;
@@ -199,7 +230,8 @@ public abstract class MdCstsSiUserInform extends
         // LOG.info("MdCstsSiUserInform#informOpInvocation() end");
     }
 
-    /**
+
+	/**
      * Process an acknowledged operation from the provider
      * 
      * @param operation The acknowledged operation
@@ -810,6 +842,131 @@ public abstract class MdCstsSiUserInform extends
         // LOG.info("MdCstsSiUserInform#onTransferData() end");
     }
     
+    private void onTransferPrivateData(ITransferData operation) {
+    	IOnChangeCyclicReport report = (IOnChangeCyclicReport) this.getApiSi().getPrimeProcedure();
+		for (QualifiedParameter qualifiedParams : report.getQualifiedParameters())
+			for (QualifiedValues qualifiedValues : qualifiedParams.getQualifiedValues()) {
+				ParameterQualifier qualifier = qualifiedValues.getQualifier();
+				switch (qualifier) {
+				case ERROR:
+					LOG.info("RECEIVED DATA: ERROR QUALIFIER");
+					break;
+				case UNAVAILABLE:
+					LOG.info("RECEIVED DATA: UNAVAILABLE QUALIFIER");
+					break;
+				case UNDEFINED:
+					LOG.info("RECEIVED DATA: UNDEFINED QUALIFIER");
+					break;
+				case VALID:
+					processQualifiedValue(qualifiedValues);
+					break;
+				}
+			}
+	}
+    
+	private void processQualifiedValue(QualifiedValues qv) {
+		for (ParameterValue pv : qv.getParameterValues()) {
+			EmbeddedData data = pv.getExtended();
+			processData(data);
+		}
+	}
+	
+	private void processData(EmbeddedData data) {
+		ObjectIdentifier paramOid = data.getOid();
+		for (SicfParameter param : sicfParameters) {
+			if (param.getParamOid().equals(paramOid)) {
+				String type = param.getType();
+				Object value;
+				if (type.equalsIgnoreCase("INTEGER"))
+					value = decodeInt(data);
+				else if (type.equalsIgnoreCase("BOOLEAN"))
+					value = decodeBoolean(data);
+				else if (type.equalsIgnoreCase("DOUBLE"))
+					value = decodeDouble(data);
+				else if (type.equalsIgnoreCase("STRING"))
+					value = decodeString(data);
+				else if (type.equalsIgnoreCase("ENUMERATIVE"))
+					value = decodeEnum(data);
+				else
+					throw new RuntimeException("Invalid Parameter Type: " + type);
+				LOG.info("RECEIVED DATA: " + siid + ": " + param.getMcsName() + ": " + value);
+			}
+		}
+	}
+	
+	private int decodeInt(EmbeddedData data) {
+		int value;
+		try (ByteArrayInputStream is = new ByteArrayInputStream(data.getData())) {
+			BerInteger berInteger = new BerInteger();
+			berInteger.decode(is);
+			value = berInteger.intValue();
+		} catch (IOException e) {
+			throw new RuntimeException("Couldn't decode received data: " + e.getMessage());
+		}
+		return value;
+	}
+
+	private boolean decodeBoolean(EmbeddedData data) {
+		boolean value;
+		try (ByteArrayInputStream is = new ByteArrayInputStream(data.getData())) {
+			BerBoolean berBoolean = new BerBoolean();
+			berBoolean.decode(is);
+			value = berBoolean.value;
+		} catch (IOException e) {
+			throw new RuntimeException("Couldn't decode received data: " + e.getMessage());
+		}
+		return value;
+	}
+
+	private double decodeDouble(EmbeddedData data) {
+		double value;
+		try (ByteArrayInputStream is = new ByteArrayInputStream(data.getData())) {
+			BerReal berReal = new BerReal();
+			berReal.decode(is);
+			value = berReal.value;
+		} catch (IOException e) {
+			throw new RuntimeException("Couldn't decode received data: " + e.getMessage());
+		}
+		return value;
+	}
+
+	private String decodeString(EmbeddedData data) {
+		String value;
+		try (ByteArrayInputStream is = new ByteArrayInputStream(data.getData())) {
+			BerOctetString berString = new BerOctetString();
+			berString.decode(is);
+			value = fromHex(berString.toString());
+		} catch (IOException e) {
+			throw new RuntimeException("Couldn't decode received data: " + e.getMessage());
+		}
+		return value;
+	}
+    
+	private static String fromHex(String s) {
+		byte bs[] = new byte[s.length() / 2];
+		for (int i = 0; i < s.length(); i += 2) {
+			bs[i / 2] = (byte) Integer.parseInt(s.substring(i, i + 2), 16);
+		}
+		try {
+			return new String(bs, "UTF8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		throw new RuntimeException();
+	}
+
+	private int decodeEnum(EmbeddedData data) {
+		int value;
+		try (ByteArrayInputStream is = new ByteArrayInputStream(data.getData())) {
+			BerEnum berEnum = new BerEnum();
+			berEnum.decode(is);
+			value = berEnum.intValue();
+		} catch (IOException e) {
+			throw new RuntimeException("Couldn't decode received data: " + e.getMessage());
+		}
+		return value;
+	}
+	
     /**
      * Wait for the given procedure identifier for the given number of parameter updates
      * @param piid
@@ -1482,5 +1639,9 @@ public abstract class MdCstsSiUserInform extends
         }
         return ret;
     }
+    
+    public void setAgencySpecyficParameters(boolean isAgencySpecyficParameters) {
+		this.isAgencySpecyficParameters = isAgencySpecyficParameters;
+	}
 
 }
