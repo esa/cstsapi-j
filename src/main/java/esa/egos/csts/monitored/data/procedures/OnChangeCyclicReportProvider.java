@@ -261,17 +261,25 @@ public class OnChangeCyclicReportProvider extends CyclicReportProvider implement
     @Override
     protected void createAndTransferData()
     {
+    	boolean createAndTransferData = false;
+    	
         synchronized (this.changedParameters)
         {
             if (!this.onChange || !this.changedParameters.isEmpty() || !this.firstUpdateDispatched)
             {
-                super.createAndTransferData();
-
-                if (!this.firstUpdateDispatched)
-                {
-                    this.firstUpdateDispatched = true;
-                }
+                createAndTransferData = true;               
             }
         }
+        
+        if(createAndTransferData) {
+        	super.createAndTransferData();
+        	
+        	synchronized (this.changedParameters) {        		
+        		if (!this.firstUpdateDispatched)
+        		{
+        			this.firstUpdateDispatched = true;
+        		}
+        	}
+        }  
     }
 }
