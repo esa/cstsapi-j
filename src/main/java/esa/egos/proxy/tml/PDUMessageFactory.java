@@ -9,13 +9,21 @@ import esa.egos.proxy.util.impl.IntegralEncoder;
 
 public class PDUMessageFactory implements ITMLMessageFactory
 {
+	private static final int MAX_PDU_BODY_LENGTH = 10 * 1024 * 1024; // 10 MB
+	
     @Override
     public TMLMessage createTmlMessage(byte[] initialEightBytes, InputStream is) throws ApiException,
                                                                                          IOException
     {
         // extract the body length from header
-        int length = (int) IntegralEncoder.decodeUnsignedMSBFirst(initialEightBytes, 4, 4);
+        long rawLength = IntegralEncoder.decodeUnsignedMSBFirst(initialEightBytes, 4, 4);
 
+        if (rawLength < 0 || rawLength > MAX_PDU_BODY_LENGTH) {
+			throw new ApiException(Result.SLE_E_INVALIDPDU.toString());
+		}
+        
+        int length = (int) rawLength;
+		
         // extract the body
         byte[] body = new byte[length];
         int bytesToRead = length;
