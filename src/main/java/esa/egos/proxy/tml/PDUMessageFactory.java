@@ -3,6 +3,7 @@ package esa.egos.proxy.tml;
 import java.io.IOException;
 import java.io.InputStream;
 
+import esa.egos.csts.api.enumerations.Result;
 import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.proxy.GenStrUtil;
 import esa.egos.proxy.util.impl.IntegralEncoder;
