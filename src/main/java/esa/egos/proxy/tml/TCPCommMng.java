@@ -3,6 +3,7 @@ package esa.egos.proxy.tml;
 import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -130,7 +131,11 @@ public class TCPCommMng
         TMLMessage msgToSend = null;
 
         // take the TMLMessage from the queue
-        msgToSend = this.sendingQueue.poll();
+        try {
+			msgToSend = this.sendingQueue.poll(100, TimeUnit.MILLISECONDS); // without timeout performance is damaged - CSTSAPI-87
+		} catch (InterruptedException e) {
+			LOG.log(Level.SEVERE, "Exception polling queue", e);
+		} 
         
         sendTMLMessage(msgToSend);
     }
