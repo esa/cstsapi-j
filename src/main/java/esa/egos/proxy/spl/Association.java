@@ -472,6 +472,9 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 	 * and removes the list.
 	 */
 	protected void clearAllPendingReturn() {
+		if(getSrvProxyInform() == null)
+			return;
+		
 		if (getSrvProxyInform().getTranslator() != null) {
 			getSrvProxyInform().getTranslator().removeAllPendingReturns();
 		}
@@ -1468,7 +1471,7 @@ public abstract class Association implements ISrvProxyInitiate, IChannelInform {
 			RemotePeer pPeerAppl = null;
 			for (RemotePeer peer : pPeerAppliDataList) {
 
-				if (peer.getId() == peerId)
+				if (peer.getId().equals(peerId))
 					pPeerAppl = peer;
 
 			}

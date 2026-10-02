@@ -1,18 +1,31 @@
 package esa.egos.csts.api.util.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
+import com.beanit.jasn1.ber.types.BerInteger;
 import com.beanit.jasn1.ber.types.BerNull;
 import com.beanit.jasn1.ber.types.BerOctetString;
 
+import b1.isp1.credentials.ISP1Credentials;
+import esa.egos.csts.api.exceptions.ApiException;
 import esa.egos.csts.api.util.ICredentials;
 import esa.egos.proxy.GenStrUtil;
 import esa.egos.proxy.enums.TimeFormat;
 import esa.egos.proxy.enums.TimeRes;
+import esa.egos.proxy.tml.Channel;
 import esa.egos.proxy.util.ITime;
+import esa.egos.proxy.util.impl.ApiTime;
 
 public class Credentials implements ICredentials{
 
+	
+	private static final Logger LOG = Logger.getLogger(Channel.class.getName());
     /**
      * The time when the message digest was generated.
      */
@@ -29,7 +42,7 @@ public class Credentials implements ICredentials{
     private byte[] messageDigest;
 	
 	public Credentials() {
-        this.timeRef = null;
+		this.timeRef = null;
         this.randomNumber = 0;
         this.messageDigest = null;
 	}
@@ -112,7 +125,6 @@ public class Credentials implements ICredentials{
                            + this.timeRef.getDateAndTime(TimeFormat.TF_dayOfMonth, TimeRes.TR_microSec)
                            + "\n");
         }
-
         byte[] time_cds = this.timeRef.getCDS();
         if (time_cds != null)
         {
@@ -132,26 +144,96 @@ public class Credentials implements ICredentials{
 
 	public b1.ccsds.csts.common.types.Credentials encode(b1.ccsds.csts.common.types.Credentials cred) {
 		
-		if (getRandomNumber() != 0){
-		    BerOctetString string = new BerOctetString();
-			string.value = getProtected(); // TODO check
-			cred.setUsed(string);
-		} else {
-			cred.setUnused(new BerNull());
-		}
+        if (getRandomNumber() <= 0)
+        {
+        	cred.setUnused(new BerNull());
+        }
+        else
+        {
+            // ISP1 Credentials
+        	b1.isp1.credentials.ISP1Credentials isp1Credentials = new b1.isp1.credentials.ISP1Credentials();
 
+            // fill the time
+            ITime time = this.getTimeRef();
+            if (time != null)
+            {
+            	isp1Credentials.setTime(new BerOctetString(time.getCDS()));
+            }
+            else
+            {
+            	isp1Credentials.setTime(new BerOctetString());
+            }
+
+            // fill the protected
+            byte[] theProtected = this.getProtected();
+            if (theProtected != null)
+            {
+            	
+            	isp1Credentials.setTheProtected(new BerOctetString(theProtected));
+
+            }
+
+            // fill the random number
+            isp1Credentials.setRandomNumber(new BerInteger(this.getRandomNumber()));
+
+            ReverseByteArrayOutputStream encoding = new ReverseByteArrayOutputStream(72, true);
+            
+                try {
+					isp1Credentials.encode(encoding, true);
+
+					cred.setUsed(new BerOctetString(encoding.getArray()));
+				} catch (IOException e) {
+					LOG.log(Level.FINE, "ApiException: Encounter problems encoding ISP! credentials ", e);
+				}                
+            }
+            
 		return cred;
 	}
 	
 	public b2.ccsds.csts.common.types.Credentials encode(b2.ccsds.csts.common.types.Credentials cred) {
 		
-		if (getRandomNumber() != 0){
-		    BerOctetString string = new BerOctetString();
-			string.value = getProtected(); // TODO check
-			cred.setUsed(string);
-		} else {
-			cred.setUnused(new BerNull());
-		}
+		if (getRandomNumber() <= 0)
+        {
+        	cred.setUnused(new BerNull());
+        }
+        else
+        {
+            // ISP1 Credentials
+        	b2.isp1.credentials.ISP1Credentials isp1Credentials = new b2.isp1.credentials.ISP1Credentials();
+
+            // fill the time
+            ITime time = this.getTimeRef();
+            if (time != null)
+            {
+            	isp1Credentials.setTime(new BerOctetString(time.getCDS()));
+            }
+            else
+            {
+            	isp1Credentials.setTime(new BerOctetString());
+            }
+
+            // fill the protected
+            byte[] theProtected = this.getProtected();
+            if (theProtected != null)
+            {
+            	
+            	isp1Credentials.setTheProtected(new BerOctetString(theProtected));
+
+            }
+
+            // fill the random number
+            isp1Credentials.setRandomNumber(new BerInteger(this.getRandomNumber()));
+
+            ReverseByteArrayOutputStream encoding = new ReverseByteArrayOutputStream(72, true);
+            
+                try {
+					isp1Credentials.encode(encoding, true);
+
+					cred.setUsed(new BerOctetString(encoding.getArray()));
+				} catch (IOException e) {
+					LOG.log(Level.FINE, "ApiException: Encounter problems encoding ISP! credentials ", e);
+				}                
+            }
 
 		return cred;
 	}
@@ -165,8 +247,50 @@ public class Credentials implements ICredentials{
 	public static ICredentials decode(b1.ccsds.csts.common.types.Credentials performerCredentials) {
 		Credentials cred = new Credentials();
 		
-		if(performerCredentials.getUsed() != null)
-			cred.setProtected(performerCredentials.getUsed().value);
+		if (performerCredentials.getUnused() != null)
+        {
+			cred = null;
+        }
+        else
+        {
+        		cred = new Credentials();
+
+                if (cred != null)
+                {
+                	InputStream is = new ByteArrayInputStream(performerCredentials.getUsed().value);
+                	b1.isp1.credentials.ISP1Credentials isp1c = new b1.isp1.credentials.ISP1Credentials();
+
+                    // decode ISP1 credentials
+                    try
+                    {
+                        isp1c.decode(is, true);
+                    }
+                    catch (IOException e)
+                    {
+                    	LOG.log(Level.FINE, "ApiException: Encounter problems decoding credentials ", e);
+                        return null;
+                    }
+
+                    // set the time
+                    ITime pTime = new ApiTime();
+
+                    if (pTime != null)
+                    {
+                    		try {
+								pTime.setCDS(isp1c.getTime().value);
+							} catch (ApiException e) {
+								LOG.log(Level.FINE, "ApiException: Encounter problems setting Time CDS while decoding ", e);
+							}
+                            cred.setTimeRef(pTime);
+                    }
+
+                    // set the protected
+                    cred.setProtected(isp1c.getTheProtected().value);
+
+                    // set the random number
+                    cred.setRandomNumber(isp1c.getRandomNumber().longValue());
+                }
+            }
 		
 		return cred;
 	}
@@ -174,8 +298,50 @@ public class Credentials implements ICredentials{
 	public static ICredentials decode(b2.ccsds.csts.common.types.Credentials performerCredentials) {
 		Credentials cred = new Credentials();
 		
-		if(performerCredentials.getUsed() != null)
-			cred.setProtected(performerCredentials.getUsed().value);
+		if (performerCredentials.getUnused() != null)
+        {
+			cred = null;
+        }
+        else
+        {
+        		cred = new Credentials();
+
+                if (cred != null)
+                {
+                	InputStream is = new ByteArrayInputStream(performerCredentials.getUsed().value);
+                    b2.isp1.credentials.ISP1Credentials isp1c = new b2.isp1.credentials.ISP1Credentials();
+
+                    // decode ISP1 credentials
+                    try
+                    {
+                        isp1c.decode(is, true);
+                    }
+                    catch (IOException e)
+                    {
+                    	LOG.log(Level.FINE, "ApiException: Encounter problems decoding credentials ", e);
+                        return null;
+                    }
+
+                    // set the time
+                    ITime pTime = new ApiTime();
+
+                    if (pTime != null)
+                    {
+                    		try {
+								pTime.setCDS(isp1c.getTime().value);
+							} catch (ApiException e) {
+								LOG.log(Level.FINE, "ApiException: Encounter problems setting Time CDS while decoding ", e);
+							}
+                            cred.setTimeRef(pTime);
+                    }
+
+                    // set the protected
+                    cred.setProtected(isp1c.getTheProtected().value);
+
+                    // set the random number
+                    cred.setRandomNumber(isp1c.getRandomNumber().longValue());
+                }
+            }
 		
 		return cred;
 	}
