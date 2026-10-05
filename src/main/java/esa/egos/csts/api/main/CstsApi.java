@@ -167,7 +167,7 @@ public abstract class CstsApi implements IApi, ILocator {
 		// check if all configured protocol identifiers are
 		// supported by registered proxies:
 		String dp = getProxySettings().getPortList().getDefaultPort();
-		if (dp == "") {
+		if (dp.equals("")){
 			throw new ApiException(Result.SLE_E_CONFIG.toString());
 		}
 
@@ -258,7 +258,7 @@ public abstract class CstsApi implements IApi, ILocator {
 				if (getProxyConfig().getPortList().getPortList() != null) {
 					for (PortMapping map : getProxyConfig().getPortList().getPortList()) {
 						// if there is a mapping for the same responderportid, add it
-						if (map.getResponderPortId() == port.getName() && found == false) {
+						if ((map.getResponderPortId().equals(port.getName()))&& found == false) {
 							this.portList.put(port.getName(), map.getProtocolId());
 							found = true;
 						}
